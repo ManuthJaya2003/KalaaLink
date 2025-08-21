@@ -1,7 +1,12 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const EmployeeSchema = new Schema({
-  employee_id: { type: String, required: true, unique: true },
+  employee_id: { 
+  type: String, 
+  required: true, 
+  unique: true,
+  default: () => "EMP-" + Math.floor(Math.random() * 100000)
+},
   name:        { type: String, required: true },
   email:       { type: String, required: true, unique: true },
   password:        { type: String, required: true },

@@ -7,9 +7,9 @@ function Login() {
     <div>
         <MainNav/>
       <p>
-        Are you an artist?{' '}
+        Are you a professional?{' '}
         <Link to="/professional_login" style={{ color: 'blue', textDecoration: 'underline' }}>
-          Register here
+          Login here
         </Link>
       </p>
     </div>
