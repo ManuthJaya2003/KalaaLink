@@ -17,15 +17,16 @@ const getAllEmployees = async (req, res, next) => {
     return res.status(200).json({ employees });
 };// Add new employee
 const addEmployees = async (req, res, next) => {
-    const { employee_id, name, email, role, status } = req.body;
+    const { employee_id, name, email, password,role, status } = req.body;
     let employee;
 
     try {
         employee = new Employee({
             employee_id,
             name,
-            email,
             role,
+            email,
+            password,
             status
         });
 
@@ -57,13 +58,13 @@ const getById = async (req, res, next) => {
 };// Update employee
 const updateEmployee = async (req, res, next) => {
     const id = req.params.id;
-    const { employee_id, name, email, role, status } = req.body;
+    const { employee_id, name, email, password,role, status } = req.body;
     let employee;
 
     try {
         employee = await Employee.findByIdAndUpdate(
             id,
-            { employee_id, name, email, role, status },
+            { employee_id, name,role, email, password, status },
             { new: true } // return updated document
         );
     } catch (err) {
