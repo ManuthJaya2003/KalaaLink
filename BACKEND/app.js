@@ -1,13 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 
 // Routes
 const artistManagerRoute = require("./routes/ArtistMangerRoute");
 const registeredArtistRoute = require("./routes/ArtistRoute");
 const userRoute = require("./routes/UserRoute");
-const path = require("path");
-const router = require("./routes/eventRoute")
+const eventRoute = require("./routes/eventRoute");
+const employeeRoute = require("./routes/EmployeeRoute"); // <-- Employee routes
 
 const app = express();
 
@@ -19,10 +20,11 @@ app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
 // Mount routes
-app.use("/artists", artistManagerRoute);       // Artist Manager CRUD & applications
+app.use("/artists", artistManagerRoute);           // Artist Manager CRUD & applications
 app.use("/registeredArtists", registeredArtistRoute); // Self-registered artists
-app.use("/users", userRoute);                  // User CRUD
-app.use("/events",router);
+app.use("/users", userRoute);                      // User CRUD
+app.use("/events", eventRoute);                    // Event CRUD
+app.use("/api/employees", employeeRoute);          // <-- Employee CRUD
 
 // Connect to MongoDB and start server
 mongoose.connect("mongodb+srv://Manuth:Manuth2003@kalaalinkcluster.imipnwu.mongodb.net/")
@@ -33,7 +35,7 @@ mongoose.connect("mongodb+srv://Manuth:Manuth2003@kalaalinkcluster.imipnwu.mongo
     console.error("❌ MongoDB connection failed:", err.message);
   });
 
-// ✅ Start server regardless of DB connection
+// Start server regardless of DB connection
 app.listen(5000, () => {
   console.log("🚀 Server running on port 5000");
 });
