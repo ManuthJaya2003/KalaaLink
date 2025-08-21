@@ -46,11 +46,6 @@ function MainNav() {
           <h1>SignUp</h1>
           </Link>
         </li>
-        <li className="navbar-item">
-          <Link to="/artistManager">
-            <h1>Artist Manager Dashboard</h1>
-          </Link>
-        </li>
       </ul>
     </nav>
   );

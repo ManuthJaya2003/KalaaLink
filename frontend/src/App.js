@@ -13,6 +13,8 @@ import Overview from './Components/Manuth/Overview/Overview.js'
 import ArtistRegistration from './Components/Manuth/ArtistRegistration/ArtistRegistration.js';
 import Login from './Components/Login/Login.js';
 import ProfessionalLogin from './Components/Manuth/ProfessionalLogin/ProfessionalLogin.js';
+import AdminDashboard from './Components/Thaveesha/AdminDashboard/AdminDashboard.js';
+import EventManagerDashboard from './Components/Lihini/EventManagerDashboard/EventManagerDashboard.js';
 
 function App() {
   return (
@@ -32,6 +34,8 @@ function App() {
           <Route path="/register" element = {<ArtistRegistration/>}/>
           <Route path="/professional" element = {<Login/>}/>
           <Route path="/professional_login" element = {<ProfessionalLogin/>}/>
+          <Route path="/admindashboard" element = {<AdminDashboard/>}/>
+          <Route path="/eventmanagerdashboard" element={<EventManagerDashboard/>}/>
         </Routes>
       </React.Fragment>
     </div>
