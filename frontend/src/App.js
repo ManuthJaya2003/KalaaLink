@@ -11,6 +11,8 @@ import Applications from './Components/Manuth/Applications/Applications.js';
 import SignUp from './Components/SignUp/SignUp.js'
 import Overview from './Components/Manuth/Overview/Overview.js'
 import ArtistRegistration from './Components/Manuth/ArtistRegistration/ArtistRegistration.js';
+import Login from './Components/Login/Login.js';
+import ProfessionalLogin from './Components/Manuth/ProfessionalLogin/ProfessionalLogin.js';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
           <Route path="/signup" element = {<SignUp/>}/>
           <Route path="/overview" element = {<Overview/>}/>
           <Route path="/register" element = {<ArtistRegistration/>}/>
+          <Route path="/professional" element = {<Login/>}/>
+          <Route path="/professional_login" element = {<ProfessionalLogin/>}/>
         </Routes>
       </React.Fragment>
     </div>
