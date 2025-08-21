@@ -1,9 +1,8 @@
 const ArtistManager = require("../model/ArtistManagerModel");
 const Artist = require("../model/ArtistModel"); // For artist approval integration
 
-
-// Get all artists
-const getAllArtists = async (req, res, next) => {
+// Get all artists managed by Artist Manager
+const getAllArtists = async (req, res) => {
   try {
     const artists = await ArtistManager.find();
     if (!artists || artists.length === 0) {
@@ -16,8 +15,8 @@ const getAllArtists = async (req, res, next) => {
   }
 };
 
-// Insert data with multer image handling
-const addArtists = async (req, res, next) => {
+// Add new artist under Artist Manager
+const addArtists = async (req, res) => {
   const { artistName, genre, category, bookingPrice, summary, bio } = req.body;
   const image = req.file ? req.file.filename : null;
 
@@ -30,7 +29,7 @@ const addArtists = async (req, res, next) => {
       summary,
       bio,
       image,
-      approved: true // Added by manager directly
+      approved: true, // added by manager directly
     });
 
     await artist.save();
@@ -42,7 +41,7 @@ const addArtists = async (req, res, next) => {
 };
 
 // Get artist by ID
-const getArtistByID = async (req, res, next) => {
+const getArtistByID = async (req, res) => {
   const artist_id = req.params.artist_id;
   try {
     const artist = await ArtistManager.findById(artist_id);
@@ -54,11 +53,11 @@ const getArtistByID = async (req, res, next) => {
   }
 };
 
-// Update artist details with optional image upload
-const updateArtist = async (req, res, next) => {
+// Update artist details
+const updateArtist = async (req, res) => {
   const artist_id = req.params.artist_id;
   const { artistName, genre, category, bookingPrice, summary, bio } = req.body;
-  const image = req.file ? req.file.filename : req.body.image; // Keep old image if no new uploaded file
+  const image = req.file ? req.file.filename : req.body.image;
 
   try {
     const artist = await ArtistManager.findByIdAndUpdate(
@@ -76,11 +75,11 @@ const updateArtist = async (req, res, next) => {
 };
 
 // Delete artist
-const deleteArtist = async (req, res, next) => {
+const deleteArtist = async (req, res) => {
   const artist_id = req.params.artist_id;
   try {
     const artist = await ArtistManager.findByIdAndDelete(artist_id);
-    if (!artist) return res.status(404).json({ message: "Unable to delete artist details" });
+    if (!artist) return res.status(404).json({ message: "Unable to delete artist" });
     return res.status(200).json({ artist });
   } catch (err) {
     console.error(err);
@@ -88,6 +87,7 @@ const deleteArtist = async (req, res, next) => {
   }
 };
 
+// Get all artist applications
 const getAllApplications = async (req, res) => {
   try {
     const pending = await Artist.find({ status: "pending" });
@@ -108,11 +108,13 @@ const approveArtist = async (req, res) => {
     if (!artist) return res.status(404).json({ message: "Artist not found" });
 
     artist.status = "approved";
+    artist.isApproved = true; // ✅ important for frontend login
     await artist.save();
 
-    res.status(200).json({ message: "Artist approved successfully" });
+    return res.status(200).json({ message: "Artist approved successfully", artist });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -123,15 +125,15 @@ const rejectArtist = async (req, res) => {
     if (!artist) return res.status(404).json({ message: "Artist not found" });
 
     artist.status = "rejected";
+    artist.isApproved = false;
     await artist.save();
 
-    res.status(200).json({ message: "Artist rejected successfully" });
+    return res.status(200).json({ message: "Artist rejected successfully", artist });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    return res.status(500).json({ message: err.message });
   }
 };
-
-
 
 module.exports = {
   getAllArtists,
@@ -141,5 +143,5 @@ module.exports = {
   deleteArtist,
   getAllApplications,
   approveArtist,
-  rejectArtist
+  rejectArtist,
 };

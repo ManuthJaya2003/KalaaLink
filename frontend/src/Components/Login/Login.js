@@ -12,6 +12,12 @@ function Login() {
           Login here
         </Link>
       </p>
+      <p>
+        Are you an artist?{' '}
+        <Link to="/artist_login" style={{ color: 'blue', textDecoration: 'underline' }}>
+          Login here
+        </Link>
+      </p>
     </div>
   );
 }

@@ -9,7 +9,7 @@ const artistSchema = new Schema(
     stageName: { type: String, required: true },
     bio: { type: String, required: true },
     password: { type: String, required: true }, // plain for now
-    isApproved: { type: Boolean, default: false }, // Must be approved by Artist Manager
+    isApproved: { type: Boolean, default: true }, // Must be approved by Artist Manager
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
