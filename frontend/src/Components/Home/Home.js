@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
 import './Home.css';
+import MainFooter from '../MainFooter/MainFooter';
 
 function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -119,6 +120,7 @@ function Home() {
           </div>
         </section>
       </main>
+      <MainFooter/>
     </div>
   );
 }

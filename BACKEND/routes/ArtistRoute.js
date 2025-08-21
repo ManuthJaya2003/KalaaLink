@@ -6,6 +6,9 @@ const ArtistController = require("../controllers/ArtistController");
 // Register new artist
 router.post("/register", ArtistController.registerArtist);
 
+// Login artist
+router.post("/login", ArtistController.loginArtist);
+
 // Get artist profile (approved only)
 router.get("/:artist_id", ArtistController.getArtistProfile);
 

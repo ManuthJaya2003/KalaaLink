@@ -15,6 +15,8 @@ import Login from './Components/Login/Login.js';
 import ProfessionalLogin from './Components/Manuth/ProfessionalLogin/ProfessionalLogin.js';
 import AdminDashboard from './Components/Thaveesha/AdminDashboard/AdminDashboard.js';
 import EventManagerDashboard from './Components/Lihini/EventManagerDashboard/EventManagerDashboard.js';
+import ArtistLogin from './Components/Manuth/ArtistLogin/ArtistLogin.js';
+import ArtistPortfolio from './Components/Manuth/ArtistPortfolio/ArtistPortfolio.js';
 
 function App() {
   return (
@@ -32,10 +34,12 @@ function App() {
           <Route path="/signup" element = {<SignUp/>}/>
           <Route path="/overview" element = {<Overview/>}/>
           <Route path="/register" element = {<ArtistRegistration/>}/>
-          <Route path="/professional" element = {<Login/>}/>
+          <Route path="/login" element = {<Login/>}/>
           <Route path="/professional_login" element = {<ProfessionalLogin/>}/>
           <Route path="/admindashboard" element = {<AdminDashboard/>}/>
           <Route path="/eventmanagerdashboard" element={<EventManagerDashboard/>}/>
+          <Route path="/artist_login" element={<ArtistLogin/>}/>
+          <Route path="/artist_portfolio/:artist_id" element={<ArtistPortfolio/>} />
         </Routes>
       </React.Fragment>
     </div>
