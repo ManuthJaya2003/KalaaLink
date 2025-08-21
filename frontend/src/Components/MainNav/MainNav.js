@@ -37,7 +37,9 @@ function MainNav() {
           </Link>
         </li>
         <li className="navbar-item auth-item">
+          <Link to = "/professional">
           <h1>Login</h1>
+          </Link>
         </li>
         <li className="navbar-item auth-item">
           <Link to = "/signup">
