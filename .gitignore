@@ -1,0 +1,12 @@
+# Node modules
+node_modules/
+frontend/node_modules/
+
+# Cache and build folders
+frontend/.cache/
+dist/
+build/
+
+# Environment files
+.env
+.vscode/

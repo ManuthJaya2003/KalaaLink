@@ -37,16 +37,13 @@ function MainNav() {
           </Link>
         </li>
         <li className="navbar-item auth-item">
+          <Link to = "/login">
           <h1>Login</h1>
+          </Link>
         </li>
         <li className="navbar-item auth-item">
           <Link to = "/signup">
           <h1>SignUp</h1>
-          </Link>
-        </li>
-        <li className="navbar-item">
-          <Link to="/artistManager">
-            <h1>Artist Manager Dashboard</h1>
           </Link>
         </li>
       </ul>
