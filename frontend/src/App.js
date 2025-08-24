@@ -17,6 +17,8 @@ import AdminDashboard from './Components/Thaveesha/AdminDashboard/AdminDashboard
 import EventManagerDashboard from './Components/Lihini/EventManagerDashboard/EventManagerDashboard.js';
 import ArtistLogin from './Components/Manuth/ArtistLogin/ArtistLogin.js';
 import ArtistPortfolio from './Components/Manuth/ArtistPortfolio/ArtistPortfolio.js';
+import ArtistDashboard from './Components/Manuth/ArtistDashboard/ArtistDashboard.js';
+import ArtistEditProfile from './Components/Manuth/ArtistEditProfile/ArtistEditProfile.js';
 
 function App() {
   return (
@@ -39,7 +41,9 @@ function App() {
           <Route path="/admindashboard" element = {<AdminDashboard/>}/>
           <Route path="/eventmanagerdashboard" element={<EventManagerDashboard/>}/>
           <Route path="/artist_login" element={<ArtistLogin/>}/>
-          <Route path="/artist_portfolio/:artist_id" element={<ArtistPortfolio/>} />
+          <Route path="/portfolio" element={<ArtistPortfolio/>} />
+          <Route path="/artistdashboard" element={<ArtistDashboard/>}/>
+          <Route path="/artist/editprofile" element={<ArtistEditProfile/>}/>
         </Routes>
       </React.Fragment>
     </div>

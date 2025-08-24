@@ -22,10 +22,12 @@ function ArtistLogin() {
       const artist = res.data.artist;
       console.log("Login successful:", artist);
 
+      // Save artist info in localStorage for session
+      localStorage.setItem("artist", JSON.stringify(artist));
+
       // Redirect to artist dashboard
-      navigate("/artist-dashboard");
+      navigate("/artistdashboard");
     } catch (err) {
-      // Properly handle Axios error
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
       } else {
