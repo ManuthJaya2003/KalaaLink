@@ -5,6 +5,7 @@ import "./Artists.css";
 
 const URL = "http://localhost:5000/artists";
 
+// Fetch all artists
 const fetchHandler = async () => {
   return await axios.get(URL).then((res) => res.data);
 };
@@ -39,14 +40,11 @@ function Artists() {
   };
 
   const handleBookNow = (artist) => {
-    // Future booking logic will be implemented here
     console.log("Booking artist:", artist.artistName);
   };
 
   const handleModalOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      handleCloseModal();
-    }
+    if (e.target === e.currentTarget) handleCloseModal();
   };
 
   if (loading) {
@@ -105,19 +103,19 @@ function Artists() {
                         justifyContent: "center",
                         color: "white",
                         fontSize: "1.2rem",
-                        fontWeight: "600"
+                        fontWeight: "600",
                       }}
                     >
                       {artist.artistName?.charAt(0) || "A"}
                     </div>
                   )}
                 </div>
-                
+
                 <div className="artist-info">
                   <h2 className="artist-name">{artist.artistName}</h2>
                   <p className="artist-genre">{artist.genre}</p>
                   <p className="artist-category">{artist.category}</p>
-                  
+
                   <div className="artist-buttons">
                     <button
                       className="btn btn-primary"
@@ -149,7 +147,7 @@ function Artists() {
                 ×
               </button>
             </div>
-            
+
             <div className="modal-body">
               {selectedArtist.image && (
                 <img
@@ -158,33 +156,33 @@ function Artists() {
                   className="modal-image"
                 />
               )}
-              
+
               <div className="modal-details">
                 <div className="detail-item">
                   <span className="detail-label">ID</span>
-                  <span className="detail-value">{selectedArtist._id || selectedArtist.artist_id}</span>
+                  <span className="detail-value">{selectedArtist._id}</span>
                 </div>
-                
+
                 <div className="detail-item">
                   <span className="detail-label">Genre</span>
                   <span className="detail-value">{selectedArtist.genre}</span>
                 </div>
-                
+
                 <div className="detail-item">
                   <span className="detail-label">Category</span>
                   <span className="detail-value">{selectedArtist.category}</span>
                 </div>
-                
+
                 <div className="detail-item">
                   <span className="detail-label">Booking Price</span>
                   <span className="detail-value price">${selectedArtist.bookingPrice}</span>
                 </div>
-                
+
                 <div className="detail-item">
                   <span className="detail-label">Summary</span>
                   <span className="detail-value">{selectedArtist.summary}</span>
                 </div>
-                
+
                 <div className="detail-item">
                   <span className="detail-label">Bio</span>
                   <span className="detail-value">{selectedArtist.bio}</span>

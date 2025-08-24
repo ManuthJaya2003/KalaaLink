@@ -1,19 +1,52 @@
 const ArtistManager = require("../model/ArtistManagerModel");
 const Artist = require("../model/ArtistModel"); // For artist approval integration
 
-// Get all artists managed by Artist Manager
+// Get all artists (manager + approved self-registered)
 const getAllArtists = async (req, res) => {
   try {
-    const artists = await ArtistManager.find();
-    if (!artists || artists.length === 0) {
-      return res.status(404).json({ message: "Artists not found" });
+    // Fetch manager-added artists
+    const managerArtists = await ArtistManager.find();
+    // Fetch approved self-registered artists
+    const approvedArtists = await Artist.find({ status: "approved" });
+
+    // Normalize manager artists
+    const normalizedManagerArtists = managerArtists.map(a => ({
+      _id: a._id,
+      artistName: a.artistName, // manager's artist name
+      genre: a.genre,
+      category: a.category,
+      bookingPrice: a.bookingPrice,
+      summary: a.summary,
+      bio: a.bio,
+      image: a.image || "", // manager image
+    }));
+
+    // Normalize self-registered artists
+    const normalizedSelfArtists = approvedArtists.map(a => ({
+      _id: a._id,
+      artistName: a.stageName, // self-registered stage name
+      genre: a.genre,
+      category: a.category,
+      bookingPrice: a.bookingPrice,
+      summary: a.summary,
+      bio: a.bio,
+      image: a.coverImage || a.profileImage || "", // priority: coverImage > profileImage
+    }));
+
+    // Merge both arrays
+    const allArtists = [...normalizedManagerArtists, ...normalizedSelfArtists];
+
+    if (allArtists.length === 0) {
+      return res.status(404).json({ message: "No artists found" });
     }
-    return res.status(200).json(artists);
+
+    return res.status(200).json(allArtists);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // Add new artist under Artist Manager
 const addArtists = async (req, res) => {

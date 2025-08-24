@@ -39,26 +39,28 @@ function ArtistPortfolio() {
       });
   }, [navigate]);
 
-  // Handle portfolio update
+  // Handle portfolio update (bio + images)
   const handlePortfolioUpdate = async (e) => {
     e.preventDefault();
     if (!artist) return;
 
     const formData = new FormData();
     formData.append("bio", bio);
-    if (profileFile) formData.append("profilePicture", profileFile);
+
+    // 🔑 Must match backend field names
+    if (profileFile) formData.append("profileImage", profileFile);
     if (coverFile) formData.append("coverImage", coverFile);
 
     try {
       const res = await axios.put(
-        `http://localhost:5000/registeredArtists/${artist._id}/portfolio`,
+        `http://localhost:5000/registeredArtists/${artist._id}/images`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
 
-      setArtist(res.data.artist); // update state with new artist info
+      setArtist(res.data.artist); // update state with new images & bio
       setMessage("Portfolio updated successfully!");
     } catch (err) {
       console.error(err);
@@ -78,7 +80,8 @@ function ArtistPortfolio() {
           <div className="portfolio-header-left">
             <h1 className="portfolio-header-title">Artist Portfolio</h1>
             <p className="portfolio-welcome-message">
-              Manage your profile, images, and bio here, {artist.firstName}.
+              Manage your profile, images, and bio here,{" "}
+              {artist.firstName || artist.stageName}.
             </p>
           </div>
           <button className="portfolio-signout-btn" onClick={handleSignOut}>
@@ -119,10 +122,11 @@ function ArtistPortfolio() {
                 accept="image/*"
                 onChange={(e) => setProfileFile(e.target.files[0])}
               />
-              {artist.profilePicture && (
+              {artist.profileImage && (
                 <img
-                  src={`http://localhost:5000/uploads/${artist.profilePicture}`}
+                  src={`http://localhost:5000${artist.profileImage}`}
                   alt="Profile"
+                  className="artist-profile-preview"
                 />
               )}
             </div>
@@ -136,8 +140,9 @@ function ArtistPortfolio() {
               />
               {artist.coverImage && (
                 <img
-                  src={`http://localhost:5000/uploads/${artist.coverImage}`}
+                  src={`http://localhost:5000${artist.coverImage}`}
                   alt="Cover"
+                  className="artist-cover-preview"
                 />
               )}
             </div>
