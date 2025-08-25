@@ -26,6 +26,7 @@ app.use("/users", userRoute);                      // User CRUD
 app.use("/events", eventRoute);                    // Event CRUD
 app.use("/api/employees", employeeRoute);          // <-- Employee CRUD
 
+
 // Connect to MongoDB and start server
 mongoose.connect("mongodb+srv://Manuth:Manuth2003@kalaalinkcluster.imipnwu.mongodb.net/")
   .then(() => {
