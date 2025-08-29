@@ -1,0 +1,124 @@
+/* Artist Manager Navigation Styles */
+.artist-navbar {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); /* Dark blue gradient */
+  padding: 0;
+  margin-top: 0; /* Remove margin to sit directly below main navbar */
+  border-bottom: 2px solid #f5a623; /* Gold separator */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.artist-navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.artist-navbar-list {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+}
+
+.artist-navbar-item {
+  flex: 1;
+  max-width: 200px;
+}
+
+.artist-navbar-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 20px;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  position: relative;
+  font-weight: 500;
+}
+
+.artist-navbar-link:hover {
+  background: rgba(245, 166, 35, 0.1); /* Subtle gold background on hover */
+  color: #f5a623; /* Gold text on hover */
+  border-bottom-color: #f5a623;
+}
+
+.artist-navbar-link:active {
+  background: rgba(245, 166, 35, 0.2);
+}
+
+/* Active state for current page */
+.artist-navbar-link.active {
+  background: rgba(245, 166, 35, 0.15);
+  color: #f5a623;
+  border-bottom-color: #f5a623;
+}
+
+.artist-navbar-icon {
+  flex-shrink: 0;
+  color: currentColor;
+  transition: transform 0.3s ease;
+}
+
+.artist-navbar-link:hover .artist-navbar-icon {
+  transform: scale(1.1);
+}
+
+.artist-navbar-text {
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .artist-navbar-container {
+    padding: 0 16px;
+  }
+  
+  .artist-navbar-list {
+    justify-content: space-between;
+  }
+  
+  .artist-navbar-item {
+    flex: 1;
+    max-width: none;
+  }
+  
+  .artist-navbar-link {
+    padding: 14px 12px;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+  
+  .artist-navbar-text {
+    font-size: 14px;
+  }
+  
+  .artist-navbar-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .artist-navbar-link {
+    padding: 12px 8px;
+  }
+  
+  .artist-navbar-text {
+    font-size: 12px;
+  }
+  
+  .artist-navbar-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
