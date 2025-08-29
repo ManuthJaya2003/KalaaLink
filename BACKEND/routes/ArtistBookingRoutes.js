@@ -6,13 +6,17 @@ const {
   createBooking,
   createPaymentIntent,
   confirmBooking,
+  getArtistById,
 } = require("../controllers/ArtistBookingController");
 
 // ✅ Get all bookings (Admin / Manager)
 router.get("/", getAllArtistBookings);
 
-// ✅ Get bookings by artist (must pass artistId + artistModel)
-router.get("/:artistId/:artistModel", getBookingsByArtist);
+// ✅ Get bookings for a specific artist
+router.get("/bookings/artist/:artistId", getBookingsByArtist);
+
+// ✅ Get artist profile by ID
+router.get("/artist/:artistId", getArtistById);
 
 // ✅ Create new booking
 router.post("/", createBooking);
