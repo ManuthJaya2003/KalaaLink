@@ -17,7 +17,9 @@ function MainNav() {
           </Link>
         </li>
         <li className="navbar-item">
-          <h1>Events</h1>
+          <Link to="/Events">
+            <h1>Events</h1>
+          </Link>
         </li>
         <li className="navbar-item">
           <h1>Marketplace</h1>

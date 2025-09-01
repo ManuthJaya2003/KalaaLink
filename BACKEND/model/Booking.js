@@ -1,0 +1,17 @@
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+const bookingSchema = new Schema({
+  event: { type: mongoose.Schema.Types.ObjectId, ref: 'eventModel', required: true },
+  customerName: { type: String, required: true },
+  customerEmail: { type: String, required: true },
+  ticketsBooked: { type: Number, required: true },
+  bookingDate: { type: Date, default: Date.now },
+  status: {
+    type: String,
+    enum: ["pending", "paid", "cancelled"],
+    default: "pending"   // default is pending until Stripe confirms
+  }
+});
+
+module.exports = mongoose.model("Booking", bookingSchema);

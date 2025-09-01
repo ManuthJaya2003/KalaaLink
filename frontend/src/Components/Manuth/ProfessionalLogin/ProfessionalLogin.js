@@ -40,13 +40,15 @@ function ProfessionalLogin() {
           navigate("/artistManager");
           break;
         case "event manager":
-          navigate("/eventmanagerdashboard");
+          navigate("/EventManagerDash");
           break;
         case "marketplace_manager":
-          navigate("/marketplacemanagerdashboard");
+          // TODO: Create Marketplace Manager Dashboard route
+          setError("Marketplace Manager Dashboard not yet implemented");
           break;
         case "donation_manager":
-          navigate("/donationmanagerdashboard");
+          // TODO: Create Donation Manager Dashboard route
+          setError("Donation Manager Dashboard not yet implemented");
           break;
         default:
           setError("Invalid role");
@@ -104,8 +106,8 @@ function ProfessionalLogin() {
               <option value="admin">Admin</option>
               <option value="artist manager">Artist Manager</option>
               <option value="event manager">Event Manager</option>
-              <option value="marketplace manager">Marketplace Manager</option>
-              <option value="donation manager">Donation Manager</option>
+              <option value="marketplace_manager">Marketplace Manager</option>
+              <option value="donation_manager">Donation Manager</option>
             </select>
           </div>
 
