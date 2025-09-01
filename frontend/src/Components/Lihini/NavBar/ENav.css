@@ -1,0 +1,21 @@
+.Home-ul {
+  list-style: none;        /* remove bullet points */
+  display: flex;           /* make it horizontal */
+  justify-content: right; /* center the menu */
+  gap: 30px;               /* space between items */
+  padding: 10px 0;
+  margin: 0;
+  background-color: #333;  /* navbar background */
+}
+
+.Home-ll h1 {
+  font-size: 18px; 
+  margin: 0;
+  color: white;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.Home-ll h1:hover {
+  color: #ff9800; /* highlight on hover */
+}

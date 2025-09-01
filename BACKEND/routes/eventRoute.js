@@ -1,18 +1,23 @@
-const express=require("express");
-const router=express.Router();
+const express = require("express");
+const router = express.Router();
+const upload = require("../uploads/upload"); // multer setup
+const {
+  createEvent,
+  getAllEvents,
+  getByEventId,
+  updateEvent,
+  deleteEvent,
+  requestCrew,
+} = require("../controllers/eventController");
 
-const Event=require("../model/eventModel");
+// Event CRUD
+router.post("/create", upload.single("image"), createEvent);
+router.get("/", getAllEvents);
+router.get("/:id", getByEventId);
+router.put("/:id", upload.single("image"), updateEvent);
+router.delete("/:id", deleteEvent);
 
-const eventController=require("../controllers/eventController");
-const upload = require("../middleware/upload"); // Multer middleware
+// Request crew manually
+router.post("/request-crew", requestCrew);
 
-router.get("/",eventController.getAllEvents);
-router.post("/",eventController.createEvent);
-router.get("/:id",eventController.getByEventId);
-router.put("/:id",eventController.updateEvent);
-router.delete("/:id",eventController.deleteEvent);
-
-router.post("/create", upload.single("image"), eventController.createEvent);
-
-module.exports=router;
-
+module.exports = router;
