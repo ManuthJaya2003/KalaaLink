@@ -28,7 +28,9 @@ function MainNav() {
           <h1>Donations</h1>
         </li>
         <li className="navbar-item">
-          <h1>Contact Us</h1>
+          <Link to="/contactus">
+            <h1>Contact Us</h1>
+          </Link>
         </li>
         <li className="navbar-item">
           <Link to="/cart" aria-label="Cart" title="Cart" className="cart-link">
