@@ -1,12 +1,14 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import MainNav from "../../MainNav/MainNav";
 import ArtistManagerNav from "../ArtistManagerNav/ArtistManagerNav";
 import "./ArtistManagerDashboard.css";
 
 function ArtistManagerDashboard() {
+  const navigate = useNavigate();
+
   const handleSignOut = () => {
-    // Sign out functionality will be implemented here
-    console.log("Sign out clicked");
+    navigate("/mainhome");
   };
 
   // Mock user name - this would come from authentication context

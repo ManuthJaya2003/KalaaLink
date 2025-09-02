@@ -46,8 +46,7 @@ function ManageArtists() {
   if (error) return <h2 style={{ color: "red" }}>{error}</h2>;
 
   const handleSignOut = () => {
-    // Sign out functionality will be implemented here
-    console.log("Sign out clicked");
+    navigate("/mainhome");
   };
 
   // Mock user name - this would come from authentication context

@@ -27,7 +27,7 @@ import ArtistEditProfile from './Components/Manuth/ArtistEditProfile/ArtistEditP
 import BookArtist from './Components/Manuth/BookArtist/BookArtist.js';
 
 // Subsystem components
-import Events from "./Components/Lihini/Events/Events";
+import Events from "./Components/Lihini/Events/Events.js";
 import EventUpdate from "./Components/Lihini/EventUpdate/EventUpdate";
 import EventPage from "./Components/Lihini/Event/EventPage";
 
