@@ -1,0 +1,430 @@
+
+.contact-container { 
+  background: white; 
+  padding: 20px; 
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about-section { 
+  display: flex; 
+  gap: 40px; 
+  justify-content: space-between; 
+  margin-bottom: 60px; 
+  background: white;
+  padding: 20px 0;
+}
+
+.about-text { 
+  flex: 2; 
+  color: #2e2e2e; 
+}
+
+.about-text h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.about-text p {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+}
+
+.contact-card { 
+  flex: 1; 
+  background: #fff; 
+  border-radius: 12px; 
+  padding: 24px; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+}
+
+.contact-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+.contact-item { 
+  display: flex; 
+  gap: 12px; 
+  margin-bottom: 20px; 
+  align-items: flex-start; 
+}
+
+.icon-circle { 
+  width: 34px; 
+  height: 34px; 
+  border-radius: 50%; 
+  background: #f0e7f6; 
+  color: #6f2da8; 
+  display: grid; 
+  place-items: center; 
+  font-size: 18px; 
+}
+
+.contact-item h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 5px 0;
+}
+
+.contact-item p {
+  color: #666;
+  margin: 0 0 5px 0;
+  font-size: 0.9rem;
+}
+
+.contact-item a {
+  color: #6f2da8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.contact-item a:hover {
+  text-decoration: underline;
+}
+
+.help-section { 
+  text-align: center; 
+  margin: 40px 0 28px; 
+  padding: 20px 0;
+}
+
+.help-section h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.help-section p {
+  font-size: 1.2rem;
+  color: #666;
+  margin: 0 0 20px 0;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto 20px auto;
+  font-weight: 400;
+}
+
+.help-btn { 
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+  color: #fff; 
+  border: none; 
+  padding: 12px 22px; 
+  border-radius: 10px; 
+  cursor: pointer; 
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.help-btn:hover { 
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  transform: translateY(-1px);
+}
+
+.secondary-btn { 
+  background: #f8f9fa; 
+  color: #495057; 
+  border: 1px solid #dee2e6; 
+  padding: 9px 14px; 
+  border-radius: 8px; 
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.secondary-btn:disabled { 
+  opacity: .6; 
+  cursor: default; 
+}
+
+.error-banner { 
+  background: #ffe5e5; 
+  border: 1px solid #ffbaba; 
+  color: #8a1f1f; 
+  padding: 10px 14px; 
+  border-radius: 8px; 
+  margin: 10px 0 18px; 
+}
+
+.complaints-section { 
+  background: white;
+  padding: 20px 0;
+}
+
+.complaints-section .section-head { 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  margin: 8px 0 14px; 
+}
+
+.complaints-section h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.table-wrap { 
+  background: #fff; 
+  border-radius: 12px; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  overflow-x: auto; 
+  border: 1px solid #dee2e6;
+}
+
+.nice-table { 
+  width: 100%; 
+  border-collapse: collapse; 
+  font-size: 14px; 
+}
+
+.nice-table th, .nice-table td { 
+  padding: 12px 14px; 
+  border-bottom: 1px solid #eee; 
+  vertical-align: top; 
+}
+
+.nice-table thead th { 
+  background: #faf8ff; 
+  color: #5a3a90; 
+  font-weight: 700; 
+}
+
+.nice-table .empty { 
+  text-align: center; 
+  color: #666; 
+}
+
+.message-cell { 
+  max-width: 480px; 
+  white-space: pre-wrap; 
+  word-break: break-word; 
+}
+
+.actions { 
+  display: flex; 
+  gap: 10px; 
+}
+
+.link-btn { 
+  background: transparent; 
+  border: none; 
+  color: #6f2da8; 
+  cursor: pointer; 
+  padding: 0; 
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.link-btn:hover {
+  color: #5a3a90;
+}
+
+.link-btn.danger { 
+  color: #c23b3b; 
+}
+
+.link-btn.danger:hover {
+  color: #a01f1f;
+}
+
+/* Modal */
+.modal-backdrop { 
+  position: fixed; 
+  inset: 0; 
+  background: rgba(30,10,35,.4); 
+  display: grid; 
+  place-items: center; 
+  z-index: 1000; 
+}
+
+.modal-card { 
+  width: min(720px, 92vw); 
+  background: #fff; 
+  border-radius: 16px; 
+  padding: 18px; 
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2); 
+}
+
+.modal-head { 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  margin-bottom: 12px; 
+}
+
+.modal-head h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.close-x { 
+  background: transparent; 
+  border: none; 
+  font-size: 26px; 
+  line-height: 1; 
+  cursor: pointer; 
+  color: #666; 
+}
+
+.form-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 14px; 
+}
+
+.form-field { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 6px; 
+}
+
+.form-field label { 
+  font-weight: 600; 
+  color: #333; 
+}
+
+.form-field input, .form-field select, .form-field textarea { 
+  border: 1px solid #ddd; 
+  border-radius: 10px; 
+  padding: 10px 12px; 
+  font-size: 14px; 
+  outline: none; 
+  transition: border-color 0.2s ease;
+}
+
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus { 
+  border-color: #a24fc4; 
+}
+
+.form-field.span-2 { 
+  grid-column: span 2; 
+}
+
+.modal-actions { 
+  grid-column: span 2; 
+  display: flex; 
+  align-items: center; 
+  justify-content: flex-end; 
+  gap: 10px; 
+  margin-top: 6px; 
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .about-section { 
+    flex-direction: column; 
+  }
+  
+  .form-grid { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .form-field.span-2 { 
+    grid-column: span 1; 
+  }
+  
+  .contact-container {
+    padding: 15px;
+  }
+  
+  .about-text h2,
+  .help-section h2 {
+    font-size: 2rem;
+  }
+  
+  .about-text p,
+  .help-section p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-container {
+    padding: 15px;
+  }
+  
+  .about-section {
+    margin-bottom: 40px;
+    padding: 15px 0;
+  }
+  
+  .help-section {
+    margin: 30px 0 20px;
+    padding: 15px 0;
+  }
+  
+  .about-text h2,
+  .help-section h2 {
+    font-size: 1.8rem;
+  }
+  
+  .about-text p,
+  .help-section p {
+    font-size: 0.9rem;
+    max-width: 100%;
+  }
+  
+  .contact-card {
+    padding: 20px;
+  }
+  
+  .complaints-section .section-head {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .modal-card {
+    margin: 10px;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-text h2,
+  .help-section h2 {
+    font-size: 1.5rem;
+  }
+  
+  .about-text p,
+  .help-section p {
+    font-size: 0.85rem;
+  }
+  
+  .contact-card {
+    padding: 15px;
+  }
+  
+  .help-btn {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+  
+  .secondary-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}

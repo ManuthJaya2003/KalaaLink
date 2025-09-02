@@ -7,7 +7,7 @@ require("dotenv").config(); // Load env variables
 const app = express();
 
 // ================== Middleware ==================
-app.use(cors());
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 
 // Serve uploaded images statically
@@ -24,15 +24,19 @@ const artistBookingRoute = require("./routes/ArtistBookingRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const artistRegistrationRoutes = require("./routes/artistRegistrationRoutes");
 
-// Mount routes
-app.use("/artists", artistManagerRoute);              // Artist Manager CRUD & applications
-app.use("/registeredArtists", registeredArtistRoute); // Self-registered artists
-app.use("/users", userRoute);                         // User CRUD
-app.use("/events", eventRoute);                       // Event CRUD
-app.use("/api/employees", employeeRoute);             // Employee CRUD
-app.use("/bookings", artistBookingRoute);             // Artist Bookings (main subsystem)
-app.use("/eventBookings", bookingRoutes);                  // ✅ Subsystem Bookings (same prefix)
-app.use("/artistsEventRegistration", artistRegistrationRoutes);        // ✅ Subsystem Artists (same prefix)
+// ✅ New Complaints Route
+const complaintsRoute = require("./routes/ComplaintsRoutes");
+
+// Mount routes (keeping original prefixes)
+app.use("/artists", artistManagerRoute);              
+app.use("/registeredArtists", registeredArtistRoute); 
+app.use("/users", userRoute);                         
+app.use("/events", eventRoute);                       
+app.use("/api/employees", employeeRoute);             
+app.use("/bookings", artistBookingRoute);             
+app.use("/eventBookings", bookingRoutes);             
+app.use("/artistsEventRegistration", artistRegistrationRoutes); 
+app.use("/complaints", complaintsRoute);              
 
 // ================== Database ==================
 mongoose
@@ -42,13 +46,20 @@ mongoose
   )
   .then(() => {
     console.log("✅ Connected to MongoDB");
+    app.listen(process.env.PORT || 5000, () => {
+      console.log(`🚀 Server running on port ${process.env.PORT || 5000}`);
+    });
   })
   .catch((err) => {
     console.error("❌ MongoDB connection failed:", err.message);
   });
 
-// ================== Server ==================
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+// ================== Error Handling ==================
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Something went wrong!", error: err.message });
 });
