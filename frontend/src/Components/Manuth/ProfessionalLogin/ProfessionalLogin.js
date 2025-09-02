@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainNav from '../../MainNav/MainNav';
+import '../../Login/Login.css';
 
 function ProfessionalLogin() {
   const [email, setEmail] = useState('');
@@ -66,58 +67,98 @@ function ProfessionalLogin() {
   return (
     <div>
       <MainNav />
-
-      <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
-        <h2 style={{ textAlign: 'center' }}>Login</h2>
-        {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
-
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px' }}>
-            <label>Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-            />
+      <div className="login-container">
+        <div className="login-card">
+          <div className="login-header">
+            <h1 className="login-title">Professional Login</h1>
+            <p className="login-subtitle">Sign in to your professional account</p>
           </div>
 
-          <div style={{ marginBottom: '15px' }}>
-            <label>Password:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-            />
+          {error && (
+            <div style={{ 
+              color: "#dc3545", 
+              textAlign: "center", 
+              marginBottom: "20px",
+              padding: "10px",
+              backgroundColor: "#f8d7da",
+              border: "1px solid #f5c6cb",
+              borderRadius: "8px",
+              fontSize: "0.9rem"
+            }}>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                className="form-input"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password" className="form-label">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                className="form-input"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="role" className="form-label">Role</label>
+              <select
+                id="role"
+                name="role"
+                className="form-input"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                required
+                style={{ cursor: 'pointer' }}
+              >
+                <option value="">Select your role</option>
+                <option value="admin">Admin</option>
+                <option value="artist manager">Artist Manager</option>
+                <option value="event manager">Event Manager</option>
+                <option value="marketplace_manager">Marketplace Manager</option>
+                <option value="donation_manager">Donation Manager</option>
+              </select>
+            </div>
+
+            <button type="submit" className="submit-btn">
+              Sign In
+            </button>
+          </form>
+
+          <div className="forgot-password">
+            <a href="#" onClick={(e) => { e.preventDefault(); setError("Contact your administrator to reset your password."); }}>
+              Forgot your password?
+            </a>
           </div>
 
-          <div style={{ marginBottom: '15px' }}>
-            <label>Role:</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              required
-              style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-            >
-              <option value="">Select role</option>
-              <option value="admin">Admin</option>
-              <option value="artist manager">Artist Manager</option>
-              <option value="event manager">Event Manager</option>
-              <option value="marketplace_manager">Marketplace Manager</option>
-              <option value="donation_manager">Donation Manager</option>
-            </select>
+          <div className="login-divider">
+            <span>or</span>
           </div>
 
-          <button
-            type="submit"
-            style={{ width: '100%', padding: '10px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px' }}
-          >
-            Login
-          </button>
-        </form>
+          <div className="login-options">
+            <a href="/login" className="login-option">
+              Back to Main Login
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );

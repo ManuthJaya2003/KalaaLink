@@ -3,6 +3,7 @@ import MainNav from "../../MainNav/MainNav";
 import ArtistManagerNav from "../ArtistManagerNav/ArtistManagerNav";
 import "./Applications.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL = "http://localhost:5000/artists/applications";
 
@@ -11,6 +12,7 @@ const Applications = () => {
   const [approvedArtists, setApprovedArtists] = useState([]);
   const [rejectedArtists, setRejectedArtists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchApplications = async () => {
     try {
@@ -64,7 +66,7 @@ const rejectArtist = async (id) => {
 };
 
   const handleSignOut = () => {
-    console.log("Sign out clicked");
+    navigate("/mainhome");
   };
 
   const userName = "Manuth";
