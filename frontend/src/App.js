@@ -32,6 +32,8 @@ import ArtistEvents from "./Components/Manuth/ArtistDashboard/Events.js";
 import Events from "./Components/Lihini/Events/Events.js";
 import EventUpdate from "./Components/Lihini/EventUpdate/EventUpdate";
 import EventPage from "./Components/Lihini/Event/EventPage";
+import SuccessPage from "./Components/Lihini/Events/SuccessPage.js";
+import CancelPage from "./Components/Lihini/Events/CancelPage.js";
 
 // ✅ New component from your smaller App.js
 import ContactUs from "./Components/Thaveesha/ContactUs/ContactUs";
@@ -43,10 +45,17 @@ function App() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
+    console.log("App.js: Fetching events from:", URL);
     axios
       .get(URL)
-      .then((res) => setEvents(res.data))
-      .catch((err) => console.error("Failed to fetch events:", err));
+      .then((res) => {
+        console.log("App.js: Events fetched successfully:", res.data);
+        setEvents(res.data);
+      })
+      .catch((err) => {
+        console.error("App.js: Failed to fetch events:", err);
+        setEvents([]); // Set empty array on error
+      });
   }, []);
 
   return (
@@ -104,6 +113,10 @@ function App() {
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/complaints" element={<ComplaintDashBoard />} />
+
+        {/* ---------- Stripe Payment Routes ---------- */}
+        <Route path="/success" element={<SuccessPage />} />
+        <Route path="/cancel" element={<CancelPage />} />
 
         {/* ---------- 404 ---------- */}
         <Route path="*" element={<h2>404 - Page Not Found</h2>} />

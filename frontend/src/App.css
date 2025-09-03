@@ -26,8 +26,14 @@
   /* Accent Colors */
   --color-accent-green: #4ade80;
   --color-accent-blue: #60a5fa;
+  --color-accent-blue-dark: #3b82f6;
   --color-accent-purple: #a78bfa;
   --color-accent-orange: #fb923c;
+  
+  /* Status Colors */
+  --color-error: #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
   
   /* Shadows */
   --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.06);
