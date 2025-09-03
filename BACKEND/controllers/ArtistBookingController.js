@@ -136,6 +136,36 @@ const confirmBooking = async (req, res) => {
   }
 };
 
+// Update booking status
+const updateBookingStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid booking ID" });
+    }
+
+    const booking = await ArtistBooking.findByIdAndUpdate(
+      id, 
+      { status }, 
+      { new: true }
+    );
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    res.status(200).json({ 
+      message: "Booking status updated successfully", 
+      booking 
+    });
+  } catch (err) {
+    console.error("Error in updateBookingStatus:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
 // Get single artist by ID (for artist profile)
 const getArtistById = async (req, res) => {
   try {
@@ -183,5 +213,6 @@ module.exports = {
   createBooking,
   createPaymentIntent,
   confirmBooking,
+  updateBookingStatus,
   getArtistById,
 };

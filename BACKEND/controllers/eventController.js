@@ -1,5 +1,7 @@
 const Event = require("../model/eventModel");
 const CrewRequest = require("../model/crewrequest");
+const Stripe = require("stripe");
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Get all events
 const getAllEvents = async (req, res) => {
@@ -177,6 +179,126 @@ const deleteEvent = async (req, res) => {
   }
 };
 
+// Create Stripe payment intent for event registration
+const createRegistrationPayment = async (req, res) => {
+  try {
+    const { eventId, artistId, amount } = req.body;
+
+    if (!eventId || !artistId || !amount) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Verify event exists
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Check if event is full
+    if (event.registeredArtists && event.registeredArtists.length >= event.maxArtists) {
+      return res.status(400).json({ message: "Event is full" });
+    }
+
+    // Check if artist is already registered
+    if (event.registeredArtists && event.registeredArtists.includes(artistId)) {
+      return res.status(400).json({ message: "Artist already registered for this event" });
+    }
+
+    // Create payment intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount,
+      currency: "usd",
+      metadata: {
+        eventId: eventId,
+        artistId: artistId,
+        type: "event_registration"
+      }
+    });
+
+    res.status(200).json({
+      clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id
+    });
+  } catch (err) {
+    console.error("Error creating registration payment:", err);
+    res.status(500).json({ message: "Failed to create payment intent", error: err.message });
+  }
+};
+
+// Register artist for event after successful payment
+const registerArtistForEvent = async (req, res) => {
+  try {
+    const { eventId, artistId, paymentIntentId } = req.body;
+
+    if (!eventId || !artistId || !paymentIntentId) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Verify payment was successful
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    if (paymentIntent.status !== "succeeded") {
+      return res.status(400).json({ message: "Payment not completed" });
+    }
+
+    // Update event with new artist registration
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Initialize arrays if they don't exist
+    if (!event.registeredArtists) {
+      event.registeredArtists = [];
+    }
+
+    // Check if artist is already registered
+    if (event.registeredArtists.includes(artistId)) {
+      return res.status(400).json({ message: "Artist already registered for this event" });
+    }
+
+    // Add artist to registered list
+    event.registeredArtists.push(artistId);
+    await event.save();
+
+    res.status(200).json({
+      message: "Artist registered successfully for event",
+      event: event
+    });
+  } catch (err) {
+    console.error("Error registering artist for event:", err);
+    res.status(500).json({ message: "Failed to register artist", error: err.message });
+  }
+};
+
+// Get artist's event registrations
+const getArtistRegistrations = async (req, res) => {
+  try {
+    const { artistId } = req.params;
+
+    if (!artistId) {
+      return res.status(400).json({ message: "Artist ID required" });
+    }
+
+    // Find all events where the artist is registered
+    const events = await Event.find({
+      registeredArtists: { $in: [artistId] }
+    }).select("_id eventTitle eventDate eventTime eventVenue");
+
+    res.status(200).json({
+      registrations: events.map(event => ({
+        eventId: event._id,
+        eventTitle: event.eventTitle,
+        eventDate: event.eventDate,
+        eventTime: event.eventTime,
+        eventVenue: event.eventVenue
+      }))
+    });
+  } catch (err) {
+    console.error("Error fetching artist registrations:", err);
+    res.status(500).json({ message: "Failed to fetch registrations", error: err.message });
+  }
+};
+
 module.exports = {
   createEvent,
   getAllEvents,
@@ -184,4 +306,7 @@ module.exports = {
   updateEvent,
   deleteEvent,
   requestCrew,
+  createRegistrationPayment,
+  registerArtistForEvent,
+  getArtistRegistrations,
 };
