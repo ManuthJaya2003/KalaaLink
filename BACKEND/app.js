@@ -27,6 +27,9 @@ const artistRegistrationRoutes = require("./routes/artistRegistrationRoutes");
 // ✅ New Complaints Route
 const complaintsRoute = require("./routes/ComplaintsRoutes");
 
+// ✅ New Dashboard Route
+const dashboardRoute = require("./routes/dashboardRoutes");
+
 // Mount routes (keeping original prefixes)
 app.use("/artists", artistManagerRoute);              
 app.use("/registeredArtists", registeredArtistRoute); 
@@ -36,7 +39,8 @@ app.use("/api/employees", employeeRoute);
 app.use("/bookings", artistBookingRoute);             
 app.use("/eventBookings", bookingRoutes);             
 app.use("/artistsEventRegistration", artistRegistrationRoutes); 
-app.use("/complaints", complaintsRoute);              
+app.use("/complaints", complaintsRoute);
+app.use("/api/dashboard", dashboardRoute);              
 
 // ================== Database ==================
 mongoose

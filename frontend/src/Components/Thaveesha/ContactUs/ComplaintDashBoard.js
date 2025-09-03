@@ -173,6 +173,9 @@ function ComplaintDashBoard() {
       <section className="complaints-section">
         <div className="section-head">
           <h3>Complaints</h3>
+          <button className="help-btn" onClick={openCreate}>
+            Open A Complaint
+          </button>
           <button className="secondary-btn" onClick={loadComplaints} disabled={loading}>
             {loading ? "Refreshing..." : "Refresh"}
           </button>

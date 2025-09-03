@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import MainNav from '../../MainNav/MainNav';
+import PasswordInput from '../../Common/PasswordInput';
 import '../../Login/Login.css';
 
 function ArtistLogin() {
@@ -78,19 +79,14 @@ function ArtistLogin() {
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="form-input"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+            <PasswordInput
+              id="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+            />
 
             <button type="submit" className="submit-btn">
               Sign In
@@ -98,9 +94,22 @@ function ArtistLogin() {
           </form>
 
           <div className="forgot-password">
-            <a href="#" onClick={(e) => { e.preventDefault(); setError("Contact support to reset your password."); }}>
+            <button 
+              type="button"
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#667eea',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                padding: '0',
+                fontFamily: 'inherit'
+              }}
+              onClick={() => setError("Contact support to reset your password.")}
+            >
               Forgot your password?
-            </a>
+            </button>
           </div>
 
           <div className="login-divider">

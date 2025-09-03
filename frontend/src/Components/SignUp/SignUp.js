@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
+import PasswordInput from '../Common/PasswordInput';
 import '../Login/Login.css';
 import './SignUp.css';
 
@@ -78,19 +79,14 @@ function SignUp() {
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="form-input"
-                placeholder="Create a password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <PasswordInput
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Create a password"
+              required
+            />
 
             <button type="submit" className="submit-btn">
               Create Account
@@ -107,11 +103,9 @@ function SignUp() {
             </Link>
           </div>
 
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
-            <span style={{ color: '#666' }}>Already have an account? </span>
-            <Link to="/login" style={{ color: '#667eea', textDecoration: 'none', fontWeight: '600' }}>
-              Sign in here
-            </Link>
+          <div className="signup-section">
+            <span>Already have an account? </span>
+            <Link to="/login">Sign in here</Link>
           </div>
         </div>
       </div>

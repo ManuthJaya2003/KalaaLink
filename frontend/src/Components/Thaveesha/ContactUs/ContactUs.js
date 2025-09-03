@@ -1,12 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ContactUs.css";
 import MainNav from "../../MainNav/MainNav";
+import MainFooter from "../../MainFooter/MainFooter";
+import ComplaintForm from "./ComplaintForm";
+import LiveLocationMap from "./LiveLocationMap";
 
 function ContactUs() {
+  const [isComplaintFormOpen, setIsComplaintFormOpen] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  const openComplaintForm = () => {
+    setIsComplaintFormOpen(true);
+  };
+
+  const closeComplaintForm = () => {
+    setIsComplaintFormOpen(false);
+  };
+
+  const handleComplaintSuccess = () => {
+    setShowSuccessMessage(true);
+    // Hide success message after 5 seconds
+    setTimeout(() => {
+      setShowSuccessMessage(false);
+    }, 5000);
+  };
+
   return (
     <div>
       <MainNav />
       <div className="contact-container">
+        {/* Success Message */}
+        {showSuccessMessage && (
+          <div className="success-message">
+            <div className="success-content">
+              <span className="success-icon">✅</span>
+              <span>Your complaint has been submitted successfully! We'll get back to you soon.</span>
+            </div>
+            <button 
+              className="success-close" 
+              onClick={() => setShowSuccessMessage(false)}
+            >
+              ×
+            </button>
+          </div>
+        )}
+
         {/* About */}
         <section className="about-section">
           <div className="about-text">
@@ -60,14 +98,24 @@ function ContactUs() {
           </div>
         </section>
 
+        {/* Live Location Map */}
+        <LiveLocationMap />
+
         {/* Help Center */}
         <section className="help-section">
           <h2>Help Center</h2>
           <p>Have a problem or need assistance? We're here to help.</p>
-          <button className="help-btn" onClick={() => window.location.href = '/complaints'}>Open A Complaint</button>
+          <button className="help-btn" onClick={openComplaintForm}>Open A Complaint</button>
         </section>
 
+        {/* Complaint Form Modal */}
+        <ComplaintForm
+          isOpen={isComplaintFormOpen}
+          onClose={closeComplaintForm}
+          onSubmitSuccess={handleComplaintSuccess}
+        />
       </div>
+      <MainFooter />
     </div>
   );
 }

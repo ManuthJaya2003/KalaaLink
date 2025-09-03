@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
+import PasswordInput from '../Common/PasswordInput';
 import './Login.css';
 
 function Login() {
@@ -48,19 +49,14 @@ function Login() {
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="form-input"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
+            <PasswordInput
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="Enter your password"
+              required
+            />
 
             <button type="submit" className="submit-btn">
               Sign In
@@ -84,11 +80,9 @@ function Login() {
             </Link>
           </div>
 
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
-            <span style={{ color: '#666' }}>Don't have an account? </span>
-            <Link to="/signup" style={{ color: '#667eea', textDecoration: 'none', fontWeight: '600' }}>
-              Sign up here
-            </Link>
+          <div className="signup-section">
+            <span>Don't have an account? </span>
+            <Link to="/signup">Sign up here</Link>
           </div>
         </div>
       </div>

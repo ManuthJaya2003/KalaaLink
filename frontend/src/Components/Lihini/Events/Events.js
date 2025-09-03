@@ -27,80 +27,90 @@ function Events({ events }) {
   return (
     <div>
       <MainNav />
-      <h1 className="text-2xl font-bold text-center my-6">Our Events</h1>
-      {Array.isArray(events) && events.length > 0 ? (
-        <div className="events-grid">
-          {events.map((event, i) => (
-            <Event 
-              key={i} 
-              event={event} 
-              onBookNow={() => handleBookNow(event)}
-              onViewDetails={() => handleViewDetails(event)}
-            />
-          ))}
+      <div className="events-container">
+        <div className="events-header">
+          <h1 className="events-title">Our Events</h1>
+          <p className="events-subtitle">
+            Discover amazing events and book your tickets today
+          </p>
         </div>
-      ) : (
-        <p className="text-center text-gray-500 mt-10">No events found</p>
-      )}
-
-      {/* Booking Modal - Rendered at Events level */}
-      {showBookingModal && selectedEvent && (
-        <div className="modal-overlay" onClick={closeModals}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3 className="modal-title">Book Event</h3>
-              <button className="modal-close" onClick={closeModals}>×</button>
-            </div>
-            <div className="modal-body">
-              <BookingForm event={selectedEvent} onClose={closeModals} />
-            </div>
+        
+        {Array.isArray(events) && events.length > 0 ? (
+          <div className="events-grid">
+            {events.map((event, i) => (
+              <Event 
+                key={i} 
+                event={event} 
+                onBookNow={() => handleBookNow(event)}
+                onViewDetails={() => handleViewDetails(event)}
+              />
+            ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="no-events">
+            <p className="no-events-text">No events found</p>
+          </div>
+        )}
 
-      {/* Details Modal - Rendered at Events level */}
-      {showDetailsModal && selectedEvent && (
-        <div className="modal-overlay" onClick={closeModals}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3 className="modal-title">{selectedEvent.eventTitle}</h3>
-              <button className="modal-close" onClick={closeModals}>×</button>
-            </div>
-            <div className="modal-body">
-              {selectedEvent.image && (
-                <img 
-                  src={`http://localhost:5000${selectedEvent.image.startsWith("/uploads") ? selectedEvent.image : `/uploads/${selectedEvent.image}`}`} 
-                  alt={selectedEvent.eventTitle} 
-                  className="modal-image" 
-                />
-              )}
-              <div className="modal-details">
-                <div className="detail-item">
-                  <span className="detail-label">Date</span>
-                  <span className="detail-value">{new Date(selectedEvent.eventDate).toLocaleDateString()}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Time</span>
-                  <span className="detail-value">{selectedEvent.eventTime}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Venue</span>
-                  <span className="detail-value">{selectedEvent.eventVenue}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Description</span>
-                  <span className="detail-value">{selectedEvent.description || "No description available"}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Price</span>
-                  <span className="detail-value price">Rs.{selectedEvent.priceCustomer}</span>
-                </div>
+        {/* Booking Modal - Rendered at Events level */}
+        {showBookingModal && selectedEvent && (
+          <div className="modal-overlay" onClick={closeModals}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3 className="modal-title">Book Event</h3>
+                <button className="modal-close" onClick={closeModals}>×</button>
               </div>
-              <BookingForm event={selectedEvent} onClose={closeModals} />
+              <div className="modal-body">
+                <BookingForm event={selectedEvent} onClose={closeModals} />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Details Modal - Rendered at Events level */}
+        {showDetailsModal && selectedEvent && (
+          <div className="modal-overlay" onClick={closeModals}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3 className="modal-title">{selectedEvent.eventTitle}</h3>
+                <button className="modal-close" onClick={closeModals}>×</button>
+              </div>
+              <div className="modal-body">
+                {selectedEvent.image && (
+                  <img 
+                    src={`http://localhost:5000${selectedEvent.image.startsWith("/uploads") ? selectedEvent.image : `/uploads/${selectedEvent.image}`}`} 
+                    alt={selectedEvent.eventTitle} 
+                    className="modal-image" 
+                  />
+                )}
+                <div className="modal-details">
+                  <div className="detail-item">
+                    <span className="detail-label">Date</span>
+                    <span className="detail-value">{new Date(selectedEvent.eventDate).toLocaleDateString()}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Time</span>
+                    <span className="detail-value">{selectedEvent.eventTime}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Venue</span>
+                    <span className="detail-value">{selectedEvent.eventVenue}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Description</span>
+                    <span className="detail-value">{selectedEvent.description || "No description available"}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Price</span>
+                    <span className="detail-value price">Rs.{selectedEvent.priceCustomer}</span>
+                  </div>
+                </div>
+                <BookingForm event={selectedEvent} onClose={closeModals} />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -193,7 +203,7 @@ function BookingForm({ event, onClose }) {
         <label className="detail-label">Tickets</label>
         <input type="number" min={1} value={tickets} onChange={(e) => setTickets(e.target.value)} className="input-field" />
       </div>
-      <div className="event-buttons mt-4">
+      <div className="event-buttons">
         <button type="button" onClick={handleReserve} className="btn btn-primary">Reserve</button>
         <button type="button" onClick={handlePayNow} className="btn btn-secondary">Pay Now</button>
       </div>

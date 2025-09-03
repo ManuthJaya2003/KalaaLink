@@ -1,0 +1,191 @@
+.virtual-gallery-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  overflow: hidden;
+}
+
+
+
+.gallery-controls {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.gallery-controls span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.gallery-viewport {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.gallery-viewport:active {
+  cursor: grabbing;
+}
+
+.artwork-info {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1000;
+  max-width: 400px;
+  text-align: center;
+  animation: slideUp 0.3s ease-out;
+}
+
+.artwork-info h3 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.artist-name {
+  margin: 0 0 12px 0;
+  color: #e74c3c;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.artwork-description {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .gallery-controls {
+    top: 15px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .artwork-info {
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    transform: none;
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-controls {
+    top: 10px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .artwork-info {
+    bottom: 15px;
+    left: 15px;
+    right: 15px;
+    padding: 15px 20px;
+  }
+  
+  .artwork-info h3 {
+    font-size: 1.2rem;
+  }
+  
+  .artist-name {
+    font-size: 1rem;
+  }
+  
+  .artwork-description {
+    font-size: 0.9rem;
+  }
+}
+
+/* Loading state */
+.gallery-viewport::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 100;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Hide loading spinner when gallery is loaded */
+.gallery-viewport.loaded::before {
+  display: none;
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .gallery-viewport {
+    cursor: default;
+  }
+  
+  .gallery-controls span {
+    font-size: 0.85rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .artwork-info {
+    background: rgba(255, 255, 255, 1);
+    border: 2px solid #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .artwork-info {
+    animation: none;
+  }
+  
+  .gallery-viewport::before {
+    animation: none;
+  }
+}

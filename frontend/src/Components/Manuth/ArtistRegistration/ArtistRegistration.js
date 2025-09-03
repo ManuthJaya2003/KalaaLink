@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link } from 'react-router-dom';
 import MainNav from '../../MainNav/MainNav';
+import PasswordInput from '../../Common/PasswordInput';
 import '../../Login/Login.css';
 
 function ArtistRegistration() {
@@ -141,19 +142,14 @@ function ArtistRegistration() {
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="form-input"
-                placeholder="Create a secure password"
-                value={form.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <PasswordInput
+              id="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="Create a secure password"
+              required
+            />
 
             <button 
               type="submit" 

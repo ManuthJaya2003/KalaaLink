@@ -1,115 +1,30 @@
-/* Additional styles for SignUp component */
-/* These styles complement the Login.css and provide signup-specific enhancements */
+/* ===== SIGNUP COMPONENT - SOFIA THERAPY STYLE ===== */
 
-.signup-terms {
-  margin-top: 20px;
-  text-align: center;
-  font-size: 0.85rem;
-  color: #666;
-  line-height: 1.4;
+/* This component inherits most styles from Login.css */
+/* Additional custom styles for signup specific elements */
+
+.login-card {
+  max-width: 500px; /* Slightly wider for signup form */
 }
 
-.signup-terms a {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 500;
+.login-title::after {
+  width: 80px; /* Wider underline for signup title */
 }
 
-.signup-terms a:hover {
-  text-decoration: underline;
+/* Custom styling for the artist registration option */
+.login-options .login-option {
+  background: var(--color-warm-peach);
+  color: var(--color-text-dark);
 }
 
-/* Password strength indicator */
-.password-strength {
-  margin-top: 8px;
-  font-size: 0.8rem;
-  color: #666;
+.login-options .login-option:hover {
+  background: var(--color-accent-orange);
+  color: white;
 }
 
-.password-strength.weak {
-  color: #dc3545;
-}
-
-.password-strength.medium {
-  color: #ffc107;
-}
-
-.password-strength.strong {
-  color: #28a745;
-}
-
-/* Form validation styles */
-.form-input.error {
-  border-color: #dc3545;
-  background-color: #fff5f5;
-}
-
-.form-input.error:focus {
-  border-color: #dc3545;
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-}
-
-.error-message {
-  color: #dc3545;
-  font-size: 0.8rem;
-  margin-top: 5px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.error-message::before {
-  content: "⚠";
-  font-size: 0.9rem;
-}
-
-/* Success message styling */
-.success-message {
-  color: #28a745;
-  text-align: center;
-  margin: 20px 0;
-  padding: 15px;
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  border-radius: 8px;
-  font-size: 0.9rem;
-}
-
-/* Enhanced button states for signup */
-.submit-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.submit-btn:disabled:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-/* Loading state for submit button */
-.submit-btn.loading {
-  position: relative;
-  color: transparent;
-}
-
-.submit-btn.loading::after {
-  content: "";
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  top: 50%;
-  left: 50%;
-  margin-left: -10px;
-  margin-top: -10px;
-  border: 2px solid transparent;
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Responsive adjustments for signup */
+@media (max-width: 480px) {
+  .login-card {
+    max-width: 100%;
+  }
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MainNav from "../MainNav/MainNav";
+import MainFooter from "../MainFooter/MainFooter";
 import axios from "axios";
 import "./Artists.css";
 import { useNavigate } from "react-router-dom";
@@ -142,6 +143,8 @@ function Artists() {
           </div>
         )}
       </div>
+
+      <MainFooter />
 
       {/* Modal */}
       {isModalOpen && selectedArtist && (
