@@ -6,6 +6,10 @@ const eventSchema = new Schema({
   eventDate: { type: Date, required: true },
   eventTime: { type: String, required: true },
   eventVenue: { type: String, required: true },
+  venueCoordinates: {
+    latitude: { type: Number, default: null },
+    longitude: { type: Number, default: null }
+  },
   eventDescription: { type: String },
   image: { type: String, default: "" },
   priceCustomer: { type: Number, required: true, min: 0 },

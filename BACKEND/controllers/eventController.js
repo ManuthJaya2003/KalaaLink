@@ -7,8 +7,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const getAllEvents = async (req, res) => {
   try {
     const events = await Event.find().populate("crewRequest");
-    if (!events) return res.status(404).json({ message: "No events found" });
-    return res.status(200).json({ events });
+    // Return empty array if no events found (not an error)
+    return res.status(200).json(events);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Error fetching events", error: err.message });
@@ -50,6 +50,7 @@ const createEvent = async (req, res) => {
       eventDate,
       eventTime,
       eventVenue,
+      venueCoordinates: req.body.venueCoordinates || null,
       eventDescription,
       maxArtists,
       maxCustomers,
@@ -134,6 +135,7 @@ const updateEvent = async (req, res) => {
       eventDate,
       eventTime,
       eventVenue,
+      venueCoordinates: req.body.venueCoordinates || null,
       eventDescription,
       maxArtists,
       maxCustomers,

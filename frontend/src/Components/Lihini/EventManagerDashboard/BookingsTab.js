@@ -4,10 +4,11 @@ import axios from "axios";
 function BookingsTab() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all"); // all, pending, paid, cancelled
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/eventBookings"); // your getAllBookings route
+      const res = await axios.get("http://localhost:5000/eventBookings");
       setBookings(res.data.bookings || []);
     } catch (err) {
       console.error("Failed to fetch bookings:", err);
@@ -18,74 +19,285 @@ function BookingsTab() {
 
   useEffect(() => {
     fetchBookings();
+    // Refresh bookings every 15 seconds to get real-time status updates
+    const interval = setInterval(fetchBookings, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleCancel = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this booking?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/eventBookings/${id}`);
-      setBookings(bookings.filter((b) => b._id !== id)); // Remove from UI
+      await axios.put(`http://localhost:5000/eventBookings/${id}/status`, {
+        status: "cancelled"
+      });
+      // Update local state
+      setBookings(bookings.map(b => 
+        b._id === id ? { ...b, status: "cancelled" } : b
+      ));
     } catch (err) {
       console.error("Failed to cancel booking:", err);
       alert("Failed to cancel booking");
     }
   };
 
-  if (loading) return <p>Loading bookings...</p>;
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      pending: { color: "#f59e0b", bgColor: "#fef3c7", text: "Pending Payment" },
+      paid: { color: "#059669", bgColor: "#d1fae5", text: "Paid & Confirmed" },
+      cancelled: { color: "#dc2626", bgColor: "#fee2e2", text: "Cancelled" }
+    };
+
+    const config = statusConfig[status] || statusConfig.pending;
+    
+    return (
+      <span
+        style={{
+          backgroundColor: config.bgColor,
+          color: config.color,
+          padding: "4px 12px",
+          borderRadius: "20px",
+          fontSize: "12px",
+          fontWeight: "600",
+          textTransform: "uppercase",
+          letterSpacing: "0.5px"
+        }}
+      >
+        {config.text}
+      </span>
+    );
+  };
+
+  const filteredBookings = bookings.filter(booking => {
+    if (filter === "all") return true;
+    return booking.status === filter;
+  });
+
+  const getStats = () => {
+    const total = bookings.length;
+    const pending = bookings.filter(b => b.status === "pending").length;
+    const paid = bookings.filter(b => b.status === "paid").length;
+    const cancelled = bookings.filter(b => b.status === "cancelled").length;
+
+    return { total, pending, paid, cancelled };
+  };
+
+  const stats = getStats();
+
+  if (loading) return (
+    <div style={{ textAlign: "center", padding: "40px" }}>
+      <div style={{ fontSize: "18px", color: "#666" }}>Loading bookings...</div>
+    </div>
+  );
 
   return (
-    <div>
-      <h2>All Bookings</h2>
-      {bookings.length === 0 ? (
-        <p>No bookings yet.</p>
+    <div style={{ padding: "20px" }}>
+      <div style={{ marginBottom: "30px" }}>
+        <h2 style={{ marginBottom: "20px", color: "#1f2937" }}>Event Bookings Management</h2>
+        
+        {/* Statistics Cards */}
+        <div style={{ 
+          display: "grid", 
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", 
+          gap: "20px", 
+          marginBottom: "30px" 
+        }}>
+          <div style={statCardStyle}>
+            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#1f2937" }}>{stats.total}</div>
+            <div style={{ color: "#6b7280" }}>Total Bookings</div>
+          </div>
+          <div style={{ ...statCardStyle, borderLeft: "4px solid #f59e0b" }}>
+            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#f59e0b" }}>{stats.pending}</div>
+            <div style={{ color: "#6b7280" }}>Pending Payment</div>
+          </div>
+          <div style={{ ...statCardStyle, borderLeft: "4px solid #059669" }}>
+            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#059669" }}>{stats.paid}</div>
+            <div style={{ color: "#6b7280" }}>Paid & Confirmed</div>
+          </div>
+          <div style={{ ...statCardStyle, borderLeft: "4px solid #dc2626" }}>
+            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#dc2626" }}>{stats.cancelled}</div>
+            <div style={{ color: "#6b7280" }}>Cancelled</div>
+          </div>
+        </div>
+
+        {/* Filter Buttons */}
+        <div style={{ marginBottom: "20px" }}>
+          <button
+            onClick={() => setFilter("all")}
+            style={{
+              ...filterButtonStyle,
+              backgroundColor: filter === "all" ? "#3b82f6" : "#f3f4f6",
+              color: filter === "all" ? "white" : "#374151"
+            }}
+          >
+            All ({stats.total})
+          </button>
+          <button
+            onClick={() => setFilter("pending")}
+            style={{
+              ...filterButtonStyle,
+              backgroundColor: filter === "pending" ? "#f59e0b" : "#f3f4f6",
+              color: filter === "pending" ? "white" : "#374151"
+            }}
+          >
+            Pending ({stats.pending})
+          </button>
+          <button
+            onClick={() => setFilter("paid")}
+            style={{
+              ...filterButtonStyle,
+              backgroundColor: filter === "paid" ? "#059669" : "#f3f4f6",
+              color: filter === "paid" ? "white" : "#374151"
+            }}
+          >
+            Paid ({stats.paid})
+          </button>
+          <button
+            onClick={() => setFilter("cancelled")}
+            style={{
+              ...filterButtonStyle,
+              backgroundColor: filter === "cancelled" ? "#dc2626" : "#f3f4f6",
+              color: filter === "cancelled" ? "white" : "#374151"
+            }}
+          >
+            Cancelled ({stats.cancelled})
+          </button>
+        </div>
+      </div>
+
+      {filteredBookings.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
+          {filter === "all" ? "No bookings yet." : `No ${filter} bookings found.`}
+        </div>
       ) : (
-        <table style={{ borderCollapse: "collapse", width: "100%" }}>
-          <thead>
-            <tr>
-              <th style={thStyle}>Customer Name</th>
-              <th style={thStyle}>Email</th>
-              <th style={thStyle}>Event</th>
-              <th style={thStyle}>Tickets</th>
-              <th style={thStyle}>Status</th>
-              <th style={thStyle}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookings.map((b) => (
-              <tr key={b._id}>
-                <td style={tdStyle}>{b.customerName}</td>
-                <td style={tdStyle}>{b.customerEmail}</td>
-                <td style={tdStyle}>{b.event?.eventTitle || "Deleted Event"}</td>
-                <td style={tdStyle}>{b.ticketsBooked}</td>
-                <td style={{ ...tdStyle, color: b.status === "paid" ? "green" : "orange", fontWeight: "bold" }}>
-                  {b.status}
-                </td>
-                <td style={tdStyle}>
-                  {b.status === "pending" && (
-                    <button onClick={() => handleCancel(b._id)} style={cancelButtonStyle}>
-                      Cancel
-                    </button>
-                  )}
-                </td>
+        <div style={{ overflowX: "auto" }}>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Customer Name</th>
+                <th style={thStyle}>Email</th>
+                <th style={thStyle}>Event</th>
+                <th style={thStyle}>Tickets</th>
+                <th style={thStyle}>Booking Date</th>
+                <th style={thStyle}>Status</th>
+                <th style={thStyle}>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredBookings.map((b) => (
+                <tr key={b._id} style={trStyle}>
+                  <td style={tdStyle}>{b.customerName}</td>
+                  <td style={tdStyle}>{b.customerEmail}</td>
+                  <td style={tdStyle}>
+                    <div style={{ maxWidth: "200px" }}>
+                      {b.event?.eventTitle || "Deleted Event"}
+                    </div>
+                  </td>
+                  <td style={tdStyle}>{b.ticketsBooked}</td>
+                  <td style={tdStyle}>
+                    {new Date(b.bookingDate).toLocaleDateString()}
+                  </td>
+                  <td style={tdStyle}>
+                    {getStatusBadge(b.status)}
+                  </td>
+                  <td style={tdStyle}>
+                    {b.status === "pending" && (
+                      <button 
+                        onClick={() => handleCancel(b._id)} 
+                        style={cancelButtonStyle}
+                        title="Cancel this pending booking"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                    {b.status === "paid" && (
+                      <span style={{ color: "#059669", fontSize: "12px" }}>
+                        ✓ Confirmed
+                      </span>
+                    )}
+                    {b.status === "cancelled" && (
+                      <span style={{ color: "#dc2626", fontSize: "12px" }}>
+                        ✗ Cancelled
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
+
+      <div style={{ marginTop: "20px", padding: "15px", backgroundColor: "#f9fafb", borderRadius: "8px" }}>
+        <p style={{ margin: "0", fontSize: "14px", color: "#6b7280" }}>
+          <strong>Note:</strong> This dashboard automatically refreshes every 15 seconds to show the latest booking statuses. 
+          Payment confirmations via Stripe webhooks are processed in real-time.
+        </p>
+      </div>
     </div>
   );
 }
 
-const thStyle = { border: "1px solid #ddd", padding: "8px", backgroundColor: "#f2f2f2" };
-const tdStyle = { border: "1px solid #ddd", padding: "8px" };
+// Styles
+const statCardStyle = {
+  backgroundColor: "white",
+  padding: "20px",
+  borderRadius: "8px",
+  border: "1px solid #e5e7eb",
+  textAlign: "center",
+  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)"
+};
+
+const filterButtonStyle = {
+  padding: "8px 16px",
+  marginRight: "10px",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontWeight: "500",
+  transition: "all 0.2s"
+};
+
+const tableStyle = {
+  borderCollapse: "collapse",
+  width: "100%",
+  backgroundColor: "white",
+  borderRadius: "8px",
+  overflow: "hidden",
+  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)"
+};
+
+const thStyle = {
+  backgroundColor: "#f9fafb",
+  padding: "16px 12px",
+  textAlign: "left",
+  fontWeight: "600",
+  color: "#374151",
+  borderBottom: "1px solid #e5e7eb",
+  fontSize: "14px"
+};
+
+const trStyle = {
+  borderBottom: "1px solid #f3f4f6"
+};
+
+const tdStyle = {
+  padding: "16px 12px",
+  borderBottom: "1px solid #f3f4f6",
+  fontSize: "14px",
+  color: "#374151"
+};
+
 const cancelButtonStyle = {
-  padding: "4px 8px",
-  backgroundColor: "#dc3545",
+  padding: "6px 12px",
+  backgroundColor: "#dc2626",
   color: "white",
   border: "none",
   borderRadius: "4px",
-  cursor: "pointer"
+  cursor: "pointer",
+  fontSize: "12px",
+  fontWeight: "500",
+  transition: "all 0.2s"
 };
 
 export default BookingsTab;

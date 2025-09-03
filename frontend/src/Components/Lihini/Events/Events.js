@@ -1,12 +1,71 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import axios from "axios";
 import MainNav from "../../MainNav/MainNav";
 import Event from "../Event/Event";
-import "../Event/Event.css"; // Import the custom CSS for grid layout
+import "../Event/Event.css";
 
-function Events({ events }) {
+// Load Stripe
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || "pk_test_your_publishable_key");
+
+// Debug: Log the Stripe key being used
+console.log("Stripe key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ? "Found" : "Not found");
+console.log("Using key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || "pk_test_your_publishable_key");
+
+function Events({ events: propEvents }) {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+
+  // Fetch events from backend API
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log("Attempting to fetch events from backend...");
+      const response = await axios.get("http://localhost:5000/events", {
+        timeout: 10000, // 10 second timeout
+      });
+      
+      // Handle response format - backend now returns array directly
+      let eventsData = Array.isArray(response.data) ? response.data : [];
+      
+      setEvents(eventsData);
+      console.log("Events fetched successfully:", eventsData);
+    } catch (err) {
+      console.error("Failed to fetch events:", err);
+      
+      if (err.code === 'ECONNABORTED') {
+        setError("Request timeout. Please check if the backend server is running.");
+      } else if (err.response) {
+        setError(`Server error: ${err.response.status}. Please try again later.`);
+      } else if (err.request) {
+        setError("Cannot connect to server. Please check if the backend is running on localhost:5000.");
+      } else {
+        setError("Failed to load events. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch events on component mount
+  useEffect(() => {
+    console.log("Events component mounted, fetching events...");
+    fetchEvents();
+  }, []);
+
+  // Update events if propEvents change (for real-time updates)
+  useEffect(() => {
+    console.log("propEvents changed:", propEvents);
+    if (propEvents && Array.isArray(propEvents) && propEvents.length > 0) {
+      setEvents(propEvents);
+    }
+  }, [propEvents]);
 
   const handleBookNow = (event) => {
     setSelectedEvent(event);
@@ -24,6 +83,50 @@ function Events({ events }) {
     setSelectedEvent(null);
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div>
+        <MainNav />
+        <div className="events-container">
+          <div className="events-header">
+            <h1 className="events-title">Our Events</h1>
+            <p className="events-subtitle">
+              Discover amazing events and book your tickets today
+            </p>
+          </div>
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p className="loading-text">Loading events...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div>
+        <MainNav />
+        <div className="events-container">
+          <div className="events-header">
+            <h1 className="events-title">Our Events</h1>
+            <p className="events-subtitle">
+              Discover amazing events and book your tickets today
+            </p>
+          </div>
+          <div className="error-state">
+            <p className="error-text">{error}</p>
+            <button className="retry-button" onClick={fetchEvents}>
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <MainNav />
@@ -33,6 +136,9 @@ function Events({ events }) {
           <p className="events-subtitle">
             Discover amazing events and book your tickets today
           </p>
+          <button className="refresh-button" onClick={fetchEvents} disabled={loading}>
+            {loading ? "Refreshing..." : "🔄 Refresh Events"}
+          </button>
         </div>
         
         {Array.isArray(events) && events.length > 0 ? (
@@ -48,11 +154,12 @@ function Events({ events }) {
           </div>
         ) : (
           <div className="no-events">
-            <p className="no-events-text">No events found</p>
+            <p className="no-events-text">No events available at the moment</p>
+            <p className="no-events-subtext">Check back later for upcoming events!</p>
           </div>
         )}
 
-        {/* Booking Modal - Rendered at Events level */}
+        {/* Enhanced Booking Modal */}
         {showBookingModal && selectedEvent && (
           <div className="modal-overlay" onClick={closeModals}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -61,13 +168,16 @@ function Events({ events }) {
                 <button className="modal-close" onClick={closeModals}>×</button>
               </div>
               <div className="modal-body">
-                <BookingForm event={selectedEvent} onClose={closeModals} />
+                <EnhancedBookingForm 
+                  event={selectedEvent} 
+                  onClose={closeModals}
+                />
               </div>
             </div>
           </div>
         )}
 
-        {/* Details Modal - Rendered at Events level */}
+        {/* Details Modal */}
         {showDetailsModal && selectedEvent && (
           <div className="modal-overlay" onClick={closeModals}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -105,7 +215,10 @@ function Events({ events }) {
                     <span className="detail-value price">Rs.{selectedEvent.priceCustomer}</span>
                   </div>
                 </div>
-                <BookingForm event={selectedEvent} onClose={closeModals} />
+                <EnhancedBookingForm 
+                  event={selectedEvent} 
+                  onClose={closeModals}
+                />
               </div>
             </div>
           </div>
@@ -115,22 +228,43 @@ function Events({ events }) {
   );
 }
 
-// BookingForm component moved to Events level
-function BookingForm({ event, onClose }) {
+// Enhanced Booking Form with Stripe Integration
+function EnhancedBookingForm({ event, onClose }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [tickets, setTickets] = useState(1);
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // "success" or "error"
+  const [currentBooking, setCurrentBooking] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const resetForm = () => {
     setName("");
     setEmail("");
     setTickets(1);
     setMessage("");
+    setMessageType("");
+    setCurrentBooking(null);
+  };
+
+  const showMessage = (msg, type = "success") => {
+    setMessage(msg);
+    setMessageType(type);
+    setTimeout(() => {
+      setMessage("");
+      setMessageType("");
+    }, 5000);
   };
 
   const handleReserve = async (e) => {
     e.preventDefault();
+    
+    if (!name.trim() || !email.trim()) {
+      showMessage("Please fill in all required fields", "error");
+      return;
+    }
+
+    setIsProcessing(true);
     try {
       const res = await fetch("http://localhost:5000/eventBookings", {
         method: "POST",
@@ -139,76 +273,175 @@ function BookingForm({ event, onClose }) {
         },
         body: JSON.stringify({
           eventId: event._id,
-          customerName: name,
-          customerEmail: email,
+          customerName: name.trim(),
+          customerEmail: email.trim(),
           ticketsBooked: Number(tickets),
         }),
       });
+
       const data = await res.json();
-      setMessage(data.message || "Booking reserved successfully");
-      setTimeout(() => {
-        resetForm();
-        onClose();
-      }, 2000);
+      
+      if (res.ok && data.booking) {
+        setCurrentBooking(data.booking);
+        showMessage("Booking reserved successfully! You can now proceed to payment.", "success");
+      } else {
+        showMessage(data.message || "Booking failed", "error");
+      }
     } catch (err) {
-      setMessage("Booking failed");
+      showMessage("Network error. Please try again.", "error");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const handlePayNow = async () => {
+    if (!currentBooking) {
+      showMessage("Please reserve your booking first", "error");
+      return;
+    }
+
+    setIsProcessing(true);
     try {
-      const res = await fetch("http://localhost:5000/eventBookings", {
+      const stripe = await stripePromise;
+      if (!stripe) {
+        throw new Error("Stripe failed to load");
+      }
+
+      console.log("Creating Stripe checkout session for existing booking:", currentBooking._id);
+
+      // Create Stripe checkout session using the EXISTING booking ID
+      const res = await fetch(`http://localhost:5000/eventBookings/${currentBooking._id}/create-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          eventId: event._id,
-          customerName: name || "Anonymous",
-          customerEmail: email || "anonymous@example.com",
-          ticketsBooked: Number(tickets) || 1,
+          customerName: name.trim() || currentBooking.customerName,
+          customerEmail: email.trim() || currentBooking.customerEmail,
+          ticketsBooked: Number(tickets) || currentBooking.ticketsBooked,
         }),
       });
+
       const data = await res.json();
-      if (data.booking) {
-        await fetch(`http://localhost:5000/eventBookings/${data.booking._id}/status`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: "paid" }),
-        });
-        setMessage("Payment successful! Booking confirmed.");
-        setTimeout(() => {
-          resetForm();
-          onClose();
-        }, 2000);
+      
+      if (res.ok && data.url) {
+        console.log("Stripe checkout session created successfully, redirecting to:", data.url);
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else {
+        console.error("Failed to create checkout session:", data);
+        showMessage(data.message || "Failed to create payment session", "error");
       }
     } catch (err) {
-      setMessage("Payment failed");
+      console.error("Payment setup error:", err);
+      showMessage("Payment setup failed. Please try again.", "error");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
+  const totalAmount = event.priceCustomer * tickets;
+
   return (
-    <form className="modal-form">
-      <div className="detail-item">
-        <label className="detail-label">Name</label>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input-field" />
+    <div className="enhanced-booking-form">
+      <div className="booking-summary">
+        <h4>Booking Summary</h4>
+        <div className="summary-item">
+          <span>Event:</span>
+          <span>{event.eventTitle}</span>
+        </div>
+        <div className="summary-item">
+          <span>Price per ticket:</span>
+          <span>Rs. {event.priceCustomer}</span>
+        </div>
+        <div className="summary-item">
+          <span>Total amount:</span>
+          <span className="total-amount">Rs. {totalAmount}</span>
+        </div>
+        {currentBooking && (
+          <div className="summary-item">
+            <span>Booking ID:</span>
+            <span>{currentBooking._id}</span>
+          </div>
+        )}
       </div>
-      <div className="detail-item">
-        <label className="detail-label">Email</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input-field" />
-      </div>
-      <div className="detail-item">
-        <label className="detail-label">Tickets</label>
-        <input type="number" min={1} value={tickets} onChange={(e) => setTickets(e.target.value)} className="input-field" />
-      </div>
-      <div className="event-buttons">
-        <button type="button" onClick={handleReserve} className="btn btn-primary">Reserve</button>
-        <button type="button" onClick={handlePayNow} className="btn btn-secondary">Pay Now</button>
-      </div>
-      {message && <p className="success-msg">{message}</p>}
-    </form>
+
+      <form onSubmit={handleReserve} className="modal-form">
+        <div className="form-group">
+          <label className="form-label">Name *</label>
+          <input 
+            type="text" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+            className="input-field" 
+            required
+            disabled={isProcessing || currentBooking}
+          />
+        </div>
+        
+        <div className="form-group">
+          <label className="form-label">Email *</label>
+          <input 
+            type="email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            className="input-field" 
+            required
+            disabled={isProcessing || currentBooking}
+          />
+        </div>
+        
+        <div className="form-group">
+          <label className="form-label">Number of Tickets</label>
+          <input 
+            type="number" 
+            min={1} 
+            max={10}
+            value={tickets} 
+            onChange={(e) => setTickets(Math.max(1, parseInt(e.target.value) || 1))} 
+            className="input-field" 
+            disabled={isProcessing || currentBooking}
+          />
+        </div>
+
+        {message && (
+          <div className={`message ${messageType}`}>
+            {message}
+          </div>
+        )}
+
+        <div className="form-actions">
+          {!currentBooking ? (
+            <button 
+              type="submit" 
+              className="btn btn-primary" 
+              disabled={isProcessing}
+            >
+              {isProcessing ? "Processing..." : "Reserve Now"}
+            </button>
+          ) : (
+            <div className="payment-actions">
+              <button 
+                type="button" 
+                onClick={handlePayNow} 
+                className="btn btn-success"
+                disabled={isProcessing}
+              >
+                {isProcessing ? "Setting up payment..." : "Pay Now"}
+              </button>
+              <button 
+                type="button" 
+                onClick={resetForm} 
+                className="btn btn-secondary"
+                disabled={isProcessing}
+              >
+                New Booking
+              </button>
+            </div>
+          )}
+        </div>
+      </form>
+    </div>
   );
 }
 
