@@ -1,470 +1,536 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import jsPDF from "jspdf";
 import MainNav from "../../MainNav/MainNav";
 import ArtistManagerNav from "../ArtistManagerNav/ArtistManagerNav";
 import OverviewCard from "./OverviewCard";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import "./Overview.css";
 
-function Overview() {
-  const [overviewData, setOverviewData] = useState({
-    totalRevenue: 0,
-    totalArtists: 0,
-    pending: 0,
-    rejected: 0
-  });
-  const [recentBookings, setRecentBookings] = useState([]);
+const Overview = () => {
+  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    totalArtists: 0,
+    pendingApprovals: 0,
+    rejectedApprovals: 0
+  });
+  const [chartData, setChartData] = useState([]);
 
-  // Mock artist ID - in real app this would come from auth context
-  const currentArtistId = "mock-artist-id";
-
-  // Fetch overview data
-  const fetchOverviewData = async () => {
+  // API endpoints
+  const API_BASE = "http://localhost:5000";
+  
+  // Fetch all artist bookings
+  const fetchBookings = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/dashboard/overview?artistId=${currentArtistId}`);
-      setOverviewData(response.data);
+      const response = await axios.get(`${API_BASE}/bookings`);
+      if (response.data && response.data.artistBookings) {
+        setBookings(response.data.artistBookings);
+      } else {
+        setBookings([]);
+      }
     } catch (err) {
-      console.error("Error fetching overview data:", err);
-      setError("Failed to load overview data");
-      // Fallback to mock data for development
-      const mockData = {
-        totalRevenue: 12500,
-        totalArtists: 24,
-        pending: 8,
-        rejected: 3
-      };
-      setOverviewData(mockData);
+      console.error("Error fetching bookings:", err);
+      setError("Failed to fetch bookings");
+      setBookings([]);
     }
   };
 
-  // Fetch recent bookings
-  const fetchRecentBookings = async () => {
+  // Fetch all artists
+  const fetchArtists = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/dashboard/recent-bookings?artistId=${currentArtistId}&limit=5`);
-      setRecentBookings(response.data);
+      const response = await axios.get(`${API_BASE}/artists`);
+      if (response.data) {
+        setStats(prev => ({ ...prev, totalArtists: response.data.length }));
+      } else {
+        setStats(prev => ({ ...prev, totalArtists: 0 }));
+      }
     } catch (err) {
-      console.error("Error fetching recent bookings:", err);
-      setError("Failed to load recent bookings");
-      // Fallback to mock data for development
-      const mockBookings = [
-        {
-          id: 1,
-          customer: "John Smith",
-          artistBooked: "Sarah Johnson",
-          date: "2024-01-15",
-          status: "confirmed"
-        },
-        {
-          id: 2,
-          customer: "Emily Davis",
-          artistBooked: "Mike Wilson",
-          date: "2024-01-14",
-          status: "pending"
-        },
-        {
-          id: 3,
-          customer: "David Brown",
-          artistBooked: "Lisa Anderson",
-          date: "2024-01-13",
-          status: "confirmed"
-        },
-        {
-          id: 4,
-          customer: "Jessica Lee",
-          artistBooked: "Tom Martinez",
-          date: "2024-01-12",
-          status: "confirmed"
-        },
-        {
-          id: 5,
-          customer: "Michael Chen",
-          artistBooked: "Amy Rodriguez",
-          date: "2024-01-11",
-          status: "confirmed"
+      console.error("Error fetching artists:", err);
+      setStats(prev => ({ ...prev, totalArtists: 0 }));
+    }
+  };
+
+  // Fetch artist applications for approval counts
+  const fetchArtistApplications = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/artists/applications`);
+      if (response.data) {
+        const pending = response.data.pending ? response.data.pending.length : 0;
+        const rejected = response.data.rejected ? response.data.rejected.length : 0;
+        setStats(prev => ({ 
+          ...prev, 
+          pendingApprovals: pending,
+          rejectedApprovals: rejected
+        }));
+      } else {
+        setStats(prev => ({ 
+          ...prev, 
+          pendingApprovals: 0,
+          rejectedApprovals: 0
+        }));
+      }
+    } catch (err) {
+      console.error("Error fetching artist applications:", err);
+      setStats(prev => ({ 
+        ...prev, 
+        pendingApprovals: 0,
+        rejectedApprovals: 0
+      }));
+    }
+  };
+
+  // Calculate total revenue from paid bookings
+  const calculateRevenue = () => {
+    const paidBookings = bookings.filter(booking => booking.paymentStatus === "paid");
+    const totalRevenue = paidBookings.reduce((sum, booking) => {
+      // Get the booking price from the artist's profile
+      if (booking.artist && typeof booking.artist === 'object') {
+        return sum + (booking.artist.bookingPrice || 0);
+      }
+      return sum;
+    }, 0);
+    setStats(prev => ({ ...prev, totalRevenue }));
+  };
+
+  // Calculate revenue by artist for chart
+  const calculateRevenueByArtist = () => {
+    const paidBookings = bookings.filter(booking => booking.paymentStatus === "paid");
+    const revenueByArtist = {};
+
+    paidBookings.forEach(booking => {
+      if (booking.artist && typeof booking.artist === 'object') {
+        const artistName = booking.artist.artistName || booking.artist.stageName || "Unknown Artist";
+        const bookingPrice = booking.artist.bookingPrice || 0;
+        
+        if (revenueByArtist[artistName]) {
+          revenueByArtist[artistName] += bookingPrice;
+        } else {
+          revenueByArtist[artistName] = bookingPrice;
         }
-      ];
-      setRecentBookings(mockBookings);
+      }
+    });
+
+    // Convert to array format for Recharts
+    const chartDataArray = Object.entries(revenueByArtist).map(([artistName, revenue]) => ({
+      artistName,
+      revenue: parseFloat(revenue.toFixed(2))
+    }));
+
+    // Sort by revenue (highest first)
+    chartDataArray.sort((a, b) => b.revenue - a.revenue);
+    setChartData(chartDataArray);
+  };
+
+  // Fetch all data
+  const fetchAllData = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      await Promise.all([
+        fetchBookings(),
+        fetchArtists(),
+        fetchArtistApplications()
+      ]);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError("Failed to fetch dashboard data");
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete a booking
-  const handleDeleteBooking = async (bookingId, event) => {
-    event.stopPropagation(); // Prevent row click event
-    
-    if (!window.confirm("Are you sure you want to delete this booking record? This action cannot be undone.")) {
-      return;
-    }
-
-    try {
-      await axios.delete(`http://localhost:5000/api/dashboard/recent-bookings/${bookingId}?artistId=${currentArtistId}`);
-      
-      // Remove the booking from the local state
-      setRecentBookings(prevBookings => 
-        prevBookings.filter(booking => booking.id !== bookingId)
-      );
-      
-      // Show success message
-      setError(null);
-      console.log("Booking deleted successfully");
-    } catch (err) {
-      console.error("Error deleting booking:", err);
-      setError("Failed to delete booking. Please try again.");
-    }
-  };
-
-  // Generate PDF report
-  const generateReport = async () => {
-    try {
-      // Create PDF document
-      const doc = new jsPDF();
-      
-      // Add title
-      doc.setFontSize(20);
-      doc.setFont("helvetica", "bold");
-      doc.text("Artist Manager Dashboard Report", 20, 30);
-      
-      // Add generation date
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "normal");
-      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 45);
-      
-      // Add overview data
-      doc.setFontSize(16);
-      doc.setFont("helvetica", "bold");
-      doc.text("Overview Statistics", 20, 65);
-      
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "normal");
-      doc.text(`Total Revenue: $${overviewData.totalRevenue.toLocaleString()}`, 20, 80);
-      doc.text(`Total Artists: ${overviewData.totalArtists}`, 20, 90);
-      doc.text(`Pending Bookings: ${overviewData.pending}`, 20, 100);
-      doc.text(`Rejected Bookings: ${overviewData.rejected}`, 20, 110);
-      
-      // Add recent bookings table manually
-      if (recentBookings.length > 0) {
-        doc.setFontSize(16);
-        doc.setFont("helvetica", "bold");
-        doc.text("Recent Bookings", 20, 135);
-        
-        // Table headers
-        const headers = ['Customer', 'Artist Booked', 'Date', 'Status', 'Actions'];
-        const startY = 150;
-        const colWidths = [50, 50, 40, 30, 25];
-        const startX = 20;
-        
-        // Draw header background
-        doc.setFillColor(139, 92, 246);
-        doc.rect(startX, startY - 5, colWidths.reduce((a, b) => a + b, 0), 8, 'F');
-        
-        // Draw header text
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
-        let currentX = startX;
-        headers.forEach((header, index) => {
-          doc.text(header, currentX + 2, startY);
-          currentX += colWidths[index];
-        });
-        
-        // Reset text color for data
-        doc.setTextColor(0, 0, 0);
-        doc.setFont("helvetica", "normal");
-        
-        // Draw table data
-        let currentY = startY + 10;
-        recentBookings.forEach((booking, rowIndex) => {
-          // Alternate row colors
-          if (rowIndex % 2 === 0) {
-            doc.setFillColor(248, 250, 252);
-            doc.rect(startX, currentY - 5, colWidths.reduce((a, b) => a + b, 0), 8, 'F');
-          }
-          
-          // Draw cell borders
-          doc.setDrawColor(229, 231, 235);
-          doc.setLineWidth(0.1);
-          let cellX = startX;
-          colWidths.forEach((width) => {
-            doc.rect(cellX, currentY - 5, width, 8, 'S');
-            cellX += width;
-          });
-          
-          // Add data
-          currentX = startX;
-          const rowData = [
-            booking.customer,
-            booking.artistBooked,
-            new Date(booking.date).toLocaleDateString(),
-            booking.status,
-            "Delete"
-          ];
-          
-          rowData.forEach((cellData, colIndex) => {
-            // Truncate long text
-            let displayText = cellData;
-            if (displayText.length > 15) {
-              displayText = displayText.substring(0, 12) + '...';
-            }
-            doc.text(displayText, currentX + 2, currentY);
-            currentX += colWidths[colIndex];
-          });
-          
-          currentY += 10;
-        });
-      }
-      
-      // Save the PDF
-      const fileName = `dashboard-report-${Date.now()}.pdf`;
-      doc.save(fileName);
-      
-      // Also send to backend for logging (optional)
-      try {
-        await axios.post('http://localhost:5000/api/dashboard/reports/generate', {
-          artistId: currentArtistId,
-          overviewData,
-          recentBookings
-        });
-      } catch (backendErr) {
-        console.log("Backend logging failed, but PDF was generated successfully");
-      }
-      
-      console.log("PDF report generated and downloaded successfully!");
-      alert("PDF report generated and downloaded successfully!");
-    } catch (err) {
-      console.error("Error generating PDF report:", err);
-      alert("Failed to generate PDF report. Check console for details.");
-    }
-  };
-
-  // Polling for real-time updates
+  // Initial data fetch
   useEffect(() => {
-    fetchOverviewData();
-    fetchRecentBookings();
+    fetchAllData();
+  }, []);
 
-    // Set up polling every 10 seconds
-    const interval = setInterval(() => {
-      fetchOverviewData();
-      fetchRecentBookings();
-    }, 10000);
+  // Update revenue when bookings change
+  useEffect(() => {
+    calculateRevenue();
+    calculateRevenueByArtist();
+  }, [bookings]);
 
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(fetchAllData, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  // Handle booking row click
-  const handleBookingClick = (booking) => {
-    console.log("Booking clicked:", booking);
-    // In real implementation, this would navigate to booking details
-    // navigate(`/booking/${booking.id}`);
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString();
+    } catch {
+      return dateString;
+    }
   };
 
-  const handleSignOut = () => {
-    // Sign out functionality will be implemented here
-    console.log("Sign out clicked");
+  // Get artist name from booking
+  const getArtistName = (booking) => {
+    if (booking.artist && typeof booking.artist === 'object') {
+      return booking.artist.artistName || booking.artist.stageName || "Unknown Artist";
+    }
+    return "Unknown Artist";
   };
 
-  // Mock user name - this would come from authentication context
-  const userName = "Manuth";
+  // Generate PDF Report
+  const generatePDFReport = () => {
+    const doc = new jsPDF();
+    
+    // Add company header
+    doc.setFontSize(24);
+    doc.setTextColor(30, 58, 138); // Blue color matching the theme
+    doc.text('KalaaLink Artist Management System', 105, 20, { align: 'center' });
+    
+    // Add subtitle
+    doc.setFontSize(14);
+    doc.setTextColor(107, 114, 128); // Gray color
+    doc.text('Comprehensive System Report', 105, 30, { align: 'center' });
+    
+    // Add generation date
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, 105, 40, { align: 'center' });
+    
+    // Add overview statistics
+    doc.setFontSize(16);
+    doc.setTextColor(30, 58, 138);
+    doc.text('System Overview', 20, 60);
+    
+    // Create overview table
+    const overviewData = [
+      ['Metric', 'Value', 'Description'],
+      ['Total Revenue', `$${stats.totalRevenue.toLocaleString()}`, 'Total revenue from all paid bookings'],
+      ['Total Artists', stats.totalArtists.toString(), 'Number of artists in the system'],
+      ['Pending Approvals', stats.pendingApprovals.toString(), 'Artist applications awaiting approval'],
+      ['Rejected Approvals', stats.rejectedApprovals.toString(), 'Rejected artist applications']
+    ];
+    
+    autoTable(doc, {
+      startY: 70,
+      head: [overviewData[0]],
+      body: overviewData.slice(1),
+      theme: 'grid',
+      headStyles: { fillColor: [30, 58, 138] },
+      styles: { fontSize: 10 }
+    });
+    
+    // Add revenue breakdown
+    if (chartData.length > 0) {
+      doc.setFontSize(16);
+      doc.setTextColor(30, 58, 138);
+      doc.text('Revenue by Artist', 20, doc.lastAutoTable.finalY + 20);
+      
+      // Create revenue table
+      const revenueData = chartData.map(item => [
+        item.artistName,
+        `$${item.revenue.toLocaleString()}`,
+        `${((item.revenue / stats.totalRevenue) * 100).toFixed(1)}%`
+      ]);
+      
+      autoTable(doc, {
+        startY: doc.lastAutoTable.finalY + 30,
+        head: [['Artist Name', 'Revenue', 'Percentage of Total']],
+        body: revenueData,
+        theme: 'grid',
+        headStyles: { fillColor: [30, 58, 138] },
+        styles: { fontSize: 9 }
+      });
+    }
+    
+    // Add recent bookings
+    if (bookings.length > 0) {
+      doc.setFontSize(16);
+      doc.setTextColor(30, 58, 138);
+      doc.text('Recent Bookings', 20, doc.lastAutoTable.finalY + 20);
+      
+      // Create bookings table (limit to first 10 for PDF)
+      const recentBookings = bookings.slice(0, 10).map(booking => [
+        getArtistName(booking),
+        booking.customerName,
+        formatDate(booking.eventDate),
+        booking.eventType,
+        booking.paymentStatus,
+        booking.eventVenue
+      ]);
+      
+      autoTable(doc, {
+        startY: doc.lastAutoTable.finalY + 30,
+        head: [['Artist', 'Customer', 'Event Date', 'Event Type', 'Status', 'Venue']],
+        body: recentBookings,
+        theme: 'grid',
+        headStyles: { fillColor: [30, 58, 138] },
+        styles: { fontSize: 8 }
+      });
+    }
+    
+    // Add system information
+    doc.setFontSize(16);
+    doc.setTextColor(30, 58, 138);
+    doc.text('System Information', 20, doc.lastAutoTable.finalY + 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(107, 114, 128);
+    doc.text('• KalaaLink Artist Management System provides comprehensive artist booking and management capabilities', 20, doc.lastAutoTable.finalY + 30);
+    doc.text('• The system tracks artist applications, bookings, and revenue generation', 20, doc.lastAutoTable.finalY + 40);
+    doc.text('• Real-time updates ensure accurate data across all dashboard components', 20, doc.lastAutoTable.finalY + 50);
+    doc.text('• Automated approval workflows streamline artist onboarding processes', 20, doc.lastAutoTable.finalY + 60);
+    
+    // Add footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(107, 114, 128);
+      doc.text(`Page ${i} of ${pageCount}`, 105, doc.internal.pageSize.height - 10, { align: 'center' });
+    }
+    
+    // Save the PDF
+    doc.save(`KalaaLink_Artist_Management_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+  };
 
   if (loading) {
     return (
-      <div className="dashboard-page">
+      <div className="overview-page">
         <MainNav />
-        <header className="dashboard-header">
-          <div className="dashboard-header-container">
-            <div className="dashboard-header-left">
-              <h1 className="dashboard-header-title">Artist Manager Dashboard</h1>
-              <p className="dashboard-welcome-message">
-                Welcome back, {userName}! Manage your artists and applications efficiently.
-              </p>
+        <div className="overview-container">
+          <div className="dashboard-header">
+            <div className="dashboard-header-container">
+              <div className="dashboard-header-left">
+                <h1 className="dashboard-header-title">Artist Overview</h1>
+                <p className="dashboard-welcome-message">Loading dashboard data...</p>
+              </div>
             </div>
-            <button className="dashboard-signout-btn" onClick={handleSignOut}>
-              <svg
-                className="signout-icon"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                <polyline points="16,17 21,12 16,7"></polyline>
-                <line x1="21" y1="12" x2="9" y2="12"></line>
-              </svg>
-              <span>Sign Out</span>
-            </button>
           </div>
-        </header>
-        <ArtistManagerNav />
-        <div className="dashboard-loading">
-          <div className="loading-spinner"></div>
-          <p>Loading dashboard...</p>
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Loading dashboard...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="overview-page">
+        <MainNav />
+        <div className="overview-container">
+          <div className="dashboard-header">
+            <div className="dashboard-header-container">
+              <div className="dashboard-header-left">
+                <h1 className="dashboard-header-title">Artist Overview</h1>
+                <p className="dashboard-welcome-message">Dashboard Error</p>
+              </div>
+            </div>
+          </div>
+          <div className="error-banner">
+            <div className="error-container">
+              <span className="error-icon">⚠️</span>
+              <span className="error-message">{error}</span>
+              <button 
+                className="retry-btn"
+                onClick={fetchAllData}
+              >
+                Retry
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="dashboard-page">
+    <div className="overview-page">
       <MainNav />
-
-      {/* Dashboard Header */}
-      <header className="dashboard-header">
-        <div className="dashboard-header-container">
-          <div className="dashboard-header-left">
-            <h1 className="dashboard-header-title">Artist Manager Dashboard</h1>
-            <p className="dashboard-welcome-message">
-              Welcome back, {userName}! Manage your artists and applications efficiently.
-            </p>
-          </div>
-          <button className="dashboard-signout-btn" onClick={handleSignOut}>
-            <svg
-              className="signout-icon"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+      <div className="overview-container">
+        {/* Header */}
+        <div className="dashboard-header">
+          <div className="dashboard-header-container">
+            <div className="dashboard-header-left">
+              <h1 className="dashboard-header-title">Artist Overview</h1>
+              <p className="dashboard-welcome-message">
+                Monitor your bookings, revenue, and artist statistics
+              </p>
+            </div>
+            <button 
+              className="refresh-btn"
+              onClick={fetchAllData}
+              title="Refresh data"
             >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16,17 21,12 16,7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-            <span>Sign Out</span>
-          </button>
-        </div>
-      </header>
-
-      <ArtistManagerNav />
-
-      {/* Error Display */}
-      {error && (
-        <div className="error-banner">
-          <div className="error-container">
-            <span className="error-icon">⚠️</span>
-            <span className="error-message">{error}</span>
-            <button className="error-dismiss" onClick={() => setError(null)}>
-              ×
+              🔄 Refresh
             </button>
           </div>
         </div>
-      )}
 
-      {/* Dashboard Content */}
-      <main className="dashboard-content">
-        <div className="dashboard-container">
-          {/* Overview Cards Section */}
-          <section className="overview-section">
-            <div className="section-header">
-              <h2 className="section-title">Overview</h2>
-              <p className="section-description">
-                Key metrics and performance indicators for your artist management
-              </p>
-            </div>
-            
-            <div className="overview-cards">
-              <OverviewCard
-                title="Total Revenue"
-                value={`$${overviewData.totalRevenue.toLocaleString()}`}
-                description="Sum of all booking payments"
-                icon="💰"
-                color="green"
-              />
-              <OverviewCard
-                title="Total Artists"
-                value={overviewData.totalArtists}
-                description="Registered artists count"
-                icon="🎨"
-                color="blue"
-              />
-              <OverviewCard
-                title="Pending"
-                value={overviewData.pending}
-                description="Bookings awaiting approval"
-                icon="⏳"
-                color="orange"
-              />
-              <OverviewCard
-                title="Rejected"
-                value={overviewData.rejected}
-                description="Declined bookings"
-                icon="❌"
-                color="red"
-              />
-            </div>
-          </section>
+        <ArtistManagerNav />
 
-          {/* Recent Bookings Section */}
-          <section className="bookings-section">
-            <div className="section-header">
-              <h2 className="section-title">Recent Bookings</h2>
-              <p className="section-description">
-                Latest booking requests and their current status
-              </p>
-              <button className="generate-report-btn" onClick={generateReport}>
-                Generate Report
-              </button>
-            </div>
+                 {/* Overview Cards */}
+         <div className="overview-cards-section">
+           <div className="overview-cards-container">
+             <OverviewCard
+               title="Total Revenue"
+               value={`$${stats.totalRevenue.toLocaleString()}`}
+               description="From all paid bookings"
+               icon="💰"
+               color="green"
+             />
+             <OverviewCard
+               title="Total Artists"
+               value={stats.totalArtists}
+               description="Registered in the system"
+               icon="🎭"
+               color="blue"
+             />
+             <OverviewCard
+               title="Pending Approvals"
+               value={stats.pendingApprovals}
+               description="Awaiting approval"
+               icon="⏳"
+               color="orange"
+             />
+             <OverviewCard
+               title="Rejected Approvals"
+               value={stats.rejectedApprovals}
+               description="Rejected registrations"
+               icon="❌"
+               color="red"
+             />
+           </div>
+           
+           {/* Generate PDF Button */}
+           <div className="pdf-button-container">
+             <button 
+               className="generate-pdf-btn"
+               onClick={generatePDFReport}
+               title="Generate comprehensive PDF report"
+             >
+               📄 Generate PDF Report
+             </button>
+           </div>
+         </div>
 
-            <div className="bookings-table-container">
-              {recentBookings.length > 0 ? (
-                <table className="bookings-table">
-                  <thead>
-                    <tr>
-                      <th>Customer</th>
-                      <th>Artist Booked</th>
-                      <th>Date</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentBookings.map((booking) => (
-                      <tr
-                        key={booking.id}
-                        className="booking-row"
-                        onClick={() => handleBookingClick(booking)}
-                      >
-                        <td>{booking.customer}</td>
-                        <td>{booking.artistBooked}</td>
-                        <td>{new Date(booking.date).toLocaleDateString()}</td>
-                        <td>
-                          <span className={`status-badge status-${booking.status}`}>
-                            {booking.status}
-                          </span>
-                        </td>
-                        <td>
-                          <button
-                            className="delete-booking-btn"
-                            onClick={(e) => handleDeleteBooking(booking.id, e)}
-                            title="Delete booking record"
-                          >
-                            🗑️
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <div className="no-bookings">
-                  <p>No recent bookings found.</p>
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
-      </main>
+                 {/* Bookings Section */}
+         <div className="bookings-section">
+           <div className="bookings-container">
+             <div className="section-header">
+               <h2 className="section-title">Artist Bookings</h2>
+               <p className="section-subtitle">
+                 All bookings for artists in the system
+               </p>
+             </div>
+
+             {bookings.length === 0 ? (
+               <div className="no-bookings">
+                 <p>No bookings found</p>
+               </div>
+             ) : (
+               <div className="bookings-table-container">
+                 <table className="bookings-table">
+                   <thead>
+                     <tr>
+                       <th>Customer Name</th>
+                       <th>Artist Booked</th>
+                       <th>Event Date</th>
+                       <th>Event Type</th>
+                       <th>Payment Status</th>
+                       <th>Venue</th>
+                     </tr>
+                   </thead>
+                   <tbody>
+                     {bookings.map((booking, index) => (
+                       <tr key={booking._id || index} className="booking-row">
+                         <td className="customer-name">{booking.customerName}</td>
+                         <td className="artist-name">{getArtistName(booking)}</td>
+                         <td className="event-date">{formatDate(booking.eventDate)}</td>
+                         <td className="event-type">{booking.eventType}</td>
+                         <td className="payment-status">
+                           <span className={`status-badge status-${booking.paymentStatus}`}>
+                             {booking.paymentStatus}
+                           </span>
+                           </td>
+                         <td className="event-venue">{booking.eventVenue}</td>
+                       </tr>
+                     ))}
+                   </tbody>
+                 </table>
+               </div>
+             )}
+           </div>
+         </div>
+
+         {/* Revenue Chart Section */}
+         <div className="revenue-chart-section">
+           <div className="revenue-chart-container">
+             <div className="section-header">
+               <h2 className="section-title">Revenue by Artist</h2>
+               <p className="section-subtitle">
+                 Total revenue generated by each artist from paid bookings
+               </p>
+             </div>
+
+             {chartData.length === 0 ? (
+               <div className="no-chart-data">
+                 <p>No revenue data available</p>
+               </div>
+             ) : (
+               <div className="chart-container">
+                 <ResponsiveContainer width="100%" height={400}>
+                   <BarChart
+                     data={chartData}
+                     margin={{
+                       top: 20,
+                       right: 30,
+                       left: 20,
+                       bottom: 60
+                     }}
+                   >
+                     <CartesianGrid strokeDasharray="3 3" />
+                     <XAxis 
+                       dataKey="artistName" 
+                       angle={-45}
+                       textAnchor="end"
+                       height={80}
+                       interval={0}
+                       tick={{ fontSize: 12 }}
+                     />
+                     <YAxis 
+                       tickFormatter={(value) => `$${value.toLocaleString()}`}
+                       tick={{ fontSize: 12 }}
+                     />
+                     <Tooltip 
+                       formatter={(value, name) => [`$${value.toLocaleString()}`, 'Revenue']}
+                       labelFormatter={(label) => `Artist: ${label}`}
+                       contentStyle={{
+                         backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                         border: '1px solid #e5e7eb',
+                         borderRadius: '8px',
+                         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                       }}
+                     />
+                     <Legend />
+                     <Bar 
+                       dataKey="revenue" 
+                       fill="#667eea" 
+                       radius={[4, 4, 0, 0]}
+                       name="Revenue"
+                     />
+                   </BarChart>
+                 </ResponsiveContainer>
+               </div>
+             )}
+           </div>
+         </div>
+      </div>
     </div>
   );
-}
+};
 
 export default Overview;

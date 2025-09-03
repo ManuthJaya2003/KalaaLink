@@ -8,6 +8,9 @@ const {
   updateEvent,
   deleteEvent,
   requestCrew,
+  createRegistrationPayment,
+  registerArtistForEvent,
+  getArtistRegistrations,
 } = require("../controllers/eventController");
 
 // Event CRUD
@@ -19,5 +22,10 @@ router.delete("/:id", deleteEvent);
 
 // Request crew manually
 router.post("/request-crew", requestCrew);
+
+// Artist event registration
+router.post("/create-registration-payment", createRegistrationPayment);
+router.post("/register-artist", registerArtistForEvent);
+router.get("/artist/:artistId/registrations", getArtistRegistrations);
 
 module.exports = router;

@@ -26,6 +26,7 @@ import ArtistPortfolio from "./Components/Manuth/ArtistPortfolio/ArtistPortfolio
 import ArtistDashboard from "./Components/Manuth/ArtistDashboard/ArtistDashboard.js";
 import ArtistEditProfile from "./Components/Manuth/ArtistEditProfile/ArtistEditProfile.js";
 import BookArtist from "./Components/Manuth/BookArtist/BookArtist.js";
+import ArtistEvents from "./Components/Manuth/ArtistDashboard/Events.js";
 
 // Subsystem components
 import Events from "./Components/Lihini/Events/Events.js";
@@ -94,6 +95,7 @@ function App() {
         <Route path="/portfolio" element={<ArtistPortfolio />} />
         <Route path="/artistdashboard" element={<ArtistDashboard />} />
         <Route path="/artist/editprofile" element={<ArtistEditProfile />} />
+        <Route path="/artist/events" element={<ArtistEvents />} />
 
         {/* ---------- Book Artist ---------- */}
         <Route path="/bookArtist" element={<BookArtist />} />

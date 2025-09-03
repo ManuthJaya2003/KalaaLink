@@ -6,6 +6,7 @@ const {
   createBooking,
   createPaymentIntent,
   confirmBooking,
+  updateBookingStatus,
   getArtistById,
 } = require("../controllers/ArtistBookingController");
 
@@ -26,5 +27,8 @@ router.post("/create-payment-intent", createPaymentIntent);
 
 // ✅ Confirm booking after payment
 router.post("/confirm", confirmBooking);
+
+// ✅ Update booking status
+router.put("/:id/status", updateBookingStatus);
 
 module.exports = router;

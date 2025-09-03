@@ -35,6 +35,13 @@ const ArtistBookingSchema = new Schema(
       enum: ["pending", "paid", "failed"],
       default: "pending",
     },
+
+    // Booking status
+    status: {
+      type: String,
+      enum: ["upcoming", "completed", "postponed", "cancelled"],
+      default: "upcoming",
+    },
   },
   { timestamps: true }
 );
