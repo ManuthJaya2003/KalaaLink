@@ -8,12 +8,23 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // Helper to populate artist dynamically
 const populateArtist = async (booking) => {
   let artistData = null;
-  if (booking.artistModel === "artistmanagermodels") {
-    artistData = await Artist.findById(booking.artist);
-  } else if (booking.artistModel === "artists") {
-    artistData = await RegisteredArtist.findById(booking.artist);
+
+  try {
+    if (booking.artistModel === "artistmanagermodels") {
+      artistData = await Artist.findById(booking.artist);
+    } else if (booking.artistModel === "artists") {
+      artistData = await RegisteredArtist.findById(booking.artist);
+    }
+
+    if (!artistData) {
+      console.warn(`Artist not found for booking ${booking._id}`);
+    }
+
+    return { ...booking._doc, artist: artistData, artistModel: booking.artistModel };
+  } catch (err) {
+    console.error("Error populating artist:", err);
+    return { ...booking._doc, artist: null, artistModel: booking.artistModel };
   }
-  return { ...booking._doc, artist: artistData, artistModel: booking.artistModel };
 };
 
 // Get all bookings (admin/manager)
@@ -36,7 +47,7 @@ const getAllArtistBookings = async (req, res) => {
   }
 };
 
-// Get bookings by artist (automatically reads artistModel)
+// Get bookings by artist
 const getBookingsByArtist = async (req, res) => {
   try {
     const { artistId } = req.params;
@@ -106,18 +117,24 @@ const createStripeCheckoutSession = async (req, res) => {
     const { id } = req.params;
     const { customerName, customerEmail } = req.body;
 
+    if (!customerEmail || !customerName) {
+      console.error("Missing customer info:", { customerName, customerEmail });
+      return res.status(400).json({ message: "Customer name and email are required" });
+    }
+
     // Find the existing booking
     const booking = await ArtistBooking.findById(id);
     if (!booking) {
+      console.error("Booking not found with ID:", id);
       return res.status(404).json({ message: "Booking not found" });
     }
 
-    // Check if booking is already paid
+    // Prevent duplicate payments
     if (booking.paymentStatus === "paid") {
       return res.status(400).json({ message: "Booking is already paid" });
     }
 
-    // Get artist info to calculate price
+    // Find the artist for pricing
     let artist = null;
     if (booking.artistModel === "artistmanagermodels") {
       artist = await Artist.findById(booking.artist);
@@ -126,14 +143,27 @@ const createStripeCheckoutSession = async (req, res) => {
     }
 
     if (!artist) {
+      console.error("Artist not found for booking:", booking._id);
       return res.status(404).json({ message: "Artist not found" });
     }
 
     const totalAmount = artist.bookingPrice;
+    if (!totalAmount || isNaN(totalAmount)) {
+      console.error("Invalid booking price for artist:", artist._id, totalAmount);
+      return res.status(400).json({ message: "Invalid booking price" });
+    }
 
-    console.log(`Creating Stripe session for artist booking ${id}, amount: ${totalAmount}`);
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 
-    // Create Stripe checkout session (Stripe Link)
+    console.log("Creating Stripe session:", {
+      bookingId: booking._id,
+      artistName: artist.name,
+      totalAmount,
+      customerEmail,
+      frontendUrl,
+    });
+
+    // Create Stripe session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -144,14 +174,14 @@ const createStripeCheckoutSession = async (req, res) => {
               name: `${artist.name} - ${booking.eventType}`,
               description: `Event on ${new Date(booking.eventDate).toLocaleDateString()} at ${booking.eventVenue}`,
             },
-            unit_amount: Math.round(totalAmount * 100), // Convert to cents
+            unit_amount: Math.round(totalAmount * 100), // in cents
           },
           quantity: 1,
         },
       ],
       mode: "payment",
-      success_url: `${process.env.FRONTEND_URL || "http://localhost:3000"}/artists?booking=success&artist=${artist.name}&event=${booking.eventType}`,
-      cancel_url: `${process.env.FRONTEND_URL || "http://localhost:3000"}/artists?booking=cancelled`,
+      success_url: `${frontendUrl}/artists?booking=success&artist=${encodeURIComponent(artist.name)}&event=${encodeURIComponent(booking.eventType)}`,
+      cancel_url: `${frontendUrl}/artists?booking=cancelled`,
       metadata: {
         bookingId: id,
         artistId: booking.artist.toString(),
@@ -165,16 +195,17 @@ const createStripeCheckoutSession = async (req, res) => {
       customer_email: customerEmail,
     });
 
-    console.log(`Stripe session created: ${session.id}`);
+    console.log("Stripe session created successfully:", session.id);
 
     res.status(200).json({ sessionId: session.id, url: session.url });
   } catch (error) {
-    console.error("Error creating checkout session:", error);
+    console.error("Error creating Stripe checkout session:", error);
     res.status(500).json({ message: "Error creating checkout session", error: error.message });
   }
 };
 
-// Handle Stripe webhook for successful payments
+
+// Handle Stripe webhook
 const handleStripeWebhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -190,15 +221,12 @@ const handleStripeWebhook = async (req, res) => {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
-    
     try {
-      // Update booking payment status to paid
       const bookingId = session.metadata.bookingId;
       await ArtistBooking.findByIdAndUpdate(bookingId, { paymentStatus: "paid" });
-      
       console.log(`Artist booking ${bookingId} marked as paid`);
     } catch (error) {
-      console.error("Error updating artist booking status:", error);
+      console.error("Error updating booking status:", error);
     }
   }
 
@@ -233,27 +261,17 @@ const updateBookingStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid booking ID" });
     }
 
-    const booking = await ArtistBooking.findByIdAndUpdate(
-      id, 
-      { status }, 
-      { new: true }
-    );
+    const booking = await ArtistBooking.findByIdAndUpdate(id, { status }, { new: true });
+    if (!booking) return res.status(404).json({ message: "Booking not found" });
 
-    if (!booking) {
-      return res.status(404).json({ message: "Booking not found" });
-    }
-
-    res.status(200).json({ 
-      message: "Booking status updated successfully", 
-      booking 
-    });
+    res.status(200).json({ message: "Booking status updated successfully", booking });
   } catch (err) {
     console.error("Error in updateBookingStatus:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
-// Get single artist by ID (for artist profile)
+// Get single artist by ID
 const getArtistById = async (req, res) => {
   try {
     const { artistId } = req.params;
@@ -270,15 +288,13 @@ const getArtistById = async (req, res) => {
       artistType = "artistmanagermodels";
     }
 
-    if (!artistData) {
-      return res.status(404).json({ message: "Artist not found" });
-    }
+    if (!artistData) return res.status(404).json({ message: "Artist not found" });
 
     res.status(200).json({
       success: true,
       artist: {
         id: artistData._id,
-        name: artistData.artistName,
+        name: artistData.artistName || artistData.name,
         genre: artistData.genre,
         category: artistData.category,
         bookingPrice: artistData.bookingPrice,
@@ -294,52 +310,25 @@ const getArtistById = async (req, res) => {
   }
 };
 
-// Manual payment status update for testing (temporary)
+// Manual payment status update
 const manuallyUpdatePaymentStatus = async (req, res) => {
   try {
     const { bookingId } = req.params;
-    
-    if (!bookingId) {
-      return res.status(400).json({ message: "Booking ID is required" });
-    }
-
-    console.log("🔧 MANUAL UPDATE: Updating payment status for booking:", bookingId);
+    if (!bookingId) return res.status(400).json({ message: "Booking ID is required" });
 
     const booking = await ArtistBooking.findById(bookingId);
-    if (!booking) {
-      return res.status(404).json({ message: "Booking not found" });
-    }
+    if (!booking) return res.status(404).json({ message: "Booking not found" });
 
-    console.log("📋 Current booking status:", {
-      id: booking._id,
-      paymentStatus: booking.paymentStatus,
-      customerName: booking.customerName,
-      eventType: booking.eventType
-    });
-
-    // Update to paid
     const updatedBooking = await ArtistBooking.findByIdAndUpdate(
       bookingId,
       { paymentStatus: "paid" },
       { new: true }
     );
 
-    console.log("✅ MANUAL UPDATE SUCCESS:", {
-      bookingId: updatedBooking._id,
-      newPaymentStatus: updatedBooking.paymentStatus,
-      updatedAt: updatedBooking.updatedAt
-    });
-
-    res.status(200).json({
-      message: "Payment status manually updated to paid",
-      booking: updatedBooking
-    });
+    res.status(200).json({ message: "Payment status manually updated to paid", booking: updatedBooking });
   } catch (err) {
-    console.error("❌ Error in manual update:", err);
-    res.status(500).json({ 
-      message: "Server error", 
-      error: err.message 
-    });
+    console.error("Error in manual update:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 

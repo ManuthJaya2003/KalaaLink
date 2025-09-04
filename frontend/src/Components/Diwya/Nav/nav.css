@@ -1,0 +1,36 @@
+/* nav.css */
+
+.home-ul {
+    list-style-type: none; /* Remove bullets */
+    margin: 0;
+    padding: 0;
+    display: flex; /* Horizontal layout */
+    background-color: #333; /* Navbar background */
+    justify-content: center; /* Center the items horizontally */
+    align-items: center;
+}
+
+.home-ll {
+    margin: 0 20px; /* Space between nav items */
+}
+
+.home-a {
+    text-decoration: none; /* Remove underline from links */
+    color: white; /* Link color */
+    font-weight: bold;
+    padding: 15px 20px;
+    display: block;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.home-a:hover,
+.home-a.active {
+    background-color: #555; /* Hover background */
+    color: #ffcc00; /* Hover text color */
+    border-radius: 5px;
+}
+
+h3 {
+    margin: 0; /* Remove default margin from h3 inside links */
+    font-size: 16px;
+}
