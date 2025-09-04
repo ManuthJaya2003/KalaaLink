@@ -11,6 +11,7 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 // Raw body for Stripe webhooks
 app.use("/eventBookings/webhook", express.raw({ type: "application/json" }));
+app.use("/bookings/webhook", express.raw({ type: "application/json" }));
 
 // JSON body for other routes
 app.use(express.json());

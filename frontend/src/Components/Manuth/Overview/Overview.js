@@ -6,6 +6,7 @@ import OverviewCard from "./OverviewCard";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import LocationModal from "../../Common/LocationModal";
 import "./Overview.css";
 
 const Overview = () => {
@@ -19,6 +20,8 @@ const Overview = () => {
     rejectedApprovals: 0
   });
   const [chartData, setChartData] = useState([]);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
   // API endpoints
   const API_BASE = "http://localhost:5000";
@@ -295,6 +298,37 @@ const Overview = () => {
     doc.save(`KalaaLink_Artist_Management_Report_${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
+  const handleViewLocation = (booking) => {
+    setSelectedBooking(booking);
+    setIsLocationModalOpen(true);
+  };
+
+  const handleManualPaymentUpdate = async (bookingId) => {
+    try {
+      console.log("🔧 Manually updating payment status for booking:", bookingId);
+      
+      const response = await axios.put(`${API_BASE}/bookings/${bookingId}/manual-payment-update`);
+      
+      if (response.data) {
+        console.log("✅ Payment status updated successfully:", response.data);
+        
+        // Refresh the bookings data to show the updated status
+        await fetchBookings();
+        
+        // Show success message
+        alert("Payment status updated to 'paid' successfully!");
+      }
+    } catch (error) {
+      console.error("❌ Error updating payment status:", error);
+      alert("Failed to update payment status. Please try again.");
+    }
+  };
+
+  const closeLocationModal = () => {
+    setIsLocationModalOpen(false);
+    setSelectedBooking(null);
+  };
+
   if (loading) {
     return (
       <div className="overview-page">
@@ -442,6 +476,7 @@ const Overview = () => {
                        <th>Event Type</th>
                        <th>Payment Status</th>
                        <th>Venue</th>
+                       <th>Actions</th>
                      </tr>
                    </thead>
                    <tbody>
@@ -457,6 +492,24 @@ const Overview = () => {
                            </span>
                            </td>
                          <td className="event-venue">{booking.eventVenue}</td>
+                         <td className="actions">
+                           <button
+                             className="view-location-btn"
+                             onClick={() => handleViewLocation(booking)}
+                             title="View venue location"
+                           >
+                             🗺️ View Location
+                           </button>
+                           {booking.paymentStatus === "pending" && (
+                             <button
+                               className="manual-payment-btn"
+                               onClick={() => handleManualPaymentUpdate(booking._id)}
+                               title="Manually mark as paid (for testing)"
+                             >
+                               💳 Mark Paid
+                             </button>
+                           )}
+                         </td>
                        </tr>
                      ))}
                    </tbody>
@@ -529,6 +582,13 @@ const Overview = () => {
            </div>
          </div>
       </div>
+      {/* Location Modal */}
+      <LocationModal
+        isOpen={isLocationModalOpen}
+        onClose={closeLocationModal}
+        booking={selectedBooking}
+        title="Venue Location"
+      />
     </div>
   );
 };
