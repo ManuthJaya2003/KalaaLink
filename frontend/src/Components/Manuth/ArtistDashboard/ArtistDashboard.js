@@ -5,6 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import LocationModal from "../../Common/LocationModal";
 import "./ArtistDashboard.css";
 
 function ArtistDashboard() {
@@ -23,6 +24,8 @@ function ArtistDashboard() {
   const [loading, setLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [generatingReport, setGeneratingReport] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const navigate = useNavigate();
 
   // Form state for edit profile
@@ -347,6 +350,16 @@ function ArtistDashboard() {
     }
   };
 
+  const handleGetDirections = (booking) => {
+    setSelectedBooking(booking);
+    setIsLocationModalOpen(true);
+  };
+
+  const closeLocationModal = () => {
+    setIsLocationModalOpen(false);
+    setSelectedBooking(null);
+  };
+
   // Categorize bookings by status
   const categorizeBookings = (allBookings) => {
     const now = new Date();
@@ -555,61 +568,68 @@ function ArtistDashboard() {
                     {upcomingBookings.length === 0 ? (
                       <p className="no-bookings">No upcoming bookings</p>
                     ) : (
-                                             upcomingBookings.map((booking, index) => (
-                         <div key={index} className="booking-item">
-                           <div className="booking-info">
-                             <div className="booking-title">
-                               {artist.firstName} {artist.lastName}: {booking.eventType || 'Live Performance'}
-                             </div>
-                             <div className="booking-details">
-                               <span className="booking-location">
-                                 📍 {booking.eventVenue || 'Venue TBD'}
-                               </span>
-                               <span className="booking-date">
-                                 ({new Date(booking.eventDate).toLocaleDateString()})
-                               </span>
-                             </div>
-                           </div>
-                           <div className="booking-actions">
-                             <div className="action-menu">
-                               <span 
-                                 className="action-dots" 
-                                 onClick={(e) => {
-                                   e.stopPropagation();
-                                   toggleActionMenu(booking._id || booking.id);
-                                 }}
-                               >
-                                 ⋯
-                               </span>
-                               {openMenuId === (booking._id || booking.id) && (
-                                 <div className="action-dropdown">
-                                   <button 
-                                     className="action-option"
-                                     onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'completed')}
-                                   >
-                                     <span className="action-icon">✅</span>
-                                     Mark as Completed
-                                   </button>
-                                   <button 
-                                     className="action-option"
-                                     onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'postponed')}
-                                   >
-                                     <span className="action-icon">⏰</span>
-                                     Mark as Postponed
-                                   </button>
-                                   <button 
-                                     className="action-option delete"
-                                     onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'cancelled')}
-                                   >
-                                     <span className="action-icon">❌</span>
-                                     Cancel Booking
-                                   </button>
-                                 </div>
-                               )}
-                             </div>
-                           </div>
-                         </div>
-                       ))
+                      upcomingBookings.map((booking, index) => (
+                        <div key={index} className="booking-item">
+                          <div className="booking-info">
+                            <div className="booking-title">
+                              {artist.firstName} {artist.lastName}: {booking.eventType || 'Live Performance'}
+                            </div>
+                            <div className="booking-details">
+                              <span className="booking-location">
+                                📍 {booking.eventVenue || 'Venue TBD'}
+                              </span>
+                              <span className="booking-date">
+                                ({new Date(booking.eventDate).toLocaleDateString()})
+                              </span>
+                            </div>
+                          </div>
+                          <div className="booking-actions">
+                            <div className="action-menu">
+                              <span 
+                                className="action-dots" 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleActionMenu(booking._id || booking.id);
+                                }}
+                              >
+                                ⋯
+                              </span>
+                              {openMenuId === (booking._id || booking.id) && (
+                                <div className="action-dropdown">
+                                  <button 
+                                    className="action-option"
+                                    onClick={() => handleGetDirections(booking)}
+                                  >
+                                    <span className="action-icon">🗺️</span>
+                                    Get Directions
+                                  </button>
+                                  <button 
+                                    className="action-option"
+                                    onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'completed')}
+                                  >
+                                    <span className="action-icon">✅</span>
+                                    Mark as Completed
+                                  </button>
+                                  <button 
+                                    className="action-option"
+                                    onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'postponed')}
+                                  >
+                                    <span className="action-icon">⏰</span>
+                                    Mark as Postponed
+                                  </button>
+                                  <button 
+                                    className="action-option delete"
+                                    onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'cancelled')}
+                                  >
+                                    <span className="action-icon">❌</span>
+                                    Cancel Booking
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))
                     )}
                   </div>
                 )}
@@ -941,6 +961,14 @@ function ArtistDashboard() {
           </div>
         </div>
       )}
+
+      {/* Location Modal */}
+      <LocationModal
+        isOpen={isLocationModalOpen}
+        onClose={closeLocationModal}
+        booking={selectedBooking}
+        title="Get Directions to Venue"
+      />
     </div>
   );
 }

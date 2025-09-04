@@ -4,10 +4,12 @@ const {
   getAllArtistBookings,
   getBookingsByArtist,
   createBooking,
-  createPaymentIntent,
+  createStripeCheckoutSession,
+  handleStripeWebhook,
   confirmBooking,
   updateBookingStatus,
   getArtistById,
+  manuallyUpdatePaymentStatus,
 } = require("../controllers/ArtistBookingController");
 
 // ✅ Get all bookings (Admin / Manager)
@@ -22,8 +24,14 @@ router.get("/artist/:artistId", getArtistById);
 // ✅ Create new booking
 router.post("/", createBooking);
 
-// ✅ Create payment intent
-router.post("/create-payment-intent", createPaymentIntent);
+// ✅ Create Stripe checkout session for artist booking (Stripe Link)
+router.post("/:id/create-checkout-session", createStripeCheckoutSession);
+
+// ✅ Stripe webhook to handle successful payments
+router.post("/webhook", handleStripeWebhook);
+
+// ✅ Manual payment status update for testing (temporary)
+router.put("/:bookingId/manual-payment-update", manuallyUpdatePaymentStatus);
 
 // ✅ Confirm booking after payment
 router.post("/confirm", confirmBooking);

@@ -3,7 +3,7 @@ import MainNav from "../MainNav/MainNav";
 import MainFooter from "../MainFooter/MainFooter";
 import axios from "axios";
 import "./Artists.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const URL = "http://localhost:5000/artists";
 
@@ -18,6 +18,10 @@ function Artists() {
   const [error, setError] = useState(null);
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [showMessage, setShowMessage] = useState(false);
+  const [messageType, setMessageType] = useState("");
+  const [messageContent, setMessageContent] = useState("");
 
   useEffect(() => {
     fetchHandler()
@@ -30,6 +34,81 @@ function Artists() {
         setLoading(false);
       });
   }, []);
+
+  // Handle URL parameters for payment success/cancelled
+  useEffect(() => {
+    const booking = searchParams.get("booking");
+    const artist = searchParams.get("artist");
+    const event = searchParams.get("event");
+
+    if (booking === "success" && artist && event) {
+      setMessageType("success");
+      setMessageContent(`🎉 Booking confirmed for ${artist} - ${event}! Your payment was successful.`);
+      setShowMessage(true);
+      
+      // Clear URL parameters
+      window.history.replaceState({}, document.title, "/artists");
+      
+      // Auto-hide message after 8 seconds
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 8000);
+
+      // Fallback: Check if we need to update any pending bookings
+      // This helps if the webhook failed
+      checkAndUpdatePendingBookings();
+    } else if (booking === "cancelled") {
+      setMessageType("cancelled");
+      setMessageContent("❌ Payment was cancelled. Your booking is still saved and you can try again later.");
+      setShowMessage(true);
+      
+      // Clear URL parameters
+      window.history.replaceState({}, document.title, "/artists");
+      
+      // Auto-hide message after 8 seconds
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 8000);
+    }
+  }, [searchParams]);
+
+  // Fallback function to check and update pending bookings
+  const checkAndUpdatePendingBookings = async () => {
+    try {
+      // Get the session ID from URL if available
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionId = urlParams.get("session_id");
+      
+      if (sessionId) {
+        console.log("🔄 Checking for pending bookings to update...");
+        
+        // Call backend to check and update payment status
+        const response = await fetch("http://localhost:5000/bookings/check-payment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sessionId: sessionId,
+            customerEmail: localStorage.getItem("customerEmail") || "unknown" // You might want to store this during booking
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("✅ Payment status check result:", data);
+          
+          if (data.message === "Payment status updated successfully") {
+            console.log("🎉 Payment status updated via fallback mechanism");
+          }
+        } else {
+          console.log("ℹ️ Payment status check response:", response.status);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking pending bookings:", error);
+    }
+  };
 
   const handleViewDetails = (artist) => {
     setSelectedArtist(artist);
@@ -85,6 +164,21 @@ function Artists() {
             event or view their stunning portfolios.
           </p>
         </div>
+
+        {/* Payment Status Messages */}
+        {showMessage && (
+          <div className={`payment-message ${messageType}`}>
+            <div className="message-content">
+              <span className="message-text">{messageContent}</span>
+              <button 
+                className="message-close" 
+                onClick={() => setShowMessage(false)}
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
 
         {artists.length === 0 ? (
           <p>No artists found.</p>
