@@ -39,6 +39,16 @@ import CancelPage from "./Components/Lihini/Events/CancelPage.js";
 import ContactUs from "./Components/Thaveesha/ContactUs/ContactUs";
 import ComplaintDashBoard from "./Components/Thaveesha/ContactUs/ComplaintDashBoard";
 
+// ✅ Marketplace components
+import Marketplace from "./Components/Diwya/Marketplace/Marketplace";
+import MarketplaceManagerDashboard from "./Components/Diwya/MarketplaceManagerDashboard/MarketplaceManagerDashboard";
+import CartPage from "./Components/Diwya/Cartpage/Cartpage";
+import CustomizationDetails from "./Components/Diwya/CustomizationDetails/CustomizationDetails";
+import OrderConfirmation from "./Components/Diwya/OrderConfirmation/OrderConfirmation";
+import Payment from "./Components/Diwya/Payment/Payment";
+import ProductReviews from "./Components/Diwya/ProductReviews/ProductReviews";
+import { CartProvider } from "./Components/Diwya/CartContext/CartContext";
+
 const URL = "http://localhost:5000/events";
 
 function App() {
@@ -59,8 +69,9 @@ function App() {
   }, []);
 
   return (
-    <div>
-      <Routes>
+    <CartProvider>
+      <div>
+        <Routes>
         {/* ---------- Redirects ---------- */}
         <Route path="/" element={<Navigate to="/mainhome" replace />} />
 
@@ -114,14 +125,24 @@ function App() {
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/complaints" element={<ComplaintDashBoard />} />
 
+        {/* ---------- Marketplace ---------- */}
+        <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/marketplace-manager-dashboard" element={<MarketplaceManagerDashboard />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/customizationdetails" element={<CustomizationDetails />} />
+        <Route path="/order-confirmation" element={<OrderConfirmation />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/product-reviews" element={<ProductReviews />} />
+
         {/* ---------- Stripe Payment Routes ---------- */}
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/cancel" element={<CancelPage />} />
 
         {/* ---------- 404 ---------- */}
         <Route path="*" element={<h2>404 - Page Not Found</h2>} />
-      </Routes>
-    </div>
+        </Routes>
+      </div>
+    </CartProvider>
   );
 }
 

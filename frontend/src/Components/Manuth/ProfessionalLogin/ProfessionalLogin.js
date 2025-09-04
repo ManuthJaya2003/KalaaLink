@@ -44,11 +44,10 @@ function ProfessionalLogin() {
         case "event manager":
           navigate("/EventManagerDash");
           break;
-        case "marketplace_manager":
-          // TODO: Create Marketplace Manager Dashboard route
-          setError("Marketplace Manager Dashboard not yet implemented");
+        case "marketplace manager":
+          navigate("/marketplace-manager-dashboard");
           break;
-        case "donation_manager":
+        case "donation manager":
           // TODO: Create Donation Manager Dashboard route
           setError("Donation Manager Dashboard not yet implemented");
           break;
@@ -129,8 +128,8 @@ function ProfessionalLogin() {
                 <option value="admin">Admin</option>
                 <option value="artist manager">Artist Manager</option>
                 <option value="event manager">Event Manager</option>
-                <option value="marketplace_manager">Marketplace Manager</option>
-                <option value="donation_manager">Donation Manager</option>
+                <option value="marketplace manager">Marketplace Manager</option>
+                <option value="donation manager">Donation Manager</option>
               </select>
             </div>
 

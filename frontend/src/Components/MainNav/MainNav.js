@@ -22,7 +22,9 @@ function MainNav() {
           </Link>
         </li>
         <li className="navbar-item">
-          <h1>Marketplace</h1>
+          <Link to="/marketplace">
+            <h1>Marketplace</h1>
+          </Link>
         </li>
         <li className="navbar-item">
           <h1>Donations</h1>
