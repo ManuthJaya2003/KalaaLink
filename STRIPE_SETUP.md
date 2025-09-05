@@ -23,10 +23,11 @@ FRONTEND_URL=http://localhost:3000
    - Navigate to Developers → API keys
    - Copy your publishable key and secret key
 
-2. **Set up Webhook Endpoint**:
+2. **Set up Webhook Endpoints**:
    - Go to Developers → Webhooks
-   - Add endpoint: `http://localhost:5000/eventBookings/webhook`
-   - Select events: `checkout.session.completed`
+   - Add endpoint: `http://localhost:5000/eventBookings/webhook` (for customer bookings)
+   - Add endpoint: `http://localhost:5000/events/webhook` (for artist registrations)
+   - Select events: `checkout.session.completed` for both endpoints
    - Copy the webhook signing secret
 
 3. **Test Mode**:

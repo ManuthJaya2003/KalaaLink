@@ -49,6 +49,10 @@ import Payment from "./Components/Diwya/Payment/Payment";
 import ProductReviews from "./Components/Diwya/ProductReviews/ProductReviews";
 import { CartProvider } from "./Components/Diwya/CartContext/CartContext";
 
+// ✅ Booking Success/Cancelled Pages
+import BookingSuccessPage from "./Components/Common/BookingSuccessPage";
+import BookingCancelledPage from "./Components/Common/BookingCancelledPage";
+
 const URL = "http://localhost:5000/events";
 
 function App() {
@@ -137,6 +141,10 @@ function App() {
         {/* ---------- Stripe Payment Routes ---------- */}
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/cancel" element={<CancelPage />} />
+
+        {/* ---------- Booking Success/Cancelled Routes ---------- */}
+        <Route path="/booking-success" element={<BookingSuccessPage />} />
+        <Route path="/booking-cancelled" element={<BookingCancelledPage />} />
 
         {/* ---------- 404 ---------- */}
         <Route path="*" element={<h2>404 - Page Not Found</h2>} />

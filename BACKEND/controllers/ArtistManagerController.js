@@ -7,7 +7,9 @@ const getAllArtists = async (req, res) => {
     // Fetch manager-added artists
     const managerArtists = await ArtistManager.find();
     // Fetch approved self-registered artists
-    const approvedArtists = await Artist.find({ status: "approved" });
+    const approvedArtists = await Artist.find({ status: "approved" }).select(
+      "firstName lastName stageName bio profileImage coverImage bookingPrice genre category summary"
+    );
 
     // Normalize manager artists
     const normalizedManagerArtists = managerArtists.map(a => ({
@@ -25,10 +27,10 @@ const getAllArtists = async (req, res) => {
     const normalizedSelfArtists = approvedArtists.map(a => ({
       _id: a._id,
       artistName: a.stageName, // self-registered stage name
-      genre: a.genre,
-      category: a.category,
+      genre: a.genre || "Not provided",
+      category: a.category || "Not provided",
       bookingPrice: a.bookingPrice,
-      summary: a.summary,
+      summary: a.summary || "Not provided",
       bio: a.bio,
       image: a.coverImage || a.profileImage || "", // priority: coverImage > profileImage
     }));

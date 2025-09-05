@@ -5,7 +5,7 @@ const getAllApprovedArtists = async (req, res) => {
   try {
     // Fetch approved self-registered artists
     const selfArtists = await Artist.find({ isApproved: true }).select(
-      "firstName lastName stageName bio profileImage coverImage bookingPrice portfolioItems"
+      "firstName lastName stageName bio profileImage coverImage bookingPrice portfolioItems genre category summary"
     );
 
     // Fetch approved manager-added artists
@@ -17,9 +17,9 @@ const getAllApprovedArtists = async (req, res) => {
     const normalizedSelfArtists = selfArtists.map((artist) => ({
       _id: artist._id,
       artistName: artist.stageName,
-      genre: "", // if not applicable
-      category: "",
-      summary: "",
+      genre: artist.genre || "Not provided",
+      category: artist.category || "Not provided",
+      summary: artist.summary || "Not provided",
       bio: artist.bio,
       bookingPrice: artist.bookingPrice,
       image: artist.profileImage,

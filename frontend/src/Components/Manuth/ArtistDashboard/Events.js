@@ -1,84 +1,48 @@
 import React, { useState, useEffect } from "react";
-import { loadStripe } from "@stripe/stripe-js";
-import {
-  Elements,
-  CardElement,
-  useStripe,
-  useElements,
-} from "@stripe/react-stripe-js";
 import axios from "axios";
 import MainNav from "../../MainNav/MainNav";
 import ArtistNav from "../ArtistNav/ArtistNav.js";
 import "./Events.css";
 
-// Stripe configuration
-const stripePromise = loadStripe(
-  "pk_test_51S0seYQYjln4LvLSFGP8SdRgTWB4n8qbfx75KgLB5Uquv6kaAlpuMOyEouy92c4VaFlBT7cq9gOmLAVi44L7oUqf00tQzSJKGz"
-);
-
 const BACKEND_URL = "http://localhost:5000";
 
-// Stripe Checkout Form Component
-const CheckoutForm = ({ event, onPaymentSuccess, onClose }) => {
-  const stripe = useStripe();
-  const elements = useElements();
+// Registration Confirmation Component
+const RegistrationConfirmation = ({ event, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleRegister = async () => {
     setLoading(true);
     setError("");
 
     try {
-      // Create payment intent for event registration
-      const paymentRes = await axios.post(`${BACKEND_URL}/events/create-registration-payment`, {
-        eventId: event._id,
-        artistId: JSON.parse(localStorage.getItem("artist")).id,
-        amount: event.registrationFeeArtist * 100, // Convert to cents
-      });
-
-      const clientSecret = paymentRes.data.clientSecret;
-
-      // Confirm card payment
-      const { paymentIntent, error: stripeError } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: { card: elements.getElement(CardElement) },
-      });
-
-      if (stripeError) {
-        setError(stripeError.message);
+      const artist = JSON.parse(localStorage.getItem("artist"));
+      if (!artist) {
+        setError("Artist information not found. Please log in again.");
         setLoading(false);
-      } else if (paymentIntent.status === "succeeded") {
-        // Register artist for the event
-        await axios.post(`${BACKEND_URL}/events/register-artist`, {
-          eventId: event._id,
-          artistId: JSON.parse(localStorage.getItem("artist")).id,
-          paymentIntentId: paymentIntent.id,
-        });
+        return;
+      }
 
-        setSuccess(true);
-        setTimeout(() => {
-          onPaymentSuccess();
-          onClose();
-        }, 2000);
+      // Create Stripe checkout session for event registration
+      const response = await axios.post(`${BACKEND_URL}/events/create-registration-checkout-session`, {
+        eventId: event._id,
+        artistId: artist.id,
+        artistName: artist.stageName || `${artist.firstName} ${artist.lastName}`,
+        artistEmail: artist.email,
+      });
+
+      if (response.data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = response.data.url;
+      } else {
+        setError("Failed to create checkout session");
+        setLoading(false);
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Payment failed");
+      setError(err.response?.data?.message || err.message || "Registration failed");
       setLoading(false);
     }
   };
-
-  if (success) {
-    return (
-      <div className="payment-success">
-        <div className="success-icon">✅</div>
-        <h3>Registration Successful!</h3>
-        <p>You have been registered for {event.eventTitle}</p>
-        <p>Check your email for confirmation details.</p>
-      </div>
-    );
-  }
 
   return (
     <div className="checkout-form">
@@ -87,52 +51,32 @@ const CheckoutForm = ({ event, onPaymentSuccess, onClose }) => {
         <p className="registration-fee">
           Registration Fee: <span className="fee-amount">${event.registrationFeeArtist}</span>
         </p>
+        <p className="registration-description">
+          You will be redirected to Stripe's secure checkout page to complete your payment.
+          Stripe Link will be available for faster checkout if you've used it before.
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="card-element-container">
-          <label>Card Details</label>
-          <CardElement
-            options={{
-              style: {
-                base: {
-                  fontSize: "16px",
-                  color: "#424770",
-                  letterSpacing: "0.025em",
-                  fontFamily: "Source Code Pro, monospace",
-                  "::placeholder": {
-                    color: "#a0aec0",
-                  },
-                  padding: "12px",
-                },
-                invalid: {
-                  color: "#fa755a",
-                },
-              },
-            }}
-          />
-        </div>
+      <div className="form-actions">
+        <button
+          type="button"
+          className="btn-cancel"
+          onClick={onClose}
+          disabled={loading}
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          className="btn-pay"
+          onClick={handleRegister}
+          disabled={loading}
+        >
+          {loading ? "Processing..." : `Pay $${event.registrationFeeArtist}`}
+        </button>
+      </div>
 
-        <div className="form-actions">
-          <button
-            type="button"
-            className="btn-cancel"
-            onClick={onClose}
-            disabled={loading}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="btn-pay"
-            disabled={!stripe || loading}
-          >
-            {loading ? "Processing..." : `Pay $${event.registrationFeeArtist}`}
-          </button>
-        </div>
-
-        {error && <p className="error-message">{error}</p>}
-      </form>
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };
@@ -143,16 +87,18 @@ function Events() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Fetch all available events
   const fetchEvents = async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${BACKEND_URL}/events`);
-      console.log("Events data:", response.data.events);
-      setEvents(response.data.events || []);
+      console.log("Events data:", response.data);
+      // Backend returns events directly as an array, not wrapped in an object
+      setEvents(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       setError("Failed to fetch events");
       console.error("Error fetching events:", err);
@@ -165,9 +111,14 @@ function Events() {
   const fetchRegisteredEvents = async () => {
     try {
       const artist = JSON.parse(localStorage.getItem("artist"));
-      if (!artist) return;
+      if (!artist) {
+        console.log("No artist found in localStorage");
+        return;
+      }
 
+      console.log("Fetching registrations for artist:", artist.id);
       const response = await axios.get(`${BACKEND_URL}/events/artist/${artist.id}/registrations`);
+      console.log("Registered events response:", response.data);
       setRegisteredEvents(response.data.registrations || []);
     } catch (err) {
       console.error("Error fetching registered events:", err);
@@ -177,26 +128,97 @@ function Events() {
   useEffect(() => {
     fetchEvents();
     fetchRegisteredEvents();
+    
+    // Handle success/cancel redirects from Stripe
+    const urlParams = new URLSearchParams(window.location.search);
+    const registrationStatus = urlParams.get('registration');
+    const eventName = urlParams.get('event');
+    const sessionId = urlParams.get('session_id');
+    
+    if (registrationStatus === 'success') {
+      setSuccessMessage(`Successfully registered for ${eventName || 'the event'}!`);
+      console.log("Registration success detected, refreshing data...");
+      
+      // Clear URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      // If we have a session ID, try to register the artist as a fallback
+      if (sessionId) {
+        handlePostPaymentRegistration(sessionId);
+      } else {
+        // Add a small delay to ensure backend processing is complete
+        setTimeout(() => {
+          console.log("Refreshing events and registrations after delay...");
+          fetchEvents();
+          fetchRegisteredEvents();
+        }, 1000);
+      }
+    } else if (registrationStatus === 'cancelled') {
+      setError('Registration was cancelled. You can try again anytime.');
+      // Clear URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   }, []);
+
+  // Handle post-payment registration as fallback
+  const handlePostPaymentRegistration = async (sessionId) => {
+    try {
+      const artist = JSON.parse(localStorage.getItem("artist"));
+      if (!artist) {
+        console.error("Artist information not found");
+        return;
+      }
+
+      console.log("Attempting fallback registration with session:", sessionId);
+
+      // Get the session details to extract eventId
+      const sessionResponse = await axios.get(`${BACKEND_URL}/events/session/${sessionId}`);
+      const sessionData = sessionResponse.data;
+      
+      if (sessionData && sessionData.metadata && sessionData.metadata.eventId) {
+        const eventId = sessionData.metadata.eventId;
+        const artistId = artist.id;
+
+        console.log("Attempting fallback registration for event:", eventId, "artist:", artistId);
+
+        // Call the registration endpoint as fallback
+        await axios.post(`${BACKEND_URL}/events/register-artist`, {
+          eventId: eventId,
+          artistId: artistId,
+          sessionId: sessionId
+        });
+
+        console.log("Fallback registration successful");
+      } else {
+        console.log("No eventId found in session metadata, skipping fallback registration");
+      }
+    } catch (err) {
+      console.error("Fallback registration failed:", err);
+      // Don't show error to user as webhook might have already processed it
+    } finally {
+      // Always refresh the data
+      setTimeout(() => {
+        console.log("Refreshing events and registrations after fallback...");
+        fetchEvents();
+        fetchRegisteredEvents();
+      }, 1000);
+    }
+  };
 
   const handleRegisterEvent = (event) => {
     setSelectedEvent(event);
-    setShowPaymentModal(true);
+    setShowRegistrationModal(true);
   };
 
-  const handlePaymentSuccess = () => {
-    fetchRegisteredEvents(); // Refresh registered events
-    setShowPaymentModal(false);
-    setSelectedEvent(null);
-  };
-
-  const closePaymentModal = () => {
-    setShowPaymentModal(false);
+  const closeRegistrationModal = () => {
+    setShowRegistrationModal(false);
     setSelectedEvent(null);
   };
 
   const isEventRegistered = (eventId) => {
-    return registeredEvents.some(reg => reg.eventId === eventId);
+    const isRegistered = registeredEvents.some(reg => reg.eventId === eventId);
+    console.log(`Checking if event ${eventId} is registered:`, isRegistered, "Registered events:", registeredEvents);
+    return isRegistered;
   };
 
   const isEventFull = (event) => {
@@ -349,22 +371,30 @@ function Events() {
         )}
       </div>
 
-      {/* Payment Modal */}
-      {showPaymentModal && selectedEvent && (
-        <div className="modal-overlay" onClick={closePaymentModal}>
+      {/* Success Message */}
+      {successMessage && (
+        <div className="success-banner">
+          <div className="success-content">
+            <span className="success-icon">✅</span>
+            <span className="success-text">{successMessage}</span>
+            <button className="success-close" onClick={() => setSuccessMessage("")}>×</button>
+          </div>
+        </div>
+      )}
+
+      {/* Registration Modal */}
+      {showRegistrationModal && selectedEvent && (
+        <div className="modal-overlay" onClick={closeRegistrationModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Event Registration</h3>
-              <button className="modal-close" onClick={closePaymentModal}>×</button>
+              <button className="modal-close" onClick={closeRegistrationModal}>×</button>
             </div>
             
-            <Elements stripe={stripePromise}>
-              <CheckoutForm
-                event={selectedEvent}
-                onPaymentSuccess={handlePaymentSuccess}
-                onClose={closePaymentModal}
-              />
-            </Elements>
+            <RegistrationConfirmation
+              event={selectedEvent}
+              onClose={closeRegistrationModal}
+            />
           </div>
         </div>
       )}

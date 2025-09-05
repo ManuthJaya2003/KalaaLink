@@ -26,6 +26,12 @@ function ArtistDashboard() {
   const [generatingReport, setGeneratingReport] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [clearType, setClearType] = useState(null); // 'completed', 'cancelled', or 'both'
+  const [isClearing, setIsClearing] = useState(false);
+  const [notification, setNotification] = useState(null);
   const navigate = useNavigate();
 
   // Form state for edit profile
@@ -34,7 +40,10 @@ function ArtistDashboard() {
     lastName: "",
     stageName: "",
     bookingPrice: "",
-    bio: ""
+    bio: "",
+    genre: "",
+    category: "",
+    summary: ""
   });
   const [message, setMessage] = useState("");
 
@@ -44,6 +53,28 @@ function ArtistDashboard() {
     navigate("/login");
   };
 
+  // Handle Delete Profile
+  const handleDeleteProfile = async () => {
+    if (!artist) return;
+    
+    setIsDeleting(true);
+    try {
+      const response = await axios.delete(`http://localhost:5000/registeredArtists/${artist.id}`);
+      
+      if (response.status === 200) {
+        // Clear local storage and redirect
+        localStorage.removeItem("artist");
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Error deleting profile:", error);
+      setMessage("Failed to delete profile. Please try again.");
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
   // Open Edit Profile Modal
   const handleEditProfile = () => {
     setEditForm({
@@ -51,7 +82,10 @@ function ArtistDashboard() {
       lastName: artist.lastName || "",
       stageName: artist.stageName || "",
       bookingPrice: artist.bookingPrice || "",
-      bio: artist.bio || ""
+      bio: artist.bio || "",
+      genre: artist.genre || "",
+      category: artist.category || "",
+      summary: artist.summary || ""
     });
     setShowEditModal(true);
   };
@@ -109,24 +143,6 @@ function ArtistDashboard() {
     } catch (err) {
       console.error(err);
       setMessage("Failed to update profile. Try again.");
-    }
-  };
-
-    // Handle Delete Profile
-  const handleDeleteProfile = async () => {
-    if (!window.confirm("Are you sure you want to delete your profile? This cannot be undone.")) return;
-
-    if (!artist || (!artist.id && !artist._id)) return;
-    const artistId = artist.id || artist._id;
-
-    try {
-      await axios.delete(`http://localhost:5000/registeredArtists/${artistId}`);
-      localStorage.removeItem("artist");
-      alert("Your profile has been deleted successfully.");
-      navigate("/login");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete profile. Please try again.");
     }
   };
 
@@ -257,12 +273,15 @@ function ArtistDashboard() {
       // Summary and Insights
       doc.setFontSize(16);
       doc.setTextColor(17, 24, 39);
-      doc.text("💡 Key Insights", 20, doc.lastAutoTable.finalY + 20);
+      
+      // Calculate the Y position for insights - use table position if available, otherwise use a default
+      const insightsStartY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : 380;
+      doc.text("💡 Key Insights", 20, insightsStartY);
       
       doc.setFontSize(11);
       doc.setTextColor(55, 65, 81);
       
-      let insightsY = doc.lastAutoTable.finalY + 35;
+      let insightsY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 35 : 395;
       
       if (totalRevenue > 0) {
         doc.text(`• Total earnings: $${totalRevenue.toLocaleString()}`, 20, insightsY);
@@ -339,6 +358,14 @@ function ArtistDashboard() {
       // Re-categorize bookings
       categorizeBookings(updatedBookings);
 
+      // Recalculate total revenue after status update
+      const updatedRevenue = updatedBookings
+        .filter(booking => booking.paymentStatus === "paid" && booking.status !== "cancelled")
+        .reduce((sum, booking) => sum + (artist?.bookingPrice || 0), 0);
+      setTotalRevenue(updatedRevenue);
+
+      console.log(`Revenue updated after booking ${newStatus}: $${updatedRevenue}`);
+
       // Show success message
       alert(`Booking ${newStatus} successfully!`);
       
@@ -358,6 +385,66 @@ function ArtistDashboard() {
   const closeLocationModal = () => {
     setIsLocationModalOpen(false);
     setSelectedBooking(null);
+  };
+
+  // Handle clear bookings
+  const handleClearBookings = (type) => {
+    setClearType(type);
+    setShowClearConfirm(true);
+  };
+
+  const confirmClearBookings = async () => {
+    if (!artist || !clearType) return;
+
+    setIsClearing(true);
+    try {
+      const response = await axios.delete(`http://localhost:5000/bookings/clear/${artist.id}`, {
+        data: { status: clearType }
+      });
+
+      if (response.data.deletedCount > 0) {
+        // Show success notification
+        setNotification({
+          type: 'success',
+          message: `Successfully cleared ${response.data.deletedCount} ${clearType} booking(s)`
+        });
+
+        // Refresh bookings data
+        const bookingsRes = await axios.get(`http://localhost:5000/bookings`);
+        if (bookingsRes.data && bookingsRes.data.artistBookings) {
+          const allBookings = bookingsRes.data.artistBookings;
+          const artistBookings = allBookings.filter(booking => 
+            booking.artist && (booking.artist.id === artist.id || booking.artist._id === artist.id)
+          );
+          
+          setBookings(artistBookings);
+          categorizeBookings(artistBookings);
+        }
+      } else {
+        setNotification({
+          type: 'info',
+          message: `No ${clearType} bookings found to clear`
+        });
+      }
+    } catch (err) {
+      console.error('Error clearing bookings:', err);
+      setNotification({
+        type: 'error',
+        message: 'Failed to clear bookings. Please try again.'
+      });
+    } finally {
+      setIsClearing(false);
+      setShowClearConfirm(false);
+      setClearType(null);
+      
+      // Auto-hide notification after 5 seconds
+      setTimeout(() => setNotification(null), 5000);
+    }
+  };
+
+  const cancelClearBookings = () => {
+    setShowClearConfirm(false);
+    setClearType(null);
   };
 
   // Categorize bookings by status
@@ -424,24 +511,7 @@ function ArtistDashboard() {
         setArtist(artistData);
 
         // Fetch artist bookings
-        const bookingsRes = await axios.get(`http://localhost:5000/bookings`);
-        if (bookingsRes.data && bookingsRes.data.artistBookings) {
-          const allBookings = bookingsRes.data.artistBookings;
-          const artistBookings = allBookings.filter(booking => 
-            booking.artist && (booking.artist.id === storedArtist.id || booking.artist._id === storedArtist.id)
-          );
-          
-          setBookings(artistBookings);
-          
-          // Calculate total revenue
-          const revenue = artistBookings
-            .filter(booking => booking.paymentStatus === "paid")
-            .reduce((sum, booking) => sum + (artistData.bookingPrice || 0), 0);
-          setTotalRevenue(revenue);
-
-          // Categorize bookings by status
-          categorizeBookings(artistBookings);
-        }
+        await fetchBookings(artistData, storedArtist);
       } catch (err) {
         console.error('Error fetching artist data:', err);
         console.error('Error response:', err.response?.data);
@@ -454,6 +524,96 @@ function ArtistDashboard() {
 
     fetchData();
   }, [navigate]);
+
+  // Fetch bookings function
+  const fetchBookings = async (artistData, storedArtist) => {
+    try {
+      const bookingsRes = await axios.get(`http://localhost:5000/bookings`);
+      if (bookingsRes.data && bookingsRes.data.artistBookings) {
+        const allBookings = bookingsRes.data.artistBookings;
+        const artistBookings = allBookings.filter(booking => 
+          booking.artist && (booking.artist.id === storedArtist.id || booking.artist._id === storedArtist.id)
+        );
+        
+        setBookings(artistBookings);
+        
+        // Calculate total revenue (only paid bookings that are NOT cancelled)
+        const revenue = artistBookings
+          .filter(booking => booking.paymentStatus === "paid" && booking.status !== "cancelled")
+          .reduce((sum, booking) => sum + (artistData.bookingPrice || 0), 0);
+        setTotalRevenue(revenue);
+
+        // Categorize bookings by status
+        categorizeBookings(artistBookings);
+      }
+    } catch (err) {
+      console.error('Error fetching bookings:', err);
+    }
+  };
+
+  // Real-time booking updates
+  useEffect(() => {
+    if (!artist) return;
+
+    // Set up automatic refresh every 10 seconds
+    const refreshInterval = setInterval(async () => {
+      console.log('🔄 Auto-refreshing bookings...');
+      const storedArtist = JSON.parse(localStorage.getItem("artist"));
+      if (storedArtist) {
+        await fetchBookings(artist, storedArtist);
+      }
+    }, 10000); // Refresh every 10 seconds
+
+    // Check for payment success in URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingStatus = urlParams.get('booking');
+    const sessionId = urlParams.get('session_id');
+    
+    if (bookingStatus === 'success' && sessionId) {
+      console.log('🎉 Payment success detected, verifying payment...');
+      
+      // Verify payment with session ID
+      const verifyPayment = async () => {
+        try {
+          const verifyResponse = await axios.post('http://localhost:5000/bookings/verify-payment', {
+            sessionId: sessionId
+          });
+          
+          if (verifyResponse.data.success) {
+            console.log('✅ Payment verified successfully');
+            setNotification({
+              type: 'success',
+              message: 'Payment confirmed! Booking status updated.'
+            });
+            
+            // Refresh bookings immediately
+            const storedArtist = JSON.parse(localStorage.getItem("artist"));
+            if (storedArtist) {
+              await fetchBookings(artist, storedArtist);
+            }
+          }
+        } catch (error) {
+          console.error('Payment verification failed:', error);
+          setNotification({
+            type: 'error',
+            message: 'Payment verification failed. Please refresh the page.'
+          });
+        }
+      };
+      
+      verifyPayment();
+      
+      // Clear URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // Auto-hide notification after 5 seconds
+    if (notification) {
+      setTimeout(() => setNotification(null), 5000);
+    }
+
+    return () => clearInterval(refreshInterval);
+  }, [artist, notification]);
 
   if (loading) {
     return (
@@ -506,6 +666,24 @@ function ArtistDashboard() {
       {/* Artist Navigation */}
       <ArtistNav />
 
+      {/* Real-time Notification */}
+      {notification && (
+        <div className={`notification ${notification.type}`}>
+          <div className="notification-content">
+            <span className="notification-icon">
+              {notification.type === 'success' ? '✅' : '❌'}
+            </span>
+            <span className="notification-message">{notification.message}</span>
+            <button 
+              className="notification-close" 
+              onClick={() => setNotification(null)}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       <main className="dashboard-main">
         <div className="dashboard-container">
           {/* Left Column - Artist Profile Card */}
@@ -523,16 +701,24 @@ function ArtistDashboard() {
                 <span className="btn-icon">✏️</span>
                 Edit Profile
               </button>
-                             <button 
-                 className={`generate-report-btn ${generatingReport ? 'loading' : ''}`} 
-                 onClick={generatePDFReport}
-                 disabled={generatingReport}
-               >
-                 <span className="btn-icon">
-                   {generatingReport ? '⏳' : '📄'}
-                 </span>
-                 {generatingReport ? 'Generating...' : 'Generate Report'}
-               </button>
+              <button 
+                className={`generate-report-btn ${generatingReport ? 'loading' : ''}`} 
+                onClick={generatePDFReport}
+                disabled={generatingReport}
+              >
+                <span className="btn-icon">
+                  {generatingReport ? '⏳' : '📄'}
+                </span>
+                {generatingReport ? 'Generating...' : 'Generate Report'}
+              </button>
+              <button 
+                className="delete-profile-btn" 
+                onClick={() => setShowDeleteConfirm(true)}
+                disabled={isDeleting}
+              >
+                <span className="btn-icon">🗑️</span>
+                Delete Profile
+              </button>
             </div>
           </div>
 
@@ -643,9 +829,23 @@ function ArtistDashboard() {
                 >
                   <span className="header-icon">✅</span>
                   <span className="header-text">Completed Bookings {completedBookings.length}</span>
-                  <span className={`header-chevron ${showCompleted ? 'up' : 'down'}`}>
-                    {showCompleted ? '▲' : '▼'}
-                  </span>
+                  <div className="header-actions">
+                    {completedBookings.length > 0 && (
+                      <button 
+                        className="clear-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClearBookings('completed');
+                        }}
+                        title="Clear all completed bookings"
+                      >
+                        🗑️ Clear All
+                      </button>
+                    )}
+                    <span className={`header-chevron ${showCompleted ? 'up' : 'down'}`}>
+                      {showCompleted ? '▲' : '▼'}
+                    </span>
+                  </div>
                 </div>
                 
                 {showCompleted && (
@@ -799,9 +999,23 @@ function ArtistDashboard() {
                 >
                   <span className="header-icon">❌</span>
                   <span className="header-text">Cancelled Bookings {cancelledBookings.length}</span>
-                  <span className={`header-chevron ${showCancelled ? 'up' : 'down'}`}>
-                    {showCancelled ? '▲' : '▼'}
-                  </span>
+                  <div className="header-actions">
+                    {cancelledBookings.length > 0 && (
+                      <button 
+                        className="clear-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClearBookings('cancelled');
+                        }}
+                        title="Clear all cancelled bookings"
+                      >
+                        🗑️ Clear All
+                      </button>
+                    )}
+                    <span className={`header-chevron ${showCancelled ? 'up' : 'down'}`}>
+                      {showCancelled ? '▲' : '▼'}
+                    </span>
+                  </div>
                 </div>
                 
                 {showCancelled && (
@@ -949,6 +1163,42 @@ function ArtistDashboard() {
                 ></textarea>
               </div>
 
+              <div className="form-group">
+                <label htmlFor="genre">Genre:</label>
+                <input
+                  type="text"
+                  id="genre"
+                  name="genre"
+                  value={editForm.genre}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Pop, Rock, Classical, Jazz, etc."
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="category">Category:</label>
+                <input
+                  type="text"
+                  id="category"
+                  name="category"
+                  value={editForm.category}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Singer, Musician, Band, DJ, etc."
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="summary">Summary:</label>
+                <textarea
+                  id="summary"
+                  name="summary"
+                  rows="3"
+                  value={editForm.summary}
+                  onChange={handleInputChange}
+                  placeholder="Brief summary of your artistic style and what makes you unique"
+                ></textarea>
+              </div>
+
               <div className="form-actions">
                 <button type="button" className="btn-secondary" onClick={handleCloseModal}>
                   Cancel
@@ -969,6 +1219,87 @@ function ArtistDashboard() {
         booking={selectedBooking}
         title="Get Directions to Venue"
       />
+
+      {/* Delete Profile Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-content delete-confirm-modal">
+            <div className="modal-header">
+              <h3>Delete Profile</h3>
+            </div>
+            <div className="modal-body">
+              <p>Are you sure you want to delete your profile? This action cannot be undone.</p>
+              <p className="warning-text">⚠️ This will permanently remove all your data, bookings, and profile information.</p>
+            </div>
+            <div className="modal-actions">
+              <button 
+                className="btn-cancel" 
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn-delete" 
+                onClick={handleDeleteProfile}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Deleting...' : 'Delete Profile'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clear Bookings Confirmation Modal */}
+      {showClearConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-content clear-confirm-modal">
+            <div className="modal-header">
+              <h3>Clear {clearType === 'completed' ? 'Completed' : 'Cancelled'} Bookings</h3>
+            </div>
+            <div className="modal-body">
+              <p>Are you sure you want to delete all {clearType} bookings? This action cannot be undone.</p>
+              <p className="warning-text">⚠️ This will permanently remove all your {clearType} bookings from the dashboard.</p>
+            </div>
+            <div className="modal-actions">
+              <button 
+                className="btn-cancel" 
+                onClick={cancelClearBookings}
+                disabled={isClearing}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn-delete" 
+                onClick={confirmClearBookings}
+                disabled={isClearing}
+              >
+                {isClearing ? 'Clearing...' : `Clear ${clearType === 'completed' ? 'Completed' : 'Cancelled'} Bookings`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Notification Toast */}
+      {notification && (
+        <div className={`notification-toast ${notification.type}`}>
+          <div className="notification-content">
+            <span className="notification-icon">
+              {notification.type === 'success' ? '✅' : 
+               notification.type === 'error' ? '❌' : 'ℹ️'}
+            </span>
+            <span className="notification-message">{notification.message}</span>
+            <button 
+              className="notification-close"
+              onClick={() => setNotification(null)}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
