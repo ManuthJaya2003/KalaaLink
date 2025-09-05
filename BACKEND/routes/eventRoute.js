@@ -8,9 +8,11 @@ const {
   updateEvent,
   deleteEvent,
   requestCrew,
-  createRegistrationPayment,
+  createRegistrationCheckoutSession,
   registerArtistForEvent,
   getArtistRegistrations,
+  handleEventRegistrationWebhook,
+  getSessionDetails,
 } = require("../controllers/eventController");
 
 // Event CRUD
@@ -24,8 +26,12 @@ router.delete("/:id", deleteEvent);
 router.post("/request-crew", requestCrew);
 
 // Artist event registration
-router.post("/create-registration-payment", createRegistrationPayment);
+router.post("/create-registration-checkout-session", createRegistrationCheckoutSession);
 router.post("/register-artist", registerArtistForEvent);
 router.get("/artist/:artistId/registrations", getArtistRegistrations);
+router.get("/session/:sessionId", getSessionDetails);
+
+// Stripe webhook for event registrations
+router.post("/webhook", handleEventRegistrationWebhook);
 
 module.exports = router;

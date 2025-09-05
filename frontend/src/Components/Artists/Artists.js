@@ -7,6 +7,19 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 const URL = "http://localhost:5000/artists";
 
+// Utility function to construct proper image URL
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  
+  // If the path already includes "/uploads/", use it as is
+  if (imagePath.startsWith("/uploads/")) {
+    return `http://localhost:5000${imagePath}`;
+  }
+  
+  // Otherwise, construct the URL with the uploads prefix
+  return `http://localhost:5000/uploads/${imagePath}`;
+};
+
 // Fetch all artists
 const fetchHandler = async () => {
   return await axios.get(URL).then((res) => res.data);
@@ -189,7 +202,7 @@ function Artists() {
                 <div className="artist-image-container">
                   {artist.image ? (
                     <img
-                      src={`http://localhost:5000/uploads/${artist.image}`}
+                      src={getImageUrl(artist.image)}
                       alt={artist.artistName}
                       className="artist-image"
                     />
@@ -254,7 +267,7 @@ function Artists() {
             <div className="modal-body">
               {selectedArtist.image && (
                 <img
-                  src={`http://localhost:5000/uploads/${selectedArtist.image}`}
+                  src={getImageUrl(selectedArtist.image)}
                   alt={selectedArtist.artistName}
                   className="modal-image"
                 />

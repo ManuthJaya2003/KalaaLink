@@ -15,6 +15,7 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use("/eventBookings/webhook", express.raw({ type: "application/json" }));
 app.use("/bookings/webhook", express.raw({ type: "application/json" }));
 app.use("/api/orders/webhook", express.raw({ type: "application/json" }));
+app.use("/events/webhook", express.raw({ type: "application/json" }));
 
 // JSON body for other routes
 app.use(express.json());

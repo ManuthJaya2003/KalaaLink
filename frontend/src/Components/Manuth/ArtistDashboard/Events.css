@@ -529,28 +529,63 @@
   border-radius: 6px;
 }
 
-/* Payment Success */
-.payment-success {
-  text-align: center;
-  padding: 40px 24px;
+/* Success Banner */
+.success-banner {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #10b981;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  z-index: 1001;
+  max-width: 500px;
+  width: 90%;
+}
+
+.success-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .success-icon {
-  font-size: 4rem;
-  margin-bottom: 16px;
+  font-size: 1.25rem;
+  flex-shrink: 0;
 }
 
-.payment-success h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #10b981;
-  margin: 0 0 16px 0;
+.success-text {
+  flex: 1;
+  font-weight: 600;
 }
 
-.payment-success p {
+.success-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.success-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Registration Description */
+.registration-description {
+  font-size: 0.875rem;
   color: #6b7280;
-  margin: 0 0 8px 0;
-  font-size: 1rem;
+  line-height: 1.5;
+  margin: 12px 0 0 0;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
 }
 
 /* Responsive Design */

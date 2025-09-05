@@ -6,6 +6,19 @@ import MainNav from "../../MainNav/MainNav";
 
 const URL = "http://localhost:5000/artists";
 
+// Utility function to construct proper image URL
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  
+  // If the path already includes "/uploads/", use it as is
+  if (imagePath.startsWith("/uploads/")) {
+    return `http://localhost:5000${imagePath}`;
+  }
+  
+  // Otherwise, construct the URL with the uploads prefix
+  return `http://localhost:5000/uploads/${imagePath}`;
+};
+
 const fetchHandler = async () => {
   return await axios.get(URL).then((res) => res.data);
 };
@@ -111,7 +124,7 @@ function ManageArtists() {
             <p><strong>Bio:</strong> {artist.bio}</p>
             {artist.image && (
               <img
-                src={`http://localhost:5000/uploads/${artist.image}`}
+                src={getImageUrl(artist.image)}
                 alt={artist.artistName}
                 style={{ width: "150px", height: "150px", objectFit: "cover" }}
               />

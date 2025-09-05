@@ -11,6 +11,9 @@ function ArtistEditProfile() {
   const [stageName, setStageName] = useState("");
   const [bookingPrice, setBookingPrice] = useState("");
   const [bio, setBio] = useState("");
+  const [genre, setGenre] = useState("");
+  const [category, setCategory] = useState("");
+  const [summary, setSummary] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -34,6 +37,9 @@ function ArtistEditProfile() {
         setStageName(artistData.stageName || "");
         setBookingPrice(artistData.bookingPrice || "");
         setBio(artistData.bio || "");
+        setGenre(artistData.genre || "");
+        setCategory(artistData.category || "");
+        setSummary(artistData.summary || "");
       })
       .catch(() => navigate("/login"));
 
@@ -48,7 +54,7 @@ function ArtistEditProfile() {
     try {
       const res = await axios.put(
         `http://localhost:5000/registeredArtists/${storedArtist.id}`,
-        { firstName, stageName, bookingPrice, bio }
+        { firstName, stageName, bookingPrice, bio, genre, category, summary }
       );
 
       const updatedArtist = res.data.artist;
@@ -120,6 +126,36 @@ function ArtistEditProfile() {
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="Tell us about yourself..."
+              ></textarea>
+            </div>
+
+            <div>
+              <label>Genre:</label>
+              <input
+                type="text"
+                value={genre}
+                onChange={(e) => setGenre(e.target.value)}
+                placeholder="e.g., Pop, Rock, Classical, Jazz, etc."
+              />
+            </div>
+
+            <div>
+              <label>Category:</label>
+              <input
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="e.g., Singer, Musician, Band, DJ, etc."
+              />
+            </div>
+
+            <div>
+              <label>Summary:</label>
+              <textarea
+                rows="3"
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                placeholder="Brief summary of your artistic style and what makes you unique"
               ></textarea>
             </div>
 

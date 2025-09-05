@@ -10,6 +10,12 @@ const {
   updateBookingStatus,
   getArtistById,
   manuallyUpdatePaymentStatus,
+  clearCompletedAndCancelledBookings,
+  testWebhookEndpoint,
+  getBookingStatus,
+  verifyPaymentManually,
+  autoVerifyAllPendingBookings,
+  generateInvoice,
 } = require("../controllers/ArtistBookingController");
 
 // ✅ Get all bookings (Admin / Manager)
@@ -38,5 +44,23 @@ router.post("/confirm", confirmBooking);
 
 // ✅ Update booking status
 router.put("/:id/status", updateBookingStatus);
+
+// ✅ Clear completed and cancelled bookings for an artist
+router.delete("/clear/:artistId", clearCompletedAndCancelledBookings);
+
+// ✅ Test webhook endpoint for debugging
+router.post("/webhook-test", testWebhookEndpoint);
+
+// ✅ Get booking status for testing
+router.get("/test-payment/:bookingId", getBookingStatus);
+
+// ✅ Manual payment verification using Stripe session ID
+router.post("/verify-payment", verifyPaymentManually);
+
+// ✅ Auto-verify all pending bookings (for testing)
+router.post("/auto-verify-all", autoVerifyAllPendingBookings);
+
+// ✅ Generate invoice for booking
+router.post("/generate-invoice", generateInvoice);
 
 module.exports = router;

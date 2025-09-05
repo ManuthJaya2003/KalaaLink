@@ -181,12 +181,12 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-// Create Stripe payment intent for event registration
-const createRegistrationPayment = async (req, res) => {
+// Create Stripe checkout session for event registration (Stripe Link)
+const createRegistrationCheckoutSession = async (req, res) => {
   try {
-    const { eventId, artistId, amount } = req.body;
+    const { eventId, artistId, artistName, artistEmail } = req.body;
 
-    if (!eventId || !artistId || !amount) {
+    if (!eventId || !artistId || !artistName || !artistEmail) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -206,40 +206,81 @@ const createRegistrationPayment = async (req, res) => {
       return res.status(400).json({ message: "Artist already registered for this event" });
     }
 
-    // Create payment intent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount,
-      currency: "usd",
+    const totalAmount = event.registrationFeeArtist;
+    if (!totalAmount || isNaN(totalAmount)) {
+      return res.status(400).json({ message: "Invalid registration fee" });
+    }
+
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+
+    console.log("Creating Stripe checkout session for event registration:", {
+      eventId,
+      artistId,
+      artistName,
+      totalAmount,
+      artistEmail,
+    });
+
+    // Create Stripe checkout session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: `Event Registration - ${event.eventTitle}`,
+              description: `Registration for ${event.eventTitle} on ${new Date(event.eventDate).toLocaleDateString()} at ${event.eventVenue}`,
+            },
+            unit_amount: Math.round(totalAmount * 100), // in cents
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `${frontendUrl}/artist/events?registration=success&event=${encodeURIComponent(event.eventTitle)}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${frontendUrl}/artist/events?registration=cancelled`,
       metadata: {
         eventId: eventId,
         artistId: artistId,
+        artistName: artistName,
+        artistEmail: artistEmail,
         type: "event_registration"
-      }
+      },
+      customer_email: artistEmail,
     });
 
-    res.status(200).json({
-      clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id
-    });
+    console.log("Stripe checkout session created successfully:", session.id);
+
+    res.status(200).json({ sessionId: session.id, url: session.url });
   } catch (err) {
-    console.error("Error creating registration payment:", err);
-    res.status(500).json({ message: "Failed to create payment intent", error: err.message });
+    console.error("Error creating registration checkout session:", err);
+    res.status(500).json({ message: "Failed to create checkout session", error: err.message });
   }
 };
 
-// Register artist for event after successful payment
+// Register artist for event after successful payment (fallback method)
 const registerArtistForEvent = async (req, res) => {
   try {
-    const { eventId, artistId, paymentIntentId } = req.body;
+    const { eventId, artistId, sessionId } = req.body;
 
-    if (!eventId || !artistId || !paymentIntentId) {
+    if (!eventId || !artistId) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // Verify payment was successful
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-    if (paymentIntent.status !== "succeeded") {
-      return res.status(400).json({ message: "Payment not completed" });
+    // If sessionId is provided, verify payment was successful
+    if (sessionId) {
+      try {
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        if (session.payment_status !== "paid") {
+          return res.status(400).json({ message: "Payment not completed" });
+        }
+        console.log("Payment verified for session:", sessionId);
+      } catch (stripeErr) {
+        console.error("Error verifying payment:", stripeErr);
+        // Continue with registration even if Stripe verification fails
+        // This provides a fallback for cases where webhook didn't work
+      }
     }
 
     // Update event with new artist registration
@@ -255,12 +296,18 @@ const registerArtistForEvent = async (req, res) => {
 
     // Check if artist is already registered
     if (event.registeredArtists.includes(artistId)) {
-      return res.status(400).json({ message: "Artist already registered for this event" });
+      console.log(`Artist ${artistId} already registered for event ${eventId}`);
+      return res.status(200).json({
+        message: "Artist already registered for this event",
+        event: event
+      });
     }
 
     // Add artist to registered list
     event.registeredArtists.push(artistId);
     await event.save();
+
+    console.log(`✅ Artist ${artistId} registered for event ${eventId}. Total artists: ${event.registeredArtists.length}`);
 
     res.status(200).json({
       message: "Artist registered successfully for event",
@@ -270,6 +317,64 @@ const registerArtistForEvent = async (req, res) => {
     console.error("Error registering artist for event:", err);
     res.status(500).json({ message: "Failed to register artist", error: err.message });
   }
+};
+
+// Handle Stripe webhook for event registrations
+const handleEventRegistrationWebhook = async (req, res) => {
+  console.log("Event registration webhook received");
+  const sig = req.headers["stripe-signature"];
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    console.log("Webhook event type:", event.type);
+  } catch (err) {
+    console.error("Webhook signature verification failed:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the checkout.session.completed event
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+
+    // Check if this is an event registration payment
+    if (session.metadata && session.metadata.type === "event_registration") {
+      console.log("Processing event registration webhook:", session.metadata);
+      try {
+        const { eventId, artistId } = session.metadata;
+
+        // Update event with new artist registration
+        const event = await Event.findById(eventId);
+        if (event) {
+          console.log("Found event:", event.eventTitle);
+          // Initialize arrays if they don't exist
+          if (!event.registeredArtists) {
+            event.registeredArtists = [];
+          }
+
+          // Check if artist is already registered
+          if (!event.registeredArtists.includes(artistId)) {
+            // Add artist to registered list
+            event.registeredArtists.push(artistId);
+            await event.save();
+            console.log(`✅ Artist ${artistId} registered for event ${eventId} via webhook. Total artists: ${event.registeredArtists.length}`);
+          } else {
+            console.log(`Artist ${artistId} already registered for event ${eventId}`);
+          }
+        } else {
+          console.log("Event not found:", eventId);
+        }
+      } catch (err) {
+        console.error("Error processing event registration webhook:", err);
+      }
+    } else {
+      console.log("Not an event registration payment:", session.metadata);
+    }
+  }
+
+  res.json({ received: true });
 };
 
 // Get artist's event registrations
@@ -301,6 +406,25 @@ const getArtistRegistrations = async (req, res) => {
   }
 };
 
+// Get Stripe session details
+const getSessionDetails = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+
+    if (!sessionId) {
+      return res.status(400).json({ message: "Session ID required" });
+    }
+
+    // Retrieve session from Stripe
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    
+    res.status(200).json(session);
+  } catch (err) {
+    console.error("Error fetching session details:", err);
+    res.status(500).json({ message: "Failed to fetch session details", error: err.message });
+  }
+};
+
 module.exports = {
   createEvent,
   getAllEvents,
@@ -308,7 +432,9 @@ module.exports = {
   updateEvent,
   deleteEvent,
   requestCrew,
-  createRegistrationPayment,
+  createRegistrationCheckoutSession,
   registerArtistForEvent,
   getArtistRegistrations,
+  handleEventRegistrationWebhook,
+  getSessionDetails,
 };

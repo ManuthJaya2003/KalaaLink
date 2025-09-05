@@ -36,6 +36,11 @@ const artistSchema = new Schema(
     bio: { type: String, required: true },
     password: { type: String, required: true }, // (Hash this in production)
     
+    // ---------------------- New fields for consistency with manager-added artists ----------------------
+    genre: { type: String, default: "" },
+    category: { type: String, default: "" },
+    summary: { type: String, default: "" },
+    
     isApproved: { type: Boolean, default: false }, 
     status: {
       type: String,

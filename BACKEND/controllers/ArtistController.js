@@ -6,7 +6,27 @@ const fs = require("fs");
 
 // Register new artist
 const registerArtist = async (req, res) => {
-  const { firstName, lastName, email, stageName, bio, password } = req.body;
+  const { firstName, lastName, email, stageName, bio, password, genre, category, summary } = req.body;
+  
+  // Log the received data for debugging
+  console.log("Received registration data:", { firstName, lastName, email, stageName, bio: bio ? "present" : "missing", password: password ? "present" : "missing", genre, category, summary });
+  
+  // Validate required fields
+  if (!firstName || !lastName || !email || !stageName || !bio || !password) {
+    console.log("Missing required fields:", { firstName: !!firstName, lastName: !!lastName, email: !!email, stageName: !!stageName, bio: !!bio, password: !!password });
+    return res.status(400).json({ 
+      message: "All fields are required",
+      missing: {
+        firstName: !firstName,
+        lastName: !lastName,
+        email: !email,
+        stageName: !stageName,
+        bio: !bio,
+        password: !password
+      }
+    });
+  }
+  
   try {
     const existingArtist = await Artist.findOne({ email });
     if (existingArtist) {
@@ -20,6 +40,9 @@ const registerArtist = async (req, res) => {
       stageName,
       bio,
       password,
+      genre: genre || "",
+      category: category || "",
+      summary: summary || "",
       isApproved: false,
       status: "pending",
     });
@@ -30,8 +53,12 @@ const registerArtist = async (req, res) => {
       artist,
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    console.error("Registration error:", err);
+    return res.status(400).json({ 
+      message: "Registration failed", 
+      error: err.message,
+      details: err.errors || "Unknown error"
+    });
   }
 };
 
@@ -81,10 +108,10 @@ const getArtistProfile = async (req, res) => {
   }
 };
 
-// Update artist profile info (name, stageName, bio, password, bookingPrice)
+// Update artist profile info (name, stageName, bio, password, bookingPrice, genre, category, summary)
 const updateArtistProfile = async (req, res) => {
   const artist_id = req.params.artist_id;
-  const { firstName, lastName, stageName, bio, password, bookingPrice } = req.body;
+  const { firstName, lastName, stageName, bio, password, bookingPrice, genre, category, summary } = req.body;
 
   try {
     const artist = await Artist.findById(artist_id);
@@ -100,6 +127,17 @@ const updateArtistProfile = async (req, res) => {
     // 🔑 new line to handle bookingPrice
     if (bookingPrice !== undefined) {
       artist.bookingPrice = bookingPrice;
+    }
+
+    // Handle new fields
+    if (genre !== undefined) {
+      artist.genre = genre;
+    }
+    if (category !== undefined) {
+      artist.category = category;
+    }
+    if (summary !== undefined) {
+      artist.summary = summary;
     }
 
     await artist.save();
@@ -136,13 +174,13 @@ const updateArtistImages = async (req, res) => {
     if (!artist.isApproved) return res.status(403).json({ message: "Artist not approved yet" });
 
     if (req.files?.profileImage) {
-      const profilePath = path.join("uploads", req.files.profileImage[0].filename);
-      artist.profileImage = "/" + profilePath.replace(/\\/g, "/");
+      // Store just the filename, not the full path
+      artist.profileImage = req.files.profileImage[0].filename;
     }
 
     if (req.files?.coverImage) {
-      const coverPath = path.join("uploads", req.files.coverImage[0].filename);
-      artist.coverImage = "/" + coverPath.replace(/\\/g, "/");
+      // Store just the filename, not the full path
+      artist.coverImage = req.files.coverImage[0].filename;
     }
 
     await artist.save();
@@ -188,7 +226,8 @@ const addPortfolioItem = async (req, res) => {
 
     let url = "";
     if (req.file) {
-      url = "/" + path.join("uploads", req.file.filename).replace(/\\/g, "/");
+      // Store just the filename, not the full path
+      url = req.file.filename;
     }
 
     const newItem = { type, url, description };

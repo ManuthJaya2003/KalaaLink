@@ -88,7 +88,9 @@ const Overview = () => {
 
   // Calculate total revenue from paid bookings
   const calculateRevenue = () => {
-    const paidBookings = bookings.filter(booking => booking.paymentStatus === "paid");
+    const paidBookings = bookings.filter(booking => 
+      booking.paymentStatus === "paid" && booking.status !== "cancelled"
+    );
     const totalRevenue = paidBookings.reduce((sum, booking) => {
       // Get the booking price from the artist's profile
       if (booking.artist && typeof booking.artist === 'object') {
@@ -101,7 +103,9 @@ const Overview = () => {
 
   // Calculate revenue by artist for chart
   const calculateRevenueByArtist = () => {
-    const paidBookings = bookings.filter(booking => booking.paymentStatus === "paid");
+    const paidBookings = bookings.filter(booking => 
+      booking.paymentStatus === "paid" && booking.status !== "cancelled"
+    );
     const revenueByArtist = {};
 
     paidBookings.forEach(booking => {
@@ -228,7 +232,8 @@ const Overview = () => {
     if (chartData.length > 0) {
       doc.setFontSize(16);
       doc.setTextColor(30, 58, 138);
-      doc.text('Revenue by Artist', 20, doc.lastAutoTable.finalY + 20);
+      const revenueStartY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : 90;
+      doc.text('Revenue by Artist', 20, revenueStartY);
       
       // Create revenue table
       const revenueData = chartData.map(item => [
@@ -238,7 +243,7 @@ const Overview = () => {
       ]);
       
       autoTable(doc, {
-        startY: doc.lastAutoTable.finalY + 30,
+        startY: doc.lastAutoTable ? doc.lastAutoTable.finalY + 30 : 100,
         head: [['Artist Name', 'Revenue', 'Percentage of Total']],
         body: revenueData,
         theme: 'grid',
@@ -251,7 +256,8 @@ const Overview = () => {
     if (bookings.length > 0) {
       doc.setFontSize(16);
       doc.setTextColor(30, 58, 138);
-      doc.text('Recent Bookings', 20, doc.lastAutoTable.finalY + 20);
+      const bookingsStartY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : 200;
+      doc.text('Recent Bookings', 20, bookingsStartY);
       
       // Create bookings table (limit to first 10 for PDF)
       const recentBookings = bookings.slice(0, 10).map(booking => [
@@ -264,7 +270,7 @@ const Overview = () => {
       ]);
       
       autoTable(doc, {
-        startY: doc.lastAutoTable.finalY + 30,
+        startY: doc.lastAutoTable ? doc.lastAutoTable.finalY + 30 : 210,
         head: [['Artist', 'Customer', 'Event Date', 'Event Type', 'Status', 'Venue']],
         body: recentBookings,
         theme: 'grid',
@@ -276,14 +282,16 @@ const Overview = () => {
     // Add system information
     doc.setFontSize(16);
     doc.setTextColor(30, 58, 138);
-    doc.text('System Information', 20, doc.lastAutoTable.finalY + 20);
+    const systemInfoStartY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : 300;
+    doc.text('System Information', 20, systemInfoStartY);
     
     doc.setFontSize(10);
     doc.setTextColor(107, 114, 128);
-    doc.text('• KalaaLink Artist Management System provides comprehensive artist booking and management capabilities', 20, doc.lastAutoTable.finalY + 30);
-    doc.text('• The system tracks artist applications, bookings, and revenue generation', 20, doc.lastAutoTable.finalY + 40);
-    doc.text('• Real-time updates ensure accurate data across all dashboard components', 20, doc.lastAutoTable.finalY + 50);
-    doc.text('• Automated approval workflows streamline artist onboarding processes', 20, doc.lastAutoTable.finalY + 60);
+    const baseY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 30 : 310;
+    doc.text('• KalaaLink Artist Management System provides comprehensive artist booking and management capabilities', 20, baseY);
+    doc.text('• The system tracks artist applications, bookings, and revenue generation', 20, baseY + 10);
+    doc.text('• Real-time updates ensure accurate data across all dashboard components', 20, baseY + 20);
+    doc.text('• Automated approval workflows streamline artist onboarding processes', 20, baseY + 30);
     
     // Add footer
     const pageCount = doc.internal.getNumberOfPages();

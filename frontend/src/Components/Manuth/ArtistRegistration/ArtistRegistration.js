@@ -12,7 +12,10 @@ function ArtistRegistration() {
     email: "",
     stageName: "",
     bio: "",
-    password: ""
+    password: "",
+    genre: "",
+    category: "",
+    summary: ""
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -27,15 +30,32 @@ function ArtistRegistration() {
     setIsLoading(true);
     setMessage({ type: '', text: '' });
 
+    // Debug: Log the form data being sent
+    console.log("Form data being sent:", form);
+    console.log("All required fields present:", {
+      firstName: !!form.firstName,
+      lastName: !!form.lastName,
+      email: !!form.email,
+      stageName: !!form.stageName,
+      bio: !!form.bio,
+      password: !!form.password,
+      genre: !!form.genre,
+      category: !!form.category,
+      summary: !!form.summary
+    });
+
     try {
       const res = await axios.post("http://localhost:5000/registeredArtists/register", form, {
         headers: { "Content-Type": "application/json" }
       });
+      console.log("Registration successful:", res.data);
       setMessage({ type: 'success', text: res.data.message });
-      setForm({ firstName: "", lastName: "", email: "", stageName: "", bio: "", password: "" });
+      setForm({ firstName: "", lastName: "", email: "", stageName: "", bio: "", password: "", genre: "", category: "", summary: "" });
     } catch (error) {
       console.error("Error registering artist:", error.response?.data || error.message);
-      setMessage({ type: 'error', text: "Error registering artist. Try again." });
+      console.error("Full error object:", error);
+      const errorMessage = error.response?.data?.message || "Error registering artist. Try again.";
+      setMessage({ type: 'error', text: errorMessage });
     } finally {
       setIsLoading(false);
     }
@@ -137,6 +157,50 @@ function ArtistRegistration() {
                 style={{ 
                   resize: 'vertical',
                   minHeight: '100px',
+                  fontFamily: 'inherit'
+                }}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="genre" className="form-label">Genre</label>
+              <input
+                type="text"
+                id="genre"
+                name="genre"
+                className="form-input"
+                placeholder="e.g., Pop, Rock, Classical, Jazz, etc."
+                value={form.genre}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="category" className="form-label">Category</label>
+              <input
+                type="text"
+                id="category"
+                name="category"
+                className="form-input"
+                placeholder="e.g., Singer, Musician, Band, DJ, etc."
+                value={form.category}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="summary" className="form-label">Summary</label>
+              <textarea
+                id="summary"
+                name="summary"
+                className="form-input"
+                placeholder="Brief summary of your artistic style and what makes you unique"
+                value={form.summary}
+                onChange={handleChange}
+                rows="3"
+                style={{ 
+                  resize: 'vertical',
+                  minHeight: '80px',
                   fontFamily: 'inherit'
                 }}
               />
