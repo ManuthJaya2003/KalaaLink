@@ -2,13 +2,14 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import MainNav from "../../MainNav/MainNav";
 import ArtistManagerNav from "../ArtistManagerNav/ArtistManagerNav";
+import logoutEmployee from "../../../utils/employeeLogout";
 import "./ArtistManagerDashboard.css";
 
 function ArtistManagerDashboard() {
   const navigate = useNavigate();
 
   const handleSignOut = () => {
-    navigate("/mainhome");
+    logoutEmployee(navigate, "/mainhome");
   };
 
   // Mock user name - this would come from authentication context

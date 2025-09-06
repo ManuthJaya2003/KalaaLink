@@ -13,16 +13,28 @@ const getAllEmployees = async (req, res) => {
 
 // Add new employee
 const addEmployees = async (req, res) => {
-  const { employee_id, name, email, password, role, status } = req.body;
+  const { firstName, lastName, email, password, role, username } = req.body;
 
   try {
+    // Check if email or username already exists
+    const existingEmployee = await Employee.findOne({
+      $or: [{ email }, { username }]
+    });
+
+    if (existingEmployee) {
+      return res.status(400).json({ 
+        message: existingEmployee.email === email ? "Email already exists" : "Username already exists" 
+      });
+    }
+
     const employee = new Employee({
-      employee_id,
-      name,
+      firstName,
+      lastName,
       email,
-      password,   // plain text
+      password,   // plain text as requested
       role,
-      status
+      username,
+      status: 'On Leave' // Default status
     });
     await employee.save();
     res.status(201).json({ employee });
@@ -44,12 +56,24 @@ const getById = async (req, res) => {
 
 // Update employee
 const updateEmployee = async (req, res) => {
-  const { employee_id, name, email, password, role, status } = req.body;
+  const { firstName, lastName, email, password, role, username, status } = req.body;
 
   try {
+    // Check if email or username already exists for other employees
+    const existingEmployee = await Employee.findOne({
+      _id: { $ne: req.params.id },
+      $or: [{ email }, { username }]
+    });
+
+    if (existingEmployee) {
+      return res.status(400).json({ 
+        message: existingEmployee.email === email ? "Email already exists" : "Username already exists" 
+      });
+    }
+
     const employee = await Employee.findByIdAndUpdate(
       req.params.id,
-      { employee_id, name, email, password, role, status },
+      { firstName, lastName, email, password, role, username, status },
       { new: true }
     );
     if (!employee) return res.status(404).json({ message: "Employee Not Found" });
@@ -70,7 +94,7 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
-// 🔹 Login employee (no bcrypt)
+// Login employee (plain text password comparison)
 const loginEmployee = async (req, res) => {
   const { email, password, role } = req.body;
 
@@ -86,17 +110,110 @@ const loginEmployee = async (req, res) => {
     if (employee.password !== password) 
       return res.status(401).json({ message: "Invalid credentials" });
 
+    // Set online status on login (status remains manual)
+    await Employee.findByIdAndUpdate(employee._id, { 
+      isOnline: true 
+    });
+
     res.status(200).json({
       message: "Login successful",
       employee: {
         id: employee._id,
-        name: employee.name,
+        employeeID: employee.employeeID,
+        firstName: employee.firstName,
+        lastName: employee.lastName,
         email: employee.email,
-        role: employee.role
+        role: employee.role,
+        username: employee.username
       }
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+// Update employee status to On Leave (logout)
+const logoutEmployee = async (req, res) => {
+  const { employeeId } = req.body;
+
+  try {
+    const employee = await Employee.findByIdAndUpdate(
+      employeeId,
+      { 
+        isOnline: false 
+      },
+      { new: true }
+    );
+
+    if (!employee) 
+      return res.status(404).json({ message: "Employee not found" });
+
+    res.status(200).json({
+      message: "Logout successful",
+      employee: {
+        id: employee._id,
+        status: employee.status
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Heartbeat mechanism to keep employee status active during session
+const heartbeatEmployee = async (req, res) => {
+  const { employeeId } = req.body;
+
+  try {
+    const employee = await Employee.findByIdAndUpdate(
+      employeeId,
+      { 
+        isOnline: true,
+        lastHeartbeat: new Date() // Track last activity
+      },
+      { new: true }
+    );
+
+    if (!employee) 
+      return res.status(404).json({ message: "Employee not found" });
+
+    res.status(200).json({
+      message: "Heartbeat successful",
+      employee: {
+        id: employee._id,
+        isOnline: employee.isOnline,
+        status: employee.status,
+        lastHeartbeat: employee.lastHeartbeat
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Utility function to automatically set employees offline if inactive
+const setInactiveEmployeesOffline = async () => {
+  try {
+    const inactiveThreshold = new Date(Date.now() - 5 * 60 * 1000); // 5 minutes ago
+    
+    const result = await Employee.updateMany(
+      {
+        isOnline: true,
+        $or: [
+          { lastHeartbeat: { $lt: inactiveThreshold } },
+          { lastHeartbeat: { $exists: false } }
+        ]
+      },
+      {
+        isOnline: false
+      }
+    );
+
+    console.log(`Set ${result.modifiedCount} inactive employees offline`);
+    return result.modifiedCount;
+  } catch (err) {
+    console.error('Error setting inactive employees offline:', err);
+    return 0;
   }
 };
 
@@ -109,5 +226,8 @@ module.exports = {
   getById,
   updateEmployee,
   deleteEmployee,
-  loginEmployee
+  loginEmployee,
+  logoutEmployee,
+  heartbeatEmployee,
+  setInactiveEmployeesOffline
 };

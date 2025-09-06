@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainNav from '../../MainNav/MainNav';
 import PasswordInput from '../../Common/PasswordInput';
+import employeeHeartbeat from '../../../utils/employeeHeartbeat';
 import '../../Login/Login.css';
 
 function ProfessionalLogin() {
@@ -55,8 +56,11 @@ function ProfessionalLogin() {
           setError("Invalid role");
       }
 
-      // Optionally, save employee info in localStorage
+      // Save employee info in localStorage and start heartbeat
       localStorage.setItem("employee", JSON.stringify(data.employee));
+      
+      // Start heartbeat mechanism to maintain online status
+      employeeHeartbeat.start(data.employee.id);
 
     } catch (err) {
       console.error(err);

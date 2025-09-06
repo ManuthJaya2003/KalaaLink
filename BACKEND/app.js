@@ -4,12 +4,13 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
+const { startCleanupScheduler } = require("./utils/employeeCleanup");
 require("dotenv").config(); // Load env variables
 
 const app = express();
 
 // ================== Middleware ==================
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: ["http://localhost:3000", "http://localhost:3001"], credentials: true }));
 
 // Raw body for Stripe webhooks
 app.use("/eventBookings/webhook", express.raw({ type: "application/json" }));
@@ -153,6 +154,8 @@ mongoose
     console.log("✅ Connected to MongoDB");
     app.listen(process.env.PORT || 5000, () => {
       console.log(`🚀 Server running on port ${process.env.PORT || 5000}`);
+      // Start employee cleanup scheduler
+      startCleanupScheduler();
     });
   })
   .catch((err) => {

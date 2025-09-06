@@ -42,12 +42,22 @@ const getById = async (req, res, next) => {
 // Update complaints details
 const updateComplaints = async (req, res, next) => {
     const id = req.params.id;
-    const { Name, Gmail, Message, Complaint_Category } = req.body;
+    const { Name, Gmail, Message, Complaint_Category, resolved, rejected } = req.body;
 
     try {
+        const updateData = {};
+        
+        // Only update fields that are provided
+        if (Name !== undefined) updateData.Name = Name;
+        if (Gmail !== undefined) updateData.Gmail = Gmail;
+        if (Message !== undefined) updateData.Message = Message;
+        if (Complaint_Category !== undefined) updateData.Complaint_Category = Complaint_Category;
+        if (resolved !== undefined) updateData.resolved = resolved;
+        if (rejected !== undefined) updateData.rejected = rejected;
+
         const complaints = await Complaints.findByIdAndUpdate(
             id,
-            { Name, Gmail, Message, Complaint_Category },
+            updateData,
             { new: true } // returns the updated document
         );
 
