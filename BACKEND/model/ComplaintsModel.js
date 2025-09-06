@@ -17,6 +17,14 @@ const complaintsSchema = new Schema({
     Complaint_Category:{
         type:String,//dataType
         required:true,//validate
+    },
+    resolved:{
+        type:Boolean,
+        default:false
+    },
+    rejected:{
+        type:Boolean,
+        default:false
     }
 })
 

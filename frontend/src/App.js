@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import axios from "axios";
+import employeeHeartbeat from "./utils/employeeHeartbeat";
 
 // CSS
 import "./App.css";
@@ -38,6 +39,7 @@ import CancelPage from "./Components/Lihini/Events/CancelPage.js";
 // ✅ New component from your smaller App.js
 import ContactUs from "./Components/Thaveesha/ContactUs/ContactUs";
 import ComplaintDashBoard from "./Components/Thaveesha/ContactUs/ComplaintDashBoard";
+import EmployeeManagement from "./Components/Thaveesha/EmployeeManagement/EmployeeManagement";
 
 // ✅ Marketplace components
 import Marketplace from "./Components/Diwya/Marketplace/Marketplace";
@@ -57,6 +59,29 @@ const URL = "http://localhost:5000/events";
 
 function App() {
   const [events, setEvents] = useState([]);
+
+  // Handle page unload/refresh to cleanup employee status
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Stop heartbeat when page is being unloaded
+      employeeHeartbeat.stop();
+    };
+
+    const handleVisibilityChange = () => {
+      // Stop heartbeat when tab becomes hidden (user switches tabs)
+      if (document.hidden) {
+        employeeHeartbeat.stop();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   useEffect(() => {
     console.log("App.js: Fetching events from:", URL);
@@ -128,6 +153,7 @@ function App() {
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/complaints" element={<ComplaintDashBoard />} />
+        <Route path="/employee-management" element={<EmployeeManagement />} />
 
         {/* ---------- Marketplace ---------- */}
         <Route path="/marketplace" element={<Marketplace />} />

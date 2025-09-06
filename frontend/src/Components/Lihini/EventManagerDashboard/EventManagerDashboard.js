@@ -8,6 +8,7 @@ import AnalyticsTab from "./AnalyticsTab";
 import EventUpdate from "../EventUpdate/EventUpdate";
 import BookingsTab from "./BookingsTab"; // ✅ new import
 import { useParams } from "react-router-dom";
+import logoutEmployee from "../../../utils/employeeLogout";
 
 function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
   const [activeTab, setActiveTab] = useState("home");
@@ -16,13 +17,7 @@ function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
 
   // Sign out function
   const handleSignOut = () => {
-    // Clear any stored user data
-    localStorage.removeItem("employee");
-    localStorage.removeItem("user");
-    localStorage.removeItem("artist");
-    
-    // Navigate to home page
-    navigate("/");
+    logoutEmployee(navigate, "/");
   };
 
   // Fetch events
