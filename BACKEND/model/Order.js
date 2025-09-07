@@ -59,6 +59,10 @@ const orderSchema = new mongoose.Schema({
     district: String,
     postalCode: String,
     contactNumber: String,
+    coordinates: {
+      lat: Number,
+      lng: Number,
+    },
   },
   useDelivery: {
     type: Boolean,

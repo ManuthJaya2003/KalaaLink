@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../CartContext/CartContext';
 import MainNav from '../../MainNav/MainNav';
 import MainFooter from '../../MainFooter/MainFooter';
+import MapPicker from '../../Manuth/BookArtist/MapPicker';
 import axios from 'axios';
 
 const CartPage = () => {
@@ -24,6 +25,7 @@ const CartPage = () => {
       contactNumber: ''
     }
   });
+  const [deliveryCoordinates, setDeliveryCoordinates] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
 
@@ -64,7 +66,10 @@ const CartPage = () => {
         customerName: checkoutData.customerName,
         customerEmail: checkoutData.customerEmail,
         customerPhone: checkoutData.customerPhone,
-        deliveryAddress: checkoutData.useDelivery ? checkoutData.deliveryAddress : null,
+        deliveryAddress: checkoutData.useDelivery ? {
+          ...checkoutData.deliveryAddress,
+          coordinates: deliveryCoordinates
+        } : null,
         useDelivery: checkoutData.useDelivery
       };
 
@@ -440,6 +445,32 @@ const CartPage = () => {
                             border: '1px solid #d1d5db',
                             borderRadius: '6px',
                             fontSize: '14px'
+                          }}
+                        />
+                      </div>
+
+                      {/* Map Picker for Delivery Location */}
+                      <div style={{ marginBottom: '15px' }}>
+                        <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '10px' }}>
+                          📍 Delivery Location (Optional)
+                        </label>
+                        <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '10px' }}>
+                          Click on the map to set the exact delivery location for better navigation
+                        </p>
+                        <MapPicker
+                          selectedLocation={deliveryCoordinates}
+                          onLocationSelect={setDeliveryCoordinates}
+                          onAddressChange={(address) => {
+                            // Auto-fill address fields if possible
+                            if (address && !checkoutData.deliveryAddress.address) {
+                              setCheckoutData({
+                                ...checkoutData,
+                                deliveryAddress: {
+                                  ...checkoutData.deliveryAddress,
+                                  address: address
+                                }
+                              });
+                            }
                           }}
                         />
                       </div>

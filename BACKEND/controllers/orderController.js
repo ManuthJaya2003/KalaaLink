@@ -1,5 +1,6 @@
 const Order = require('../model/Order');
 const Art = require('../model/Art');
+const Delivery = require('../model/Delivery');
 const Stripe = require('stripe');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -237,11 +238,48 @@ exports.handleStripeWebhook = async (req, res) => {
       
       await order.save();
       
+      // Create delivery record if delivery is requested
+      if (order.useDelivery && order.deliveryAddress) {
+        try {
+          // Create delivery record for each item in the order
+          for (const item of order.items) {
+            const delivery = new Delivery({
+              artId: item.productId,
+              orderId: order._id, // Link to the order
+              customerName: order.customerName,
+              customerEmail: order.customerEmail,
+              address: order.deliveryAddress.address,
+              city: order.deliveryAddress.city,
+              district: order.deliveryAddress.district,
+              postalCode: order.deliveryAddress.postalCode,
+              contactNumber: order.deliveryAddress.contactNumber,
+              coordinates: order.deliveryAddress.coordinates,
+              deliveryStatus: 'Pending',
+              quantity: item.quantity,
+              productName: item.productName,
+              productPrice: item.price
+            });
+            
+            await delivery.save();
+            console.log('✅ Delivery record created:', {
+              deliveryId: delivery._id,
+              orderId: order._id,
+              productName: item.productName,
+              customerName: order.customerName
+            });
+          }
+        } catch (deliveryError) {
+          console.error('❌ Error creating delivery records:', deliveryError);
+          // Don't fail the order update if delivery creation fails
+        }
+      }
+      
       console.log('✅ Marketplace order updated successfully:', {
         orderId: order._id,
         newPaymentStatus: order.paymentStatus,
         newOrderStatus: order.status,
-        paidAt: order.paidAt
+        paidAt: order.paidAt,
+        deliveryCreated: order.useDelivery && order.deliveryAddress
       });
 
       return res.status(200).json({ 
@@ -477,6 +515,42 @@ exports.confirmOrderPayment = async (req, res) => {
           
           await order.save();
           
+          // Create delivery record if delivery is requested
+          if (order.useDelivery && order.deliveryAddress) {
+            try {
+              // Create delivery record for each item in the order
+              for (const item of order.items) {
+                const delivery = new Delivery({
+                  artId: item.productId,
+                  orderId: order._id, // Link to the order
+                  customerName: order.customerName,
+                  customerEmail: order.customerEmail,
+                  address: order.deliveryAddress.address,
+                  city: order.deliveryAddress.city,
+                  district: order.deliveryAddress.district,
+                  postalCode: order.deliveryAddress.postalCode,
+                  contactNumber: order.deliveryAddress.contactNumber,
+                  coordinates: order.deliveryAddress.coordinates,
+                  deliveryStatus: 'Pending',
+                  quantity: item.quantity,
+                  productName: item.productName,
+                  productPrice: item.price
+                });
+                
+                await delivery.save();
+                console.log('✅ Delivery record created via payment confirmation:', {
+                  deliveryId: delivery._id,
+                  orderId: order._id,
+                  productName: item.productName,
+                  customerName: order.customerName
+                });
+              }
+            } catch (deliveryError) {
+              console.error('❌ Error creating delivery records via payment confirmation:', deliveryError);
+              // Don't fail the order update if delivery creation fails
+            }
+          }
+          
           console.log('✅ Order payment confirmed via Stripe verification:', {
             orderId: order._id,
             sessionId: session.id,
@@ -526,6 +600,42 @@ exports.confirmOrderPayment = async (req, res) => {
       order.status = 'Processing';
       
       await order.save();
+      
+      // Create delivery record if delivery is requested
+      if (order.useDelivery && order.deliveryAddress) {
+        try {
+          // Create delivery record for each item in the order
+          for (const item of order.items) {
+            const delivery = new Delivery({
+              artId: item.productId,
+              orderId: order._id, // Link to the order
+              customerName: order.customerName,
+              customerEmail: order.customerEmail,
+              address: order.deliveryAddress.address,
+              city: order.deliveryAddress.city,
+              district: order.deliveryAddress.district,
+              postalCode: order.deliveryAddress.postalCode,
+              contactNumber: order.deliveryAddress.contactNumber,
+              coordinates: order.deliveryAddress.coordinates,
+              deliveryStatus: 'Pending',
+              quantity: item.quantity,
+              productName: item.productName,
+              productPrice: item.price
+            });
+            
+            await delivery.save();
+            console.log('✅ Delivery record created via manual payment confirmation:', {
+              deliveryId: delivery._id,
+              orderId: order._id,
+              productName: item.productName,
+              customerName: order.customerName
+            });
+          }
+        } catch (deliveryError) {
+          console.error('❌ Error creating delivery records via manual payment confirmation:', deliveryError);
+          // Don't fail the order update if delivery creation fails
+        }
+      }
       
       console.log('✅ Order payment manually confirmed:', {
         orderId: order._id,
@@ -590,6 +700,42 @@ exports.manualUpdatePaymentStatus = async (req, res) => {
     if (paymentStatus === 'paid') {
       order.paidAt = new Date();
       order.status = 'Processing';
+      
+      // Create delivery record if delivery is requested and order wasn't already paid
+      if (previousStatus !== 'paid' && order.useDelivery && order.deliveryAddress) {
+        try {
+          // Create delivery record for each item in the order
+          for (const item of order.items) {
+            const delivery = new Delivery({
+              artId: item.productId,
+              orderId: order._id, // Link to the order
+              customerName: order.customerName,
+              customerEmail: order.customerEmail,
+              address: order.deliveryAddress.address,
+              city: order.deliveryAddress.city,
+              district: order.deliveryAddress.district,
+              postalCode: order.deliveryAddress.postalCode,
+              contactNumber: order.deliveryAddress.contactNumber,
+              coordinates: order.deliveryAddress.coordinates,
+              deliveryStatus: 'Pending',
+              quantity: item.quantity,
+              productName: item.productName,
+              productPrice: item.price
+            });
+            
+            await delivery.save();
+            console.log('✅ Delivery record created via manual payment status update:', {
+              deliveryId: delivery._id,
+              orderId: order._id,
+              productName: item.productName,
+              customerName: order.customerName
+            });
+          }
+        } catch (deliveryError) {
+          console.error('❌ Error creating delivery records via manual payment status update:', deliveryError);
+          // Don't fail the order update if delivery creation fails
+        }
+      }
     } else if (paymentStatus === 'failed' || paymentStatus === 'cancelled') {
       order.status = 'Cancelled';
     }
