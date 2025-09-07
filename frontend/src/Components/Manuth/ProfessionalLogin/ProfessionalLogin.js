@@ -114,6 +114,7 @@ function ProfessionalLogin() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
+              label="Password"
               required
             />
 
