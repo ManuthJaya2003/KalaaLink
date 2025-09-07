@@ -85,6 +85,7 @@ function SignUp() {
               value={formData.password}
               onChange={handleChange}
               placeholder="Create a password"
+              label="Password"
               required
             />
 

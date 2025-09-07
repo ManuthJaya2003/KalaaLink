@@ -212,6 +212,7 @@ function ArtistRegistration() {
               value={form.password}
               onChange={handleChange}
               placeholder="Create a secure password"
+              label="Password"
               required
             />
 

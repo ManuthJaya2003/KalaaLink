@@ -1,0 +1,10 @@
+const express = require("express");
+const router = express.Router();
+
+const Testimonial = require("../Model/TestimonialsModel");
+const TestimonialsController = require("../Controllers/TestimonialsControllers");
+
+router.get("/", TestimonialsController.getAllTestimonials);
+router.post("/", TestimonialsController.createTestimonial);
+
+module.exports = router;

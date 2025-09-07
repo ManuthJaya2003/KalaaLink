@@ -55,6 +55,7 @@ function Login() {
               value={formData.password}
               onChange={handleInputChange}
               placeholder="Enter your password"
+              label="Password"
               required
             />
 
