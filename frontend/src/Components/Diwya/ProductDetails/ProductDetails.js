@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Product from '../Product/Product';
 import Orders from '../Orders/Orders';
+import Deliveries from '../Deliveries/Deliveries';
 import { useCart } from '../CartContext/CartContext';
 
 const PRODUCT_URL = 'http://localhost:5000/api/art';
@@ -118,41 +119,7 @@ function ProductDetails({ activeTab, onTabChange }) {
           )}
 
           {activeTab === 'deliveries' && (
-            <div>
-              <h2 style={{ textAlign: 'center', fontSize: '24px', marginBottom: '15px' }}>Delivery List</h2>
-              {deliveries.length > 0 ? (
-                deliveries.map((delivery) => (
-                  <div
-                    key={delivery._id}
-                    style={{
-                      marginBottom: '15px',
-                      border: '1px solid #ccc',
-                      padding: '10px',
-                      borderRadius: '4px',
-                    }}
-                  >
-                    <p><strong>Delivery ID:</strong> {delivery._id}</p>
-                    <p><strong>Customer Name:</strong> {delivery.customerName}</p>
-                    <p><strong>Address:</strong> {delivery.address}</p>
-                    <p><strong>City:</strong> {delivery.city}</p>
-                    <p><strong>District:</strong> {delivery.district}</p>
-                    <p><strong>Postal Code:</strong> {delivery.postalCode}</p>
-                    <p><strong>Contact Number:</strong> {delivery.contactNumber}</p>
-                    <p><strong>Status:</strong> {delivery.deliveryStatus}</p>
-                    <p><strong>Created At:</strong> {new Date(delivery.createdAt).toLocaleString('en-US', {
-                      timeZone: 'Asia/Colombo',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}</p>
-                  </div>
-                ))
-              ) : (
-                <p style={{ textAlign: 'center', color: '#6b7280' }}>No deliveries found</p>
-              )}
-            </div>
+            <Deliveries />
           )}
 
           {activeTab === 'orders' && (
