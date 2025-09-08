@@ -240,7 +240,7 @@ function AnalyticsTab() {
           <h2 class="section-title">Executive Summary</h2>
           <div class="summary-grid">
             <div class="summary-item">
-              <div class="summary-value">${analyticsData.summary.totalRevenue}</div>
+              <div class="summary-value">LKR {analyticsData.summary.totalRevenue}</div>
               <div class="summary-label">Total Revenue</div>
               <div class="summary-description">From all event ticket sales</div>
             </div>
@@ -255,7 +255,7 @@ function AnalyticsTab() {
               <div class="summary-description">Currently listed</div>
             </div>
             <div class="summary-item negative">
-              <div class="summary-value">${analyticsData.summary.totalRefunds}</div>
+              <div class="summary-value">LKR {analyticsData.summary.totalRefunds}</div>
               <div class="summary-label">Total Refunds</div>
               <div class="summary-description">Processed across all events</div>
             </div>
@@ -315,7 +315,7 @@ function AnalyticsTab() {
               ${analyticsData.topPerformingEvents.map((event, index) => `
                 <tr>
                   <td>${event.event}</td>
-                  <td class="revenue-cell">${event.revenue}</td>
+                  <td class="revenue-cell">LKR {event.revenue}</td>
                   <td>${event.ticketsSold}</td>
                   <td>${index === 0 ? '🥇 Top Performer' : index === 1 ? '🥈 Runner Up' : index === 2 ? '🥉 Third Place' : '⭐ Good'}</td>
                 </tr>

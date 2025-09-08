@@ -123,7 +123,7 @@ exports.createMarketplaceOrder = async (req, res) => {
     // Create Stripe checkout session
     const lineItems = validatedItems.map(item => ({
       price_data: {
-        currency: 'usd',
+        currency: 'lkr',
         product_data: {
           name: item.productName,
           description: `Quantity: ${item.quantity}`,

@@ -180,7 +180,7 @@ function ArtistDashboard() {
       doc.text(`Full Name: ${artist.firstName} ${artist.lastName}`, 20, 110);
       doc.text(`Stage Name: ${artist.stageName || "Not specified"}`, 20, 125);
       doc.text(`Email: ${artist.email || "Not specified"}`, 20, 140);
-      doc.text(`Booking Price: $${artist.bookingPrice || 0}`, 20, 155);
+      doc.text(`Booking Price: LKR ${artist.bookingPrice || 0}`, 20, 155);
       
       // Bio section (with word wrapping)
       const bioText = artist.bio || "No bio available";
@@ -195,7 +195,7 @@ function ArtistDashboard() {
       
       doc.setFontSize(14);
       doc.setTextColor(16, 185, 129); // Green color for revenue
-      doc.text(`Total Revenue: $${totalRevenue.toLocaleString()}`, 20, 230);
+      doc.text(`Total Revenue: LKR ${totalRevenue.toLocaleString()}`, 20, 230);
       
       // Calculate additional revenue metrics
       const paidBookings = bookings.filter(booking => booking.paymentStatus === "paid");
@@ -206,7 +206,7 @@ function ArtistDashboard() {
       doc.setTextColor(55, 65, 81);
       doc.text(`Paid Bookings: ${paidBookings.length}`, 20, 245);
       doc.text(`Pending Payments: ${pendingBookings.length}`, 20, 255);
-      doc.text(`Potential Revenue: $${potentialRevenue.toLocaleString()}`, 20, 265);
+      doc.text(`Potential Revenue: LKR ${potentialRevenue.toLocaleString()}`, 20, 265);
       
       // Booking Statistics
       doc.setFontSize(16);
@@ -284,7 +284,7 @@ function ArtistDashboard() {
       let insightsY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 35 : 395;
       
       if (totalRevenue > 0) {
-        doc.text(`• Total earnings: $${totalRevenue.toLocaleString()}`, 20, insightsY);
+        doc.text(`• Total earnings: LKR ${totalRevenue.toLocaleString()}`, 20, insightsY);
         insightsY += 10;
       }
       
@@ -299,7 +299,7 @@ function ArtistDashboard() {
       }
       
       if (pendingBookings.length > 0) {
-        doc.text(`• ${pendingBookings.length} pending payments worth $${potentialRevenue.toLocaleString()}`, 20, insightsY);
+        doc.text(`• ${pendingBookings.length} pending payments worth LKR ${potentialRevenue.toLocaleString()}`, 20, insightsY);
         insightsY += 10;
       }
       
@@ -726,8 +726,8 @@ function ArtistDashboard() {
           <div className="main-content">
             {/* Total Revenue Flashcard */}
             <div className="revenue-card">
-              <h3 className="card-title">$ Total Revenue</h3>
-              <div className="card-value">${totalRevenue.toLocaleString()}</div>
+              <h3 className="card-title">LKR Total Revenue</h3>
+              <div className="card-value">LKR {totalRevenue.toLocaleString()}</div>
               <p className="card-description">This is your total earnings to date.</p>
             </div>
 
@@ -1139,7 +1139,7 @@ function ArtistDashboard() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="bookingPrice">Booking Price ($):</label>
+                <label htmlFor="bookingPrice">Booking Price (LKR):</label>
                 <input
                   type="number"
                   id="bookingPrice"

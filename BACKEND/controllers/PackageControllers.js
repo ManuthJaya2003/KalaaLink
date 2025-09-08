@@ -21,7 +21,7 @@ const addPackage = async (req, res, next) => {
       return res.status(400).json({ message: "Name and amount are required" });
     }
     if (amount < 10) {
-      return res.status(400).json({ message: "Amount must be at least $10" });
+      return res.status(400).json({ message: "Amount must be at least LKR 10" });
     }
     const package = new Package({ name, amount, description, isActive });
     await package.save();
@@ -54,7 +54,7 @@ const updatePackage = async (req, res, next) => {
       return res.status(400).json({ message: "Name and amount are required" });
     }
     if (amount < 10) {
-      return res.status(400).json({ message: "Amount must be at least $10" });
+      return res.status(400).json({ message: "Amount must be at least LKR 10" });
     }
     const package = await Package.findByIdAndUpdate(
       id,

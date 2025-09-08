@@ -180,7 +180,7 @@ const getBookingAnalytics = async (req, res) => {
       .slice(0, 5)
       .map(event => ({
         event: event.eventTitle,
-        revenue: `$${event.revenue.toLocaleString()}`,
+        revenue: `LKR ${event.revenue.toLocaleString()}`,
         ticketsSold: event.ticketsSold.toString()
       }));
     
@@ -203,10 +203,10 @@ const getBookingAnalytics = async (req, res) => {
     
     const analytics = {
       summary: {
-        totalRevenue: `$${totalRevenue.toLocaleString()}`,
+        totalRevenue: `LKR ${totalRevenue.toLocaleString()}`,
         ticketsSold: `+${totalTicketsSold}`,
         activeEvents: activeEvents.toString(),
-        totalRefunds: `$${totalRefunds.toLocaleString()}`,
+        totalRefunds: `LKR ${totalRefunds.toLocaleString()}`,
         refundedTickets: totalRefundedTickets.toString()
       },
       chartData: chartData,

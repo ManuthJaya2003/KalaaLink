@@ -49,7 +49,7 @@ const RegistrationConfirmation = ({ event, onClose }) => {
       <div className="form-header">
         <h3>Register for {event.eventTitle}</h3>
         <p className="registration-fee">
-          Registration Fee: <span className="fee-amount">${event.registrationFeeArtist}</span>
+          Registration Fee: <span className="fee-amount">LKR {event.registrationFeeArtist}</span>
         </p>
         <p className="registration-description">
           You will be redirected to Stripe's secure checkout page to complete your payment.
@@ -72,7 +72,7 @@ const RegistrationConfirmation = ({ event, onClose }) => {
           onClick={handleRegister}
           disabled={loading}
         >
-          {loading ? "Processing..." : `Pay $${event.registrationFeeArtist}`}
+          {loading ? "Processing..." : `Pay LKR ${event.registrationFeeArtist}`}
         </button>
       </div>
 
@@ -339,7 +339,7 @@ function Events() {
                   </div>
 
                   <div className="registration-fee">
-                    Registration Fee: <span className="fee-amount">${event.registrationFeeArtist}</span>
+                    Registration Fee: <span className="fee-amount">LKR {event.registrationFeeArtist}</span>
                   </div>
 
                   <div className="event-actions">

@@ -161,7 +161,7 @@ function Product(props) {
         <h2>Frame Size: {frameSize}</h2>
         <h2>Color Palette: {Array.isArray(colorPalette) ? colorPalette.join(', ') : colorPalette}</h2>
         <h2>Art Type: {artType}</h2>
-        <h2>Price: ${price}</h2>
+        <h2>Price: LKR {price}</h2>
         <h2>Image: <img src={image} alt={artType} style={{ maxWidth: '200px' }} /></h2>
         <h2>
           Created At:{' '}

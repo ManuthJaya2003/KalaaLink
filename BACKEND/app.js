@@ -108,7 +108,7 @@ app.get("/api/art/:id/report", async (req, res) => {
           : art.colorPalette
       }`
     );
-    doc.text(`Price: $${art.price}`);
+    doc.text(`Price: LKR ${art.price}`);
     doc.text(
       `Created At: ${new Date(art.createdAt).toLocaleString("en-US", {
         timeZone: "Asia/Colombo",

@@ -162,7 +162,7 @@ function BookArtist() {
   return (
     <div className="book-artist-container">
       <h2>Book {artist.name}</h2>
-      <p>Price: ${artist.bookingPrice}</p>
+      <p>Price: LKR {artist.bookingPrice}</p>
 
       {!showPayment ? (
         <form onSubmit={handleBookingSubmit} className="book-artist-form">
@@ -231,7 +231,7 @@ function BookArtist() {
         <div className="payment-section">
           <h3>Booking created! Ready to pay</h3>
           <p>
-            Artist: {artist.name} | Event: {formData.eventType} | Price: ${artist.bookingPrice}
+            Artist: {artist.name} | Event: {formData.eventType} | Price: LKR {artist.bookingPrice}
           </p>
           <button onClick={handlePayNow} disabled={isProcessing}>
             {isProcessing ? "Redirecting..." : "💳 Pay Now with Stripe"}

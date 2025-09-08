@@ -294,7 +294,7 @@ function Artists() {
                 <div className="detail-item">
                   <span className="detail-label">Booking Price</span>
                   <span className="detail-value price">
-                    ${selectedArtist.bookingPrice}
+                    LKR {selectedArtist.bookingPrice}
                   </span>
                 </div>
 

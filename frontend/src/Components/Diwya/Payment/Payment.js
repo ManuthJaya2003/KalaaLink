@@ -99,7 +99,7 @@ const Payment = () => {
         <p><strong>Product ID:</strong> {productId || 'Not provided'}</p>
         <p><strong>Quantity:</strong> {quantity || '1'}</p>
         <p><strong>Delivery ID:</strong> {deliveryId || 'Not provided'}</p>
-        <p><strong>Amount:</strong> ${paymentDetails.amount || '0.00'}</p>
+        <p><strong>Amount:</strong> LKR {paymentDetails.amount || '0.00'}</p>
 
         <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
           <div style={{ marginBottom: '15px' }}>

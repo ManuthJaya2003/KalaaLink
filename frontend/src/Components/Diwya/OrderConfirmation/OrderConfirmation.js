@@ -143,7 +143,7 @@ const OrderConfirmation = () => {
             </div>
             <div className="info-item">
               <span className="label">Total Amount:</span>
-              <span className="value total-amount">${order.totalAmount}</span>
+              <span className="value total-amount">LKR {order.totalAmount}</span>
             </div>
           </div>
         </div>
@@ -199,8 +199,8 @@ const OrderConfirmation = () => {
                   <div className="item-details">
                     <h3>{item.productName}</h3>
                     <p className="item-quantity">Quantity: {item.quantity}</p>
-                    <p className="item-price">${item.price} each</p>
-                    <p className="item-total">Total: ${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="item-price">LKR {item.price} each</p>
+                    <p className="item-total">Total: LKR {(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 </div>
               ))
@@ -214,7 +214,7 @@ const OrderConfirmation = () => {
           <h2>Order Summary</h2>
           <div className="summary-row">
             <span>Subtotal:</span>
-            <span>${order.totalAmount}</span>
+            <span>LKR {order.totalAmount}</span>
           </div>
           <div className="summary-row">
             <span>Delivery:</span>
@@ -222,7 +222,7 @@ const OrderConfirmation = () => {
           </div>
           <div className="summary-row total">
             <span>Total:</span>
-            <span>${order.totalAmount}</span>
+            <span>LKR {order.totalAmount}</span>
           </div>
         </div>
       </div>

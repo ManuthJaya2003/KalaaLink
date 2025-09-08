@@ -308,7 +308,7 @@ const ProductPopup = ({ product, onClose, onAddToCart }) => {
         <p style={{ marginBottom: '12px', color: '#374151', lineHeight: '1.5' }}><strong style={{ color: '#1f2937' }}>Artist Name:</strong> {product.artistName}</p>
         <p style={{ marginBottom: '12px', color: '#374151', lineHeight: '1.5' }}><strong style={{ color: '#1f2937' }}>Frame Size:</strong> {product.frameSize}</p>
         <p style={{ marginBottom: '12px', color: '#374151', lineHeight: '1.5' }}><strong style={{ color: '#1f2937' }}>Color Palette:</strong> {Array.isArray(product.colorPalette) ? product.colorPalette.join(', ') : product.colorPalette}</p>
-        <p style={{ marginBottom: '12px', color: '#374151', lineHeight: '1.5' }}><strong style={{ color: '#1f2937' }}>Price:</strong> ${product.price}</p>
+        <p style={{ marginBottom: '12px', color: '#374151', lineHeight: '1.5' }}><strong style={{ color: '#1f2937' }}>Price:</strong> LKR {product.price}</p>
         <p style={{ marginBottom: '20px', color: '#374151', lineHeight: '1.5' }}><strong style={{ color: '#1f2937' }}>Created At:</strong> {new Date(product.createdAt).toLocaleString('en-US', {
           timeZone: 'Asia/Colombo',
           year: 'numeric',

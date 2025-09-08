@@ -169,7 +169,7 @@ const createStripeCheckoutSession = async (req, res) => {
       line_items: [
         {
           price_data: {
-            currency: "usd",
+            currency: "lkr",
             product_data: {
               name: `${artist.name} - ${booking.eventType}`,
               description: `Event on ${new Date(booking.eventDate).toLocaleDateString()} at ${booking.eventVenue}`,

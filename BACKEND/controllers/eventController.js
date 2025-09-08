@@ -227,7 +227,7 @@ const createRegistrationCheckoutSession = async (req, res) => {
       line_items: [
         {
           price_data: {
-            currency: "usd",
+            currency: "lkr",
             product_data: {
               name: `Event Registration - ${event.eventTitle}`,
               description: `Registration for ${event.eventTitle} on ${new Date(event.eventDate).toLocaleDateString()} at ${event.eventVenue}`,

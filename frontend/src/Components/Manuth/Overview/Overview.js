@@ -213,7 +213,7 @@ const Overview = () => {
     // Create overview table
     const overviewData = [
       ['Metric', 'Value', 'Description'],
-      ['Total Revenue', `$${stats.totalRevenue.toLocaleString()}`, 'Total revenue from all paid bookings'],
+      ['Total Revenue', `LKR ${stats.totalRevenue.toLocaleString()}`, 'Total revenue from all paid bookings'],
       ['Total Artists', stats.totalArtists.toString(), 'Number of artists in the system'],
       ['Pending Approvals', stats.pendingApprovals.toString(), 'Artist applications awaiting approval'],
       ['Rejected Approvals', stats.rejectedApprovals.toString(), 'Rejected artist applications']
@@ -238,7 +238,7 @@ const Overview = () => {
       // Create revenue table
       const revenueData = chartData.map(item => [
         item.artistName,
-        `$${item.revenue.toLocaleString()}`,
+        `LKR ${item.revenue.toLocaleString()}`,
         `${((item.revenue / stats.totalRevenue) * 100).toFixed(1)}%`
       ]);
       
@@ -419,7 +419,7 @@ const Overview = () => {
            <div className="overview-cards-container">
              <OverviewCard
                title="Total Revenue"
-               value={`$${stats.totalRevenue.toLocaleString()}`}
+               value={`LKR ${stats.totalRevenue.toLocaleString()}`}
                description="From all paid bookings"
                icon="💰"
                color="green"
@@ -563,11 +563,11 @@ const Overview = () => {
                        tick={{ fontSize: 12 }}
                      />
                      <YAxis 
-                       tickFormatter={(value) => `$${value.toLocaleString()}`}
+                       tickFormatter={(value) => `LKR ${value.toLocaleString()}`}
                        tick={{ fontSize: 12 }}
                      />
                      <Tooltip 
-                       formatter={(value, name) => [`$${value.toLocaleString()}`, 'Revenue']}
+                       formatter={(value, name) => [`LKR ${value.toLocaleString()}`, 'Revenue']}
                        labelFormatter={(label) => `Artist: ${label}`}
                        contentStyle={{
                          backgroundColor: 'rgba(255, 255, 255, 0.95)',

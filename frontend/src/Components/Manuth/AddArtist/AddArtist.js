@@ -189,7 +189,7 @@ function Artist() {
               <div className="form-group">
                 <label htmlFor="bookingPrice" className="form-label">Booking Price *</label>
                 <div className="price-input-container">
-                  <span className="currency-symbol">$</span>
+                  <span className="currency-symbol">LKR</span>
                   <input
                     type="number"
                     id="bookingPrice"

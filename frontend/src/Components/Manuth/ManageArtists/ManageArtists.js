@@ -119,7 +119,7 @@ function ManageArtists() {
             <p><strong>ID:</strong> {artist._id || artist.artist_id}</p>
             <p><strong>Genre:</strong> {artist.genre}</p>
             <p><strong>Category:</strong> {artist.category}</p>
-            <p><strong>Booking Price:</strong> {artist.bookingPrice}</p>
+            <p><strong>Booking Price:</strong> LKR {artist.bookingPrice}</p>
             <p><strong>Summary:</strong> {artist.summary}</p>
             <p><strong>Bio:</strong> {artist.bio}</p>
             {artist.image && (

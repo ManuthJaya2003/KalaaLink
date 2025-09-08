@@ -28,7 +28,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         <p className="product-artist"><strong>Artist:</strong> {product.artistName}</p>
         <p className="product-size"><strong>Size:</strong> {product.size}</p>
         <p className="product-frame"><strong>Frame:</strong> {product.frameSize}</p>
-        <p className="product-price">${product.price}</p>
+        <p className="product-price">LKR {product.price}</p>
       </div>
       <div className="product-actions">
         <button

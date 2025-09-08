@@ -85,7 +85,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         fontSize: '18px',
         margin: '12px 0'
       }}>
-        ${product.price}
+        LKR ${product.price}
       </p>
 
       <div style={{ 

@@ -158,7 +158,7 @@ const CartPage = () => {
             >
               <div>
                 <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '10px' }}>{item.artType}</h3>
-                <p><strong>Price:</strong> ${item.price} x {item.quantity} = ${(item.price * item.quantity).toFixed(2)}</p>
+                <p><strong>Price:</strong> LKR {item.price} x {item.quantity} = LKR {(item.price * item.quantity).toFixed(2)}</p>
                 <p><strong>Size:</strong> {item.size}</p>
                 <p><strong>Artist:</strong> {item.artistName}</p>
               </div>
@@ -178,7 +178,7 @@ const CartPage = () => {
             </div>
           ))}
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <p style={{ fontSize: '18px', fontWeight: 'bold' }}>Total: ${totalPrice.toFixed(2)}</p>
+            <p style={{ fontSize: '18px', fontWeight: 'bold' }}>Total: LKR {totalPrice.toFixed(2)}</p>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '10px' }}>
               <button
                 onClick={handleCheckout}
@@ -519,7 +519,7 @@ const CartPage = () => {
                         fontWeight: '600'
                       }}
                     >
-                      {isProcessing ? 'Processing...' : `Pay $${totalPrice.toFixed(2)}`}
+                      {isProcessing ? 'Processing...' : `Pay LKR ${totalPrice.toFixed(2)}`}
                     </button>
                   </div>
                 </form>
