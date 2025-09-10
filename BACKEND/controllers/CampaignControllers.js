@@ -1,8 +1,17 @@
-const Campaign = require("../Model/CampaignModel");
+const mongoose = require('mongoose');
+
+// Get Campaign model safely
+const getCampaignModel = () => {
+  if (mongoose.models.Campaign) {
+    return mongoose.models.Campaign;
+  }
+  return require("../Model/CampaignModel");
+};
 
 const getAllCampaigns = async (req, res, next) => {
   let campaigns;
   try {
+    const Campaign = getCampaignModel();
     campaigns = await Campaign.find();
   } catch (err) {
     console.log(err);
@@ -18,6 +27,7 @@ const addCampaign = async (req, res, next) => {
   const { name, goal, description, packages } = req.body;
   let campaign;
   try {
+    const Campaign = getCampaignModel();
     campaign = new Campaign({ name, goal, description, packages });
     await campaign.save();
   } catch (err) {
@@ -34,6 +44,7 @@ const getById = async (req, res, next) => {
   const id = req.params.id;
   let campaign;
   try {
+    const Campaign = getCampaignModel();
     campaign = await Campaign.findById(id);
   } catch (err) {
     console.log(err);
@@ -50,6 +61,7 @@ const updateCampaign = async (req, res, next) => {
   const { name, goal, description, packages } = req.body;
   let campaign;
   try {
+    const Campaign = getCampaignModel();
     campaign = await Campaign.findByIdAndUpdate(
       id,
       { name, goal, description, packages },
@@ -69,6 +81,7 @@ const deleteCampaign = async (req, res, next) => {
   const id = req.params.id;
   let campaign;
   try {
+    const Campaign = getCampaignModel();
     campaign = await Campaign.findByIdAndDelete(id);
   } catch (err) {
     console.log(err);

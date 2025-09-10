@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 //Insert Model
-const Complaints = require("../model/ComplaintsModel");
+// Complaints model will be loaded via controller
 //Insert Complaints Controller
 const ComplaintsController = require("../controllers/ComplaintsControllers");
 

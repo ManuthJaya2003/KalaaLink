@@ -4,13 +4,9 @@ const Schema = mongoose.Schema;
 const EmployeeSchema = new Schema({
   employeeID: { 
     type: String, 
-    required: true, 
+    required: false, 
     unique: true,
-    default: () => {
-      // Generate EMP001, EMP002, etc.
-      const count = Math.floor(Math.random() * 1000) + 1;
-      return `EMP${count.toString().padStart(3, '0')}`;
-    }
+    sparse: true
   },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
