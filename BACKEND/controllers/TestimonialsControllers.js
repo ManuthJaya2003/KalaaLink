@@ -1,8 +1,17 @@
-const Testimonial = require("../Model/TestimonialsModel");
+const mongoose = require('mongoose');
+
+// Get Testimonial model safely
+const getTestimonialModel = () => {
+  if (mongoose.models.Testimonial) {
+    return mongoose.models.Testimonial;
+  }
+  return require("../Model/TestimonialsModel");
+};
 
 const getAllTestimonials = async (req, res, next) => {
   let testimonials;
   try {
+    const Testimonial = getTestimonialModel();
     testimonials = await Testimonial.find();
   } catch (err) {
     console.log(err);
@@ -17,6 +26,7 @@ const getAllTestimonials = async (req, res, next) => {
 const createTestimonial = async (req, res, next) => {
   const { description } = req.body;
   try {
+    const Testimonial = getTestimonialModel();
     const newTestimonial = new Testimonial({
       description,
     });

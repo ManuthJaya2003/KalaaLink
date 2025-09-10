@@ -27,7 +27,28 @@ const addEmployees = async (req, res) => {
       });
     }
 
+    // Generate unique employee ID
+    let employeeID;
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    do {
+      const employeeCount = await Employee.countDocuments();
+      employeeID = `EMP${(employeeCount + attempts + 1).toString().padStart(3, '0')}`;
+      
+      // Check if this ID already exists
+      const existingID = await Employee.findOne({ employeeID });
+      if (!existingID) break;
+      
+      attempts++;
+    } while (attempts < maxAttempts);
+    
+    if (attempts >= maxAttempts) {
+      return res.status(500).json({ message: "Unable to generate unique employee ID" });
+    }
+
     const employee = new Employee({
+      employeeID,
       firstName,
       lastName,
       email,
@@ -39,6 +60,7 @@ const addEmployees = async (req, res) => {
     await employee.save();
     res.status(201).json({ employee });
   } catch (err) {
+    console.error('Error creating employee:', err);
     res.status(500).json({ message: err.message });
   }
 };

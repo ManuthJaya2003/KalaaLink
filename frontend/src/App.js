@@ -55,6 +55,16 @@ import { CartProvider } from "./Components/Diwya/CartContext/CartContext";
 import BookingSuccessPage from "./Components/Common/BookingSuccessPage";
 import BookingCancelledPage from "./Components/Common/BookingCancelledPage";
 
+// ✅ Donation Management Components
+import AddPackages from "./Components/Chamodi/AddPackages/AddPackages";
+import Packages from "./Components/Chamodi/PackageDetails/Packages";
+import UpdatePackages from "./Components/Chamodi/UpdatePackages/UpdatePackages";
+import DonorDashboard from "./Components/Chamodi/DonorDashboard/DonorDashboard";
+import DonorPackageDetails from "./Components/Chamodi/DonorPackageDetails/DonorPackageDetails";
+import DonationManagerDashboard from "./Components/Chamodi/DonationManagerDashboard/DonationManagerDashboard";
+import DonationSuccess from "./Components/Chamodi/DonationSuccess/DonationSuccess";
+import DonationCancel from "./Components/Chamodi/DonationCancel/DonationCancel";
+
 const URL = "http://localhost:5000/events";
 
 function App() {
@@ -74,12 +84,12 @@ function App() {
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
@@ -101,79 +111,89 @@ function App() {
     <CartProvider>
       <div>
         <Routes>
-        {/* ---------- Redirects ---------- */}
-        <Route path="/" element={<Navigate to="/mainhome" replace />} />
+          {/* ---------- Redirects ---------- */}
+          <Route path="/" element={<Navigate to="/mainhome" replace />} />
 
-        {/* ---------- Home ---------- */}
-        <Route path="/mainhome" element={<Home />} />
+          {/* ---------- Home ---------- */}
+          <Route path="/mainhome" element={<Home />} />
 
-        {/* ---------- Artists ---------- */}
-        <Route path="/artists" element={<Artists />} />
+          {/* ---------- Artists ---------- */}
+          <Route path="/artists" element={<Artists />} />
 
-        {/* ---------- Artist Manager ---------- */}
-        <Route path="/artistManager" element={<ArtistManagerDashboard />} />
-        <Route path="/manage_artists" element={<ManageArtists />} />
-        <Route path="/manage_artists/:artist_id" element={<UpdateArtist />} />
-        <Route path="/addArtist" element={<AddArtist />} />
-        <Route path="/applications" element={<Applications />} />
-        <Route path="/overview" element={<Overview />} />
-        <Route path="/register" element={<ArtistRegistration />} />
-        <Route path="/artist_login" element={<ArtistLogin />} />
+          {/* ---------- Artist Manager ---------- */}
+          <Route path="/artistManager" element={<ArtistManagerDashboard />} />
+          <Route path="/manage_artists" element={<ManageArtists />} />
+          <Route path="/manage_artists/:artist_id" element={<UpdateArtist />} />
+          <Route path="/addArtist" element={<AddArtist />} />
+          <Route path="/applications" element={<Applications />} />
+          <Route path="/overview" element={<Overview />} />
+          <Route path="/register" element={<ArtistRegistration />} />
+          <Route path="/artist_login" element={<ArtistLogin />} />
 
-        {/* ---------- SignUp/Login ---------- */}
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/professional_login" element={<ProfessionalLogin />} />
+          {/* ---------- SignUp/Login ---------- */}
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/professional_login" element={<ProfessionalLogin />} />
 
-        {/* ---------- Admin ---------- */}
-        <Route path="/admindashboard" element={<AdminDashboard />} />
+          {/* ---------- Admin ---------- */}
+          <Route path="/admindashboard" element={<AdminDashboard />} />
 
-        {/* ---------- Event Manager (Subsystem) ---------- */}
-        <Route path="/events" element={<Events events={events} />} />
-        <Route path="/event/:id" element={<EventPage />} />
-        <Route
-          path="/eventManagerDash"
-          element={<EventManagerDashboard events={events} setEvents={setEvents} />}
-        />
-        <Route
-          path="/eventManagerDash/:id"
-          element={<EventUpdate events={events} setEvents={setEvents} />}
-        />
+          {/* ---------- Event Manager (Subsystem) ---------- */}
+          <Route path="/events" element={<Events events={events} />} />
+          <Route path="/event/:id" element={<EventPage />} />
+          <Route
+            path="/eventManagerDash"
+            element={<EventManagerDashboard events={events} setEvents={setEvents} />}
+          />
+          <Route
+            path="/eventManagerDash/:id"
+            element={<EventUpdate events={events} setEvents={setEvents} />}
+          />
 
-        {/* ---------- Artist ---------- */}
-        <Route path="/portfolio" element={<ArtistPortfolio />} />
-        <Route path="/artistdashboard" element={<ArtistDashboard />} />
-        <Route path="/artist/editprofile" element={<ArtistEditProfile />} />
-        <Route path="/artist/events" element={<ArtistEvents />} />
+          {/* ---------- Artist ---------- */}
+          <Route path="/portfolio" element={<ArtistPortfolio />} />
+          <Route path="/artistdashboard" element={<ArtistDashboard />} />
+          <Route path="/artist/editprofile" element={<ArtistEditProfile />} />
+          <Route path="/artist/events" element={<ArtistEvents />} />
 
-        {/* ---------- Book Artist ---------- */}
-        <Route path="/bookArtist" element={<BookArtist />} />
+          {/* ---------- Book Artist ---------- */}
+          <Route path="/bookArtist" element={<BookArtist />} />
 
-        {/* ---------- ContactUs ---------- */}
-        <Route path="/contactus" element={<ContactUs />} />
-        <Route path="/contact" element={<ContactUs />} />
-        <Route path="/complaints" element={<ComplaintDashBoard />} />
-        <Route path="/employee-management" element={<EmployeeManagement />} />
+          {/* ---------- ContactUs ---------- */}
+          <Route path="/contactus" element={<ContactUs />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/complaints" element={<ComplaintDashBoard />} />
+          <Route path="/employee-management" element={<EmployeeManagement />} />
 
-        {/* ---------- Marketplace ---------- */}
-        <Route path="/marketplace" element={<Marketplace />} />
-        <Route path="/marketplace-manager-dashboard" element={<MarketplaceManagerDashboard />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/customizationdetails" element={<CustomizationDetails />} />
-        <Route path="/order-confirmation" element={<OrderConfirmation />} />
-        <Route path="/payment" element={<Payment />} />
-        <Route path="/product-reviews" element={<ProductReviews />} />
+          {/* ---------- Marketplace ---------- */}
+          <Route path="/marketplace" element={<Marketplace />} />
+          <Route path="/marketplace-manager-dashboard" element={<MarketplaceManagerDashboard />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/customizationdetails" element={<CustomizationDetails />} />
+          <Route path="/order-confirmation" element={<OrderConfirmation />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/product-reviews" element={<ProductReviews />} />
 
-        {/* ---------- Stripe Payment Routes ---------- */}
-        <Route path="/success" element={<SuccessPage />} />
-        <Route path="/cancel" element={<CancelPage />} />
+          {/* ---------- Stripe Payment Routes ---------- */}
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/cancel" element={<CancelPage />} />
 
-        {/* ---------- Booking Success/Cancelled Routes ---------- */}
-        <Route path="/booking-success" element={<BookingSuccessPage />} />
-        <Route path="/booking-cancelled" element={<BookingCancelledPage />} />
+          {/* ---------- Booking Success/Cancelled Routes ---------- */}
+          <Route path="/booking-success" element={<BookingSuccessPage />} />
+          <Route path="/booking-cancelled" element={<BookingCancelledPage />} />
 
-        {/* ---------- 404 ---------- */}
-        <Route path="*" element={<h2>404 - Page Not Found</h2>} />
+          {/* ✅ Donation Management Routes */}
+          <Route path="/donation-manager-dashboard" element={<DonationManagerDashboard />} />
+          <Route path="/addpackages" element={<AddPackages />} />
+          <Route path="/packagedetails" element={<Packages />} />
+          <Route path="/updatepackage/:id" element={<UpdatePackages />} />
+          <Route path="/donordashboard" element={<DonorDashboard />} />
+          <Route path="/donorpackagedetails" element={<DonorPackageDetails />} />
+          <Route path="/donation-success" element={<DonationSuccess />} />
+          <Route path="/donation-cancel" element={<DonationCancel />} />
+
+          {/* ---------- 404 ---------- */}
+          <Route path="*" element={<h2>404 - Page Not Found</h2>} />
         </Routes>
       </div>
     </CartProvider>

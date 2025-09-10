@@ -10,13 +10,19 @@ require("dotenv").config(); // Load env variables
 const app = express();
 
 // ================== Middleware ==================
-app.use(cors({ origin: ["http://localhost:3000", "http://localhost:3001"], credentials: true }));
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:3001"],
+    credentials: true,
+  })
+);
 
 // Raw body for Stripe webhooks
 app.use("/eventBookings/webhook", express.raw({ type: "application/json" }));
 app.use("/bookings/webhook", express.raw({ type: "application/json" }));
 app.use("/api/orders/webhook", express.raw({ type: "application/json" }));
 app.use("/events/webhook", express.raw({ type: "application/json" }));
+app.use("/api/donations/webhook", express.raw({ type: "application/json" }));
 
 // JSON body for other routes
 app.use(express.json());
@@ -53,6 +59,13 @@ const reviewRoutes = require("./routes/reviewsRoutes");
 const deliveryRoutes = require("./routes/deliveryRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 
+// ✅ Donation Management Routes (from subsystem)
+const donorRouter = require("./routes/DonorRoutes");
+const packageRouter = require("./routes/PackageRoutes");
+const campaignRouter = require("./routes/CampaignRoutes");
+const testimonialsRouter = require("./routes/TestimonialsRoutes");
+const donationPaymentRouter = require("./routes/DonationPaymentRoutes");
+
 // Mount routes
 app.use("/artists", artistManagerRoute);
 app.use("/registeredArtists", registeredArtistRoute);
@@ -72,6 +85,13 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/review", reviewRoutes);
 app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/orders", orderRoutes);
+
+// ✅ Donation Management routes
+app.use("/donor", donorRouter);
+app.use("/package", packageRouter);
+app.use("/campaign", campaignRouter);
+app.use("/testimonials", testimonialsRouter);
+app.use("/api/donations", donationPaymentRouter);
 
 // ================== PDF Generation Route ==================
 app.get("/api/art/:id/report", async (req, res) => {
@@ -152,6 +172,26 @@ mongoose
   )
   .then(() => {
     console.log("✅ Connected to MongoDB");
+    
+    // ✅ Preload all models to prevent OverwriteModelError
+    require("./model/DonorModel");
+    require("./model/PackageModel");
+    require("./model/UserModel");
+    require("./model/EmployeeModel");
+    require("./model/ArtistModel");
+    require("./model/Booking");
+    require("./model/eventModel");
+    require("./model/Art");
+    require("./model/Review");
+    require("./model/Order");
+    require("./model/Customization");
+    require("./model/Delivery");
+    require("./model/CampaignModel");
+    require("./model/TestimonialsModel");
+    require("./model/ComplaintsModel");
+    
+    console.log("✅ All models loaded successfully");
+    
     app.listen(process.env.PORT || 5000, () => {
       console.log(`🚀 Server running on port ${process.env.PORT || 5000}`);
       // Start employee cleanup scheduler

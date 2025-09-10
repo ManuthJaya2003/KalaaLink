@@ -27,7 +27,9 @@ function MainNav() {
           </Link>
         </li>
         <li className="navbar-item">
-          <h1>Donations</h1>
+          <Link to="/donordashboard">
+            <h1>Donations</h1>
+          </Link>
         </li>
         <li className="navbar-item">
           <Link to="/contactus">

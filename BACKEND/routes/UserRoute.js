@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const User = require("../model/UserModel")
+// User model will be loaded via controller
 
 const UserController = require("../controllers/UserController")
 

@@ -1,0 +1,277 @@
+.donation-acknowledgment-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.acknowledgment-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.acknowledgment-header h2 {
+  margin: 0 0 10px 0;
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
+.acknowledgment-header p {
+  margin: 0;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.acknowledgment-content {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.acknowledgment-letterhead {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 3px solid #667eea;
+}
+
+.organization-info h1 {
+  font-size: 3rem;
+  color: #667eea;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.tagline {
+  font-size: 1.3rem;
+  color: #666;
+  margin: 0 0 20px 0;
+  font-style: italic;
+}
+
+.contact-info {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.contact-info p {
+  margin: 0;
+  color: #555;
+  font-size: 1rem;
+}
+
+.acknowledgment-body {
+  line-height: 1.8;
+  color: #333;
+}
+
+.date-section {
+  margin-bottom: 30px;
+  text-align: right;
+}
+
+.date-section p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #555;
+}
+
+.donor-info {
+  background-color: #f8f9fa;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  border-left: 5px solid #667eea;
+}
+
+.donor-info p {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+}
+
+.donor-info p:last-child {
+  margin-bottom: 0;
+}
+
+.thank-you-message {
+  margin-bottom: 40px;
+}
+
+.thank-you-message h3 {
+  color: #667eea;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.thank-you-message p {
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+  text-align: justify;
+}
+
+.thank-you-message p:last-child {
+  margin-bottom: 0;
+}
+
+.signature-section {
+  margin: 50px 0;
+  text-align: center;
+}
+
+.signature-line {
+  display: inline-block;
+  text-align: center;
+}
+
+.signature-line p {
+  margin: 5px 0;
+  font-size: 1rem;
+}
+
+.signature-line p:first-child {
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.footer-note {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+  text-align: center;
+}
+
+.footer-note p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #666;
+  font-style: italic;
+}
+
+.acknowledgment-actions {
+  text-align: center;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.download-btn {
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.download-btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.download-btn.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.download-btn.secondary {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.download-btn.secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.download-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.download-note {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* Print styles */
+@media print {
+  .donation-acknowledgment-container {
+    background: white;
+    padding: 0;
+    margin: 0;
+    min-height: auto;
+  }
+  
+  .acknowledgment-header,
+  .acknowledgment-actions {
+    display: none;
+  }
+  
+  .acknowledgment-content {
+    box-shadow: none;
+    padding: 20px;
+    margin: 0;
+  }
+  
+  .download-btn {
+    display: none;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .donation-acknowledgment-container {
+    padding: 10px;
+  }
+  
+  .acknowledgment-content {
+    padding: 20px;
+  }
+  
+  .organization-info h1 {
+    font-size: 2.2rem;
+  }
+  
+  .contact-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .acknowledgment-header h2 {
+    font-size: 2rem;
+  }
+  
+  .acknowledgment-header p {
+    font-size: 1rem;
+  }
+}

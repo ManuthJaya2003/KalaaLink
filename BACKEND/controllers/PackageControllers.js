@@ -1,8 +1,17 @@
 
-const Package = require("../Model/PackageModel");
+const mongoose = require('mongoose');
+
+// Get Package model safely
+const getPackageModel = () => {
+  if (mongoose.models.Package) {
+    return mongoose.models.Package;
+  }
+  return require("../Model/PackageModel");
+};
 
 const getAllPackages = async (req, res, next) => {
   try {
+    const Package = getPackageModel();
     const packages = await Package.find();
     if (!packages || packages.length === 0) {
       return res.status(404).json({ message: "No packages found" });
@@ -23,6 +32,7 @@ const addPackage = async (req, res, next) => {
     if (amount < 10) {
       return res.status(400).json({ message: "Amount must be at least LKR 10" });
     }
+    const Package = getPackageModel();
     const package = new Package({ name, amount, description, isActive });
     await package.save();
     return res.status(201).json({ package });
@@ -35,6 +45,7 @@ const addPackage = async (req, res, next) => {
 const getById = async (req, res, next) => {
   const id = req.params.id;
   try {
+    const Package = getPackageModel();
     const package = await Package.findById(id);
     if (!package) {
       return res.status(404).json({ message: "Package not found" });
@@ -56,6 +67,7 @@ const updatePackage = async (req, res, next) => {
     if (amount < 10) {
       return res.status(400).json({ message: "Amount must be at least LKR 10" });
     }
+    const Package = getPackageModel();
     const package = await Package.findByIdAndUpdate(
       id,
       { name, amount, description, isActive },
@@ -74,6 +86,7 @@ const updatePackage = async (req, res, next) => {
 const deletePackage = async (req, res, next) => {
   const id = req.params.id;
   try {
+    const Package = getPackageModel();
     const package = await Package.findByIdAndDelete(id);
     if (!package) {
       return res.status(404).json({ message: "Package not found" });

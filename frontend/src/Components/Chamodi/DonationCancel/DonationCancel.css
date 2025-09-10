@@ -1,0 +1,130 @@
+/* Donation Cancel Page Styles */
+
+.donation-cancel-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.cancel-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.cancel-icon {
+  margin-bottom: 30px;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.cancel-title {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 40px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.cancel-message {
+  background: rgba(255,255,255,0.1);
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  max-width: 600px;
+  width: 100%;
+  backdrop-filter: blur(10px);
+}
+
+.cancel-message p {
+  color: white;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.cancel-message p:last-child {
+  margin-bottom: 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  min-width: 180px;
+}
+
+.btn-primary {
+  background: #27ae60;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #229954;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-secondary:hover {
+  background: white;
+  color: #e74c3c;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cancel-title {
+    font-size: 2rem;
+  }
+  
+  .cancel-message {
+    padding: 20px;
+    margin: 0 10px 20px 10px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    max-width: 300px;
+  }
+}

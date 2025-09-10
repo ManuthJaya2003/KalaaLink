@@ -49,8 +49,7 @@ function ProfessionalLogin() {
           navigate("/marketplace-manager-dashboard");
           break;
         case "donation manager":
-          // TODO: Create Donation Manager Dashboard route
-          setError("Donation Manager Dashboard not yet implemented");
+          navigate("/donation-manager-dashboard");
           break;
         default:
           setError("Invalid role");

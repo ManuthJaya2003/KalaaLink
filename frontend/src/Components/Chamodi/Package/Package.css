@@ -1,0 +1,30 @@
+.package-container {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 10px;
+  max-width: 400px;
+}
+
+.package-details p {
+  margin: 5px 0;
+}
+
+.update-link {
+  display: inline-block;
+  padding: 8px 15px;
+  background: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.delete-button {
+  padding: 8px 15px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

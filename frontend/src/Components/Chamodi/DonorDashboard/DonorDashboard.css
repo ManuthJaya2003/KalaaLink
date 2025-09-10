@@ -1,0 +1,204 @@
+/* ✅ Main navbar integration - consistent styling with main project */
+.donor-dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-3xl) var(--space-md);
+  background: var(--color-off-white);
+  min-height: 100vh;
+}
+
+.donor-dashboard-header {
+  text-align: center;
+  margin-bottom: var(--space-3xl);
+  padding: var(--space-2xl) 0;
+  background: linear-gradient(135deg, var(--color-light-beige) 0%, var(--color-warm-peach) 100%);
+  border-radius: var(--radius-organic);
+  position: relative;
+  overflow: hidden;
+}
+
+.donor-dashboard-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, var(--color-soft-green) 0%, transparent 70%);
+  opacity: 0.3;
+  z-index: 0;
+}
+
+.donor-dashboard-header > * {
+  position: relative;
+  z-index: 1;
+}
+
+.donor-dashboard-container h1 {
+  font-size: var(--text-5xl);
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: var(--space-lg);
+  position: relative;
+}
+
+.donor-dashboard-container h1::after {
+  content: '';
+  position: absolute;
+  bottom: -var(--space-sm);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-accent-green), var(--color-accent-blue));
+  border-radius: var(--radius-small);
+}
+
+.donor-dashboard-container p {
+  font-size: var(--text-xl);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.package-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.package-buttons button {
+  padding: 15px 25px;
+  border: 2px solid #3498db;
+  background: white;
+  color: #3498db;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.package-buttons button:hover {
+  background: #3498db;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.package-buttons button.selected {
+  background: #3498db;
+  color: white;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+select,
+input {
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+button[type="submit"] {
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+button[type="submit"]:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Testimonials Section Styling */
+.testimonials-section {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.testimonials-section h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.testimonial-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.testimonial-box p:first-child {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.testimonial-box p:last-child {
+  font-style: italic;
+  color: #666;
+  text-align: center;
+}
+
+/* Optional: Simulate circular image placeholder */
+.testimonial-box::before {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 80px;
+  background-color: #ccc; /* Placeholder color */
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+/* Responsive Adjustments */
+@media (min-width: 600px) {
+  .testimonials-section {
+    padding: 30px;
+  }
+
+  .testimonial-box {
+    max-width: 400px;
+  }
+}

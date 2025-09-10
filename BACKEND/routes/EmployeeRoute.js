@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Import Employee model
-const Employee = require("../model/EmployeeModel");
+// Employee model will be loaded via controller
 
 // Import Employee controller
 const EmployeeController = require("../controllers/EmployeeController");
