@@ -37,11 +37,38 @@ const registerArtist = async (req, res, next) => {
 const getArtistsByEvent = async (req, res, next) => {
     const eventId = req.params.id;
     try {
-        const artists = await ArtistRegistration.find({ event: eventId });
-        if (!artists || artists.length === 0) {
-            return res.status(404).json({ message: "No artists found" });
+        // Get artists from ArtistRegistration collection (direct registrations)
+        const directRegistrations = await ArtistRegistration.find({ event: eventId });
+        
+        // Get event to check registeredArtists array (from Stripe webhook)
+        const event = await Event.findById(eventId).populate('registeredArtists', 'firstName lastName email stageName');
+        
+        // Combine both sources
+        let allArtists = [...directRegistrations];
+        
+        // Add artists from event.registeredArtists (Stripe webhook registrations)
+        if (event && event.registeredArtists && event.registeredArtists.length > 0) {
+            const webhookRegistrations = event.registeredArtists
+                .filter(artist => artist && artist._id) // Filter out null/undefined artists
+                .map(artist => ({
+                    _id: artist._id,
+                    event: eventId,
+                    artistName: artist.stageName || `${artist.firstName || ''} ${artist.lastName || ''}`.trim() || 'Unknown Artist',
+                    artistEmail: artist.email || 'unknown@example.com',
+                    registrationFee: event.registrationFeeArtist,
+                    registrationDate: new Date(), // Webhook registrations don't have a specific date
+                    source: 'webhook'
+                }));
+            allArtists = [...allArtists, ...webhookRegistrations];
         }
-        return res.status(200).json({ artists });
+        
+        // Remove duplicates based on email
+        const uniqueArtists = allArtists.filter((artist, index, self) => 
+            index === self.findIndex(a => a.artistEmail === artist.artistEmail)
+        );
+        
+        // Return empty array instead of 404 when no artists found
+        return res.status(200).json({ artists: uniqueArtists || [] });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Failed to fetch artists", error: err.message });

@@ -63,6 +63,88 @@
   margin: 0 auto;
 }
 
+/* Filter Controls */
+.filter-container {
+  display: flex;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+  padding: var(--space-lg);
+  background: white;
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--color-light-gray);
+  flex-wrap: wrap;
+  align-items: end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 200px;
+}
+
+.filter-label {
+  font-weight: 600;
+  color: var(--color-text-dark);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-select {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-small);
+  border: 1px solid var(--color-light-gray);
+  background: white;
+  color: var(--color-text-primary);
+  font-size: var(--text-base);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--color-accent-green);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.filter-select:disabled {
+  background: var(--color-light-gray);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.clear-btn {
+  padding: var(--space-sm) var(--space-lg);
+  border: none;
+  border-radius: var(--radius-small);
+  background: var(--color-accent-blue);
+  color: white;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  height: fit-content;
+  align-self: end;
+}
+
+.clear-btn:hover:not(:disabled) {
+  background: var(--color-accent-green);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.clear-btn:disabled {
+  background: var(--color-light-gray);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 /* Artists Grid */
 .artists-grid {
   display: grid;
@@ -363,6 +445,22 @@
   
   .artists-subtitle {
     font-size: var(--text-lg);
+  }
+  
+  .filter-container {
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-md);
+  }
+  
+  .filter-group {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .clear-btn {
+    align-self: stretch;
+    width: 100%;
   }
   
   .artists-grid {

@@ -16,7 +16,7 @@ const eventSchema = new Schema({
   registrationFeeArtist: { type: Number, required: true, min: 0 },
   maxArtists: { type: Number, required: true, min: 1, default: 10 },
   maxCustomers: { type: Number, required: true, min: 1, default: 50 },
-  registeredArtists: [{ type: mongoose.Schema.Types.ObjectId, ref: "artistModel" }],
+  registeredArtists: [{ type: mongoose.Schema.Types.ObjectId, ref: "Artist" }],
   registeredCustomers: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserModel" }],
   crewRequest: { type: mongoose.Schema.Types.ObjectId, ref: "crewrequest", default: null },
 });

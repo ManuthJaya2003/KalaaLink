@@ -25,6 +25,17 @@ const fetchHandler = async () => {
   return await axios.get(URL).then((res) => res.data);
 };
 
+// Fetch all genres
+const fetchGenres = async () => {
+  return await axios.get(`${URL}/genres`).then((res) => res.data);
+};
+
+// Fetch categories for a specific genre
+const fetchCategories = async (genre) => {
+  if (!genre) return [];
+  return await axios.get(`${URL}/categories/${encodeURIComponent(genre)}`).then((res) => res.data);
+};
+
 function Artists() {
   const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,6 +46,13 @@ function Artists() {
   const [showMessage, setShowMessage] = useState(false);
   const [messageType, setMessageType] = useState("");
   const [messageContent, setMessageContent] = useState("");
+  
+  // Filtering state
+  const [selectedGenre, setSelectedGenre] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [genres, setGenres] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [filteredArtists, setFilteredArtists] = useState([]);
 
   useEffect(() => {
     fetchHandler()
@@ -47,6 +65,50 @@ function Artists() {
         setLoading(false);
       });
   }, []);
+
+  // Fetch genres on component mount
+  useEffect(() => {
+    fetchGenres()
+      .then((data) => {
+        setGenres(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch genres:", err);
+      });
+  }, []);
+
+  // Fetch categories when genre changes
+  useEffect(() => {
+    if (selectedGenre) {
+      fetchCategories(selectedGenre)
+        .then((data) => {
+          setCategories(Array.isArray(data) ? data : []);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch categories:", err);
+          setCategories([]);
+        });
+    } else {
+      setCategories([]);
+    }
+    // Reset category selection when genre changes
+    setSelectedCategory("");
+  }, [selectedGenre]);
+
+  // Filter artists based on selected genre and category
+  useEffect(() => {
+    let filtered = artists;
+
+    if (selectedGenre) {
+      filtered = filtered.filter(artist => artist.genre === selectedGenre);
+    }
+
+    if (selectedCategory) {
+      filtered = filtered.filter(artist => artist.category === selectedCategory);
+    }
+
+    setFilteredArtists(filtered);
+  }, [artists, selectedGenre, selectedCategory]);
 
   // Handle URL parameters for payment success/cancelled
   useEffect(() => {
@@ -144,6 +206,20 @@ function Artists() {
     if (e.target === e.currentTarget) handleCloseModal();
   };
 
+  // Filter handlers
+  const handleGenreChange = (e) => {
+    setSelectedGenre(e.target.value);
+  };
+
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+
+  const handleClearFilters = () => {
+    setSelectedGenre("");
+    setSelectedCategory("");
+  };
+
   if (loading) {
     return (
       <div>
@@ -193,11 +269,57 @@ function Artists() {
           </div>
         )}
 
-        {artists.length === 0 ? (
+        {/* Filter Controls */}
+        <div className="filter-container">
+          <div className="filter-group">
+            <label htmlFor="genre-filter" className="filter-label">Genre:</label>
+            <select
+              id="genre-filter"
+              className="filter-select"
+              value={selectedGenre}
+              onChange={handleGenreChange}
+            >
+              <option value="">All Genres</option>
+              {genres.map((genre, index) => (
+                <option key={index} value={genre}>
+                  {genre}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="category-filter" className="filter-label">Category:</label>
+            <select
+              id="category-filter"
+              className="filter-select"
+              value={selectedCategory}
+              onChange={handleCategoryChange}
+              disabled={!selectedGenre}
+            >
+              <option value="">All Categories</option>
+              {categories.map((category, index) => (
+                <option key={index} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            className="clear-btn"
+            onClick={handleClearFilters}
+            disabled={!selectedGenre && !selectedCategory}
+          >
+            Clear Filters
+          </button>
+        </div>
+
+        {filteredArtists.length === 0 ? (
           <p>No artists found.</p>
         ) : (
           <div className="artists-grid">
-            {artists.map((artist, i) => (
+            {filteredArtists.map((artist, i) => (
               <div key={i} className="artist-card">
                 <div className="artist-image-container">
                   {artist.image ? (

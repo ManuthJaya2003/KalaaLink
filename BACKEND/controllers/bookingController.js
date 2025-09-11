@@ -88,8 +88,18 @@ const updateBookingStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
   try {
-    const booking = await Booking.findByIdAndUpdate(id, { status }, { new: true });
+    const booking = await Booking.findById(id);
     if (!booking) return res.status(404).json({ message: "Booking not found" });
+    
+    // If cancelling a booking, track the original status and cancellation date
+    if (status === "cancelled" && booking.status !== "cancelled") {
+      booking.originalStatus = booking.status;
+      booking.cancelledDate = new Date();
+    }
+    
+    booking.status = status;
+    await booking.save();
+    
     return res.status(200).json({ message: "Booking status updated", booking });
   } catch (err) {
     console.error(err);
@@ -126,6 +136,9 @@ const getBookingAnalytics = async (req, res) => {
     let totalRefundedTickets = 0;
     let activeEvents = 0;
     
+    // Note: Refunds are only counted for bookings that were previously paid and then cancelled
+    // Cleared pending bookings (never paid) are not counted as refunds
+    
     // Event-specific analytics
     const eventAnalytics = {};
     
@@ -157,10 +170,15 @@ const getBookingAnalytics = async (req, res) => {
             totalTicketsSold += booking.ticketsBooked;
             totalRevenue += (booking.ticketsBooked * event.priceCustomer);
           } else if (booking.status === 'cancelled') {
-            event.refundedTickets += booking.ticketsBooked;
-            event.refunds += (booking.ticketsBooked * event.priceCustomer);
-            totalRefundedTickets += booking.ticketsBooked;
-            totalRefunds += (booking.ticketsBooked * event.priceCustomer);
+            // Only count as refund if the booking was previously paid
+            // Use originalStatus to determine if this was a refund or just a cleared pending booking
+            if (booking.originalStatus === 'paid' || booking.paymentIntentId) {
+              event.refundedTickets += booking.ticketsBooked;
+              event.refunds += (booking.ticketsBooked * event.priceCustomer);
+              totalRefundedTickets += booking.ticketsBooked;
+              totalRefunds += (booking.ticketsBooked * event.priceCustomer);
+            }
+            // If originalStatus was 'pending' (cleared pending bookings), don't count as refund
           }
         }
       }
@@ -306,11 +324,15 @@ const handleStripeWebhook = async (req, res) => {
     const session = event.data.object;
     
     try {
-      // Update booking status to paid
+      // Update booking status to paid and save payment intent ID
       const bookingId = session.metadata.bookingId;
-      await Booking.findByIdAndUpdate(bookingId, { status: "paid" });
+      await Booking.findByIdAndUpdate(bookingId, { 
+        status: "paid",
+        paymentIntentId: session.payment_intent,
+        sessionId: session.id
+      });
       
-      console.log(`Booking ${bookingId} marked as paid`);
+      console.log(`Booking ${bookingId} marked as paid with payment intent ${session.payment_intent}`);
     } catch (error) {
       console.error("Error updating booking status:", error);
     }
