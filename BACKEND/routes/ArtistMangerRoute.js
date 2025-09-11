@@ -22,6 +22,9 @@ router.get("/applications", ArtistManagerController.getAllApplications);
 router.put("/applications/approve/:id", ArtistManagerController.approveArtist);
 router.put("/applications/reject/:id", ArtistManagerController.rejectArtist);
 
+// Filter endpoints (must come BEFORE dynamic :artist_id routes)
+router.get("/genres", ArtistManagerController.getGenres);
+router.get("/categories/:genre", ArtistManagerController.getCategoriesByGenre);
 
 // CRUD routes
 router.get("/", ArtistManagerController.getAllArtists);

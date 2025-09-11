@@ -1,0 +1,27 @@
+/* BookingsTab Component Styles */
+
+.event-filter {
+  margin-bottom: 20px;
+}
+
+.bookings-section {
+  margin-top: 20px;
+}
+
+.artists-section {
+  margin-top: 20px;
+}
+
+/* Additional styling for better visual separation */
+.bookings-section h3,
+.artists-section h3 {
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 8px;
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .event-filter select {
+    min-width: 100% !important;
+  }
+}

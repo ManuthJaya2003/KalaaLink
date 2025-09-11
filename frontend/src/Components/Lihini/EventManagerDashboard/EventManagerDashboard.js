@@ -112,7 +112,7 @@ function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
           {activeTab === "organize" && <OrganizeEventForm events={events} setEvents={setEvents} />}
           {activeTab === "ongoing" && <OngoingEventsTable events={events} setEvents={setEvents} />}
           {activeTab === "analytics" && <AnalyticsTab />}
-          {activeTab === "bookings" && <BookingsTab />} {/* ✅ new tab content */}
+          {activeTab === "bookings" && <BookingsTab events={events} />} {/* ✅ new tab content */}
         </div>
       </div>
     </div>

@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "./BookingsTab.css";
 
-function BookingsTab() {
+function BookingsTab({ events = [] }) {
   const [bookings, setBookings] = useState([]);
+  const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [artistsLoading, setArtistsLoading] = useState(false);
   const [filter, setFilter] = useState("all"); // all, pending, paid, cancelled
+  const [selectedEvent, setSelectedEvent] = useState("");
 
   const fetchBookings = async () => {
     try {
@@ -17,6 +21,29 @@ function BookingsTab() {
     }
   };
 
+  const fetchArtists = async (eventId) => {
+    if (!eventId) {
+      setArtists([]);
+      return;
+    }
+    
+    setArtistsLoading(true);
+    try {
+      const res = await axios.get(`http://localhost:5000/artistsEventRegistration/${eventId}`);
+      setArtists(res.data.artists || []);
+    } catch (err) {
+      console.error("Failed to fetch artists:", err);
+      setArtists([]);
+    } finally {
+      setArtistsLoading(false);
+    }
+  };
+
+  const handleEventChange = (eventId) => {
+    setSelectedEvent(eventId);
+    fetchArtists(eventId);
+  };
+
   useEffect(() => {
     fetchBookings();
     // Refresh bookings every 15 seconds to get real-time status updates
@@ -24,8 +51,21 @@ function BookingsTab() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleCancel = async (id) => {
-    if (!window.confirm("Are you sure you want to cancel this booking?")) return;
+  const handleClear = async (id) => {
+    if (!window.confirm("Are you sure you want to clear this pending booking? This will delete the booking record.")) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/eventBookings/${id}`);
+      // Remove from local state
+      setBookings(bookings.filter(b => b._id !== id));
+    } catch (err) {
+      console.error("Failed to clear booking:", err);
+      alert("Failed to clear booking");
+    }
+  };
+
+  const handleRefund = async (id) => {
+    if (!window.confirm("Are you sure you want to refund this booking? This will cancel the booking and process a refund.")) return;
 
     try {
       await axios.put(`http://localhost:5000/eventBookings/${id}/status`, {
@@ -36,8 +76,8 @@ function BookingsTab() {
         b._id === id ? { ...b, status: "cancelled" } : b
       ));
     } catch (err) {
-      console.error("Failed to cancel booking:", err);
-      alert("Failed to cancel booking");
+      console.error("Failed to refund booking:", err);
+      alert("Failed to refund booking");
     }
   };
 
@@ -69,15 +109,22 @@ function BookingsTab() {
   };
 
   const filteredBookings = bookings.filter(booking => {
+    // Filter by event if one is selected
+    if (selectedEvent && booking.event?._id !== selectedEvent) {
+      return false;
+    }
+    // Filter by status
     if (filter === "all") return true;
     return booking.status === filter;
   });
 
   const getStats = () => {
-    const total = bookings.length;
-    const pending = bookings.filter(b => b.status === "pending").length;
-    const paid = bookings.filter(b => b.status === "paid").length;
-    const cancelled = bookings.filter(b => b.status === "cancelled").length;
+    // Use filtered bookings for stats when an event is selected
+    const bookingsToUse = selectedEvent ? filteredBookings : bookings;
+    const total = bookingsToUse.length;
+    const pending = bookingsToUse.filter(b => b.status === "pending").length;
+    const paid = bookingsToUse.filter(b => b.status === "paid").length;
+    const cancelled = bookingsToUse.filter(b => b.status === "cancelled").length;
 
     return { total, pending, paid, cancelled };
   };
@@ -94,6 +141,33 @@ function BookingsTab() {
     <div style={{ padding: "20px" }}>
       <div style={{ marginBottom: "30px" }}>
         <h2 style={{ marginBottom: "20px", color: "#1f2937" }}>Event Bookings Management</h2>
+        
+        {/* Event Selection Dropdown */}
+        <div className="event-filter" style={{ marginBottom: "20px" }}>
+          <label style={{ display: "block", marginBottom: "8px", fontWeight: "600", color: "#374151" }}>
+            Select Event:
+          </label>
+          <select
+            value={selectedEvent}
+            onChange={(e) => handleEventChange(e.target.value)}
+            style={{
+              padding: "10px 12px",
+              border: "1px solid #d1d5db",
+              borderRadius: "6px",
+              backgroundColor: "white",
+              fontSize: "14px",
+              minWidth: "300px",
+              cursor: "pointer"
+            }}
+          >
+            <option value="">All Events</option>
+            {events.map((event) => (
+              <option key={event._id} value={event._id}>
+                {event.eventTitle} - {new Date(event.eventDate).toLocaleDateString()}
+              </option>
+            ))}
+          </select>
+        </div>
         
         {/* Statistics Cards */}
         <div style={{ 
@@ -165,68 +239,130 @@ function BookingsTab() {
         </div>
       </div>
 
-      {filteredBookings.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
-          {filter === "all" ? "No bookings yet." : `No ${filter} bookings found.`}
-        </div>
-      ) : (
-        <div style={{ overflowX: "auto" }}>
-          <table style={tableStyle}>
-            <thead>
-              <tr>
-                <th style={thStyle}>Customer Name</th>
-                <th style={thStyle}>Email</th>
-                <th style={thStyle}>Event</th>
-                <th style={thStyle}>Tickets</th>
-                <th style={thStyle}>Booking Date</th>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredBookings.map((b) => (
-                <tr key={b._id} style={trStyle}>
-                  <td style={tdStyle}>{b.customerName}</td>
-                  <td style={tdStyle}>{b.customerEmail}</td>
-                  <td style={tdStyle}>
-                    <div style={{ maxWidth: "200px" }}>
-                      {b.event?.eventTitle || "Deleted Event"}
-                    </div>
-                  </td>
-                  <td style={tdStyle}>{b.ticketsBooked}</td>
-                  <td style={tdStyle}>
-                    {new Date(b.bookingDate).toLocaleDateString()}
-                  </td>
-                  <td style={tdStyle}>
-                    {getStatusBadge(b.status)}
-                  </td>
-                  <td style={tdStyle}>
-                    {b.status === "pending" && (
-                      <button 
-                        onClick={() => handleCancel(b._id)} 
-                        style={cancelButtonStyle}
-                        title="Cancel this pending booking"
-                      >
-                        Cancel
-                      </button>
-                    )}
-                    {b.status === "paid" && (
-                      <span style={{ color: "#059669", fontSize: "12px" }}>
-                        ✓ Confirmed
-                      </span>
-                    )}
-                    {b.status === "cancelled" && (
-                      <span style={{ color: "#dc2626", fontSize: "12px" }}>
-                        ✗ Cancelled
-                      </span>
-                    )}
-                  </td>
+
+      {/* Customer Bookings Section */}
+      <div className="bookings-section" style={{ marginTop: "20px" }}>
+        <h3 style={{ marginBottom: "15px", color: "#1f2937", fontSize: "18px", fontWeight: "600" }}>
+          Customer Bookings {selectedEvent && `- ${events.find(e => e._id === selectedEvent)?.eventTitle || 'Selected Event'}`}
+        </h3>
+        
+        {filteredBookings.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
+            {selectedEvent ? "No bookings found for this event." : "No bookings yet."}
+          </div>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table style={tableStyle}>
+              <thead>
+                <tr>
+                  <th style={thStyle}>Customer Name</th>
+                  <th style={thStyle}>Email</th>
+                  <th style={thStyle}>Event</th>
+                  <th style={thStyle}>Tickets</th>
+                  <th style={thStyle}>Booking Date</th>
+                  <th style={thStyle}>Status</th>
+                  <th style={thStyle}>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {filteredBookings.map((b) => (
+                  <tr key={b._id} style={trStyle}>
+                    <td style={tdStyle}>{b.customerName}</td>
+                    <td style={tdStyle}>{b.customerEmail}</td>
+                    <td style={tdStyle}>
+                      <div style={{ maxWidth: "200px" }}>
+                        {b.event?.eventTitle || "Deleted Event"}
+                      </div>
+                    </td>
+                    <td style={tdStyle}>{b.ticketsBooked}</td>
+                    <td style={tdStyle}>
+                      {new Date(b.bookingDate).toLocaleDateString()}
+                    </td>
+                    <td style={tdStyle}>
+                      {getStatusBadge(b.status)}
+                    </td>
+                    <td style={tdStyle}>
+                      {b.status === "pending" && (
+                        <button 
+                          onClick={() => handleClear(b._id)} 
+                          style={cancelButtonStyle}
+                          title="Clear this pending booking (no payment made)"
+                        >
+                          Clear
+                        </button>
+                      )}
+                      {b.status === "paid" && (
+                        <button 
+                          onClick={() => handleRefund(b._id)} 
+                          style={cancelButtonStyle}
+                          title="Refund this confirmed booking"
+                        >
+                          Refund
+                        </button>
+                      )}
+                      {b.status === "cancelled" && (
+                        <span style={{ color: "#dc2626", fontSize: "12px" }}>
+                          ✗ Cancelled
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Registered Artists Section */}
+      <div className="artists-section" style={{ marginTop: "30px" }}>
+        <h3 style={{ marginBottom: "15px", color: "#1f2937", fontSize: "18px", fontWeight: "600" }}>
+          Registered Artists {selectedEvent && `- ${events.find(e => e._id === selectedEvent)?.eventTitle || 'Selected Event'}`}
+        </h3>
+        
+        {!selectedEvent ? (
+          <div style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
+            Please select an event to view registered artists.
+          </div>
+        ) : artistsLoading ? (
+          <div style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
+            Loading artists...
+          </div>
+        ) : artists.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
+            No artists registered for this event yet.
+          </div>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table style={tableStyle}>
+              <thead>
+                <tr>
+                  <th style={thStyle}>Artist Name</th>
+                  <th style={thStyle}>Email</th>
+                  <th style={thStyle}>Registration Date</th>
+                  <th style={thStyle}>Registration Fee</th>
+                </tr>
+              </thead>
+              <tbody>
+                {artists.map((artist) => (
+                  <tr key={artist._id} style={trStyle}>
+                    <td style={tdStyle}>{artist.artistName}</td>
+                    <td style={tdStyle}>{artist.artistEmail}</td>
+                    <td style={tdStyle}>
+                      {new Date(artist.registrationDate).toLocaleDateString()}
+                    </td>
+                    <td style={tdStyle}>
+                      <span style={{ color: "#059669", fontWeight: "600" }}>
+                        LKR {artist.registrationFee}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       <div style={{ marginTop: "20px", padding: "15px", backgroundColor: "#f9fafb", borderRadius: "8px" }}>
         <p style={{ margin: "0", fontSize: "14px", color: "#6b7280" }}>

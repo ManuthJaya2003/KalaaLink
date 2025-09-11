@@ -11,7 +11,11 @@ const bookingSchema = new Schema({
     type: String,
     enum: ["pending", "paid", "cancelled"],
     default: "pending"   // default is pending until Stripe confirms
-  }
+  },
+  paymentIntentId: { type: String }, // Stripe payment intent ID
+  sessionId: { type: String }, // Stripe session ID
+  originalStatus: { type: String }, // Track original status before cancellation for refund tracking
+  cancelledDate: { type: Date } // When the booking was cancelled
 });
 
 module.exports = mongoose.model("Booking", bookingSchema);

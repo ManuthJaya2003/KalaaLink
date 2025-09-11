@@ -170,6 +170,48 @@ const rejectArtist = async (req, res) => {
   }
 };
 
+// Get all distinct genres
+const getGenres = async (req, res) => {
+  try {
+    // Get genres from manager artists
+    const managerGenres = await ArtistManager.distinct("genre");
+    // Get genres from approved self-registered artists
+    const selfGenres = await Artist.distinct("genre", { status: "approved" });
+    
+    // Combine and remove duplicates
+    const allGenres = [...new Set([...managerGenres, ...selfGenres])].filter(genre => genre && genre.trim() !== "");
+    
+    return res.status(200).json(allGenres);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get all distinct categories for a given genre
+const getCategoriesByGenre = async (req, res) => {
+  try {
+    const { genre } = req.params;
+    
+    if (!genre) {
+      return res.status(400).json({ message: "Genre parameter is required" });
+    }
+    
+    // Get categories from manager artists for the given genre
+    const managerCategories = await ArtistManager.distinct("category", { genre: genre });
+    // Get categories from approved self-registered artists for the given genre
+    const selfCategories = await Artist.distinct("category", { genre: genre, status: "approved" });
+    
+    // Combine and remove duplicates
+    const allCategories = [...new Set([...managerCategories, ...selfCategories])].filter(category => category && category.trim() !== "");
+    
+    return res.status(200).json(allCategories);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   getAllArtists,
   addArtists,
@@ -179,4 +221,6 @@ module.exports = {
   getAllApplications,
   approveArtist,
   rejectArtist,
+  getGenres,
+  getCategoriesByGenre,
 };

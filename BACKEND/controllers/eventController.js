@@ -343,7 +343,7 @@ const handleEventRegistrationWebhook = async (req, res) => {
     if (session.metadata && session.metadata.type === "event_registration") {
       console.log("Processing event registration webhook:", session.metadata);
       try {
-        const { eventId, artistId } = session.metadata;
+        const { eventId, artistId, artistName, artistEmail } = session.metadata;
 
         // Update event with new artist registration
         const event = await Event.findById(eventId);
@@ -360,6 +360,27 @@ const handleEventRegistrationWebhook = async (req, res) => {
             event.registeredArtists.push(artistId);
             await event.save();
             console.log(`✅ Artist ${artistId} registered for event ${eventId} via webhook. Total artists: ${event.registeredArtists.length}`);
+            
+            // Also create ArtistRegistration record for consistency
+            const ArtistRegistration = require("../model/artistRegistration");
+            const existingRegistration = await ArtistRegistration.findOne({ 
+              event: eventId, 
+              artistEmail: artistEmail 
+            });
+            
+            if (!existingRegistration) {
+              const artistRegistration = new ArtistRegistration({
+                event: eventId,
+                artistName: artistName,
+                artistEmail: artistEmail,
+                registrationFee: event.registrationFeeArtist
+              });
+              
+              await artistRegistration.save();
+              console.log(`✅ ArtistRegistration record created for ${artistName}`);
+            } else {
+              console.log(`ArtistRegistration record already exists for ${artistEmail}`);
+            }
           } else {
             console.log(`Artist ${artistId} already registered for event ${eventId}`);
           }
