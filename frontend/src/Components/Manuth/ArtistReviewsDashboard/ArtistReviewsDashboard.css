@@ -1,0 +1,376 @@
+/* Artist Reviews Dashboard Styles */
+.artist-reviews-dashboard {
+  padding: var(--space-xl);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  margin-bottom: var(--space-2xl);
+  text-align: center;
+}
+
+.dashboard-title {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.dashboard-subtitle {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: var(--leading-relaxed);
+}
+
+/* Loading and Error States */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl) 0;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--color-light-gray);
+  border-top: 4px solid var(--color-accent-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--space-md);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container p,
+.error-container p {
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+  margin: 0;
+}
+
+.retry-btn {
+  background: var(--color-accent-blue);
+  color: white;
+  border: none;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-small);
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  margin-top: var(--space-md);
+}
+
+.retry-btn:hover {
+  background: var(--color-accent-blue-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: var(--space-3xl) 0;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-lg);
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-text-dark);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.empty-state p {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: var(--leading-relaxed);
+}
+
+/* Reviews Table */
+.reviews-table-container {
+  background: white;
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  border: 1px solid var(--color-light-gray);
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.reviews-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.reviews-table thead {
+  background: var(--color-light-beige);
+  border-bottom: 2px solid var(--color-light-gray);
+}
+
+.reviews-table th {
+  padding: var(--space-lg) var(--space-md);
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.reviews-table td {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-light-gray);
+  vertical-align: top;
+}
+
+.review-row:hover {
+  background: var(--color-light-beige);
+}
+
+/* Table Cells */
+.customer-cell,
+.artist-cell {
+  min-width: 150px;
+}
+
+.customer-info,
+.artist-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.customer-avatar,
+.artist-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: var(--text-sm);
+  flex-shrink: 0;
+}
+
+.customer-name,
+.artist-name {
+  font-weight: 500;
+  color: var(--color-text-dark);
+  font-size: var(--text-sm);
+}
+
+.rating-cell {
+  min-width: 120px;
+}
+
+.dashboard-star-rating {
+  display: flex;
+  gap: 2px;
+}
+
+.dashboard-star {
+  font-size: var(--text-sm);
+  filter: grayscale(100%);
+  opacity: 0.3;
+}
+
+.dashboard-star.filled {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+.review-cell {
+  min-width: 200px;
+  max-width: 300px;
+}
+
+.review-text {
+  font-style: italic;
+  color: var(--color-text-primary);
+  line-height: var(--leading-relaxed);
+  font-size: var(--text-sm);
+}
+
+.date-cell {
+  min-width: 120px;
+}
+
+.review-date {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+.actions-cell {
+  min-width: 100px;
+  text-align: center;
+}
+
+.delete-btn {
+  background: var(--color-accent-orange);
+  color: white;
+  border: none;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-small);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.delete-btn:hover:not(:disabled) {
+  background: #ea580c;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .artist-reviews-dashboard {
+    padding: var(--space-lg);
+  }
+  
+  .reviews-table th,
+  .reviews-table td {
+    padding: var(--space-sm);
+  }
+  
+  .review-cell {
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .artist-reviews-dashboard {
+    padding: var(--space-md);
+  }
+  
+  .dashboard-title {
+    font-size: var(--text-2xl);
+  }
+  
+  .dashboard-subtitle {
+    font-size: var(--text-base);
+  }
+  
+  .reviews-table {
+    font-size: var(--text-xs);
+  }
+  
+  .reviews-table th,
+  .reviews-table td {
+    padding: var(--space-xs);
+  }
+  
+  .customer-avatar,
+  .artist-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: var(--text-xs);
+  }
+  
+  .customer-name,
+  .artist-name {
+    font-size: var(--text-xs);
+  }
+  
+  .review-text {
+    font-size: var(--text-xs);
+  }
+  
+  .review-date {
+    font-size: 10px;
+  }
+  
+  .delete-btn {
+    padding: var(--space-xs);
+    font-size: 10px;
+  }
+  
+  .dashboard-star {
+    font-size: var(--text-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .artist-reviews-dashboard {
+    padding: var(--space-sm);
+  }
+  
+  .dashboard-header {
+    margin-bottom: var(--space-lg);
+  }
+  
+  .dashboard-title {
+    font-size: var(--text-xl);
+  }
+  
+  .dashboard-subtitle {
+    font-size: var(--text-sm);
+  }
+  
+  .empty-state {
+    padding: var(--space-2xl) 0;
+  }
+  
+  .empty-icon {
+    font-size: 3rem;
+  }
+  
+  .empty-state h3 {
+    font-size: var(--text-xl);
+  }
+  
+  .empty-state p {
+    font-size: var(--text-sm);
+  }
+  
+  .reviews-table th {
+    font-size: 10px;
+    padding: var(--space-xs) 4px;
+  }
+  
+  .reviews-table td {
+    padding: var(--space-xs) 4px;
+  }
+  
+  .customer-info,
+  .artist-info {
+    gap: var(--space-xs);
+  }
+  
+  .customer-avatar,
+  .artist-avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+}

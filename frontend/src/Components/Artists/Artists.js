@@ -4,6 +4,9 @@ import MainFooter from "../MainFooter/MainFooter";
 import axios from "axios";
 import "./Artists.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import ArtistReviewModal from "./ArtistReviewModal";
+import ArtistReviewsDisplay from "./ArtistReviewsDisplay";
+import AllReviewsModal from "./AllReviewsModal";
 
 const URL = "http://localhost:5000/artists";
 
@@ -42,6 +45,10 @@ function Artists() {
   const [error, setError] = useState(null);
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedArtistForReview, setSelectedArtistForReview] = useState(null);
+  const [isAllReviewsModalOpen, setIsAllReviewsModalOpen] = useState(false);
+  const [selectedArtistForAllReviews, setSelectedArtistForAllReviews] = useState(null);
   const [searchParams] = useSearchParams();
   const [showMessage, setShowMessage] = useState(false);
   const [messageType, setMessageType] = useState("");
@@ -195,6 +202,31 @@ function Artists() {
     setSelectedArtist(null);
   };
 
+  const handleOpenReviewModal = (artist) => {
+    setSelectedArtistForReview(artist);
+    setIsReviewModalOpen(true);
+  };
+
+  const handleCloseReviewModal = () => {
+    setIsReviewModalOpen(false);
+    setSelectedArtistForReview(null);
+  };
+
+  const handleReviewSubmitted = (newReview) => {
+    console.log('New review submitted:', newReview);
+    // The ArtistReviewsDisplay component will automatically refresh
+  };
+
+  const handleOpenAllReviewsModal = (artist) => {
+    setSelectedArtistForAllReviews(artist);
+    setIsAllReviewsModalOpen(true);
+  };
+
+  const handleCloseAllReviewsModal = () => {
+    setIsAllReviewsModalOpen(false);
+    setSelectedArtistForAllReviews(null);
+  };
+
   const navigate = useNavigate();
 
   const handleBookNow = (artist) => {
@@ -329,19 +361,7 @@ function Artists() {
                       className="artist-image"
                     />
                   ) : (
-                    <div
-                      className="artist-image"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "white",
-                        fontSize: "1.2rem",
-                        fontWeight: "600",
-                      }}
-                    >
+                    <div className="artist-image-fallback">
                       {artist.artistName?.charAt(0) || "A"}
                     </div>
                   )}
@@ -351,6 +371,7 @@ function Artists() {
                   <h2 className="artist-name">{artist.artistName}</h2>
                   <p className="artist-genre">{artist.genre}</p>
                   <p className="artist-category">{artist.category}</p>
+                  <p className="artist-bio">{artist.bio || artist.summary || 'Professional artist ready to bring creativity to your event.'}</p>
 
                   <div className="artist-buttons">
                     <button
@@ -365,8 +386,21 @@ function Artists() {
                     >
                       View Details
                     </button>
+                    <button
+                      className="btn btn-review"
+                      onClick={() => handleOpenReviewModal(artist)}
+                    >
+                      ✨ Leave a Review
+                    </button>
                   </div>
                 </div>
+
+                {/* Reviews Display - moved outside artist-info */}
+                <ArtistReviewsDisplay 
+                  artistId={artist._id} 
+                  artist={artist} 
+                  onViewMoreReviews={handleOpenAllReviewsModal}
+                />
               </div>
             ))}
           </div>
@@ -433,6 +467,25 @@ function Artists() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Review Modal */}
+      {isReviewModalOpen && selectedArtistForReview && (
+        <ArtistReviewModal
+          artist={selectedArtistForReview}
+          isOpen={isReviewModalOpen}
+          onClose={handleCloseReviewModal}
+          onReviewSubmitted={handleReviewSubmitted}
+        />
+      )}
+
+      {/* All Reviews Modal - Global Modal */}
+      {isAllReviewsModalOpen && selectedArtistForAllReviews && (
+        <AllReviewsModal
+          artist={selectedArtistForAllReviews}
+          isOpen={isAllReviewsModalOpen}
+          onClose={handleCloseAllReviewsModal}
+        />
       )}
     </div>
   );
