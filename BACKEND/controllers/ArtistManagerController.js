@@ -20,7 +20,8 @@ const getAllArtists = async (req, res) => {
       bookingPrice: a.bookingPrice,
       summary: a.summary,
       bio: a.bio,
-      image: a.image || "", // manager image
+      image: a.image || "", // cover image
+      profilePic: a.profilePic || "", // profile picture
     }));
 
     // Normalize self-registered artists
@@ -32,7 +33,8 @@ const getAllArtists = async (req, res) => {
       bookingPrice: a.bookingPrice,
       summary: a.summary || "Not provided",
       bio: a.bio,
-      image: a.coverImage || a.profileImage || "", // priority: coverImage > profileImage
+      image: a.coverImage || "", // cover image
+      profilePic: a.profileImage || "", // profile picture
     }));
 
     // Merge both arrays
@@ -53,7 +55,11 @@ const getAllArtists = async (req, res) => {
 // Add new artist under Artist Manager
 const addArtists = async (req, res) => {
   const { artistName, genre, category, bookingPrice, summary, bio } = req.body;
-  const image = req.file ? req.file.filename : null;
+  
+  // Handle cover image
+  const image = req.files?.image ? req.files.image[0].filename : null;
+  // Handle profile picture
+  const profilePic = req.files?.profilePic ? req.files.profilePic[0].filename : null;
 
   try {
     const artist = new ArtistManager({
@@ -64,6 +70,7 @@ const addArtists = async (req, res) => {
       summary,
       bio,
       image,
+      profilePic,
       approved: true, // added by manager directly
     });
 
@@ -92,12 +99,20 @@ const getArtistByID = async (req, res) => {
 const updateArtist = async (req, res) => {
   const artist_id = req.params.artist_id;
   const { artistName, genre, category, bookingPrice, summary, bio } = req.body;
-  const image = req.file ? req.file.filename : req.body.image;
+  
+  // Handle cover image
+  const image = req.files?.image ? req.files.image[0].filename : req.body.image;
+  // Handle profile picture
+  const profilePic = req.files?.profilePic ? req.files.profilePic[0].filename : req.body.profilePic;
 
   try {
+    const updateData = { artistName, genre, category, bookingPrice, summary, bio };
+    if (image) updateData.image = image;
+    if (profilePic) updateData.profilePic = profilePic;
+
     const artist = await ArtistManager.findByIdAndUpdate(
       artist_id,
-      { artistName, genre, category, bookingPrice, summary, bio, image },
+      updateData,
       { new: true }
     );
 

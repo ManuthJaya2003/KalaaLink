@@ -1,20 +1,35 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import MainNav from "../../MainNav/MainNav";
-import OverviewAnalyticsTab from "./OverviewAnalyticsTab";
-import OverviewApplicationsTab from "./OverviewApplicationsTab";
-import OverviewManageArtistsTab from "./OverviewManageArtistsTab";
+import ArtistManagerNav from "../ArtistManagerNav/ArtistManagerNav";
+import ArtistReviewsDashboard from "../ArtistReviewsDashboard/ArtistReviewsDashboard";
 import logoutEmployee from "../../../utils/employeeLogout";
-import "./Overview.css";
+import "./ArtistReviews.css";
 
-const Overview = () => {
-  const [activeTab, setActiveTab] = useState("analytics");
+function ArtistReviews() {
   const navigate = useNavigate();
 
-  // Sign out function
   const handleSignOut = () => {
     logoutEmployee(navigate, "/mainhome");
   };
+
+  // Mock user name - this would come from authentication context
+  const userName = "Manuth";
+
+  const getButtonStyle = (isActive) => ({
+    background: isActive ? "#34495e" : "transparent",
+    border: "none",
+    color: "white",
+    textAlign: "left",
+    padding: "10px 0",
+    cursor: "pointer",
+    fontSize: "16px",
+    fontWeight: isActive ? "bold" : "normal",
+    width: "100%",
+    marginBottom: "5px",
+    borderRadius: "5px",
+    transition: "background-color 0.3s",
+  });
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -67,37 +82,45 @@ const Overview = () => {
           }}
         >
           <h2 style={{ marginBottom: "30px" }}>Dashboard</h2>
-          <button onClick={() => setActiveTab("analytics")} style={getButtonStyle(activeTab === "analytics")}>Analytics</button>
-          <button onClick={() => setActiveTab("applications")} style={getButtonStyle(activeTab === "applications")}>Applications</button>
-          <button onClick={() => setActiveTab("manage")} style={getButtonStyle(activeTab === "manage")}>Manage Artists</button>
-          <button onClick={() => navigate('/addArtist')} style={getButtonStyle(false)}>Add Artist</button>
-          <button onClick={() => navigate('/artist_reviews')} style={getButtonStyle(false)}>Artist Reviews</button>
+          <button 
+            onClick={() => navigate('/overview')} 
+            style={getButtonStyle(false)}
+          >
+            Analytics
+          </button>
+          <button 
+            onClick={() => navigate('/applications')} 
+            style={getButtonStyle(false)}
+          >
+            Applications
+          </button>
+          <button 
+            onClick={() => navigate('/manage_artists')} 
+            style={getButtonStyle(false)}
+          >
+            Manage Artists
+          </button>
+          <button 
+            onClick={() => navigate('/addArtist')} 
+            style={getButtonStyle(false)}
+          >
+            Add Artist
+          </button>
+          <button 
+            onClick={() => navigate('/artist_reviews')} 
+            style={getButtonStyle(true)}
+          >
+            Artist Reviews
+          </button>
         </div>
 
         {/* Main Content */}
         <div style={{ flex: 1, padding: "20px" }}>
-          {activeTab === "analytics" && <OverviewAnalyticsTab />}
-          {activeTab === "applications" && <OverviewApplicationsTab />}
-          {activeTab === "manage" && <OverviewManageArtistsTab />}
+          <ArtistReviewsDashboard />
         </div>
       </div>
     </div>
   );
-};
+}
 
-const getButtonStyle = (isActive) => ({
-  background: isActive ? "#34495e" : "transparent",
-  border: "none",
-  color: "white",
-  textAlign: "left",
-  padding: "10px 0",
-  cursor: "pointer",
-  fontSize: "16px",
-  fontWeight: isActive ? "bold" : "normal",
-  width: "100%",
-  marginBottom: "5px",
-  borderRadius: "4px",
-  transition: "background-color 0.3s",
-});
-
-export default Overview;
+export default ArtistReviews;

@@ -89,12 +89,136 @@
   transform: none;
 }
 
-/* Events Grid */
+/* Events Filter */
+.events-filter {
+  margin: var(--space-xl) 0 1rem 0;
+  padding: 0 var(--space-md);
+  display: flex;
+  justify-content: flex-start;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text-dark);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  white-space: nowrap;
+}
+
+.filter-label::before {
+  content: '🔍';
+  font-size: var(--text-base);
+}
+
+.month-filter-dropdown {
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid var(--color-medium-gray);
+  border-radius: var(--radius-small);
+  background: white;
+  color: var(--color-text-primary);
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  width: 150px;
+  max-width: 150px;
+  box-shadow: var(--shadow-soft);
+}
+
+.month-filter-dropdown:focus {
+  outline: none;
+  border-color: var(--color-accent-green);
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+}
+
+.month-filter-dropdown:hover {
+  border-color: var(--color-accent-blue);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+.month-filter-dropdown option {
+  padding: var(--space-sm);
+  background: white;
+  color: var(--color-text-primary);
+}
+
+.filter-results {
+  display: flex;
+  align-items: center;
+  margin-left: var(--space-md);
+}
+
+.results-count {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  background: var(--color-light-beige);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-small);
+  border: 1px solid var(--color-medium-gray);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Events Grid - Responsive 3-column layout */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-xl);
   margin-top: var(--space-2xl);
+  padding: 0 var(--space-md);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1024px) {
+  .events-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .events-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    padding: 0 var(--space-sm);
+  }
+  
+  .events-filter {
+    margin: var(--space-lg) 0 1rem 0;
+    padding: 0 var(--space-sm);
+    justify-content: flex-start;
+  }
+  
+  .filter-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+  
+  .filter-label {
+    font-size: var(--text-base);
+  }
+  
+  .month-filter-dropdown {
+    width: 150px;
+    max-width: 150px;
+  }
+  
+  .filter-results {
+    margin-left: 0;
+    margin-top: var(--space-xs);
+  }
 }
 
 /* No Events State */
@@ -176,11 +300,14 @@
   background: white;
   border-radius: var(--radius-medium);
   overflow: hidden;
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all var(--transition-normal);
   border: 1px solid var(--color-light-gray);
   cursor: pointer;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .event-card::before {
@@ -196,12 +323,19 @@
 
 .event-card:hover {
   transform: translateY(-8px);
-  box-shadow: var(--shadow-medium);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  border-color: var(--color-accent-green);
+}
+
+.event-image-container {
+  position: relative;
+  overflow: hidden;
+  height: 200px;
 }
 
 .event-image {
   width: 100%;
-  height: 200px;
+  height: 100%;
   object-fit: cover;
   transition: transform var(--transition-normal);
 }
@@ -212,37 +346,197 @@
 
 .event-info {
   padding: var(--space-lg);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.event-title {
-  font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--color-text-dark);
-  margin-bottom: var(--space-sm);
-}
-
-.event-date {
-  color: var(--color-accent-green);
-  font-weight: 600;
-  margin-bottom: var(--space-xs);
-  font-size: var(--text-base);
-}
-
-.event-venue {
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-lg);
-  font-size: var(--text-sm);
-}
 
 .event-buttons {
   display: flex;
   gap: var(--space-sm);
   flex-wrap: wrap;
+  margin-top: auto;
 }
 
 .event-buttons .btn {
   flex: 1;
   min-width: 100px;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-small);
+  font-weight: 600;
+  transition: all var(--transition-normal);
+}
+
+.event-buttons .btn-primary {
+  background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
+  color: white;
+  border: none;
+}
+
+.event-buttons .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.event-buttons .btn-secondary {
+  background: var(--color-warm-beige);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-medium-gray);
+}
+
+.event-buttons .btn-secondary:hover {
+  background: var(--color-medium-gray);
+  transform: translateY(-1px);
+}
+
+
+/* Add a subtle gradient overlay on hover */
+.event-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.05), rgba(96, 165, 250, 0.05));
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.event-card:hover::after {
+  opacity: 1;
+}
+
+/* Ensure content stays above the overlay */
+.event-info {
+  position: relative;
+  z-index: 2;
+}
+
+/* Additional responsive improvements */
+@media (max-width: 480px) {
+  .event-info {
+    padding: var(--space-md);
+  }
+  
+  .event-name {
+    font-size: var(--text-lg);
+  }
+  
+  .event-buttons {
+    flex-direction: column;
+  }
+  
+  .event-buttons .btn {
+    width: 100%;
+    margin-bottom: var(--space-xs);
+  }
+  
+  .event-buttons .btn:last-child {
+    margin-bottom: 0;
+  }
+  
+  .events-filter {
+    margin: var(--space-md) 0 1rem 0;
+    padding: 0 var(--space-xs);
+    justify-content: flex-start;
+  }
+  
+  .filter-container {
+    gap: var(--space-xs);
+    align-items: flex-start;
+  }
+  
+  .filter-label {
+    font-size: var(--text-sm);
+  }
+  
+  .month-filter-dropdown {
+    width: 140px;
+    max-width: 140px;
+    font-size: var(--text-sm);
+    padding: var(--space-xs) var(--space-sm);
+  }
+  
+  .filter-results {
+    margin-left: 0;
+    margin-top: var(--space-xs);
+  }
+  
+  .results-count {
+    font-size: var(--text-xs);
+    padding: var(--space-xs);
+  }
+}
+
+/* Enhanced visual hierarchy for better readability */
+.event-name {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: var(--space-sm);
+  line-height: var(--leading-tight);
+  text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.event-category {
+  color: var(--color-accent-green);
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+  font-size: var(--text-sm);
+  text-align: left;
+  line-height: var(--leading-normal);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.event-category::before {
+  content: '📅';
+  font-size: var(--text-xs);
+}
+
+.detail-value:not(.price) {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
+  font-size: var(--text-sm);
+  text-align: left;
+  line-height: var(--leading-normal);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.detail-value:not(.price)::before {
+  content: '📍';
+  font-size: var(--text-xs);
+}
+
+.detail-value.price {
+  color: var(--color-accent-green);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-lg);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.detail-value.price::before {
+  content: '💰';
+  font-size: var(--text-sm);
 }
 
 /* Modal Styles */
