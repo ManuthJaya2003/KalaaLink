@@ -66,6 +66,7 @@ const campaignRouter = require("./routes/CampaignRoutes");
 const testimonialsRouter = require("./routes/TestimonialsRoutes");
 const artistReviewRouter = require("./routes/artistReviewRoutes");
 const donationPaymentRouter = require("./routes/DonationPaymentRoutes");
+const impactStoryRouter = require("./routes/ImpactStoryRoutes");
 
 // Mount routes
 app.use("/artists", artistManagerRoute);
@@ -94,6 +95,7 @@ app.use("/campaign", campaignRouter);
 app.use("/testimonials", testimonialsRouter);
 app.use("/artist-reviews", artistReviewRouter);
 app.use("/api/donations", donationPaymentRouter);
+app.use("/api/impactStories", impactStoryRouter);
 
 // ================== PDF Generation Route ==================
 app.get("/api/art/:id/report", async (req, res) => {
@@ -192,6 +194,7 @@ mongoose
     require("./model/TestimonialsModel");
     require("./model/ArtistReview");
     require("./model/ComplaintsModel");
+    require("./model/ImpactStory");
     
     console.log("✅ All models loaded successfully");
     
