@@ -67,6 +67,9 @@ const testimonialsRouter = require("./routes/TestimonialsRoutes");
 const artistReviewRouter = require("./routes/artistReviewRoutes");
 const donationPaymentRouter = require("./routes/DonationPaymentRoutes");
 
+// ✅ Authentication Routes
+const authRoutes = require("./routes/authRoutes");
+
 // Mount routes
 app.use("/artists", artistManagerRoute);
 app.use("/registeredArtists", registeredArtistRoute);
@@ -94,6 +97,9 @@ app.use("/campaign", campaignRouter);
 app.use("/testimonials", testimonialsRouter);
 app.use("/artist-reviews", artistReviewRouter);
 app.use("/api/donations", donationPaymentRouter);
+
+// ✅ Authentication routes
+app.use("/api/auth", authRoutes);
 
 // ================== PDF Generation Route ==================
 app.get("/api/art/:id/report", async (req, res) => {

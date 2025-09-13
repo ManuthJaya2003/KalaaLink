@@ -41,6 +41,8 @@ import CancelPage from "./Components/Lihini/Events/CancelPage.js";
 import ContactUs from "./Components/Thaveesha/ContactUs/ContactUs";
 import ComplaintDashBoard from "./Components/Thaveesha/ContactUs/ComplaintDashBoard";
 import EmployeeManagement from "./Components/Thaveesha/EmployeeManagement/EmployeeManagement";
+import ForgotPassword from "./Components/ForgotPassword/ForgotPassword";
+import Profile from "./Components/Profile/Profile";
 
 // ✅ Marketplace components
 import Marketplace from "./Components/Diwya/Marketplace/Marketplace";
@@ -135,6 +137,8 @@ function App() {
           {/* ---------- SignUp/Login ---------- */}
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/professional_login" element={<ProfessionalLogin />} />
 
           {/* ---------- Admin ---------- */}
