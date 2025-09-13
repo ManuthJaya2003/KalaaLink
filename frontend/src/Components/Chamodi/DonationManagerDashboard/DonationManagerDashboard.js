@@ -6,6 +6,7 @@ import axios from 'axios';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import ImpactStoriesManagement from '../ImpactStoriesManagement/ImpactStoriesManagement';
 import './DonationManagerDashboard.css';
 
 function DonationManagerDashboard() {
@@ -869,6 +870,9 @@ function DonationManagerDashboard() {
           <button onClick={() => setActiveTab("donations")} style={getButtonStyle(activeTab === "donations")}>
             View Donations
           </button>
+          <button onClick={() => setActiveTab("impactStories")} style={getButtonStyle(activeTab === "impactStories")}>
+            Impact Stories
+          </button>
         </div>
 
         {/* Main Content */}
@@ -876,6 +880,7 @@ function DonationManagerDashboard() {
           {activeTab === "home" && <HomeTab />}
           {activeTab === "packages" && <PackagesTab />}
           {activeTab === "donations" && <DonationsTab />}
+          {activeTab === "impactStories" && <ImpactStoriesManagement />}
         </div>
       </div>
     </div>
