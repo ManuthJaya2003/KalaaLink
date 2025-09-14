@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import MainNav from '../../MainNav/MainNav';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import ImpactStories from '../ImpactStories/ImpactStories';
 import './DonorDashboard.css';
 
 function DonorDashboard() {
@@ -128,9 +127,6 @@ function DonorDashboard() {
         <button type="submit">Proceed to Payment</button>
       </form>
       </div>
-      
-      {/* ✅ Impact Stories Section */}
-      <ImpactStories />
     </div>
   );
 }
