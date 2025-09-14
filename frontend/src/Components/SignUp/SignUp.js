@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
 import PasswordInput from '../Common/PasswordInput';
-import { useAuth } from '../../contexts/AuthContext';
 import '../Login/Login.css';
 import './SignUp.css';
 
@@ -13,38 +12,18 @@ function SignUp() {
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const { signup } = useAuth();
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // Clear error when user starts typing
-    if (error) setError('');
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    const result = await signup(
-      formData.firstName, 
-      formData.lastName, 
-      formData.email, 
-      formData.password
-    );
-    
-    if (result.success) {
-      // Redirect to login page after successful signup
-      navigate('/login');
-    } else {
-      setError(result.message);
-    }
-    
-    setLoading(false);
+    // Here you can call your backend API to submit the signup data
+    console.log(formData);
+    alert('Account created successfully!');
+    // Reset form
+    setFormData({ firstName: '', lastName: '', email: '', password: '' });
   };
 
   return (
@@ -58,12 +37,6 @@ function SignUp() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            {error && (
-              <div className="error-message" style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>
-                {error}
-              </div>
-            )}
-            
             <div className="form-group">
               <label htmlFor="firstName" className="form-label">First Name</label>
               <input
@@ -75,7 +48,6 @@ function SignUp() {
                 value={formData.firstName}
                 onChange={handleChange}
                 required
-                disabled={loading}
               />
             </div>
 
@@ -90,7 +62,6 @@ function SignUp() {
                 value={formData.lastName}
                 onChange={handleChange}
                 required
-                disabled={loading}
               />
             </div>
 
@@ -105,7 +76,6 @@ function SignUp() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                disabled={loading}
               />
             </div>
 
@@ -117,11 +87,10 @@ function SignUp() {
               placeholder="Create a password"
               label="Password"
               required
-              disabled={loading}
             />
 
-            <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? 'Creating Account...' : 'Create Account'}
+            <button type="submit" className="submit-btn">
+              Create Account
             </button>
           </form>
 

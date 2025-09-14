@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
 import PasswordInput from '../Common/PasswordInput';
-import { useAuth } from '../../contexts/AuthContext';
 import './Login.css';
 
 function Login() {
@@ -10,11 +9,6 @@ function Login() {
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,25 +16,12 @@ function Login() {
       ...prevState,
       [name]: value
     }));
-    // Clear error when user starts typing
-    if (error) setError('');
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    const result = await login(formData.email, formData.password);
-    
-    if (result.success) {
-      // Redirect to home page after successful login
-      navigate('/mainhome');
-    } else {
-      setError(result.message);
-    }
-    
-    setLoading(false);
+    // Handle login logic here
+    console.log('Login attempt:', formData);
   };
 
   return (
@@ -54,12 +35,6 @@ function Login() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            {error && (
-              <div className="error-message" style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>
-                {error}
-              </div>
-            )}
-            
             <div className="form-group">
               <label htmlFor="email" className="form-label">Email Address</label>
               <input
@@ -71,7 +46,6 @@ function Login() {
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                disabled={loading}
               />
             </div>
 
@@ -83,11 +57,10 @@ function Login() {
               placeholder="Enter your password"
               label="Password"
               required
-              disabled={loading}
             />
 
-            <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? 'Signing In...' : 'Sign In'}
+            <button type="submit" className="submit-btn">
+              Sign In
             </button>
           </form>
 

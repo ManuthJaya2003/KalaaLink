@@ -130,48 +130,6 @@
   transform: scale(1.1);
 }
 
-/* Profile icon styling */
-.profile-icon {
-  width: 22px;
-  height: 22px;
-  color: #2c3e50;
-  transition: all 0.3s ease;
-}
-
-.navbar-item a:hover .profile-icon {
-  color: #27ae60;
-  transform: scale(1.1);
-}
-
-/* Logout button styling */
-.logout-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
-  font-family: inherit;
-}
-
-.logout-btn h1 {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: 2px solid transparent;
-  background: #ffebee;
-  color: #d32f2f;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.logout-btn:hover h1 {
-  background: #d32f2f;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
-}
-
 /* Ensure links in nav have no underline */
 .navbar-item a {
   text-decoration: none;

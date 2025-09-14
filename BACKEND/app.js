@@ -34,8 +34,8 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Serve uploaded images statically
-app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // Your original
-app.use("/Uploads", express.static(uploadsDir)); // Marketplace Manager
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/Uploads", express.static(uploadsDir));
 
 // ================== Routes ==================
 // Existing KalaaLink Routes
@@ -66,7 +66,6 @@ const campaignRouter = require("./routes/CampaignRoutes");
 const testimonialsRouter = require("./routes/TestimonialsRoutes");
 const donationPaymentRouter = require("./routes/DonationPaymentRoutes");
 
-
 // Mount routes
 app.use("/artists", artistManagerRoute);
 app.use("/registeredArtists", registeredArtistRoute);
@@ -93,7 +92,6 @@ app.use("/package", packageRouter);
 app.use("/campaign", campaignRouter);
 app.use("/testimonials", testimonialsRouter);
 app.use("/api/donations", donationPaymentRouter);
-
 
 // ================== PDF Generation Route ==================
 app.get("/api/art/:id/report", async (req, res) => {
@@ -174,7 +172,7 @@ mongoose
   )
   .then(() => {
     console.log("✅ Connected to MongoDB");
-    
+
     // ✅ Preload all models to prevent OverwriteModelError
     require("./model/DonorModel");
     require("./model/PackageModel");
@@ -191,12 +189,11 @@ mongoose
     require("./model/CampaignModel");
     require("./model/TestimonialsModel");
     require("./model/ComplaintsModel");
-    
+
     console.log("✅ All models loaded successfully");
-    
+
     app.listen(process.env.PORT || 5000, () => {
       console.log(`🚀 Server running on port ${process.env.PORT || 5000}`);
-      // Start employee cleanup scheduler
       startCleanupScheduler();
     });
   })
