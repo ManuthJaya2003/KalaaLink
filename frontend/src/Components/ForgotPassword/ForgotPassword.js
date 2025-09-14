@@ -1,27 +1,23 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
-import PasswordInput from '../Common/PasswordInput';
 import { useAuth } from '../../contexts/AuthContext';
-import './Login.css';
+import '../Login/Login.css';
+import './ForgotPassword.css';
 
-function Login() {
+function ForgotPassword() {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    newPassword: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const { forgotPassword } = useAuth();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
     // Clear error when user starts typing
     if (error) setError('');
   };
@@ -30,15 +26,17 @@ function Login() {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccess('');
 
     try {
-      const result = await login(formData.email, formData.password);
+      const result = await forgotPassword(formData.email, formData.newPassword);
       
       if (result.success) {
-        // Redirect to home page on successful login
-        navigate('/mainhome');
+        setSuccess('Password updated successfully! You can now login with your new password.');
+        // Reset form
+        setFormData({ email: '', newPassword: '' });
       } else {
-        setError(result.message || 'Login failed');
+        setError(result.message || 'Password reset failed');
       }
     } catch (error) {
       setError('An unexpected error occurred');
@@ -53,8 +51,8 @@ function Login() {
       <div className="login-container">
         <div className="login-card">
           <div className="login-header">
-            <h1 className="login-title">Welcome Back</h1>
-            <p className="login-subtitle">Sign in to your account to continue</p>
+            <h1 className="login-title">Reset Password</h1>
+            <p className="login-subtitle">Enter your email and new password</p>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -69,6 +67,17 @@ function Login() {
               </div>
             )}
 
+            {success && (
+              <div className="success-message" style={{ 
+                color: 'green', 
+                marginBottom: '1rem', 
+                textAlign: 'center',
+                fontSize: '0.9rem'
+              }}>
+                {success}
+              </div>
+            )}
+
             <div className="form-group">
               <label htmlFor="email" className="form-label">Email Address</label>
               <input
@@ -78,22 +87,26 @@ function Login() {
                 className="form-input"
                 placeholder="Enter your email"
                 value={formData.email}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 required
                 disabled={loading}
               />
             </div>
 
-            <PasswordInput
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder="Enter your password"
-              label="Password"
-              required
-              disabled={loading}
-            />
+            <div className="form-group">
+              <label htmlFor="newPassword" className="form-label">New Password</label>
+              <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                className="form-input"
+                placeholder="Enter your new password"
+                value={formData.newPassword}
+                onChange={handleChange}
+                required
+                disabled={loading}
+              />
+            </div>
 
             <button 
               type="submit" 
@@ -101,30 +114,13 @@ function Login() {
               disabled={loading}
               style={{ opacity: loading ? 0.7 : 1 }}
             >
-              {loading ? 'Signing In...' : 'Sign In'}
+              {loading ? 'Updating Password...' : 'Update Password'}
             </button>
           </form>
 
-          <div className="forgot-password">
-            <Link to="/forgot-password">Forgot your password?</Link>
-          </div>
-
-          <div className="login-divider">
-            <span>or</span>
-          </div>
-
-          <div className="login-options">
-            <Link to="/professional_login" className="login-option">
-              Professional Login
-            </Link>
-            <Link to="/artist_login" className="login-option">
-              Artist Login
-            </Link>
-          </div>
-
           <div className="signup-section">
-            <span>Don't have an account? </span>
-            <Link to="/signup">Sign up here</Link>
+            <span>Remember your password? </span>
+            <Link to="/login">Sign in here</Link>
           </div>
         </div>
       </div>
@@ -132,5 +128,4 @@ function Login() {
   );
 }
 
-export default Login;
-
+export default ForgotPassword;

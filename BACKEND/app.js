@@ -67,6 +67,12 @@ const testimonialsRouter = require("./routes/TestimonialsRoutes");
 const donationPaymentRouter = require("./routes/DonationPaymentRoutes");
 const impactStoryRouter = require("./routes/ImpactStoryRoutes");
 
+// ✅ Authentication Routes
+const authRoutes = require("./routes/authRoutes");
+
+// ✅ Location Tracking Routes
+const locationRoutes = require("./routes/locationRoutes");
+
 // Mount routes
 app.use("/artists", artistManagerRoute);
 app.use("/registeredArtists", registeredArtistRoute);
@@ -94,6 +100,12 @@ app.use("/campaign", campaignRouter);
 app.use("/testimonials", testimonialsRouter);
 app.use("/api/donations", donationPaymentRouter);
 app.use("/api/impactStories", impactStoryRouter);
+
+// ✅ Authentication routes
+app.use("/api/auth", authRoutes);
+
+// ✅ Location tracking routes
+app.use("/api/location", locationRoutes);
 
 // ================== PDF Generation Route ==================
 app.get("/api/art/:id/report", async (req, res) => {

@@ -20,7 +20,7 @@ function Package(props) {
       <div className="package-details">
         <p><strong>ID:</strong> {_id}</p>
         <p><strong>Name:</strong> {name}</p>
-        <p><strong>Amount:</strong> ${amount}</p>
+        <p><strong>Amount:</strong> LKR {amount}</p>
         <p><strong>Description:</strong> {description || 'N/A'}</p>
         <p><strong>Active:</strong> {isActive ? 'Yes' : 'No'}</p>
         <Link to={`/updatepackage/${_id}`} className="update-link">Update</Link>

@@ -175,7 +175,36 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
               disabled={isCalculatingRoute}
               className="btn btn-primary"
             >
-              {isCalculatingRoute ? '🔄 Calculating...' : '🚗 Get Directions'}
+              {isCalculatingRoute ? '🔄 Calculating...' : '🚗 Request Directions'}
+            </button>
+
+            <button
+              onClick={() => {
+                const userLocation = navigator.geolocation ? 
+                  new Promise((resolve) => {
+                    navigator.geolocation.getCurrentPosition(
+                      (position) => resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
+                      () => resolve(null),
+                      { enableHighAccuracy: true, timeout: 5000 }
+                    );
+                  }) : 
+                  Promise.resolve(null);
+                
+                userLocation.then((currentLocation) => {
+                  if (currentLocation) {
+                    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation.lat},${currentLocation.lng}&destination=${venueCoords.lat},${venueCoords.lng}`;
+                    window.open(googleMapsUrl, '_blank');
+                  } else {
+                    // If location access fails, use venue as destination only
+                    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${venueCoords.lat},${venueCoords.lng}`;
+                    window.open(googleMapsUrl, '_blank');
+                  }
+                });
+              }}
+              className="btn btn-success"
+              style={{ marginLeft: '10px' }}
+            >
+              🗺️ Get Directions
             </button>
 
             {showDirections && (

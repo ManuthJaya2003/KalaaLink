@@ -345,7 +345,7 @@ function AnalyticsTab() {
                 return `
                   <tr>
                     <td>${event.event}</td>
-                    <td class="refund-cell">${event.refundAmount}</td>
+                    <td class="refund-cell">LKR {event.refundAmount}</td>
                     <td class="refund-cell">${event.ticketsRefunded}</td>
                     <td>${impactLevel}</td>
                   </tr>

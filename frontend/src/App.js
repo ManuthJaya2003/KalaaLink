@@ -65,6 +65,13 @@ import DonationManagerDashboard from "./Components/Chamodi/DonationManagerDashbo
 import DonationSuccess from "./Components/Chamodi/DonationSuccess/DonationSuccess";
 import DonationCancel from "./Components/Chamodi/DonationCancel/DonationCancel";
 
+// ✅ Authentication Context
+import { AuthProvider } from "./contexts/AuthContext";
+
+// ✅ Profile and Forgot Password Components
+import Profile from "./Components/Profile/Profile";
+import ForgotPassword from "./Components/ForgotPassword/ForgotPassword";
+
 const URL = "http://localhost:5000/events";
 
 function App() {
@@ -108,9 +115,10 @@ function App() {
   }, []);
 
   return (
-    <CartProvider>
-      <div>
-        <Routes>
+    <AuthProvider>
+      <CartProvider>
+        <div>
+          <Routes>
           {/* ---------- Redirects ---------- */}
           <Route path="/" element={<Navigate to="/mainhome" replace />} />
 
@@ -133,7 +141,11 @@ function App() {
           {/* ---------- SignUp/Login ---------- */}
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/professional_login" element={<ProfessionalLogin />} />
+
+          {/* ---------- Profile ---------- */}
+          <Route path="/profile" element={<Profile />} />
 
           {/* ---------- Admin ---------- */}
           <Route path="/admindashboard" element={<AdminDashboard />} />
@@ -194,9 +206,10 @@ function App() {
 
           {/* ---------- 404 ---------- */}
           <Route path="*" element={<h2>404 - Page Not Found</h2>} />
-        </Routes>
-      </div>
-    </CartProvider>
+          </Routes>
+        </div>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

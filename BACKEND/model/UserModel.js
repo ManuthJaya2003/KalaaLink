@@ -16,13 +16,21 @@ const userSchema = new Schema({
         unique:true,
     },
     password: {
-        type: Number,
+        type: String,
         required: true,
     },
     role:{
         type:String,
         enum: ['artist', 'artistManager', 'customer', 'admin','donationManager','eventManager','inventoryManager'],
         required:true,
+    },
+    profilePicture: {
+        type: String,
+        required: false,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
     }
 });
 

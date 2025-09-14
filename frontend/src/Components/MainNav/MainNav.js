@@ -1,8 +1,15 @@
 import React from "react";
 import "./MainNav.css";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 function MainNav() {
+  const { user, logout, isAuthenticated } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <nav className="navbar">
       <ul className="navbar-list">
@@ -44,16 +51,42 @@ function MainNav() {
             </svg>
           </Link>
         </li>
-        <li className="navbar-item auth-item">
-          <Link to = "/login">
-          <h1>Login</h1>
-          </Link>
-        </li>
-        <li className="navbar-item auth-item">
-          <Link to = "/signup">
-          <h1>SignUp</h1>
-          </Link>
-        </li>
+        
+        {/* Authentication Section */}
+        {isAuthenticated ? (
+          <>
+            {/* Profile Icon */}
+            <li className="navbar-item">
+              <Link to="/profile" aria-label="Profile" title="Profile" className="profile-link">
+                <svg className="profile-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </Link>
+            </li>
+            {/* Sign Out */}
+            <li className="navbar-item auth-item">
+              <button onClick={handleLogout} className="logout-btn">
+                <h1>Sign Out</h1>
+              </button>
+            </li>
+          </>
+        ) : (
+          <>
+            {/* Login */}
+            <li className="navbar-item auth-item">
+              <Link to = "/login">
+              <h1>Login</h1>
+              </Link>
+            </li>
+            {/* Sign Up */}
+            <li className="navbar-item auth-item">
+              <Link to = "/signup">
+              <h1>SignUp</h1>
+              </Link>
+            </li>
+          </>
+        )}
       </ul>
     </nav>
   );

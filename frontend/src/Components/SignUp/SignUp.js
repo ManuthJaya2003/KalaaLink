@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
 import PasswordInput from '../Common/PasswordInput';
+import { useAuth } from '../../contexts/AuthContext';
 import '../Login/Login.css';
 import './SignUp.css';
 
@@ -12,18 +13,49 @@ function SignUp() {
     email: '',
     password: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  
+  const { signup } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you can call your backend API to submit the signup data
-    console.log(formData);
-    alert('Account created successfully!');
-    // Reset form
-    setFormData({ firstName: '', lastName: '', email: '', password: '' });
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const result = await signup(
+        formData.firstName,
+        formData.lastName,
+        formData.email,
+        formData.password
+      );
+      
+      if (result.success) {
+        setSuccess('Account created successfully!');
+        // Reset form
+        setFormData({ firstName: '', lastName: '', email: '', password: '' });
+        // Redirect to home page after a short delay
+        setTimeout(() => {
+          navigate('/mainhome');
+        }, 2000);
+      } else {
+        setError(result.message || 'Signup failed');
+      }
+    } catch (error) {
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -37,6 +69,28 @@ function SignUp() {
           </div>
 
           <form onSubmit={handleSubmit}>
+            {error && (
+              <div className="error-message" style={{ 
+                color: 'red', 
+                marginBottom: '1rem', 
+                textAlign: 'center',
+                fontSize: '0.9rem'
+              }}>
+                {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="success-message" style={{ 
+                color: 'green', 
+                marginBottom: '1rem', 
+                textAlign: 'center',
+                fontSize: '0.9rem'
+              }}>
+                {success}
+              </div>
+            )}
+
             <div className="form-group">
               <label htmlFor="firstName" className="form-label">First Name</label>
               <input
@@ -48,6 +102,7 @@ function SignUp() {
                 value={formData.firstName}
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             </div>
 
@@ -62,6 +117,7 @@ function SignUp() {
                 value={formData.lastName}
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             </div>
 
@@ -76,6 +132,7 @@ function SignUp() {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             </div>
 
@@ -87,10 +144,16 @@ function SignUp() {
               placeholder="Create a password"
               label="Password"
               required
+              disabled={loading}
             />
 
-            <button type="submit" className="submit-btn">
-              Create Account
+            <button 
+              type="submit" 
+              className="submit-btn"
+              disabled={loading}
+              style={{ opacity: loading ? 0.7 : 1 }}
+            >
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
 
