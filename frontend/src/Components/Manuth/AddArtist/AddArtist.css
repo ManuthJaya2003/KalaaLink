@@ -262,12 +262,6 @@
   transform: scale(1.05);
 }
 
-.profile-preview {
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-}
-
 .remove-image-btn {
   position: absolute;
   top: -10px;

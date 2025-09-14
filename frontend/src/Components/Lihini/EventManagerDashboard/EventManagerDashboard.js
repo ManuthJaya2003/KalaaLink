@@ -7,7 +7,6 @@ import OngoingEventsTable from "./OngoingEventsTable";
 import AnalyticsTab from "./AnalyticsTab";
 import EventUpdate from "../EventUpdate/EventUpdate";
 import BookingsTab from "./BookingsTab"; // ✅ new import
-import TestimonialsTab from "./TestimonialsTab"; // ✅ new import
 import { useParams } from "react-router-dom";
 import logoutEmployee from "../../../utils/employeeLogout";
 
@@ -105,7 +104,6 @@ function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
         </button>
         <button onClick={() => setActiveTab("analytics")} style={getButtonStyle(activeTab === "analytics")}>Analytics</button>
         <button onClick={() => setActiveTab("bookings")} style={getButtonStyle(activeTab === "bookings")}>Bookings</button> {/* ✅ new button */}
-        <button onClick={() => setActiveTab("testimonials")} style={getButtonStyle(activeTab === "testimonials")}>Testimonials</button> {/* ✅ new button */}
         </div>
 
         {/* Main Content */}
@@ -115,7 +113,6 @@ function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
           {activeTab === "ongoing" && <OngoingEventsTable events={events} setEvents={setEvents} />}
           {activeTab === "analytics" && <AnalyticsTab />}
           {activeTab === "bookings" && <BookingsTab events={events} />} {/* ✅ new tab content */}
-          {activeTab === "testimonials" && <TestimonialsTab />} {/* ✅ new tab content */}
         </div>
       </div>
     </div>

@@ -148,40 +148,20 @@
 /* Artists Grid */
 .artists-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: var(--space-xl);
   margin-top: var(--space-2xl);
-  padding: 0 var(--space-md);
-}
-
-/* Responsive breakpoints */
-@media (max-width: 1024px) {
-  .artists-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-lg);
-  }
-}
-
-@media (max-width: 768px) {
-  .artists-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
-    padding: 0 var(--space-sm);
-  }
 }
 
 .artist-card {
   background: white;
   border-radius: var(--radius-medium);
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-soft);
   transition: all var(--transition-normal);
   border: 1px solid var(--color-light-gray);
   cursor: pointer;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
 }
 
 .artist-card::before {
@@ -197,35 +177,14 @@
 
 .artist-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-  border-color: var(--color-accent-green);
+  box-shadow: var(--shadow-medium);
 }
 
-.artist-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(74, 222, 128, 0.05), rgba(96, 165, 250, 0.05));
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.artist-card:hover::after {
-  opacity: 1;
-}
-
-/* Cover Image Section (Banner) */
 .artist-image-container {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 280px;
   overflow: hidden;
-  background: var(--color-light-beige);
 }
 
 .artist-image {
@@ -239,211 +198,39 @@
   transform: scale(1.05);
 }
 
-/* Fallback for no cover image */
-.artist-image-fallback {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 3rem;
-  font-weight: 700;
-}
-
-/* Artist Info Section */
 .artist-info {
-  padding: var(--space-lg);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  z-index: 2;
+  padding: var(--space-xl);
 }
 
 .artist-name {
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
   font-weight: 700;
   color: var(--color-text-dark);
   margin-bottom: var(--space-sm);
-  text-align: center;
-  line-height: var(--leading-tight);
 }
 
 .artist-genre {
   color: var(--color-accent-green);
   font-weight: 600;
-  margin-bottom: var(--space-sm);
-  font-size: var(--text-base);
-  text-align: center;
+  margin-bottom: var(--space-xs);
+  font-size: var(--text-lg);
 }
 
 .artist-category {
   color: var(--color-text-muted);
-  margin-bottom: var(--space-md);
-  font-size: var(--text-sm);
-  text-align: center;
-  line-height: var(--leading-relaxed);
-}
-
-.artist-bio {
-  color: var(--color-text-primary);
-  font-size: var(--text-sm);
-  line-height: var(--leading-relaxed);
   margin-bottom: var(--space-lg);
-  text-align: center;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  flex: 1;
+  font-size: var(--text-base);
 }
 
 .artist-buttons {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   flex-wrap: wrap;
-  margin-top: auto;
 }
 
 .artist-buttons .btn {
   flex: 1;
-  min-width: 100px;
-  padding: var(--space-sm) var(--space-md);
-  font-size: var(--text-sm);
-  border-radius: var(--radius-small);
-  font-weight: 600;
-  transition: all var(--transition-normal);
-  cursor: pointer;
-  border: none;
-  text-align: center;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.artist-buttons .btn-primary {
-  background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
-  color: white;
-  border: none;
-}
-
-.artist-buttons .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
-}
-
-.artist-buttons .btn-secondary {
-  background: var(--color-warm-beige);
-  color: var(--color-text-primary);
-  border: 2px solid var(--color-medium-gray);
-}
-
-.artist-buttons .btn-secondary:hover {
-  background: var(--color-medium-gray);
-  transform: translateY(-1px);
-}
-
-.btn-review {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  border: none;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-small);
-  font-weight: 600;
-  font-size: var(--text-sm);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  text-transform: none;
-  letter-spacing: 0;
-  box-shadow: var(--shadow-soft);
-}
-
-.btn-review:hover:not(:disabled) {
-  background: linear-gradient(135deg, #d97706, #b45309);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
-}
-
-/* Reviews Display Section */
-.artist-reviews-section {
-  margin-top: var(--space-md);
-  padding: var(--space-md);
-  background: var(--color-light-beige);
-  border-top: 1px solid var(--color-light-gray);
-}
-
-/* Responsive adjustments for mobile */
-@media (max-width: 768px) {
-  .artist-info {
-    padding: var(--space-md);
-  }
-  
-  .artist-name {
-    font-size: var(--text-lg);
-  }
-  
-  .artist-buttons {
-    flex-direction: column;
-  }
-  
-  .artist-buttons .btn {
-    width: 100%;
-    margin-bottom: var(--space-xs);
-  }
-  
-  .artist-buttons .btn:last-child {
-    margin-bottom: 0;
-  }
-  
-  .artist-image {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .artist-image-container {
-    height: 160px;
-  }
-}
-
-@media (max-width: 480px) {
-  .artist-info {
-    padding: var(--space-sm);
-  }
-  
-  .artist-name {
-    font-size: var(--text-base);
-  }
-  
-  .artist-genre {
-    font-size: var(--text-sm);
-  }
-  
-  .artist-category {
-    font-size: var(--text-xs);
-  }
-  
-  .artist-bio {
-    font-size: var(--text-xs);
-    -webkit-line-clamp: 2;
-  }
-  
-  .artist-buttons .btn {
-    padding: var(--space-xs) var(--space-sm);
-    font-size: var(--text-xs);
-  }
-  
-  .artist-image {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .artist-image-container {
-    height: 140px;
-  }
+  min-width: 120px;
 }
 
 /* Loading and Error States */

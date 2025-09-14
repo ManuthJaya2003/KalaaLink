@@ -3,8 +3,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import MainNav from "../../MainNav/MainNav";
 import Event from "../Event/Event";
-import TestimonialForm from "./TestimonialForm";
-import TestimonialDisplay from "./TestimonialDisplay";
 import "../Event/Event.css";
 
 // Load Stripe
@@ -21,45 +19,6 @@ function Events({ events: propEvents }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState('all');
-
-  // Month options for the filter
-  const monthOptions = [
-    { value: 'all', label: 'All Months' },
-    { value: '0', label: 'January' },
-    { value: '1', label: 'February' },
-    { value: '2', label: 'March' },
-    { value: '3', label: 'April' },
-    { value: '4', label: 'May' },
-    { value: '5', label: 'June' },
-    { value: '6', label: 'July' },
-    { value: '7', label: 'August' },
-    { value: '8', label: 'September' },
-    { value: '9', label: 'October' },
-    { value: '10', label: 'November' },
-    { value: '11', label: 'December' }
-  ];
-
-  // Filter events by selected month
-  const filteredEvents = events.filter(event => {
-    if (selectedMonth === 'all') {
-      return true;
-    }
-    
-    try {
-      const eventDate = new Date(event.eventDate);
-      const eventMonth = eventDate.getMonth().toString();
-      return eventMonth === selectedMonth;
-    } catch (error) {
-      console.warn('Invalid date format for event:', event.eventDate);
-      return false;
-    }
-  });
-
-  // Handle month filter change
-  const handleMonthChange = (e) => {
-    setSelectedMonth(e.target.value);
-  };
 
   // Fetch events from backend API
   const fetchEvents = async () => {
@@ -181,73 +140,24 @@ function Events({ events: propEvents }) {
             {loading ? "Refreshing..." : "🔄 Refresh Events"}
           </button>
         </div>
-
-        {/* Month Filter */}
-        <div className="events-filter">
-          <div className="filter-container">
-            <label htmlFor="month-filter" className="filter-label">
-              Filter by Month:
-            </label>
-            <select 
-              id="month-filter"
-              value={selectedMonth} 
-              onChange={handleMonthChange}
-              className="month-filter-dropdown"
-            >
-              {monthOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            {Array.isArray(events) && events.length > 0 && (
-              <div className="filter-results">
-                <span className="results-count">
-                  {filteredEvents.length} of {events.length} events
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
         
         {Array.isArray(events) && events.length > 0 ? (
-          <>
-            {filteredEvents.length > 0 ? (
-              <div className="events-grid">
-                {filteredEvents.map((event, i) => (
-                  <Event 
-                    key={i} 
-                    event={event} 
-                    onBookNow={() => handleBookNow(event)}
-                    onViewDetails={() => handleViewDetails(event)}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="no-events">
-                <p className="no-events-text">No events found for the selected month</p>
-                <p className="no-events-subtext">Try selecting a different month or "All Months"</p>
-              </div>
-            )}
-          </>
+          <div className="events-grid">
+            {events.map((event, i) => (
+              <Event 
+                key={i} 
+                event={event} 
+                onBookNow={() => handleBookNow(event)}
+                onViewDetails={() => handleViewDetails(event)}
+              />
+            ))}
+          </div>
         ) : (
           <div className="no-events">
             <p className="no-events-text">No events available at the moment</p>
             <p className="no-events-subtext">Check back later for upcoming events!</p>
           </div>
         )}
-
-        {/* Testimonial Form */}
-        <TestimonialForm 
-          events={events} 
-          onTestimonialAdded={() => {
-            // Refresh testimonials display if needed
-            console.log('New testimonial added');
-          }}
-        />
-
-        {/* Testimonials Display */}
-        <TestimonialDisplay />
 
         {/* Enhanced Booking Modal */}
         {showBookingModal && selectedEvent && (

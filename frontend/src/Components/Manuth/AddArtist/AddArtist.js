@@ -16,12 +16,10 @@ function Artist() {
     bookingPrice: "",
     summary: "",
     bio: "",
-    image: null, // cover image
-    profilePic: null, // profile picture
+    image: null,
   });
 
   const [preview, setPreview] = useState("");
-  const [profilePreview, setProfilePreview] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -38,14 +36,6 @@ function Artist() {
     }
   };
 
-  const handleProfilePicChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setInputs(prev => ({ ...prev, profilePic: file }));
-      setProfilePreview(URL.createObjectURL(file));
-    }
-  };
-
   const sendRequest = async () => {
     const formData = new FormData();
     formData.append("artistName", inputs.artistName);
@@ -57,9 +47,6 @@ function Artist() {
     formData.append("bio", inputs.bio);
     if (inputs.image) {
       formData.append("image", inputs.image);
-    }
-    if (inputs.profilePic) {
-      formData.append("profilePic", inputs.profilePic);
     }
 
     try {
@@ -99,106 +86,26 @@ function Artist() {
 
   const userName = "Manuth";
 
-  const getButtonStyle = (isActive) => ({
-    background: isActive ? "#34495e" : "transparent",
-    border: "none",
-    color: "white",
-    textAlign: "left",
-    padding: "10px 0",
-    cursor: "pointer",
-    fontSize: "16px",
-    fontWeight: isActive ? "bold" : "normal",
-    width: "100%",
-    marginBottom: "5px",
-    borderRadius: "5px",
-    transition: "background-color 0.3s",
-  });
-
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      {/* Top Navigation Bar */}
-      <div
-        style={{
-          background: "#34495e",
-          color: "white",
-          padding: "15px 20px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          borderBottom: "2px solid #2c3e50",
-        }}
-      >
-        <h1 style={{ margin: 0, fontSize: "24px", fontWeight: "bold" }}>
-          Artist Manager Dashboard
-        </h1>
-        <button
-          onClick={handleSignOut}
-          style={{
-            background: "#e74c3c",
-            color: "white",
-            border: "none",
-            padding: "10px 20px",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "bold",
-            transition: "background-color 0.3s",
-          }}
-          onMouseEnter={(e) => e.target.style.background = "#c0392b"}
-          onMouseLeave={(e) => e.target.style.background = "#e74c3c"}
-        >
-          Sign Out
-        </button>
-      </div>
+    <div className="dashboard-page">
+      <MainNav />
 
-      {/* Main Dashboard Container */}
-      <div style={{ display: "flex", flex: 1 }}>
-        {/* Sidebar */}
-        <div
-          style={{
-            width: "220px",
-            background: "#2c3e50",
-            color: "white",
-            display: "flex",
-            flexDirection: "column",
-            padding: "20px",
-          }}
-        >
-          <h2 style={{ marginBottom: "30px" }}>Dashboard</h2>
-          <button 
-            onClick={() => navigate('/overview')} 
-            style={getButtonStyle(false)}
-          >
-            Analytics
-          </button>
-          <button 
-            onClick={() => navigate('/applications')} 
-            style={getButtonStyle(false)}
-          >
-            Applications
-          </button>
-          <button 
-            onClick={() => navigate('/manage_artists')} 
-            style={getButtonStyle(false)}
-          >
-            Manage Artists
-          </button>
-          <button 
-            onClick={() => navigate('/addArtist')} 
-            style={getButtonStyle(true)}
-          >
-            Add Artist
-          </button>
-          <button 
-            onClick={() => navigate('/artist_reviews')} 
-            style={getButtonStyle(false)}
-          >
-            Artist Reviews
+      {/* Dashboard Header */}
+      <header className="dashboard-header">
+        <div className="dashboard-header-container">
+          <div className="dashboard-header-left">
+            <h1 className="dashboard-header-title">Artist Manager Dashboard</h1>
+            <p className="dashboard-welcome-message">
+              Welcome back, {userName}! Manage your artists and applications efficiently.
+            </p>
+          </div>
+          <button className="dashboard-signout-btn" onClick={handleSignOut}>
+            <span>Sign Out</span>
           </button>
         </div>
+      </header>
 
-        {/* Main Content */}
-        <div style={{ flex: 1, padding: "20px" }}>
+      <ArtistManagerNav />
 
       <div className="add-artist-container">
         <div className="add-artist-card">
@@ -328,7 +235,7 @@ function Artist() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="image" className="form-label">Cover Image (Banner)</label>
+              <label htmlFor="image" className="form-label">Artist Image</label>
               <div className="image-upload-container">
                 <input
                   type="file"
@@ -338,8 +245,8 @@ function Artist() {
                   className="image-input"
                 />
                 <label htmlFor="image" className="image-upload-label">
-                  <span className="upload-icon">🖼️</span>
-                  <span>Choose Cover Image</span>
+                  <span className="upload-icon">📷</span>
+                  <span>Choose Image</span>
                 </label>
               </div>
               
@@ -356,43 +263,6 @@ function Artist() {
                     onClick={() => {
                       setPreview("");
                       setInputs(prev => ({ ...prev, image: null }));
-                    }}
-                  >
-                    ✕
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="profilePic" className="form-label">Profile Picture</label>
-              <div className="image-upload-container">
-                <input
-                  type="file"
-                  id="profilePic"
-                  accept="image/*"
-                  onChange={handleProfilePicChange}
-                  className="image-input"
-                />
-                <label htmlFor="profilePic" className="image-upload-label">
-                  <span className="upload-icon">👤</span>
-                  <span>Choose Profile Picture</span>
-                </label>
-              </div>
-              
-              {profilePreview && (
-                <div className="image-preview-container">
-                  <img
-                    src={profilePreview}
-                    alt="Profile Preview"
-                    className="image-preview profile-preview"
-                  />
-                  <button
-                    type="button"
-                    className="remove-image-btn"
-                    onClick={() => {
-                      setProfilePreview("");
-                      setInputs(prev => ({ ...prev, profilePic: null }));
                     }}
                   >
                     ✕
@@ -418,8 +288,6 @@ function Artist() {
               </button>
             </div>
           </form>
-        </div>
-      </div>
         </div>
       </div>
     </div>

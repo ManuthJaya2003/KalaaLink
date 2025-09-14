@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MainNav from "../../MainNav/MainNav";
+import OverviewHomeTab from "./OverviewHomeTab";
 import OverviewAnalyticsTab from "./OverviewAnalyticsTab";
 import OverviewApplicationsTab from "./OverviewApplicationsTab";
 import OverviewManageArtistsTab from "./OverviewManageArtistsTab";
@@ -8,7 +9,7 @@ import logoutEmployee from "../../../utils/employeeLogout";
 import "./Overview.css";
 
 const Overview = () => {
-  const [activeTab, setActiveTab] = useState("analytics");
+  const [activeTab, setActiveTab] = useState("home");
   const navigate = useNavigate();
 
   // Sign out function
@@ -67,15 +68,15 @@ const Overview = () => {
           }}
         >
           <h2 style={{ marginBottom: "30px" }}>Dashboard</h2>
+          <button onClick={() => setActiveTab("home")} style={getButtonStyle(activeTab === "home")}>Home</button>
           <button onClick={() => setActiveTab("analytics")} style={getButtonStyle(activeTab === "analytics")}>Analytics</button>
           <button onClick={() => setActiveTab("applications")} style={getButtonStyle(activeTab === "applications")}>Applications</button>
           <button onClick={() => setActiveTab("manage")} style={getButtonStyle(activeTab === "manage")}>Manage Artists</button>
-          <button onClick={() => navigate('/addArtist')} style={getButtonStyle(false)}>Add Artist</button>
-          <button onClick={() => navigate('/artist_reviews')} style={getButtonStyle(false)}>Artist Reviews</button>
         </div>
 
         {/* Main Content */}
         <div style={{ flex: 1, padding: "20px" }}>
+          {activeTab === "home" && <OverviewHomeTab />}
           {activeTab === "analytics" && <OverviewAnalyticsTab />}
           {activeTab === "applications" && <OverviewApplicationsTab />}
           {activeTab === "manage" && <OverviewManageArtistsTab />}

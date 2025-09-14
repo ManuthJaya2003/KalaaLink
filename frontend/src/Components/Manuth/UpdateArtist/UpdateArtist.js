@@ -10,11 +10,9 @@ function UpdateArtist() {
     bookingPrice: '',
     summary: '',
     bio: '',
-    image: '', // store existing cover image path
-    profilePic: '' // store existing profile picture path
+    image: '' // store existing image path
   });
   const [imageFile, setImageFile] = useState(null);
-  const [profilePicFile, setProfilePicFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -39,8 +37,7 @@ function UpdateArtist() {
           bookingPrice: artistData.bookingPrice || '',
           summary: artistData.summary || '',
           bio: artistData.bio || '',
-          image: artistData.image || '',
-          profilePic: artistData.profilePic || ''
+          image: artistData.image || ''
         });
         setLoading(false);
       } catch (err) {
@@ -59,8 +56,6 @@ function UpdateArtist() {
     const { name, value, files } = e.target;
     if (name === 'image') {
       setImageFile(files[0]);
-    } else if (name === 'profilePic') {
-      setProfilePicFile(files[0]);
     } else {
       setInputs((prev) => ({ ...prev, [name]: value }));
     }
@@ -77,9 +72,6 @@ function UpdateArtist() {
       formData.append('bio', inputs.bio);
       if (imageFile) {
         formData.append('image', imageFile);
-      }
-      if (profilePicFile) {
-        formData.append('profilePic', profilePicFile);
       }
 
       await axios.put(`http://localhost:5000/artists/${artist_id}`, formData, {
@@ -158,42 +150,19 @@ function UpdateArtist() {
         />
         <br />
 
-        {/* Cover Image Section */}
-        <label>Cover Image (Banner):</label>
-        <br />
+        {/* Show current image if available */}
         {inputs.image && !imageFile && (
           <div style={{ marginBottom: '10px' }}>
             <img
               src={`http://localhost:5000/${inputs.image}`}
-              alt="Cover Image"
+              alt="Artist"
               width="150"
               style={{ border: '1px solid #ccc', padding: '4px' }}
             />
           </div>
         )}
-        <input type="file" name="image" onChange={handleChange} />
-        <br />
 
-        {/* Profile Picture Section */}
-        <label>Profile Picture:</label>
-        <br />
-        {inputs.profilePic && !profilePicFile && (
-          <div style={{ marginBottom: '10px' }}>
-            <img
-              src={`http://localhost:5000/${inputs.profilePic}`}
-              alt="Profile Picture"
-              width="100"
-              height="100"
-              style={{ 
-                border: '1px solid #ccc', 
-                padding: '4px',
-                borderRadius: '50%',
-                objectFit: 'cover'
-              }}
-            />
-          </div>
-        )}
-        <input type="file" name="profilePic" onChange={handleChange} />
+        <input type="file" name="image" onChange={handleChange} />
         <br />
         <button type="submit">Update Artist</button>
       </form>

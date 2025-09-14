@@ -28,15 +28,9 @@ router.get("/categories/:genre", ArtistManagerController.getCategoriesByGenre);
 
 // CRUD routes
 router.get("/", ArtistManagerController.getAllArtists);
-router.post("/", upload.fields([
-  { name: 'image', maxCount: 1 },
-  { name: 'profilePic', maxCount: 1 }
-]), ArtistManagerController.addArtists);
+router.post("/", upload.single("image"), ArtistManagerController.addArtists);
 router.get("/:artist_id", ArtistManagerController.getArtistByID);
-router.put("/:artist_id", upload.fields([
-  { name: 'image', maxCount: 1 },
-  { name: 'profilePic', maxCount: 1 }
-]), ArtistManagerController.updateArtist);
+router.put("/:artist_id", upload.single("image"), ArtistManagerController.updateArtist);
 router.delete("/:artist_id", ArtistManagerController.deleteArtist);
 
 module.exports = router;

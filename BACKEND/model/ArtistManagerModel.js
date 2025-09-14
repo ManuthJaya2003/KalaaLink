@@ -8,8 +8,7 @@ const ArtistManagerSchema = new Schema({
     bookingPrice: { type: Number, required: true },
     summary: { type: String, required: true },
     bio: { type: String, required: true },
-    image: { type: String, required: false }, // Cover image
-    profilePic: { type: String, required: false }, // Profile picture
+    image: { type: String, required: false },
     approved: { type: Boolean, default: false } // NEW: tracks approval
 }, {
     timestamps: true
