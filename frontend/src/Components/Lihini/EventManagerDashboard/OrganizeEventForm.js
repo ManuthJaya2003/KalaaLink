@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import MapPicker from "../../Manuth/BookArtist/MapPicker";
 import "./OrganizeEventForm.css";
 
 const URL = "http://localhost:5000/events";
@@ -10,6 +11,7 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
     eventDate: "",
     eventTime: "",
     eventVenue: "",
+    eventLocation: { lat: "", lng: "" },
     eventDescription: "",
     maxArtists: "",
     maxCustomers: "",
@@ -17,6 +19,13 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
     registrationFeeArtist: "",
     image: null,
     requestCrew: false,
+    // Crew request fields
+    crewType: "",
+    crewDetails: "",
+    crewRequiredDate: "",
+    crewRequiredTime: "",
+    estimatedDuration: "",
+    specialRequirements: ""
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,6 +43,16 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
     }
   };
 
+  // Handle location selection from MapPicker
+  const handleLocationSelect = (location) => {
+    setForm({ ...form, eventLocation: location });
+  };
+
+  // Handle address change from MapPicker
+  const handleAddressChange = (address) => {
+    setForm({ ...form, eventVenue: address });
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,6 +65,7 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
       data.append("eventDate", form.eventDate);
       data.append("eventTime", form.eventTime);
       data.append("eventVenue", form.eventVenue);
+      data.append("venueCoordinates", JSON.stringify(form.eventLocation));
       data.append("eventDescription", form.eventDescription);
       data.append("maxArtists", Number(form.maxArtists));
       data.append("maxCustomers", Number(form.maxCustomers));
@@ -60,6 +80,27 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
 
       const res = await axios.post(`${URL}/create`, data);
 
+      // If crew is requested, create crew request
+      if (form.requestCrew) {
+        try {
+          const crewRequestData = {
+            eventId: res.data.event._id,
+            requestedBy: eventManagerId || "Event Manager",
+            crewType: form.crewType,
+            crewDetails: form.crewDetails,
+            requiredDate: form.crewRequiredDate,
+            requiredTime: form.crewRequiredTime,
+            estimatedDuration: form.estimatedDuration,
+            specialRequirements: form.specialRequirements
+          };
+
+          await axios.post("http://localhost:5000/api/crew-requests", crewRequestData);
+        } catch (crewError) {
+          console.error("Error creating crew request:", crewError);
+          // Don't fail the entire form if crew request fails
+        }
+      }
+
       setEvents([...events, res.data.event]);
 
       // Reset form
@@ -68,6 +109,7 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
         eventDate: "",
         eventTime: "",
         eventVenue: "",
+        eventLocation: { lat: "", lng: "" },
         eventDescription: "",
         maxArtists: "",
         maxCustomers: "",
@@ -75,6 +117,13 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
         registrationFeeArtist: "",
         image: null,
         requestCrew: false,
+        // Reset crew request fields
+        crewType: "",
+        crewDetails: "",
+        crewRequiredDate: "",
+        crewRequiredTime: "",
+        estimatedDuration: "",
+        specialRequirements: ""
       });
 
       document.querySelector('input[name="image"]').value = "";
@@ -147,20 +196,20 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
             />
           </div>
 
-          {/* Venue */}
+          {/* Venue Location */}
           <div className="form-group full-width">
             <label className="form-label">
               <span className="label-icon">📍</span>
-              Venue
+              Event Venue Location
             </label>
-            <input
-              name="eventVenue"
-              type="text"
-              placeholder="Enter the event venue..."
-              value={form.eventVenue}
-              onChange={handleChange}
-              className="form-input"
-              required
+            <MapPicker
+              selectedLocation={
+                form.eventLocation.lat && form.eventLocation.lng
+                  ? form.eventLocation
+                  : null
+              }
+              onLocationSelect={handleLocationSelect}
+              onAddressChange={handleAddressChange}
             />
           </div>
 
@@ -294,6 +343,132 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
               <p className="checkbox-hint">Check this if you need additional crew members for the event</p>
             </div>
           </div>
+
+          {/* Crew Request Fields - Only show when checkbox is checked */}
+          {form.requestCrew && (
+            <div className="crew-request-section">
+              <div className="section-header">
+                <h3>👷 Crew Request Details</h3>
+                <p>Provide details about the crew support you need</p>
+              </div>
+
+              <div className="form-grid">
+                {/* Crew Type */}
+                <div className="form-group">
+                  <label className="form-label">
+                    <span className="label-icon">🔧</span>
+                    Crew Type
+                  </label>
+                  <select
+                    name="crewType"
+                    value={form.crewType}
+                    onChange={handleChange}
+                    className="form-select"
+                    required={form.requestCrew}
+                  >
+                    <option value="">Select crew type...</option>
+                    <option value="sound">Sound System</option>
+                    <option value="lighting">Lighting</option>
+                    <option value="stage_setup">Stage Setup</option>
+                    <option value="security">Security</option>
+                    <option value="catering">Catering</option>
+                    <option value="photography">Photography</option>
+                    <option value="transportation">Transportation</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                {/* Required Date */}
+                <div className="form-group">
+                  <label className="form-label">
+                    <span className="label-icon">📅</span>
+                    Required Date
+                  </label>
+                  <input
+                    name="crewRequiredDate"
+                    type="date"
+                    value={form.crewRequiredDate}
+                    onChange={handleChange}
+                    className="form-input"
+                    required={form.requestCrew}
+                  />
+                </div>
+
+                {/* Required Time */}
+                <div className="form-group">
+                  <label className="form-label">
+                    <span className="label-icon">⏰</span>
+                    Required Time
+                  </label>
+                  <input
+                    name="crewRequiredTime"
+                    type="time"
+                    value={form.crewRequiredTime}
+                    onChange={handleChange}
+                    className="form-input"
+                    required={form.requestCrew}
+                  />
+                </div>
+
+                {/* Estimated Duration */}
+                <div className="form-group">
+                  <label className="form-label">
+                    <span className="label-icon">⏱️</span>
+                    Estimated Duration
+                  </label>
+                  <select
+                    name="estimatedDuration"
+                    value={form.estimatedDuration}
+                    onChange={handleChange}
+                    className="form-select"
+                    required={form.requestCrew}
+                  >
+                    <option value="">Select duration...</option>
+                    <option value="1 hour">1 Hour</option>
+                    <option value="2 hours">2 Hours</option>
+                    <option value="4 hours">4 Hours</option>
+                    <option value="6 hours">6 Hours</option>
+                    <option value="8 hours">8 Hours</option>
+                    <option value="Full day">Full Day</option>
+                    <option value="Multiple days">Multiple Days</option>
+                  </select>
+                </div>
+
+                {/* Crew Details */}
+                <div className="form-group full-width">
+                  <label className="form-label">
+                    <span className="label-icon">📝</span>
+                    Crew Details
+                  </label>
+                  <textarea
+                    name="crewDetails"
+                    placeholder="Describe the crew requirements in detail..."
+                    value={form.crewDetails}
+                    onChange={handleChange}
+                    className="form-textarea"
+                    rows="4"
+                    required={form.requestCrew}
+                  />
+                </div>
+
+                {/* Special Requirements */}
+                <div className="form-group full-width">
+                  <label className="form-label">
+                    <span className="label-icon">⭐</span>
+                    Special Requirements
+                  </label>
+                  <textarea
+                    name="specialRequirements"
+                    placeholder="Any special requirements or notes..."
+                    value={form.specialRequirements}
+                    onChange={handleChange}
+                    className="form-textarea"
+                    rows="3"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Submit Button */}
