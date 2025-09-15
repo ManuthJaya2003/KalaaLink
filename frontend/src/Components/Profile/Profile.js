@@ -26,6 +26,7 @@ function Profile() {
   const [eventBookings, setEventBookings] = useState([]);
   const [orders, setOrders] = useState([]);
   const [donations, setDonations] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -132,12 +133,13 @@ function Profile() {
   const fetchUserData = async () => {
     setLoading(true);
     try {
-      // Fetch artist bookings, event bookings, orders, and donations in parallel
-      const [artistBookingsRes, eventBookingsRes, ordersRes, donationsRes] = await Promise.allSettled([
+      // Fetch artist bookings, event bookings, orders, donations, and reviews in parallel
+      const [artistBookingsRes, eventBookingsRes, ordersRes, donationsRes, reviewsRes] = await Promise.allSettled([
         axios.get('http://localhost:5000/bookings'),
         axios.get('http://localhost:5000/eventBookings'),
         axios.get('http://localhost:5000/api/orders'),
-        axios.get('http://localhost:5000/donor')
+        axios.get('http://localhost:5000/donor'),
+        axios.get('http://localhost:5000/api/artist-reviews')
       ]);
 
       if (artistBookingsRes.status === 'fulfilled') {
@@ -192,6 +194,22 @@ function Profile() {
         console.error('Donations request failed:', donationsRes.reason);
         // Set empty array if donations request fails
         setDonations([]);
+      }
+
+      if (reviewsRes.status === 'fulfilled') {
+        // Filter reviews for current user
+        const reviewsData = reviewsRes.value.data;
+        const reviewsArray = reviewsData.reviews || reviewsData || [];
+        const userReviews = Array.isArray(reviewsArray) ? reviewsArray.filter(
+          review => review.customerName === user?.firstName + ' ' + user?.lastName || 
+                   review.customerName === user?.firstName ||
+                   review.customerName === user?.lastName
+        ) : [];
+        setReviews(userReviews);
+        console.log(`Found ${userReviews.length} reviews for user ${user?.email}`);
+      } else {
+        console.error('Reviews request failed:', reviewsRes.reason);
+        setReviews([]);
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -770,6 +788,12 @@ function Profile() {
               >
                 Donations ({donations.length})
               </button>
+              <button
+                className={`tab-button ${activeTab === 'reviews' ? 'active' : ''}`}
+                onClick={() => setActiveTab('reviews')}
+              >
+                My Reviews ({reviews.length})
+              </button>
             </div>
 
             <div className="tab-content">
@@ -957,6 +981,37 @@ function Profile() {
                     </div>
                   ) : (
                     <p>No donations found.</p>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'reviews' && (
+                <div className="reviews-history">
+                  <h3>My Reviews</h3>
+                  {loading ? (
+                    <p>Loading reviews...</p>
+                  ) : reviews.length > 0 ? (
+                    <div className="reviews-list">
+                      {reviews.map((review, index) => (
+                        <div key={index} className="review-item">
+                          <div className="review-info">
+                            <h4>Review for {review.artist?.artistName || 'Artist'}</h4>
+                            <div className="review-rating">
+                              <span className="stars">
+                                {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                              </span>
+                              <span className="rating-text">{review.rating} out of 5 stars</span>
+                            </div>
+                            <p className="review-text">"{review.review}"</p>
+                            <p className="review-date">
+                              <strong>Posted:</strong> {formatDate(review.createdAt)}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>No reviews found. Start reviewing artists you've booked!</p>
                   )}
                 </div>
               )}

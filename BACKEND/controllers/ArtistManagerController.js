@@ -170,6 +170,21 @@ const rejectArtist = async (req, res) => {
   }
 };
 
+// Clear all rejected artists
+const clearRejectedArtists = async (req, res) => {
+  try {
+    const result = await Artist.deleteMany({ status: "rejected" });
+    
+    return res.status(200).json({ 
+      message: `Successfully cleared ${result.deletedCount} rejected artists`,
+      deletedCount: result.deletedCount
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 // Get all distinct genres
 const getGenres = async (req, res) => {
   try {
@@ -221,6 +236,7 @@ module.exports = {
   getAllApplications,
   approveArtist,
   rejectArtist,
+  clearRejectedArtists,
   getGenres,
   getCategoriesByGenre,
 };

@@ -21,6 +21,7 @@ const upload = multer({ storage: storage });
 router.get("/applications", ArtistManagerController.getAllApplications);
 router.put("/applications/approve/:id", ArtistManagerController.approveArtist);
 router.put("/applications/reject/:id", ArtistManagerController.rejectArtist);
+router.delete("/applications/clear-rejected", ArtistManagerController.clearRejectedArtists);
 
 // Filter endpoints (must come BEFORE dynamic :artist_id routes)
 router.get("/genres", ArtistManagerController.getGenres);

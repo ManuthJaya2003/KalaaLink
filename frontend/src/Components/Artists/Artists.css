@@ -533,3 +533,175 @@
     padding: var(--space-md);
   }
 }
+
+/* ===== REVIEW SECTION STYLES ===== */
+
+.artist-reviews-section {
+  margin: var(--space-md) 0;
+  padding: var(--space-md);
+  background: var(--color-off-white);
+  border-radius: var(--radius-organic);
+  border: 1px solid var(--color-soft-border);
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.rating-display .rating-text {
+  font-size: var(--text-sm);
+  color: var(--color-text-medium);
+  font-weight: 600;
+}
+
+.latest-review {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm);
+  background: white;
+  border-radius: var(--radius-soft);
+  border-left: 3px solid var(--color-soft-green);
+}
+
+.review-snippet {
+  font-style: italic;
+  color: var(--color-text-medium);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.review-author {
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+  font-weight: 600;
+  margin: 0;
+  text-align: right;
+}
+
+.no-reviews {
+  text-align: center;
+  padding: var(--space-sm);
+}
+
+.no-reviews-text {
+  color: var(--color-text-light);
+  font-size: var(--text-sm);
+  font-style: italic;
+}
+
+/* Review Button Styles */
+.btn-review {
+  background: linear-gradient(135deg, var(--color-soft-green) 0%, var(--color-mint-green) 100%);
+  color: white;
+  border: none;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-soft);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-review:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, var(--color-mint-green) 0%, var(--color-soft-green) 100%);
+}
+
+.btn-reviews {
+  background: linear-gradient(135deg, var(--color-warm-peach) 0%, var(--color-light-beige) 100%);
+  color: var(--color-text-dark);
+  border: none;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-soft);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-reviews:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, var(--color-light-beige) 0%, var(--color-warm-peach) 100%);
+}
+
+/* Update artist buttons layout */
+.artist-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.artist-buttons .btn {
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-soft);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive adjustments for review section */
+@media (max-width: 768px) {
+  .artist-reviews-section {
+    margin: var(--space-sm) 0;
+    padding: var(--space-sm);
+  }
+  
+  .rating-display {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+  
+  .latest-review {
+    margin-top: var(--space-xs);
+    padding: var(--space-xs);
+  }
+  
+  .review-snippet {
+    font-size: var(--text-xs);
+  }
+  
+  .artist-buttons {
+    flex-direction: column;
+  }
+  
+  .artist-buttons .btn {
+    min-width: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .artist-reviews-section {
+    padding: var(--space-xs);
+  }
+  
+  .rating-display .rating-text {
+    font-size: var(--text-xs);
+  }
+  
+  .review-snippet {
+    font-size: 11px;
+  }
+  
+  .review-author {
+    font-size: 10px;
+  }
+}

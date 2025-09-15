@@ -5,6 +5,7 @@ import OverviewHomeTab from "./OverviewHomeTab";
 import OverviewAnalyticsTab from "./OverviewAnalyticsTab";
 import OverviewApplicationsTab from "./OverviewApplicationsTab";
 import OverviewManageArtistsTab from "./OverviewManageArtistsTab";
+import ArtistReviews from "../ArtistReviews/ArtistReviews";
 import logoutEmployee from "../../../utils/employeeLogout";
 import "./Overview.css";
 
@@ -72,6 +73,7 @@ const Overview = () => {
           <button onClick={() => setActiveTab("analytics")} style={getButtonStyle(activeTab === "analytics")}>Analytics</button>
           <button onClick={() => setActiveTab("applications")} style={getButtonStyle(activeTab === "applications")}>Applications</button>
           <button onClick={() => setActiveTab("manage")} style={getButtonStyle(activeTab === "manage")}>Manage Artists</button>
+          <button onClick={() => setActiveTab("reviews")} style={getButtonStyle(activeTab === "reviews")}>Artist Reviews</button>
         </div>
 
         {/* Main Content */}
@@ -80,6 +82,7 @@ const Overview = () => {
           {activeTab === "analytics" && <OverviewAnalyticsTab />}
           {activeTab === "applications" && <OverviewApplicationsTab />}
           {activeTab === "manage" && <OverviewManageArtistsTab />}
+          {activeTab === "reviews" && <ArtistReviews showNavigation={false} />}
         </div>
       </div>
     </div>
