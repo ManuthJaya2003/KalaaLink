@@ -4,6 +4,9 @@ import MainFooter from "../MainFooter/MainFooter";
 import axios from "axios";
 import "./Artists.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import ReviewModal from "./ReviewModal";
+import ViewReviewsModal from "./ViewReviewsModal";
+import StarRating from "../Common/StarRating";
 
 const URL = "http://localhost:5000/artists";
 
@@ -47,6 +50,12 @@ function Artists() {
   const [messageType, setMessageType] = useState("");
   const [messageContent, setMessageContent] = useState("");
   
+  // Review-related state
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isViewReviewsModalOpen, setIsViewReviewsModalOpen] = useState(false);
+  const [artistReviews, setArtistReviews] = useState({});
+  const [artistRatings, setArtistRatings] = useState({});
+  
   // Filtering state
   const [selectedGenre, setSelectedGenre] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -65,6 +74,13 @@ function Artists() {
         setLoading(false);
       });
   }, []);
+
+  // Fetch reviews and ratings for all artists
+  useEffect(() => {
+    if (artists.length > 0) {
+      fetchAllArtistReviews();
+    }
+  }, [artists]);
 
   // Fetch genres on component mount
   useEffect(() => {
@@ -220,6 +236,87 @@ function Artists() {
     setSelectedCategory("");
   };
 
+  // Fetch reviews and ratings for all artists
+  const fetchAllArtistReviews = async () => {
+    const reviewsData = {};
+    const ratingsData = {};
+
+    for (const artist of artists) {
+      try {
+        // Fetch reviews
+        const reviewsResponse = await axios.get(`http://localhost:5000/api/artist-reviews/${artist._id}`);
+        if (reviewsResponse.data.success) {
+          reviewsData[artist._id] = reviewsResponse.data.reviews;
+        }
+
+        // Fetch average rating
+        const ratingResponse = await axios.get(`http://localhost:5000/api/artist-reviews/${artist._id}/average`);
+        if (ratingResponse.data.success) {
+          ratingsData[artist._id] = {
+            averageRating: ratingResponse.data.averageRating,
+            totalReviews: ratingResponse.data.totalReviews
+          };
+        }
+      } catch (error) {
+        console.error(`Error fetching reviews for artist ${artist._id}:`, error);
+        // Handle different types of errors
+        if (error.response?.status === 404) {
+          console.log(`Artist ${artist._id} not found in database, skipping reviews`);
+        } else {
+          console.error(`Unexpected error for artist ${artist._id}:`, error.response?.data || error.message);
+        }
+        reviewsData[artist._id] = [];
+        ratingsData[artist._id] = { averageRating: 0, totalReviews: 0 };
+      }
+    }
+
+    setArtistReviews(reviewsData);
+    setArtistRatings(ratingsData);
+  };
+
+  // Handle opening review modal
+  const handlePostReview = (artist) => {
+    setSelectedArtist(artist);
+    setIsReviewModalOpen(true);
+  };
+
+  // Handle opening view reviews modal
+  const handleViewReviews = (artist) => {
+    setSelectedArtist(artist);
+    setIsViewReviewsModalOpen(true);
+  };
+
+  // Handle review submission
+  const handleReviewSubmitted = (newReview) => {
+    // Update the reviews for this artist
+    const artistId = selectedArtist._id;
+    setArtistReviews(prev => ({
+      ...prev,
+      [artistId]: [newReview, ...(prev[artistId] || [])]
+    }));
+
+    // Recalculate average rating
+    fetchArtistRating(artistId);
+  };
+
+  // Fetch rating for a specific artist
+  const fetchArtistRating = async (artistId) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/artist-reviews/${artistId}/average`);
+      if (response.data.success) {
+        setArtistRatings(prev => ({
+          ...prev,
+          [artistId]: {
+            averageRating: response.data.averageRating,
+            totalReviews: response.data.totalReviews
+          }
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching artist rating:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div>
@@ -352,6 +449,33 @@ function Artists() {
                   <p className="artist-genre">{artist.genre}</p>
                   <p className="artist-category">{artist.category}</p>
 
+                  {/* Review Section */}
+                  <div className="artist-reviews-section">
+                    {artistRatings[artist._id] && artistRatings[artist._id].totalReviews > 0 ? (
+                      <>
+                        <div className="rating-display">
+                          <StarRating rating={Math.round(artistRatings[artist._id].averageRating)} size="small" />
+                          <span className="rating-text">
+                            {artistRatings[artist._id].averageRating.toFixed(1)} ({artistRatings[artist._id].totalReviews} review{artistRatings[artist._id].totalReviews !== 1 ? 's' : ''})
+                          </span>
+                        </div>
+                        {artistReviews[artist._id] && artistReviews[artist._id].length > 0 && (
+                          <div className="latest-review">
+                            <p className="review-snippet">
+                              "{artistReviews[artist._id][0].review.substring(0, 80)}
+                              {artistReviews[artist._id][0].review.length > 80 ? '...' : ''}"
+                            </p>
+                            <p className="review-author">- {artistReviews[artist._id][0].customerName}</p>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="no-reviews">
+                        <span className="no-reviews-text">No reviews yet</span>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="artist-buttons">
                     <button
                       className="btn btn-primary"
@@ -365,6 +489,20 @@ function Artists() {
                     >
                       View Details
                     </button>
+                    <button
+                      className="btn btn-review"
+                      onClick={() => handlePostReview(artist)}
+                    >
+                      Post Review
+                    </button>
+                    {artistRatings[artist._id] && artistRatings[artist._id].totalReviews > 0 && (
+                      <button
+                        className="btn btn-reviews"
+                        onClick={() => handleViewReviews(artist)}
+                      >
+                        View Reviews
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -434,6 +572,21 @@ function Artists() {
           </div>
         </div>
       )}
+
+      {/* Review Modal */}
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        artist={selectedArtist}
+        onReviewSubmitted={handleReviewSubmitted}
+      />
+
+      {/* View Reviews Modal */}
+      <ViewReviewsModal
+        isOpen={isViewReviewsModalOpen}
+        onClose={() => setIsViewReviewsModalOpen(false)}
+        artist={selectedArtist}
+      />
     </div>
   );
 }

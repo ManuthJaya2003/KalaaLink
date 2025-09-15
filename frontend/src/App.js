@@ -28,6 +28,8 @@ import ArtistDashboard from "./Components/Manuth/ArtistDashboard/ArtistDashboard
 import ArtistEditProfile from "./Components/Manuth/ArtistEditProfile/ArtistEditProfile.js";
 import BookArtist from "./Components/Manuth/BookArtist/BookArtist.js";
 import ArtistEvents from "./Components/Manuth/ArtistDashboard/Events.js";
+import ArtistReviews from "./Components/Manuth/ArtistReviews/ArtistReviews.js";
+import ArtistDashboardReviews from "./Components/Manuth/ArtistDashboard/ArtistDashboardReviews.js";
 
 // Subsystem components
 import Events from "./Components/Lihini/Events/Events.js";
@@ -137,6 +139,7 @@ function App() {
           <Route path="/overview" element={<Overview />} />
           <Route path="/register" element={<ArtistRegistration />} />
           <Route path="/artist_login" element={<ArtistLogin />} />
+          <Route path="/artist_reviews" element={<ArtistReviews />} />
 
           {/* ---------- SignUp/Login ---------- */}
           <Route path="/signup" element={<SignUp />} />
@@ -167,6 +170,7 @@ function App() {
           <Route path="/artistdashboard" element={<ArtistDashboard />} />
           <Route path="/artist/editprofile" element={<ArtistEditProfile />} />
           <Route path="/artist/events" element={<ArtistEvents />} />
+          <Route path="/artist-dashboard-reviews" element={<ArtistDashboardReviews />} />
 
           {/* ---------- Book Artist ---------- */}
           <Route path="/bookArtist" element={<BookArtist />} />

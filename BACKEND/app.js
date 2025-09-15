@@ -79,6 +79,9 @@ const eventTestimonialsRoutes = require("./routes/EventTestimonialsRoutes");
 // ✅ Crew Request Routes
 const crewRequestRoutes = require("./routes/crewRequestRoutes");
 
+// ✅ Artist Review Routes
+const artistReviewRoutes = require("./routes/ArtistReviewRoutes");
+
 // Mount routes
 app.use("/artists", artistManagerRoute);
 app.use("/registeredArtists", registeredArtistRoute);
@@ -118,6 +121,9 @@ app.use("/api", eventTestimonialsRoutes);
 
 // ✅ Crew request routes
 app.use("/api/crew-requests", crewRequestRoutes);
+
+// ✅ Artist review routes
+app.use("/api/artist-reviews", artistReviewRoutes);
 
 // ================== PDF Generation Route ==================
 app.get("/api/art/:id/report", async (req, res) => {
@@ -218,6 +224,7 @@ mongoose
     require("./model/ComplaintsModel");
     require("./model/ImpactStory");
     require("./model/crewrequest");
+    require("./model/ArtistReview");
 
     console.log("✅ All models loaded successfully");
 

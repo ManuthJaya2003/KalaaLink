@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "../Applications/Applications.css";
+import "./OverviewApplicationsTab.css";
 
 const BASE_URL = "http://localhost:5000/artists/applications";
 
@@ -61,73 +61,207 @@ function OverviewApplicationsTab() {
     }
   };
 
-  if (loading) return <div>Loading applications...</div>;
+  const clearRejectedArtists = async () => {
+    if (rejectedArtists.length === 0) {
+      alert("No rejected artists to clear.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to permanently delete all ${rejectedArtists.length} rejected artists? This action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const res = await axios.delete(`${BASE_URL}/clear-rejected`);
+      // Refresh the lists from the backend
+      await fetchApplications();
+      alert(res.data.message || "All rejected artists cleared successfully!");
+    } catch (err) {
+      console.error("Error clearing rejected artists:", err);
+      alert("Failed to clear rejected artists.");
+    }
+  };
+
+  if (loading) return <div className="loading">Loading applications...</div>;
 
   const nameLine = (artist) =>
     `${artist.firstName || artist.firstname || ""} ${artist.lastName || artist.lastname || ""}`.trim();
 
   return (
-    <div>
-      {/* Pending Applications */}
-      <h2>Pending Applications</h2>
-      {pendingArtists.length === 0 ? (
-        <p>No pending applications.</p>
-      ) : (
-        <div className="applications-list">
-          {pendingArtists.map((artist) => (
-            <div className="application-card" key={artist._id}>
-              <h3>{artist.stageName || "Unnamed Artist"}</h3>
-              <p>Name: {nameLine(artist) || "—"}</p>
-              <p>Email: {artist.email || "—"}</p>
-              <p>Bio: {artist.bio || "—"}</p>
-              <div className="application-actions">
-                <button onClick={() => approveArtist(artist._id)} className="approve-btn">
-                  Approve
-                </button>
-                <button onClick={() => rejectArtist(artist._id)} className="reject-btn">
-                  Reject
-                </button>
-              </div>
-            </div>
-          ))}
+    <div className="overview-applications-container">
+      {/* Pending Applications Table */}
+      <div className="applications-section">
+        <div className="section-header">
+          <h2 className="section-title pending">
+            <span className="status-icon">⏳</span>
+            Pending Applications ({pendingArtists.length})
+          </h2>
         </div>
-      )}
+        {pendingArtists.length === 0 ? (
+          <div className="empty-state">
+            <p>No pending applications.</p>
+          </div>
+        ) : (
+          <div className="table-container">
+            <table className="applications-table pending-table">
+              <thead>
+                <tr>
+                  <th>Stage Name</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Bio</th>
+                  <th>Applied Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pendingArtists.map((artist) => (
+                  <tr key={artist._id} className="application-row">
+                    <td className="stage-name">
+                      <strong>{artist.stageName || "Unnamed Artist"}</strong>
+                    </td>
+                    <td className="full-name">{nameLine(artist) || "—"}</td>
+                    <td className="email">{artist.email || "—"}</td>
+                    <td className="bio">
+                      <div className="bio-content">
+                        {artist.bio ? (artist.bio.length > 100 ? `${artist.bio.substring(0, 100)}...` : artist.bio) : "—"}
+                      </div>
+                    </td>
+                    <td className="applied-date">
+                      {artist.createdAt ? new Date(artist.createdAt).toLocaleDateString() : "—"}
+                    </td>
+                    <td className="actions">
+                      <div className="action-buttons">
+                        <button onClick={() => approveArtist(artist._id)} className="btn-approve">
+                          ✅ Approve
+                        </button>
+                        <button onClick={() => rejectArtist(artist._id)} className="btn-reject">
+                          ❌ Reject
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
-      {/* Approved Artists */}
-      <h2>Approved Artists</h2>
-      {approvedArtists.length === 0 ? (
-        <p>No approved artists yet.</p>
-      ) : (
-        <div className="applications-list">
-          {approvedArtists.map((artist) => (
-            <div className="application-card approved" key={artist._id}>
-              <h3>{artist.stageName || "Unnamed Artist"}</h3>
-              <p>Name: {nameLine(artist) || "—"}</p>
-              <p>Email: {artist.email || "—"}</p>
-              <p>Bio: {artist.bio || "—"}</p>
-              <span className="approved-label">✅ Approved</span>
-            </div>
-          ))}
+      {/* Approved Artists Table */}
+      <div className="applications-section">
+        <div className="section-header">
+          <h2 className="section-title approved">
+            <span className="status-icon">✅</span>
+            Approved Artists ({approvedArtists.length})
+          </h2>
         </div>
-      )}
+        {approvedArtists.length === 0 ? (
+          <div className="empty-state">
+            <p>No approved artists yet.</p>
+          </div>
+        ) : (
+          <div className="table-container">
+            <table className="applications-table approved-table">
+              <thead>
+                <tr>
+                  <th>Stage Name</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Bio</th>
+                  <th>Approved Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {approvedArtists.map((artist) => (
+                  <tr key={artist._id} className="application-row approved-row">
+                    <td className="stage-name">
+                      <strong>{artist.stageName || "Unnamed Artist"}</strong>
+                    </td>
+                    <td className="full-name">{nameLine(artist) || "—"}</td>
+                    <td className="email">{artist.email || "—"}</td>
+                    <td className="bio">
+                      <div className="bio-content">
+                        {artist.bio ? (artist.bio.length > 100 ? `${artist.bio.substring(0, 100)}...` : artist.bio) : "—"}
+                      </div>
+                    </td>
+                    <td className="approved-date">
+                      {artist.updatedAt ? new Date(artist.updatedAt).toLocaleDateString() : "—"}
+                    </td>
+                    <td className="status">
+                      <span className="status-badge approved-badge">✅ Approved</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
-      {/* Rejected Artists */}
-      <h2>Rejected Artists</h2>
-      {rejectedArtists.length === 0 ? (
-        <p>No rejected artists.</p>
-      ) : (
-        <div className="applications-list">
-          {rejectedArtists.map((artist) => (
-            <div className="application-card rejected" key={artist._id}>
-              <h3>{artist.stageName || "Unnamed Artist"}</h3>
-              <p>Name: {nameLine(artist) || "—"}</p>
-              <p>Email: {artist.email || "—"}</p>
-              <p>Bio: {artist.bio || "—"}</p>
-              <span className="rejected-label">❌ Rejected</span>
-            </div>
-          ))}
+      {/* Rejected Artists Table */}
+      <div className="applications-section">
+        <div className="section-header">
+          <h2 className="section-title rejected">
+            <span className="status-icon">❌</span>
+            Rejected Artists ({rejectedArtists.length})
+          </h2>
+          {rejectedArtists.length > 0 && (
+            <button 
+              onClick={clearRejectedArtists} 
+              className="btn-clear-rejected"
+              title="Clear all rejected artists"
+            >
+              🗑️ Clear All
+            </button>
+          )}
         </div>
-      )}
+        {rejectedArtists.length === 0 ? (
+          <div className="empty-state">
+            <p>No rejected artists.</p>
+          </div>
+        ) : (
+          <div className="table-container">
+            <table className="applications-table rejected-table">
+              <thead>
+                <tr>
+                  <th>Stage Name</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Bio</th>
+                  <th>Rejected Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rejectedArtists.map((artist) => (
+                  <tr key={artist._id} className="application-row rejected-row">
+                    <td className="stage-name">
+                      <strong>{artist.stageName || "Unnamed Artist"}</strong>
+                    </td>
+                    <td className="full-name">{nameLine(artist) || "—"}</td>
+                    <td className="email">{artist.email || "—"}</td>
+                    <td className="bio">
+                      <div className="bio-content">
+                        {artist.bio ? (artist.bio.length > 100 ? `${artist.bio.substring(0, 100)}...` : artist.bio) : "—"}
+                      </div>
+                    </td>
+                    <td className="rejected-date">
+                      {artist.updatedAt ? new Date(artist.updatedAt).toLocaleDateString() : "—"}
+                    </td>
+                    <td className="status">
+                      <span className="status-badge rejected-badge">❌ Rejected</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
