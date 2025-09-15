@@ -24,6 +24,13 @@ function Events({ events: propEvents }) {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showTestimonialModal, setShowTestimonialModal] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
+  
+  // Search and filter state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedDate, setSelectedDate] = useState("Any Date");
+  const [selectedLocation, setSelectedLocation] = useState("Any Location");
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
   // Fetch events from backend API
   const fetchEvents = async () => {
@@ -71,6 +78,97 @@ function Events({ events: propEvents }) {
       setEvents(propEvents);
     }
   }, [propEvents]);
+
+  // Filter events based on search and filter criteria
+  useEffect(() => {
+    if (!Array.isArray(events) || events.length === 0) {
+      setFilteredEvents([]);
+      return;
+    }
+
+    let filtered = [...events];
+
+    // Search filter
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter(event => 
+        event.eventTitle?.toLowerCase().includes(searchLower) ||
+        event.eventDescription?.toLowerCase().includes(searchLower) ||
+        event.eventVenue?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Category filter (using eventTitle as category for now)
+    if (selectedCategory !== "All Categories") {
+      filtered = filtered.filter(event => {
+        if (!event.eventTitle) return false;
+        const eventTitleWords = event.eventTitle.split(' ');
+        const firstWord = eventTitleWords[0]?.replace(/[^\w\s]/g, '').trim().toLowerCase();
+        return firstWord === selectedCategory.toLowerCase();
+      });
+    }
+
+    // Date filter
+    if (selectedDate !== "Any Date") {
+      const selectedDateObj = new Date(selectedDate);
+      filtered = filtered.filter(event => {
+        const eventDate = new Date(event.eventDate);
+        return eventDate.toDateString() === selectedDateObj.toDateString();
+      });
+    }
+
+    // Location filter
+    if (selectedLocation !== "Any Location") {
+      filtered = filtered.filter(event => 
+        event.eventVenue?.toLowerCase().includes(selectedLocation.toLowerCase())
+      );
+    }
+
+    setFilteredEvents(filtered);
+  }, [events, searchTerm, selectedCategory, selectedDate, selectedLocation]);
+
+  // Get unique categories from events (using eventTitle as category)
+  const getUniqueCategories = () => {
+    const categories = new Set();
+    events.forEach(event => {
+      if (event.eventTitle) {
+        // Extract category from event title (first word or main category)
+        const words = event.eventTitle.split(' ');
+        if (words.length > 0) {
+          // Clean up the category name
+          const category = words[0].replace(/[^\w\s]/g, '').trim();
+          if (category.length > 0) {
+            categories.add(category);
+          }
+        }
+      }
+    });
+    return Array.from(categories).sort();
+  };
+
+  // Get unique locations from events
+  const getUniqueLocations = () => {
+    const locations = new Set();
+    events.forEach(event => {
+      if (event.eventVenue) {
+        locations.add(event.eventVenue);
+      }
+    });
+    return Array.from(locations).sort();
+  };
+
+  // Get unique dates from events
+  const getUniqueDates = () => {
+    const dates = new Set();
+    events.forEach(event => {
+      if (event.eventDate) {
+        const date = new Date(event.eventDate);
+        dates.add(date.toISOString().split('T')[0]);
+      }
+    });
+    return Array.from(dates).sort();
+  };
+
 
   const handleBookNow = (event) => {
     setSelectedEvent(event);
@@ -152,18 +250,125 @@ function Events({ events: propEvents }) {
             {loading ? "Refreshing..." : "🔄 Refresh Events"}
           </button>
         </div>
+
+        {/* Search and Filter Section */}
+        {Array.isArray(events) && events.length > 0 && (
+          <div className="search-filter-section">
+            <div className="search-filter-container">
+              {/* Search Bar */}
+              <div className="search-container">
+                <input
+                  type="text"
+                  placeholder="Search events by name, description, or venue..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+                <div className="search-icon">🔍</div>
+              </div>
+
+              {/* Filter Dropdowns */}
+              <div className="filters-container">
+                {/* Category Filter */}
+                <div className="filter-group">
+                  <label className="filter-label">Category</label>
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="filter-select"
+                  >
+                    <option value="All Categories">All Categories</option>
+                    {getUniqueCategories().map((category, index) => (
+                      <option key={index} value={category}>{category}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Date Filter */}
+                <div className="filter-group">
+                  <label className="filter-label">Date</label>
+                  <select
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="filter-select"
+                  >
+                    <option value="Any Date">Any Date</option>
+                    {getUniqueDates().map((date, index) => (
+                      <option key={index} value={date}>
+                        {new Date(date).toLocaleDateString()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Location Filter */}
+                <div className="filter-group">
+                  <label className="filter-label">Location</label>
+                  <select
+                    value={selectedLocation}
+                    onChange={(e) => setSelectedLocation(e.target.value)}
+                    className="filter-select"
+                  >
+                    <option value="Any Location">Any Location</option>
+                    {getUniqueLocations().map((location, index) => (
+                      <option key={index} value={location}>{location}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Clear Filters Button */}
+                <button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setSelectedCategory("All Categories");
+                    setSelectedDate("Any Date");
+                    setSelectedLocation("Any Location");
+                  }}
+                  className="clear-filters-btn"
+                >
+                  Clear All
+                </button>
+              </div>
+            </div>
+
+            {/* Results Count */}
+            <div className="results-info">
+              <p className="results-text">
+                Showing {filteredEvents.length} of {events.length} events
+              </p>
+            </div>
+          </div>
+        )}
         
         {Array.isArray(events) && events.length > 0 ? (
-          <div className="events-grid">
-            {events.map((event, i) => (
-              <Event 
-                key={i} 
-                event={event} 
-                onBookNow={() => handleBookNow(event)}
-                onViewDetails={() => handleViewDetails(event)}
-              />
-            ))}
-          </div>
+          filteredEvents.length > 0 ? (
+            <div className="events-grid">
+              {filteredEvents.map((event, i) => (
+                <Event 
+                  key={i} 
+                  event={event} 
+                  onBookNow={() => handleBookNow(event)}
+                  onViewDetails={() => handleViewDetails(event)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="no-events">
+              <p className="no-events-text">No events found matching your criteria</p>
+              <p className="no-events-subtext">Try adjusting your search or filters</p>
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("All Categories");
+                  setSelectedDate("Any Date");
+                  setSelectedLocation("Any Location");
+                }}
+                className="retry-button"
+              >
+                Clear Filters
+              </button>
+            </div>
+          )
         ) : (
           <div className="no-events">
             <p className="no-events-text">No events available at the moment</p>
