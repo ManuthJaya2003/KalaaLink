@@ -4,6 +4,8 @@ import MainNav from '../../MainNav/MainNav';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ImpactStories from '../ImpactStories/ImpactStories';
+import PartnershipForm from '../PartnershipForm/PartnershipForm';
+import PartnersDisplay from '../PartnersDisplay/PartnersDisplay';
 import './DonorDashboard.css';
 
 function DonorDashboard() {
@@ -14,6 +16,7 @@ function DonorDashboard() {
     customAmount: '',
   });
   const [packages, setPackages] = useState([]);
+  const [showPartnershipForm, setShowPartnershipForm] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,6 +134,34 @@ function DonorDashboard() {
       
       {/* ✅ Impact Stories Section */}
       <ImpactStories />
+      
+      {/* ✅ Partners & Supporters Display */}
+      <PartnersDisplay />
+      
+      {/* ✅ Become a Partner Section */}
+      <div className="partnership-section">
+        <div className="partnership-content">
+          <h2>Become a Partner</h2>
+          <p>Join us in making a difference. Partner with KalaaLink to support our mission and reach more people in need.</p>
+          <button 
+            className="partnership-button"
+            onClick={() => setShowPartnershipForm(true)}
+          >
+            Request a Partnership
+          </button>
+        </div>
+      </div>
+      
+      {/* ✅ Partnership Form Modal */}
+      {showPartnershipForm && (
+        <PartnershipForm 
+          onClose={() => setShowPartnershipForm(false)}
+          onSuccess={() => {
+            setShowPartnershipForm(false);
+            // Optionally refresh partners display
+          }}
+        />
+      )}
     </div>
   );
 }

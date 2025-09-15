@@ -24,8 +24,10 @@ app.use("/api/orders/webhook", express.raw({ type: "application/json" }));
 app.use("/events/webhook", express.raw({ type: "application/json" }));
 app.use("/api/donations/webhook", express.raw({ type: "application/json" }));
 
-// JSON body for other routes
-app.use(express.json());
+// JSON body for other routes with increased size limit for image uploads
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
 
 // Ensure Uploads dir exists for Marketplace Manager
 const uploadsDir = path.join(__dirname, "Uploads");
@@ -82,6 +84,9 @@ const crewRequestRoutes = require("./routes/crewRequestRoutes");
 // ✅ Artist Review Routes
 const artistReviewRoutes = require("./routes/ArtistReviewRoutes");
 
+// ✅ Partnership Routes
+const partnershipRoutes = require("./routes/PartnershipRoutes");
+
 // Mount routes
 app.use("/artists", artistManagerRoute);
 app.use("/registeredArtists", registeredArtistRoute);
@@ -124,6 +129,9 @@ app.use("/api/crew-requests", crewRequestRoutes);
 
 // ✅ Artist review routes
 app.use("/api/artist-reviews", artistReviewRoutes);
+
+// ✅ Partnership routes
+app.use("/api/partnerships", partnershipRoutes);
 
 // ================== PDF Generation Route ==================
 app.get("/api/art/:id/report", async (req, res) => {
@@ -225,6 +233,7 @@ mongoose
     require("./model/ImpactStory");
     require("./model/crewrequest");
     require("./model/ArtistReview");
+    require("./Model/PartnershipRequest");
 
     console.log("✅ All models loaded successfully");
 
