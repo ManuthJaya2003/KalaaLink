@@ -6,12 +6,78 @@ import MainNav from '../../MainNav/MainNav';
 import MainFooter from '../../MainFooter/MainFooter';
 import ProductPopup from '../ProductPopup/ProductPopup';
 import CustomizationForm from '../CustomizationForm/CustomizationForm';
+import ReviewModal from './ReviewModal';
+import ReviewsModal from './ReviewsModal';
 import './Marketplace.css';
 
 const BASE_URL = 'http://localhost:5000/api/art';
 
 const ProductCard = ({ product, onAddToCart }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [latestReview, setLatestReview] = useState(null);
+
+  // Fetch reviews for this product
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/reviews/product/${product._id}`);
+        const productReviews = response.data;
+        setReviews(productReviews);
+        
+        if (productReviews.length > 0) {
+          // Calculate average rating
+          const totalRating = productReviews.reduce((sum, review) => sum + review.rating, 0);
+          const avgRating = totalRating / productReviews.length;
+          setAverageRating(avgRating);
+          
+          // Set latest review
+          setLatestReview(productReviews[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+
+    fetchReviews();
+  }, [product._id]);
+
+  const handleReviewSubmit = (newReview) => {
+    setReviews(prev => [newReview, ...prev]);
+    
+    // Recalculate average rating
+    const updatedReviews = [newReview, ...reviews];
+    const totalRating = updatedReviews.reduce((sum, review) => sum + review.rating, 0);
+    const avgRating = totalRating / updatedReviews.length;
+    setAverageRating(avgRating);
+    
+    // Update latest review
+    setLatestReview(newReview);
+  };
+
+  const renderStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<span key={i} className="star filled">★</span>);
+    }
+    
+    if (hasHalfStar) {
+      stars.push(<span key="half" className="star half">☆</span>);
+    }
+    
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<span key={`empty-${i}`} className="star empty">☆</span>);
+    }
+    
+    return stars;
+  };
 
   return (
     <div className="product-card">
@@ -28,6 +94,32 @@ const ProductCard = ({ product, onAddToCart }) => {
         <p className="product-artist"><strong>Artist:</strong> {product.artistName}</p>
         <p className="product-size"><strong>Size:</strong> {product.size}</p>
         <p className="product-frame"><strong>Frame:</strong> {product.frameSize}</p>
+        
+        {/* Star Rating Display */}
+        {averageRating > 0 && (
+          <div className="product-rating">
+            <div className="stars">
+              {renderStars(averageRating)}
+            </div>
+            <span className="rating-text">{averageRating.toFixed(1)} / 5</span>
+          </div>
+        )}
+        
+        {/* Latest Review Preview */}
+        {latestReview && (
+          <div className="latest-review">
+            <p className="review-preview">
+              <strong>{latestReview.customerName}:</strong> {latestReview.comment.substring(0, 50)}...
+            </p>
+            <button 
+              className="view-reviews-btn"
+              onClick={() => setIsReviewsModalOpen(true)}
+            >
+              View More Reviews
+            </button>
+          </div>
+        )}
+        
         <p className="product-price">LKR {product.price}</p>
       </div>
       <div className="product-actions">
@@ -43,6 +135,12 @@ const ProductCard = ({ product, onAddToCart }) => {
         >
           Add to Cart
         </button>
+        <button
+          onClick={() => setIsReviewModalOpen(true)}
+          className="btn btn-secondary"
+        >
+          Post a Review
+        </button>
       </div>
 
       {isPopupOpen && (
@@ -52,14 +150,40 @@ const ProductCard = ({ product, onAddToCart }) => {
           onAddToCart={onAddToCart}
         />
       )}
+
+      {isReviewModalOpen && (
+        <ReviewModal
+          product={product}
+          onClose={() => setIsReviewModalOpen(false)}
+          onReviewSubmit={handleReviewSubmit}
+        />
+      )}
+
+      {isReviewsModalOpen && (
+        <ReviewsModal
+          product={product}
+          reviews={reviews}
+          onClose={() => setIsReviewsModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
 
 function Marketplace() {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // Filter states
+  const [filters, setFilters] = useState({
+    priceRange: '',
+    material: '',
+    colorPalette: '',
+    frameOption: '',
+    style: ''
+  });
 
   const fetchProducts = async () => {
     try {
@@ -72,10 +196,12 @@ function Marketplace() {
       
       if (response.data && Array.isArray(response.data)) {
         setProducts(response.data);
+        setFilteredProducts(response.data);
         console.log('Marketplace: Products loaded:', response.data.length);
       } else {
         setError('Invalid response format from server');
         setProducts([]);
+        setFilteredProducts([]);
       }
     } catch (err) {
       console.error('Marketplace: Error fetching products:', err);
@@ -84,6 +210,94 @@ function Marketplace() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Filter products based on selected filters
+  const applyFilters = (productsToFilter) => {
+    return productsToFilter.filter(product => {
+      // Price range filter
+      if (filters.priceRange) {
+        const price = product.price;
+        switch (filters.priceRange) {
+          case 'below-10000':
+            if (price >= 10000) return false;
+            break;
+          case '10000-50000':
+            if (price < 10000 || price > 50000) return false;
+            break;
+          case '50000-200000':
+            if (price < 50000 || price > 200000) return false;
+            break;
+          case 'above-200000':
+            if (price <= 200000) return false;
+            break;
+          default:
+            break;
+        }
+      }
+
+      // Material/Medium filter
+      if (filters.material && product.artType && !product.artType.toLowerCase().includes(filters.material.toLowerCase())) {
+        return false;
+      }
+
+      // Color palette filter
+      if (filters.colorPalette && product.colorPalette) {
+        const productColors = Array.isArray(product.colorPalette) 
+          ? product.colorPalette 
+          : product.colorPalette.split(',').map(c => c.trim());
+        if (!productColors.some(color => color.toLowerCase().includes(filters.colorPalette.toLowerCase()))) {
+          return false;
+        }
+      }
+
+      // Frame option filter
+      if (filters.frameOption) {
+        const frameSize = product.frameSize ? product.frameSize.toLowerCase() : '';
+        switch (filters.frameOption) {
+          case 'framed':
+            if (!frameSize.includes('frame') && !frameSize.includes('framed')) return false;
+            break;
+          case 'unframed':
+            if (frameSize.includes('frame') || frameSize.includes('framed')) return false;
+            break;
+          case 'ready-to-hang':
+            if (!frameSize.includes('ready') && !frameSize.includes('hang')) return false;
+            break;
+          default:
+            break;
+        }
+      }
+
+      // Style/Genre filter
+      if (filters.style && product.artType && !product.artType.toLowerCase().includes(filters.style.toLowerCase())) {
+        return false;
+      }
+
+      return true;
+    });
+  };
+
+  // Handle filter changes
+  const handleFilterChange = (filterType, value) => {
+    const newFilters = { ...filters, [filterType]: value };
+    setFilters(newFilters);
+    
+    // Apply filters to current products
+    const filtered = applyFilters(products);
+    setFilteredProducts(filtered);
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setFilters({
+      priceRange: '',
+      material: '',
+      colorPalette: '',
+      frameOption: '',
+      style: ''
+    });
+    setFilteredProducts(products);
   };
 
   useEffect(() => {
@@ -118,12 +332,15 @@ function Marketplace() {
             <MarketplaceActionButtons />
           </header>
           
-          <MarketplaceContent 
-            products={products}
-            loading={loading}
-            error={error}
-            onRetry={fetchProducts}
-          />
+        <MarketplaceContent 
+          products={filteredProducts} 
+          loading={loading} 
+          error={error} 
+          onRetry={fetchProducts}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={clearFilters}
+        />
         </div>
       </main>
       
@@ -132,7 +349,7 @@ function Marketplace() {
   );
 }
 
-const MarketplaceContent = ({ products, loading, error, onRetry }) => {
+const MarketplaceContent = ({ products, loading, error, onRetry, filters, onFilterChange, onClearFilters }) => {
   const { setCart } = useCart();
 
   const handleAddToCart = (product) => {
@@ -156,40 +373,12 @@ const MarketplaceContent = ({ products, loading, error, onRetry }) => {
     alert(`${product.artType} added to cart!`);
   };
 
-  const handleTestAddToCart = () => {
-    const testProduct = {
-      _id: 'test-product-123',
-      artType: 'Test Painting',
-      artistName: 'Test Artist',
-      size: 'Medium',
-      frameSize: '12x8',
-      price: 299,
-      image: 'https://via.placeholder.com/300x200?text=Test+Image'
-    };
-    handleAddToCart(testProduct);
-  };
-
-  const handleDebugCart = () => {
-    if (window.debugCart) {
-      window.debugCart();
-    } else {
-      console.log('Debug function not available');
-    }
-  };
 
   if (loading) {
     return (
       <div className="marketplace-loading">
         <div className="loading-spinner"></div>
         <p>Loading products...</p>
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
-          <button onClick={handleTestAddToCart} className="btn btn-primary">
-            Test Add to Cart
-          </button>
-          <button onClick={handleDebugCart} className="btn btn-success">
-            Debug Cart
-          </button>
-        </div>
       </div>
     );
   }
@@ -200,9 +389,6 @@ const MarketplaceContent = ({ products, loading, error, onRetry }) => {
         <p>{error}</p>
         <button onClick={onRetry} className="btn btn-primary">
           Try Again
-        </button>
-        <button onClick={handleTestAddToCart} className="btn btn-success" style={{ marginLeft: '10px' }}>
-          Test Add to Cart
         </button>
       </div>
     );
@@ -216,25 +402,113 @@ const MarketplaceContent = ({ products, loading, error, onRetry }) => {
         <button onClick={onRetry} className="btn btn-primary">
           Refresh
         </button>
-        <button onClick={handleTestAddToCart} className="btn btn-success" style={{ marginLeft: '10px' }}>
-          Test Add to Cart
-        </button>
       </div>
     );
   }
 
   return (
     <div className="marketplace-products">
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-          <button onClick={handleTestAddToCart} className="btn btn-success">
-            Test Add to Cart
-          </button>
-          <button onClick={handleDebugCart} className="btn btn-primary">
-            Debug Cart
-          </button>
+      {/* Filter Panel */}
+      <div className="filter-panel">
+        <h3>Filter Products</h3>
+        <div className="filter-grid">
+          {/* Price Range Filter */}
+          <div className="filter-group">
+            <label>Price Range (LKR)</label>
+            <select 
+              value={filters.priceRange} 
+              onChange={(e) => onFilterChange('priceRange', e.target.value)}
+            >
+              <option value="">All Prices</option>
+              <option value="below-10000">Below 10,000</option>
+              <option value="10000-50000">10,000 – 50,000</option>
+              <option value="50000-200000">50,000 – 200,000</option>
+              <option value="above-200000">Above 200,000</option>
+            </select>
+          </div>
+
+          {/* Material/Medium Filter */}
+          <div className="filter-group">
+            <label>Material / Medium</label>
+            <select 
+              value={filters.material} 
+              onChange={(e) => onFilterChange('material', e.target.value)}
+            >
+              <option value="">All Materials</option>
+              <option value="photography">Photography</option>
+              <option value="painting">Painting</option>
+              <option value="drawing">Drawing</option>
+              <option value="mixed media">Mixed Media</option>
+              <option value="digital">Digital Art</option>
+              <option value="sculpture">Sculpture</option>
+            </select>
+          </div>
+
+          {/* Color Palette Filter */}
+          <div className="filter-group">
+            <label>Color Palette</label>
+            <select 
+              value={filters.colorPalette} 
+              onChange={(e) => onFilterChange('colorPalette', e.target.value)}
+            >
+              <option value="">All Colors</option>
+              <option value="red">Red</option>
+              <option value="blue">Blue</option>
+              <option value="green">Green</option>
+              <option value="yellow">Yellow</option>
+              <option value="purple">Purple</option>
+              <option value="orange">Orange</option>
+              <option value="black">Black</option>
+              <option value="white">White</option>
+              <option value="brown">Brown</option>
+              <option value="pink">Pink</option>
+            </select>
+          </div>
+
+          {/* Frame Options Filter */}
+          <div className="filter-group">
+            <label>Frame Options</label>
+            <select 
+              value={filters.frameOption} 
+              onChange={(e) => onFilterChange('frameOption', e.target.value)}
+            >
+              <option value="">All Frame Types</option>
+              <option value="framed">Framed</option>
+              <option value="unframed">Unframed</option>
+              <option value="ready-to-hang">Ready to Hang</option>
+            </select>
+          </div>
+
+          {/* Style/Genre Filter */}
+          <div className="filter-group">
+            <label>Style / Genre</label>
+            <select 
+              value={filters.style} 
+              onChange={(e) => onFilterChange('style', e.target.value)}
+            >
+              <option value="">All Styles</option>
+              <option value="abstract">Abstract</option>
+              <option value="realism">Realism</option>
+              <option value="modern">Modern</option>
+              <option value="traditional">Traditional</option>
+              <option value="contemporary">Contemporary</option>
+              <option value="minimalist">Minimalist</option>
+              <option value="impressionist">Impressionist</option>
+            </select>
+          </div>
+
+          {/* Clear Filters Button */}
+          <div className="filter-group">
+            <button 
+              className="clear-filters-btn"
+              onClick={onClearFilters}
+            >
+              Clear All Filters
+            </button>
+          </div>
         </div>
       </div>
+
       <div className="products-grid">
         {products.map(product => (
           <ProductCard 
