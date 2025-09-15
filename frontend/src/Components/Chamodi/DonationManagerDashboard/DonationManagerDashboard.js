@@ -20,6 +20,7 @@ function DonationManagerDashboard() {
   const [deletingPackage, setDeletingPackage] = useState(null);
   const [donationFilter, setDonationFilter] = useState('all'); // all, pending, paid
   const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [partnershipRequests, setPartnershipRequests] = useState([]);
 
   // Check if user is authenticated as donation manager
   useEffect(() => {
@@ -38,14 +39,16 @@ function DonationManagerDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Fetch packages and donations in parallel
-      const [packagesRes, donationsRes] = await Promise.all([
+      // Fetch packages, donations, and partnership requests in parallel
+      const [packagesRes, donationsRes, partnershipRes] = await Promise.all([
         axios.get('http://localhost:5000/package'),
-        axios.get('http://localhost:5000/donor')
+        axios.get('http://localhost:5000/donor'),
+        axios.get('http://localhost:5000/api/partnerships')
       ]);
       
       setPackages(packagesRes.data.packages || []);
       setDonations(donationsRes.data.donors || []);
+      setPartnershipRequests(partnershipRes.data.partnershipRequests || []);
       setLastUpdated(new Date());
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -92,6 +95,77 @@ function DonationManagerDashboard() {
     setDonationFilter(status);
   };
 
+
+  // ✅ Handle partnership request approval
+  const handleApprovePartnership = async (requestId) => {
+    try {
+      await axios.patch(`http://localhost:5000/api/partnerships/${requestId}/approve`);
+      console.log(`✅ Partnership request ${requestId} approved successfully`);
+      await fetchData(); // Refresh data
+      alert('Partnership request approved successfully!');
+    } catch (error) {
+      console.error('Error approving partnership request:', error);
+      alert('Failed to approve partnership request. Please try again.');
+    }
+  };
+
+  // ✅ Handle partnership request rejection
+  const handleRejectPartnership = async (requestId) => {
+    try {
+      await axios.patch(`http://localhost:5000/api/partnerships/${requestId}/reject`);
+      console.log(`✅ Partnership request ${requestId} rejected successfully`);
+      await fetchData(); // Refresh data
+      alert('Partnership request rejected successfully!');
+    } catch (error) {
+      console.error('Error rejecting partnership request:', error);
+      alert('Failed to reject partnership request. Please try again.');
+    }
+  };
+
+  // ✅ Handle individual partnership request deletion
+  const handleDeletePartnership = async (requestId) => {
+    if (window.confirm('Are you sure you want to delete this partnership request? This action cannot be undone.')) {
+      try {
+        await axios.delete(`http://localhost:5000/api/partnerships/${requestId}`);
+        console.log(`✅ Partnership request ${requestId} deleted successfully`);
+        await fetchData(); // Refresh data
+        alert('Partnership request deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting partnership request:', error);
+        alert('Failed to delete partnership request. Please try again.');
+      }
+    }
+  };
+
+  // ✅ Handle clearing all approved partnership requests
+  const handleClearApproved = async () => {
+    if (window.confirm('Are you sure you want to delete ALL approved partnership requests? This action cannot be undone.')) {
+      try {
+        await axios.delete('http://localhost:5000/api/partnerships/clear/Approved');
+        console.log('✅ All approved partnership requests deleted successfully');
+        await fetchData(); // Refresh data
+        alert('All approved partnership requests deleted successfully!');
+      } catch (error) {
+        console.error('Error clearing approved requests:', error);
+        alert('Failed to clear approved requests. Please try again.');
+      }
+    }
+  };
+
+  // ✅ Handle clearing all rejected partnership requests
+  const handleClearRejected = async () => {
+    if (window.confirm('Are you sure you want to delete ALL rejected partnership requests? This action cannot be undone.')) {
+      try {
+        await axios.delete('http://localhost:5000/api/partnerships/clear/Rejected');
+        console.log('✅ All rejected partnership requests deleted successfully');
+        await fetchData(); // Refresh data
+        alert('All rejected partnership requests deleted successfully!');
+      } catch (error) {
+        console.error('Error clearing rejected requests:', error);
+        alert('Failed to clear rejected requests. Please try again.');
+      }
+    }
+  };
 
   // ✅ Handle bulk delete donations by status
   const handleBulkDeleteDonations = async (status) => {
@@ -803,6 +877,239 @@ function DonationManagerDashboard() {
     );
   };
 
+  // Partnerships Tab Component
+  const PartnershipsTab = () => {
+    const pendingRequests = partnershipRequests.filter(req => req.status === 'Pending');
+    const approvedRequests = partnershipRequests.filter(req => req.status === 'Approved');
+    const rejectedRequests = partnershipRequests.filter(req => req.status === 'Rejected');
+
+    return (
+      <div style={{ padding: "20px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+          <div>
+            <h2 style={{ color: "#2c3e50", margin: "0 0 5px 0" }}>Partnership Requests</h2>
+            <p style={{ color: "#666", margin: "0", fontSize: "14px" }}>
+              Manage partnership requests from organizations
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: "10px", fontSize: "12px" }}>
+            <span style={{ 
+              background: "#fff3cd", 
+              color: "#856404", 
+              padding: "4px 8px", 
+              borderRadius: "4px",
+              fontWeight: "bold"
+            }}>
+              Pending: {pendingRequests.length}
+            </span>
+            <span style={{ 
+              background: "#d4edda", 
+              color: "#155724", 
+              padding: "4px 8px", 
+              borderRadius: "4px",
+              fontWeight: "bold"
+            }}>
+              Approved: {approvedRequests.length}
+            </span>
+            <span style={{ 
+              background: "#f8d7da", 
+              color: "#721c24", 
+              padding: "4px 8px", 
+              borderRadius: "4px",
+              fontWeight: "bold"
+            }}>
+              Rejected: {rejectedRequests.length}
+            </span>
+          </div>
+        </div>
+
+        {/* Clear Buttons */}
+        <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+          {approvedRequests.length > 0 && (
+            <button
+              onClick={handleClearApproved}
+              style={{
+                background: "#dc3545",
+                color: "white",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
+                fontWeight: "bold"
+              }}
+            >
+              Clear All Approved ({approvedRequests.length})
+            </button>
+          )}
+          {rejectedRequests.length > 0 && (
+            <button
+              onClick={handleClearRejected}
+              style={{
+                background: "#6c757d",
+                color: "white",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
+                fontWeight: "bold"
+              }}
+            >
+              Clear All Rejected ({rejectedRequests.length})
+            </button>
+          )}
+        </div>
+
+        {loading ? (
+          <p style={{ textAlign: "center", padding: "20px" }}>Loading partnership requests...</p>
+        ) : partnershipRequests.length === 0 ? (
+          <div style={{ 
+            textAlign: "center", 
+            padding: "40px", 
+            background: "white", 
+            borderRadius: "10px", 
+            boxShadow: "0 2px 10px rgba(0,0,0,0.1)" 
+          }}>
+            <h3 style={{ color: "#666", marginBottom: "10px" }}>No partnership requests found</h3>
+            <p style={{ color: "#999", margin: "0" }}>Partnership requests will appear here when organizations submit them.</p>
+          </div>
+        ) : (
+          <div style={{ background: "white", borderRadius: "10px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)", overflow: "hidden" }}>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ background: "#f8f9fa" }}>
+                    <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Organization</th>
+                    <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Contact</th>
+                    <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Email</th>
+                    <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Message</th>
+                    <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Logo</th>
+                    <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Status</th>
+                    <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Date</th>
+                    <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {partnershipRequests.map((request, index) => (
+                    <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
+                      <td style={{ padding: "12px", fontWeight: "bold" }}>{request.organizationName}</td>
+                      <td style={{ padding: "12px" }}>{request.contactName}</td>
+                      <td style={{ padding: "12px" }}>{request.contactEmail}</td>
+                      <td style={{ padding: "12px", maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {request.message.length > 50 ? `${request.message.substring(0, 50)}...` : request.message}
+                      </td>
+                      <td style={{ padding: "12px" }}>
+                        {request.logo ? (
+                          <img 
+                            src={request.logo} 
+                            alt="Logo" 
+                            style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "4px" }}
+                            onError={(e) => e.target.style.display = 'none'}
+                          />
+                        ) : (
+                          <div style={{ 
+                            width: "40px", 
+                            height: "40px", 
+                            background: "#f8f9fa", 
+                            borderRadius: "4px", 
+                            display: "flex", 
+                            alignItems: "center", 
+                            justifyContent: "center",
+                            color: "#666",
+                            fontSize: "12px",
+                            fontWeight: "bold"
+                          }}>
+                            {request.organizationName.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </td>
+                      <td style={{ padding: "12px" }}>
+                        <span style={{
+                          padding: "4px 8px",
+                          borderRadius: "4px",
+                          fontSize: "12px",
+                          fontWeight: "bold",
+                          background: request.status === 'Approved' ? "#d4edda" : 
+                                     request.status === 'Pending' ? "#fff3cd" : "#f8d7da",
+                          color: request.status === 'Approved' ? "#155724" : 
+                                 request.status === 'Pending' ? "#856404" : "#721c24"
+                        }}>
+                          {request.status}
+                        </span>
+                      </td>
+                      <td style={{ padding: "12px" }}>
+                        {new Date(request.createdAt).toLocaleDateString()}
+                      </td>
+                      <td style={{ padding: "12px" }}>
+                        <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
+                          {request.status === 'Pending' && (
+                            <>
+                              <button
+                                onClick={() => handleApprovePartnership(request._id)}
+                                style={{
+                                  background: "#27ae60",
+                                  color: "white",
+                                  border: "none",
+                                  padding: "6px 12px",
+                                  borderRadius: "4px",
+                                  cursor: "pointer",
+                                  fontSize: "12px",
+                                  fontWeight: "bold"
+                                }}
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => handleRejectPartnership(request._id)}
+                                style={{
+                                  background: "#e74c3c",
+                                  color: "white",
+                                  border: "none",
+                                  padding: "6px 12px",
+                                  borderRadius: "4px",
+                                  cursor: "pointer",
+                                  fontSize: "12px",
+                                  fontWeight: "bold"
+                                }}
+                              >
+                                Reject
+                              </button>
+                            </>
+                          )}
+                          <button
+                            onClick={() => handleDeletePartnership(request._id)}
+                            style={{
+                              background: "#6c757d",
+                              color: "white",
+                              border: "none",
+                              padding: "6px 12px",
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                              fontSize: "12px",
+                              fontWeight: "bold"
+                            }}
+                          >
+                            Delete
+                          </button>
+                          {request.status !== 'Pending' && (
+                            <span style={{ color: "#666", fontSize: "12px", alignSelf: "center" }}>
+                              {request.status === 'Approved' ? 'Approved' : 'Rejected'}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   if (error) {
     return (
       <div style={{ padding: "20px", textAlign: "center" }}>
@@ -873,6 +1180,9 @@ function DonationManagerDashboard() {
           <button onClick={() => setActiveTab("impactStories")} style={getButtonStyle(activeTab === "impactStories")}>
             Impact Stories
           </button>
+          <button onClick={() => setActiveTab("partnerships")} style={getButtonStyle(activeTab === "partnerships")}>
+            Partnership Requests
+          </button>
         </div>
 
         {/* Main Content */}
@@ -881,6 +1191,7 @@ function DonationManagerDashboard() {
           {activeTab === "packages" && <PackagesTab />}
           {activeTab === "donations" && <DonationsTab />}
           {activeTab === "impactStories" && <ImpactStoriesManagement />}
+          {activeTab === "partnerships" && <PartnershipsTab />}
         </div>
       </div>
     </div>
