@@ -92,40 +92,64 @@ function OngoingEventsGrid({ events, setEvents }) {
                   {ev.crewRequest ? ev.crewRequest.status : "Not requested"}
                 </p>
 
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "15px" }}>
-                  <Link
-                    to={`/EventManagerDash/${ev._id}`}
-                    style={{
-                      padding: "8px 16px",
-                      backgroundColor: "#4CAF50",
-                      color: "#fff",
-                      borderRadius: "6px",
-                      textDecoration: "none",
-                      fontWeight: "bold",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#45a049")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "#4CAF50")}
-                  >
-                    Update
-                  </Link>
-                  <button
-                    onClick={() => deleteEvent(ev._id)}
-                    style={{
-                      padding: "8px 16px",
-                      backgroundColor: "#f44336",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "6px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#e53935")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "#f44336")}
-                  >
-                    Delete
-                  </button>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "15px" }}>
+                  {/* Action Buttons Row 1 */}
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
+                    <Link
+                      to={`/EventManagerDash/${ev._id}`}
+                      style={{
+                        padding: "8px 16px",
+                        backgroundColor: "#4CAF50",
+                        color: "#fff",
+                        borderRadius: "6px",
+                        textDecoration: "none",
+                        fontWeight: "bold",
+                        transition: "background-color 0.2s",
+                        flex: 1,
+                        textAlign: "center"
+                      }}
+                      onMouseEnter={(e) => (e.target.style.backgroundColor = "#45a049")}
+                      onMouseLeave={(e) => (e.target.style.backgroundColor = "#4CAF50")}
+                    >
+                      Update
+                    </Link>
+                    <button
+                      onClick={() => deleteEvent(ev._id)}
+                      style={{
+                        padding: "8px 16px",
+                        backgroundColor: "#f44336",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "6px",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                        transition: "background-color 0.2s",
+                        flex: 1
+                      }}
+                      onMouseEnter={(e) => (e.target.style.backgroundColor = "#e53935")}
+                      onMouseLeave={(e) => (e.target.style.backgroundColor = "#f44336")}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  
+                  {/* Crew Status Display */}
+                  <div style={{
+                    padding: "8px 16px",
+                    backgroundColor: ev.crewRequest ? 
+                      (ev.crewRequest.status === 'approved' ? "#28a745" : 
+                       ev.crewRequest.status === 'rejected' ? "#dc3545" : "#ffc107") : "#6c757d",
+                    color: "#fff",
+                    borderRadius: "6px",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    fontSize: "12px"
+                  }}>
+                    {ev.crewRequest ? 
+                      `Crew: ${ev.crewRequest.status.charAt(0).toUpperCase() + ev.crewRequest.status.slice(1)}` : 
+                      "No Crew Request"
+                    }
+                  </div>
                 </div>
               </div>
             </div>

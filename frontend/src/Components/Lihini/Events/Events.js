@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import MainNav from "../../MainNav/MainNav";
 import Event from "../Event/Event";
+import TestimonialModal from "./TestimonialModal";
+import EventTestimonials from "./EventTestimonials";
 import "../Event/Event.css";
 
 // Load Stripe
@@ -19,6 +22,8 @@ function Events({ events: propEvents }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showTestimonialModal, setShowTestimonialModal] = useState(false);
+  const [testimonials, setTestimonials] = useState([]);
 
   // Fetch events from backend API
   const fetchEvents = async () => {
@@ -80,8 +85,15 @@ function Events({ events: propEvents }) {
   const closeModals = () => {
     setShowBookingModal(false);
     setShowDetailsModal(false);
+    setShowTestimonialModal(false);
     setSelectedEvent(null);
   };
+
+  const handleTestimonialSubmitted = (newTestimonial) => {
+    // Add the new testimonial to the local state
+    setTestimonials(prev => [newTestimonial, ...prev]);
+  };
+
 
   // Loading state
   if (loading) {
@@ -223,7 +235,37 @@ function Events({ events: propEvents }) {
             </div>
           </div>
         )}
+
+        {/* Global Testimonials Section */}
+        <div className="testimonials-section">
+          <div className="testimonials-header">
+            <h2 className="testimonials-title">What Our Attendees Say</h2>
+            <p className="testimonials-subtitle">Hear from people who have attended our amazing events</p>
+            <button
+              className="testimonials-button"
+              onClick={() => setShowTestimonialModal(true)}
+            >
+              Leave a Testimonial
+            </button>
+          </div>
+          <div className="testimonials-grid">
+            <EventTestimonials eventId={null} />
+          </div>
+        </div>
+
       </div>
+      
+      
+      {/* Render TestimonialModal using portal to ensure it's at root level */}
+      {showTestimonialModal && createPortal(
+        <TestimonialModal
+          isOpen={showTestimonialModal}
+          onClose={() => setShowTestimonialModal(false)}
+          eventId={selectedEvent?._id}
+          onTestimonialSubmitted={handleTestimonialSubmitted}
+        />,
+        document.body
+      )}
     </div>
   );
 }

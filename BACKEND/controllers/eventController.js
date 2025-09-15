@@ -61,18 +61,8 @@ const createEvent = async (req, res) => {
 
     const savedEvent = await event.save();
 
-    // Create crew request if needed
-    if (requestCrew) {
-      const crewRequestDoc = new CrewRequest({
-        eventId: savedEvent._id,
-        requestedBy,
-        status: "pending",
-      });
-      const savedCrewRequest = await crewRequestDoc.save();
-
-      savedEvent.crewRequest = savedCrewRequest._id;
-      await savedEvent.save();
-    }
+    // Note: Crew request creation is now handled separately via the crew request API
+    // The requestCrew flag is kept for backward compatibility but doesn't create a crew request
 
     const populatedEvent = await Event.findById(savedEvent._id).populate("crewRequest");
 
@@ -149,18 +139,8 @@ const updateEvent = async (req, res) => {
 
     if (!event) return res.status(404).json({ message: "Couldn't update event" });
 
-    // Handle crew request
-    if (requestCrew && !event.crewRequest) {
-      const crewRequestDoc = new CrewRequest({
-        eventId: event._id,
-        requestedBy,
-        status: "pending",
-      });
-      const savedCrewRequest = await crewRequestDoc.save();
-      event.crewRequest = savedCrewRequest._id;
-      await event.save();
-      event = await Event.findById(event._id).populate("crewRequest");
-    }
+    // If crew request is being handled, we need to update the event's crewRequest reference
+    // This will be done after the crew request is created/updated in the frontend
 
     return res.status(200).json({ event });
   } catch (err) {

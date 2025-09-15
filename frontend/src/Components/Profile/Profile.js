@@ -4,7 +4,7 @@ import MainNav from '../MainNav/MainNav';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -278,7 +278,7 @@ function Profile() {
           booking.paymentStatus
         ]);
         
-        doc.autoTable({
+        autoTable(doc, {
           startY: yPosition,
           head: [['#', 'Artist', 'Event Type', 'Date', 'Status', 'Payment']],
           body: artistBookingData,
@@ -306,7 +306,7 @@ function Profile() {
           booking.paymentIntentId ? booking.paymentIntentId.slice(-8) : 'N/A'
         ]);
         
-        doc.autoTable({
+        autoTable(doc, {
           startY: yPosition,
           head: [['#', 'Event', 'Date', 'Tickets', 'Status', 'Payment ID']],
           body: eventBookingData,
@@ -336,7 +336,7 @@ function Profile() {
         `LKR ${order.totalAmount || '0.00'}`
       ]);
       
-      doc.autoTable({
+      autoTable(doc, {
         startY: yPosition,
         head: [['#', 'Order ID', 'Date', 'Status', 'Total']],
         body: orderData,
@@ -364,7 +364,7 @@ function Profile() {
         `LKR ${donation.Amount || donation.amount || '0.00'}`
       ]);
       
-      doc.autoTable({
+      autoTable(doc, {
         startY: yPosition,
         head: [['#', 'Package', 'Date', 'Status', 'Amount']],
         body: donationData,
@@ -606,7 +606,7 @@ function Profile() {
               <Popup>
                 <div>
                   <strong>Artist Location</strong><br />
-                  <small>Last updated: {artistLocation.lastUpdated.toLocaleTimeString()}</small>
+                  <small>Last updated: {artistLocation.lastUpdated ? new Date(artistLocation.lastUpdated).toLocaleTimeString() : 'Unknown'}</small>
                 </div>
               </Popup>
             </Marker>

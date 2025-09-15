@@ -242,7 +242,12 @@ function VenueMap({ event, height = "400px" }) {
 
   const handleGetDirections = () => {
     if (userLocation) {
+      // Keep existing Leaflet map functionality
       calculateRoute(userLocation, venueCoords);
+      
+      // Open Google Maps in new tab
+      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${venueCoords.lat},${venueCoords.lng}`;
+      window.open(googleMapsUrl, '_blank');
     } else {
       // Request location permission
       if (navigator.geolocation) {
@@ -251,7 +256,13 @@ function VenueMap({ event, height = "400px" }) {
             const { latitude, longitude } = position.coords;
             const location = { lat: latitude, lng: longitude };
             setUserLocation(location);
+            
+            // Keep existing Leaflet map functionality
             calculateRoute(location, venueCoords);
+            
+            // Open Google Maps in new tab
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${location.lat},${location.lng}&destination=${venueCoords.lat},${venueCoords.lng}`;
+            window.open(googleMapsUrl, '_blank');
           },
           (error) => {
             alert('Please enable location services to get directions.');
