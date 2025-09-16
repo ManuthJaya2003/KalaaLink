@@ -161,8 +161,13 @@ function ComplaintDashBoard() {
     // Build rows with status information
     const rows = complaints.map((c, index) => {
       let status = "Pending";
-      if (c.resolved) status = "Resolved";
-      else if (c.rejected) status = "Rejected";
+      if (c.status) {
+        status = c.status;
+      } else if (c.resolved) {
+        status = "Accepted";
+      } else if (c.rejected) {
+        status = "Rejected";
+      }
       
       return [
         `CMP${(index + 1).toString().padStart(3, '0')}`,
@@ -177,9 +182,15 @@ function ComplaintDashBoard() {
 
       // Add summary statistics with professional styling
       const totalComplaints = complaints.length;
-      const pendingComplaints = complaints.filter(c => !c.resolved && !c.rejected).length;
-      const resolvedComplaints = complaints.filter(c => c.resolved).length;
-      const rejectedComplaints = complaints.filter(c => c.rejected).length;
+      const pendingComplaints = complaints.filter(c => 
+        (c.status === 'Pending' || (!c.status && !c.resolved && !c.rejected))
+      ).length;
+      const resolvedComplaints = complaints.filter(c => 
+        c.status === 'Accepted' || c.resolved
+      ).length;
+      const rejectedComplaints = complaints.filter(c => 
+        c.status === 'Rejected' || c.rejected
+      ).length;
 
       // Summary section with background
       doc.setFillColor(248, 249, 250);
@@ -253,7 +264,7 @@ function ComplaintDashBoard() {
           // Color code status cells
           if (data.column.index === 5) { // Status column
             const status = data.cell.text[0];
-            if (status === 'Resolved') {
+            if (status === 'Accepted' || status === 'Resolved') {
               doc.setFillColor(212, 237, 218);
               doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
             } else if (status === 'Rejected') {
@@ -347,35 +358,51 @@ function ComplaintDashBoard() {
 
   // Helper functions for status and actions
   const getStatusClass = (complaint) => {
-    if (complaint.resolved) return 'resolved';
+    if (complaint.status) {
+      return complaint.status.toLowerCase();
+    }
+    if (complaint.resolved) return 'accepted';
     if (complaint.rejected) return 'rejected';
     return 'pending';
   };
 
   const getStatusText = (complaint) => {
-    if (complaint.resolved) return 'Resolved';
+    if (complaint.status) {
+      return complaint.status;
+    }
+    if (complaint.resolved) return 'Accepted';
     if (complaint.rejected) return 'Rejected';
     return 'Pending';
   };
 
   const getActionButtons = (complaint) => {
-    if (complaint.resolved || complaint.rejected) {
-      return <span className="no-actions">-</span>;
-    }
-
+    const isProcessed = complaint.status === 'Accepted' || complaint.status === 'Rejected' || 
+                       complaint.resolved || complaint.rejected;
+    
     return (
       <div className="action-buttons">
+        {!isProcessed && (
+          <>
+            <button 
+              className="btn-accept"
+              onClick={() => handleStatusUpdate(complaint._id, 'Accepted')}
+            >
+              Accept
+            </button>
+            <button 
+              className="btn-reject"
+              onClick={() => handleStatusUpdate(complaint._id, 'Rejected')}
+            >
+              Reject
+            </button>
+          </>
+        )}
         <button 
-          className="btn-accept"
-          onClick={() => handleStatusUpdate(complaint._id, 'resolved')}
+          className="btn-clear"
+          onClick={() => handleClearComplaint(complaint._id)}
+          title="Clear this complaint"
         >
-          Accept
-        </button>
-        <button 
-          className="btn-reject"
-          onClick={() => handleStatusUpdate(complaint._id, 'rejected')}
-        >
-          Reject
+          Clear
         </button>
       </div>
     );
@@ -387,10 +414,12 @@ function ComplaintDashBoard() {
       setErr(''); // Clear any previous errors
       
       const updateData = {};
-      if (status === 'resolved') {
+      if (status === 'Accepted') {
+        updateData.status = 'Accepted';
         updateData.resolved = true;
         updateData.rejected = false;
-      } else if (status === 'rejected') {
+      } else if (status === 'Rejected') {
+        updateData.status = 'Rejected';
         updateData.resolved = false;
         updateData.rejected = true;
       }
@@ -409,6 +438,47 @@ function ComplaintDashBoard() {
     } catch (error) {
       console.error('Error updating complaint status:', error);
       setErr(`Failed to update complaint status: ${error.message || error}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClearComplaint = async (complaintId) => {
+    if (!window.confirm("Are you sure you want to clear this complaint?")) return;
+    
+    try {
+      setLoading(true);
+      setErr('');
+      
+      await api.remove(complaintId);
+      await loadComplaints();
+      
+      setErr("Complaint cleared successfully!");
+      setTimeout(() => setErr(''), 3000);
+    } catch (error) {
+      console.error('Error clearing complaint:', error);
+      setErr(`Failed to clear complaint: ${error.message || error}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBulkClear = async (status) => {
+    const statusText = status === 'Accepted' ? 'accepted' : 'rejected';
+    if (!window.confirm(`Are you sure you want to clear all ${statusText} complaints?`)) return;
+    
+    try {
+      setLoading(true);
+      setErr('');
+      
+      const response = await axios.post(`${API}/bulk-clear`, { status });
+      await loadComplaints();
+      
+      setErr(response.data.message || `All ${statusText} complaints cleared successfully!`);
+      setTimeout(() => setErr(''), 3000);
+    } catch (error) {
+      console.error('Error bulk clearing complaints:', error);
+      setErr(`Failed to clear ${statusText} complaints: ${error.message || error}`);
     } finally {
       setLoading(false);
     }
@@ -451,15 +521,21 @@ function ComplaintDashBoard() {
                   <span className="nav-stat-label">Total</span>
                 </div>
                 <div className="nav-stat-item pending">
-                  <span className="nav-stat-number">{complaints.filter(c => !c.resolved && !c.rejected).length}</span>
+                  <span className="nav-stat-number">{complaints.filter(c => 
+                    c.status === 'Pending' || (!c.status && !c.resolved && !c.rejected)
+                  ).length}</span>
                   <span className="nav-stat-label">Pending</span>
                 </div>
                 <div className="nav-stat-item resolved">
-                  <span className="nav-stat-number">{complaints.filter(c => c.resolved).length}</span>
-                  <span className="nav-stat-label">Resolved</span>
+                  <span className="nav-stat-number">{complaints.filter(c => 
+                    c.status === 'Accepted' || c.resolved
+                  ).length}</span>
+                  <span className="nav-stat-label">Accepted</span>
                 </div>
                 <div className="nav-stat-item rejected">
-                  <span className="nav-stat-number">{complaints.filter(c => c.rejected).length}</span>
+                  <span className="nav-stat-number">{complaints.filter(c => 
+                    c.status === 'Rejected' || c.rejected
+                  ).length}</span>
                   <span className="nav-stat-label">Rejected</span>
                 </div>
                 <div 
@@ -495,6 +571,22 @@ function ComplaintDashBoard() {
                 disabled={!complaints.length || generatingPdf}
               >
                 {generatingPdf ? "⏳ Generating..." : "📄 Download PDF"}
+              </button>
+              <button 
+                className="btn-bulk-clear-accepted" 
+                onClick={() => handleBulkClear('Accepted')}
+                disabled={loading || !complaints.some(c => c.status === 'Accepted' || c.resolved)}
+                title="Clear all accepted complaints"
+              >
+                🗑️ Clear Accepted
+              </button>
+              <button 
+                className="btn-bulk-clear-rejected" 
+                onClick={() => handleBulkClear('Rejected')}
+                disabled={loading || !complaints.some(c => c.status === 'Rejected' || c.rejected)}
+                title="Clear all rejected complaints"
+              >
+                🗑️ Clear Rejected
               </button>
             </div>
           </div>

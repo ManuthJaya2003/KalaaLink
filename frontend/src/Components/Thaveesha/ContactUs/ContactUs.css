@@ -270,7 +270,7 @@
   gap: 12px;
 }
 
-.btn-refresh, .btn-download {
+.btn-refresh, .btn-download, .btn-bulk-clear-accepted, .btn-bulk-clear-rejected {
   padding: 10px 16px;
   border: none;
   border-radius: 8px;
@@ -300,7 +300,27 @@
   transform: translateY(-1px);
 }
 
-.btn-refresh:disabled, .btn-download:disabled {
+.btn-bulk-clear-accepted {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-bulk-clear-accepted:hover:not(:disabled) {
+  background: #138496;
+  transform: translateY(-1px);
+}
+
+.btn-bulk-clear-rejected {
+  background: #fd7e14;
+  color: white;
+}
+
+.btn-bulk-clear-rejected:hover:not(:disabled) {
+  background: #e8681c;
+  transform: translateY(-1px);
+}
+
+.btn-refresh:disabled, .btn-download:disabled, .btn-bulk-clear-accepted:disabled, .btn-bulk-clear-rejected:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
@@ -386,7 +406,7 @@
   color: #856404;
 }
 
-.status-badge.resolved {
+.status-badge.accepted, .status-badge.resolved {
   background: #6f42c1;
   color: white;
 }
@@ -401,7 +421,7 @@
   gap: 8px;
 }
 
-.btn-accept, .btn-reject {
+.btn-accept, .btn-reject, .btn-clear {
   padding: 6px 12px;
   border: none;
   border-radius: 6px;
@@ -428,6 +448,16 @@
 
 .btn-reject:hover {
   background: #c82333;
+  transform: translateY(-1px);
+}
+
+.btn-clear {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-clear:hover {
+  background: #5a6268;
   transform: translateY(-1px);
 }
 
@@ -507,9 +537,19 @@
     gap: 4px;
   }
   
-  .btn-accept, .btn-reject {
+  .btn-accept, .btn-reject, .btn-clear {
     padding: 4px 8px;
     font-size: 0.75rem;
+  }
+  
+  .header-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .btn-bulk-clear-accepted, .btn-bulk-clear-rejected {
+    padding: 8px 12px;
+    font-size: 0.8rem;
   }
 }
 
