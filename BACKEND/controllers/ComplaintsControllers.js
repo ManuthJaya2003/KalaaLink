@@ -42,7 +42,7 @@ const getById = async (req, res, next) => {
 // Update complaints details
 const updateComplaints = async (req, res, next) => {
     const id = req.params.id;
-    const { Name, Gmail, Message, Complaint_Category, resolved, rejected } = req.body;
+    const { Name, Gmail, Message, Complaint_Category, resolved, rejected, status } = req.body;
 
     try {
         const updateData = {};
@@ -54,6 +54,20 @@ const updateComplaints = async (req, res, next) => {
         if (Complaint_Category !== undefined) updateData.Complaint_Category = Complaint_Category;
         if (resolved !== undefined) updateData.resolved = resolved;
         if (rejected !== undefined) updateData.rejected = rejected;
+        if (status !== undefined) {
+            updateData.status = status;
+            // Update resolved/rejected based on status
+            if (status === 'Accepted') {
+                updateData.resolved = true;
+                updateData.rejected = false;
+            } else if (status === 'Rejected') {
+                updateData.resolved = false;
+                updateData.rejected = true;
+            } else if (status === 'Pending') {
+                updateData.resolved = false;
+                updateData.rejected = false;
+            }
+        }
 
         const complaints = await Complaints.findByIdAndUpdate(
             id,
@@ -83,10 +97,31 @@ const deleteComplaints = async (req, res, next) => {
     }
 };
 
+// Bulk clear complaints by status
+const bulkClearComplaints = async (req, res, next) => {
+    const { status } = req.body;
+
+    try {
+        if (!status || !['Accepted', 'Rejected'].includes(status)) {
+            return res.status(400).json({ message: "Invalid status. Must be 'Accepted' or 'Rejected'" });
+        }
+
+        const result = await Complaints.deleteMany({ status: status });
+        return res.status(200).json({ 
+            message: `Successfully cleared ${result.deletedCount} ${status.toLowerCase()} complaints`,
+            deletedCount: result.deletedCount
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Server Error" });
+    }
+};
+
 module.exports = {
     getAllComplaints,
     addComplaints,
     getById,
     updateComplaints,
-    deleteComplaints
+    deleteComplaints,
+    bulkClearComplaints
 };

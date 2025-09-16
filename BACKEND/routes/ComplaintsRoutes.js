@@ -10,6 +10,7 @@ router.post("/",ComplaintsController.addComplaints);
 router.get("/:id",ComplaintsController.getById);
 router.put("/:id",ComplaintsController.updateComplaints);
 router.delete("/:id",ComplaintsController.deleteComplaints);
+router.post("/bulk-clear",ComplaintsController.bulkClearComplaints);
 
 
 //export
