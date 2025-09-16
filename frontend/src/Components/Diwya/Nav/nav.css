@@ -5,7 +5,7 @@
     margin: 0;
     padding: 0;
     display: flex; /* Horizontal layout */
-    background-color: #333; /* Navbar background */
+    background-color: #C1A37F; /* Grey-orange navbar background */
     justify-content: center; /* Center the items horizontally */
     align-items: center;
 }
@@ -16,7 +16,7 @@
 
 .home-a {
     text-decoration: none; /* Remove underline from links */
-    color: white; /* Link color */
+    color: #000000; /* Black link color */
     font-weight: bold;
     padding: 15px 20px;
     display: block;
@@ -25,8 +25,8 @@
 
 .home-a:hover,
 .home-a.active {
-    background-color: #555; /* Hover background */
-    color: #ffcc00; /* Hover text color */
+    background-color: #333333; /* Darker hover background */
+    color: #000000; /* Black hover text color */
     border-radius: 5px;
 }
 

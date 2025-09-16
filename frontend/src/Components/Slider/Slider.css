@@ -1,0 +1,69 @@
+/* Hero Video Container */
+.hero-video {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  min-height: 600px;
+  overflow: hidden;
+  margin: 0 0 4rem 0; /* Remove top/left/right margins, keep bottom spacing */
+  padding: 0; /* Remove all padding */
+  z-index: 1; /* Ensure video is behind navbar */
+}
+
+/* Background Video */
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+/* Video Loading State */
+.background-video::-webkit-media-controls {
+  display: none !important;
+}
+
+.background-video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+.background-video::-webkit-media-controls-play-button {
+  display: none !important;
+}
+
+.background-video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .hero-video {
+    height: 100vh;
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-video {
+    height: 100vh;
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-video {
+    height: 100vh;
+    min-height: 400px;
+  }
+}
+
+/* Ensure video covers full area on all devices */
+@media (orientation: landscape) and (max-height: 500px) {
+  .hero-video {
+    height: 100vh;
+    min-height: 100vh;
+  }
+}

@@ -1,11 +1,14 @@
 /* ===== MAIN FOOTER - SOFIA THERAPY STYLE ===== */
 
 .footer {
-  background: var(--color-text-dark);
-  color: white;
+  background: rgba(193, 163, 127, 0.85);
+  backdrop-filter: blur(15px);
+  color: #000000;
   padding: var(--space-3xl) 0 var(--space-lg);
   position: relative;
-  overflow: hidden;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  margin-top: var(--space-3xl);
 }
 
 .footer::before {
@@ -39,7 +42,7 @@
   font-family: var(--font-family-serif);
   font-size: var(--text-2xl);
   font-weight: 700;
-  color: white;
+  color: #000000;
   margin-bottom: var(--space-md);
   position: relative;
 }
@@ -59,7 +62,7 @@
   font-family: var(--font-family-serif);
   font-size: var(--text-lg);
   font-weight: 600;
-  color: white;
+  color: #000000;
   margin-bottom: var(--space-md);
   position: relative;
 }
@@ -76,7 +79,7 @@
 }
 
 .footer-section p {
-  color: var(--color-medium-gray);
+  color: #000000;
   line-height: var(--leading-relaxed);
   margin-bottom: var(--space-sm);
 }
@@ -92,7 +95,7 @@
 }
 
 .footer-section ul li a {
-  color: var(--color-medium-gray);
+  color: #000000;
   text-decoration: none;
   transition: all var(--transition-normal);
   display: inline-flex;
@@ -110,7 +113,7 @@
 }
 
 .footer-section ul li a:hover {
-  color: var(--color-accent-green);
+  color: #333333;
   transform: translateX(4px);
 }
 
@@ -132,8 +135,8 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: var(--color-text-muted);
-  color: white;
+  background: #000000;
+  color: #FFFFFF;
   border-radius: 50%;
   text-decoration: none;
   transition: all var(--transition-normal);
@@ -142,7 +145,7 @@
 }
 
 .social-icons a:hover {
-  background: var(--color-accent-green);
+  background: #333333;
   transform: translateY(-2px);
   box-shadow: var(--shadow-soft-colored);
 }
@@ -151,8 +154,8 @@
 .footer-bottom {
   text-align: center;
   padding-top: var(--space-lg);
-  border-top: 1px solid var(--color-text-muted);
-  color: var(--color-text-muted);
+  border-top: 1px solid #000000;
+  color: #000000;
   position: relative;
 }
 
@@ -162,7 +165,7 @@
   left: 50%;
   top: -10px;
   transform: translateX(-50%);
-  background: var(--color-text-dark);
+  background: #C1A37F;
   padding: 0 var(--space-sm);
   font-size: var(--text-lg);
   opacity: 0.8;

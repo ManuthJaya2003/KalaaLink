@@ -5,17 +5,17 @@
   gap: 30px;               /* space between items */
   padding: 10px 0;
   margin: 0;
-  background-color: #333;  /* navbar background */
+  background-color: #C1A37F;  /* grey-orange navbar background */
 }
 
 .Home-ll h1 {
   font-size: 18px; 
   margin: 0;
-  color: white;
+  color: #000000;
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .Home-ll h1:hover {
-  color: #ff9800; /* highlight on hover */
+  color: #333333; /* darker on hover */
 }

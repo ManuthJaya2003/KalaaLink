@@ -4,13 +4,17 @@ import MainNav from '../MainNav/MainNav';
 import './Home.css';
 import MainFooter from '../MainFooter/MainFooter';
 import VirtualGallery from '../Thaveesha/ContactUs/VirtualGallery';
+import Slider from '../Slider/Slider';
 
 function Home() {
   const navigate = useNavigate();
   
   return (
     <div className="home-page">
-      {/* Navigation */}
+      {/* Slider/Carousel - At the very top */}
+      <Slider />
+      
+      {/* Navigation - Overlaying the slider */}
       <MainNav />
       
       {/* Virtual Art Gallery */}
