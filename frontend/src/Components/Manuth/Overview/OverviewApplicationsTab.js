@@ -113,6 +113,7 @@ function OverviewApplicationsTab() {
                   <th>Email</th>
                   <th>Bio</th>
                   <th>Applied Date</th>
+                  <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -131,6 +132,9 @@ function OverviewApplicationsTab() {
                     </td>
                     <td className="applied-date">
                       {artist.createdAt ? new Date(artist.createdAt).toLocaleDateString() : "—"}
+                    </td>
+                    <td className="status">
+                      <span className="status-badge pending-badge">⏳ Pending</span>
                     </td>
                     <td className="actions">
                       <div className="action-buttons">

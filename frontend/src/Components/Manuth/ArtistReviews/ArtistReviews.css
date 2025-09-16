@@ -5,14 +5,28 @@
 }
 
 .reviews-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 24px;
   padding: 20px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reviews-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.reviews-header-text {
+  flex: 1;
+}
+
+.reviews-header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
 .reviews-header h2 {
@@ -40,9 +54,51 @@
   transition: all 0.2s ease;
 }
 
-.btn-refresh:hover {
+.btn-refresh:hover:not(:disabled) {
   background: #5a67d8;
   transform: translateY(-1px);
+}
+
+.btn-export {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-export:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.btn-clear-all {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-clear-all:hover:not(:disabled) {
+  background: #d97706;
+  transform: translateY(-1px);
+}
+
+.btn-export:disabled,
+.btn-clear-all:disabled,
+.btn-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .loading-container,
@@ -330,6 +386,16 @@
   font-size: 0.95rem;
 }
 
+.warning-text {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 16px 0 !important;
+  color: #92400e !important;
+  font-size: 0.9rem;
+}
+
 .review-preview {
   background: #f9fafb;
   border-radius: 8px;
@@ -406,9 +472,24 @@
   }
   
   .reviews-header {
+    padding: 16px;
+  }
+  
+  .reviews-header-content {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
+  }
+  
+  .reviews-header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .reviews-header-actions .btn {
+    flex: 1;
+    min-width: 120px;
   }
   
   .reviews-table-container {

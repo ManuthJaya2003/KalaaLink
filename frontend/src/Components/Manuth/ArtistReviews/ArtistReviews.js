@@ -11,6 +11,9 @@ const ArtistReviews = ({ showNavigation = true }) => {
   const [error, setError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [clearAllConfirm, setClearAllConfirm] = useState(false);
+  const [isClearingAll, setIsClearingAll] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     fetchReviews();
@@ -54,6 +57,54 @@ const ArtistReviews = ({ showNavigation = true }) => {
       setError('Failed to delete review. Please try again.');
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleClearAllReviews = async () => {
+    setIsClearingAll(true);
+    
+    try {
+      const response = await axios.delete('http://localhost:5000/api/artist-reviews/clear-all');
+      
+      if (response.data.success) {
+        // Clear all reviews from the list
+        setReviews([]);
+        setClearAllConfirm(false);
+        setError('');
+      } else {
+        setError('Failed to clear all reviews');
+      }
+    } catch (err) {
+      console.error('Error clearing all reviews:', err);
+      setError('Failed to clear all reviews. Please try again.');
+    } finally {
+      setIsClearingAll(false);
+    }
+  };
+
+  const handleExportReviews = async () => {
+    setIsExporting(true);
+    
+    try {
+      const response = await axios.get('http://localhost:5000/api/artist-reviews/export', {
+        responseType: 'blob'
+      });
+      
+      // Create a blob URL and trigger download
+      const blob = new Blob([response.data], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `artist-reviews-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error exporting reviews:', err);
+      setError('Failed to export reviews. Please try again.');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -117,11 +168,31 @@ const ArtistReviews = ({ showNavigation = true }) => {
       {showNavigation && <ArtistManagerNav />}
       <div className="artist-reviews-container">
       <div className="reviews-header">
-        <h2>Artist Reviews Management</h2>
-        <p>Manage all artist reviews and ratings</p>
-        <button className="btn btn-refresh" onClick={fetchReviews}>
-          Refresh
-        </button>
+        <div className="reviews-header-content">
+          <div className="reviews-header-text">
+            <h2>Artist Reviews Management</h2>
+            <p>Manage all artist reviews and ratings</p>
+          </div>
+          <div className="reviews-header-actions">
+            <button 
+              className="btn btn-export" 
+              onClick={handleExportReviews}
+              disabled={isExporting || reviews.length === 0}
+            >
+              {isExporting ? 'Exporting...' : 'Export Reviews'}
+            </button>
+            <button 
+              className="btn btn-clear-all" 
+              onClick={() => setClearAllConfirm(true)}
+              disabled={isClearingAll || reviews.length === 0}
+            >
+              {isClearingAll ? 'Clearing...' : 'Clear All Reviews'}
+            </button>
+            <button className="btn btn-refresh" onClick={fetchReviews}>
+              Refresh
+            </button>
+          </div>
+        </div>
       </div>
 
       {reviews.length === 0 ? (
@@ -240,6 +311,48 @@ const ArtistReviews = ({ showNavigation = true }) => {
                 disabled={isDeleting}
               >
                 {isDeleting ? 'Deleting...' : 'Delete Review'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clear All Reviews Confirmation Modal */}
+      {clearAllConfirm && (
+        <div className="delete-modal-overlay" onClick={() => setClearAllConfirm(false)}>
+          <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="delete-modal-header">
+              <h3>Clear All Reviews</h3>
+              <button 
+                className="delete-modal-close" 
+                onClick={() => setClearAllConfirm(false)}
+                disabled={isClearingAll}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="delete-modal-body">
+              <p>Are you sure you want to clear all artist reviews? This action cannot be undone.</p>
+              <p className="warning-text">
+                <strong>Warning:</strong> This will permanently delete all {reviews.length} review{reviews.length !== 1 ? 's' : ''} from the database.
+              </p>
+            </div>
+            
+            <div className="delete-modal-actions">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setClearAllConfirm(false)}
+                disabled={isClearingAll}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={handleClearAllReviews}
+                disabled={isClearingAll}
+              >
+                {isClearingAll ? 'Clearing All Reviews...' : 'Clear All Reviews'}
               </button>
             </div>
           </div>

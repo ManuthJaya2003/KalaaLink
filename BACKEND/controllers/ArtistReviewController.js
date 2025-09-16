@@ -278,10 +278,132 @@ const getAllReviews = async (req, res) => {
   }
 };
 
+// Clear all reviews
+const clearAllReviews = async (req, res) => {
+  try {
+    // Delete all reviews from the database
+    const result = await ArtistReview.deleteMany({});
+    
+    res.status(200).json({
+      success: true,
+      message: `Successfully cleared ${result.deletedCount} reviews`,
+      deletedCount: result.deletedCount
+    });
+  } catch (error) {
+    console.error("Error clearing all reviews:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message
+    });
+  }
+};
+
+// Export reviews to PDF
+const exportReviews = async (req, res) => {
+  try {
+    // Get all reviews with artist information (same as getAllReviews)
+    const reviews = await ArtistReview.aggregate([
+      {
+        $lookup: {
+          from: "artistmanagermodels", // Manager-added artists
+          localField: "artistId",
+          foreignField: "_id",
+          as: "managerArtist"
+        }
+      },
+      {
+        $lookup: {
+          from: "artists", // Self-registered artists
+          localField: "artistId",
+          foreignField: "_id",
+          as: "selfArtist"
+        }
+      },
+      {
+        $addFields: {
+          artist: {
+            $cond: {
+              if: { $gt: [{ $size: "$managerArtist" }, 0] },
+              then: {
+                $mergeObjects: [
+                  { $arrayElemAt: ["$managerArtist", 0] },
+                  { artistName: { $arrayElemAt: ["$managerArtist.artistName", 0] } }
+                ]
+              },
+              else: {
+                $cond: {
+                  if: { $gt: [{ $size: "$selfArtist" }, 0] },
+                  then: {
+                    $mergeObjects: [
+                      { $arrayElemAt: ["$selfArtist", 0] },
+                      { artistName: { $arrayElemAt: ["$selfArtist.stageName", 0] } }
+                    ]
+                  },
+                  else: {
+                    artistName: "Unknown Artist",
+                    genre: "Unknown",
+                    category: "Unknown"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          customerName: 1,
+          rating: 1,
+          review: 1,
+          createdAt: 1,
+          "artist.artistName": 1,
+          "artist.genre": 1,
+          "artist.category": 1
+        }
+      },
+      {
+        $sort: { createdAt: -1 }
+      }
+    ]);
+
+    // Generate CSV content
+    const csvHeader = "Artist Name,Reviewer Name,Rating,Comment,Date\n";
+    const csvRows = reviews.map(review => {
+      const artistName = review.artist?.artistName || 'Unknown Artist';
+      const reviewerName = review.customerName || 'Unknown Customer';
+      const rating = review.rating || 0;
+      const comment = (review.review || '').replace(/"/g, '""'); // Escape quotes
+      const date = review.createdAt ? new Date(review.createdAt).toLocaleDateString('en-US') : 'Unknown Date';
+      
+      return `"${artistName}","${reviewerName}","${rating}","${comment}","${date}"`;
+    }).join('\n');
+
+    const csvContent = csvHeader + csvRows;
+
+    // Set response headers for CSV download
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="artist-reviews-${new Date().toISOString().split('T')[0]}.csv"`);
+    res.setHeader('Content-Length', Buffer.byteLength(csvContent, 'utf8'));
+
+    res.status(200).send(csvContent);
+  } catch (error) {
+    console.error("Error exporting reviews:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   addReview,
   getReviewsByArtist,
   getAverageRating,
   deleteReview,
-  getAllReviews
+  getAllReviews,
+  clearAllReviews,
+  exportReviews
 };
