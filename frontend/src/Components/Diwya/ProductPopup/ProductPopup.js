@@ -165,6 +165,7 @@ const ProductPopup = ({ product, onClose }) => {
             alignItems: 'center',
             textAlign: 'center'
           }}>
+            {/* Fixed Image Frame - Content flows beneath */}
             <div style={{
               width: '100%',
               maxWidth: '350px',
@@ -174,7 +175,9 @@ const ProductPopup = ({ product, onClose }) => {
               overflow: 'hidden',
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
               border: '1px solid #e5e7eb',
-              backgroundColor: '#f8f9fa'
+              backgroundColor: '#f8f9fa',
+              position: 'relative',
+              zIndex: 1
             }}>
               <img
                 src={product.image}
@@ -190,27 +193,31 @@ const ProductPopup = ({ product, onClose }) => {
               />
             </div>
             
+            {/* Product Details - Always appears under image */}
             <div style={{
               width: '100%',
               maxWidth: '500px',
-              textAlign: 'left'
+              textAlign: 'left',
+              marginTop: '0',
+              position: 'relative',
+              zIndex: 2
             }}>
-              <p style={{ marginBottom: '8px', color: '#374151', lineHeight: '1.5', fontSize: '18px' }}>
+              <p style={{ marginBottom: '8px', color: '#374151', lineHeight: '1.5', fontSize: '20px' }}>
                 <span style={{ color: '#C1A37F', fontWeight: '600' }}>Artist:</span> {product.artistName}
               </p>
-              <p style={{ marginBottom: '16px', color: '#374151', lineHeight: '1.5', fontSize: '18px' }}>
+              <p style={{ marginBottom: '16px', color: '#374151', lineHeight: '1.5', fontSize: '20px' }}>
                 <span style={{ color: '#C1A37F', fontWeight: '600' }}>Price:</span> LKR {product.price}
               </p>
-              <p style={{ marginBottom: '8px', color: '#374151', lineHeight: '1.5', fontSize: '18px' }}>
+              <p style={{ marginBottom: '8px', color: '#374151', lineHeight: '1.5', fontSize: '20px' }}>
                 <span style={{ color: '#C1A37F', fontWeight: '600' }}>Frame:</span> {product.frameSize}
               </p>
-              <p style={{ marginBottom: '8px', color: '#374151', lineHeight: '1.5', fontSize: '18px' }}>
+              <p style={{ marginBottom: '8px', color: '#374151', lineHeight: '1.5', fontSize: '20px' }}>
                 <span style={{ color: '#C1A37F', fontWeight: '600' }}>Size:</span> {product.size}
               </p>
-              <p style={{ marginBottom: '8px', color: '#374151', lineHeight: '1.5', fontSize: '18px' }}>
+              <p style={{ marginBottom: '8px', color: '#374151', lineHeight: '1.5', fontSize: '20px' }}>
                 <span style={{ color: '#C1A37F', fontWeight: '600' }}>Color Palette:</span> {Array.isArray(product.colorPalette) ? product.colorPalette.join(', ') : product.colorPalette}
               </p>
-              <p style={{ marginBottom: '0', color: '#374151', lineHeight: '1.5', fontSize: '18px' }}>
+              <p style={{ marginBottom: '0', color: '#374151', lineHeight: '1.5', fontSize: '20px' }}>
                 <span style={{ color: '#C1A37F', fontWeight: '600' }}>Created:</span> {new Date(product.createdAt).toLocaleDateString('en-US', {
                   timeZone: 'Asia/Colombo',
                   year: 'numeric',

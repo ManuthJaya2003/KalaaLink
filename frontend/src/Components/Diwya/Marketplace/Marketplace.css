@@ -714,12 +714,19 @@
   background: black !important;
   color: white !important;
   border: none !important;
+  outline: none !important;
 }
 
 .product-buttons .btn.btn-secondary:hover {
   background: white !important;
   color: black !important;
   transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  outline: none !important;
+}
+
+.product-buttons .btn.btn-secondary:focus {
+  outline: none !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import MainNav from '../../MainNav/MainNav';
+import AuthFooter from '../../Common/AuthFooter';
 import './OrderConfirmation.css';
 
 const OrderConfirmation = () => {
@@ -106,19 +108,14 @@ const OrderConfirmation = () => {
   };
 
   return (
-    <div className="order-confirmation-container">
-      <div className="confirmation-header">
-        <div className="success-icon">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22,4 12,14.01 9,11.01"></polyline>
-          </svg>
-        </div>
-        <h1>Order Confirmed!</h1>
-        <p className="confirmation-message">
-          Thank you for your purchase, {order.customerName}! Your order has been successfully placed.
-        </p>
-      </div>
+    <div>
+      <MainNav />
+      <div className="order-confirmation-container">
+        <div className="success-card">
+          <h1 className="success-title">Order Confirmed</h1>
+          <p className="success-subtitle">
+            Thank you for your purchase
+          </p>
 
       <div className="order-details">
         <div className="order-info">
@@ -236,14 +233,9 @@ const OrderConfirmation = () => {
         </button>
       </div>
 
-      <div className="confirmation-footer">
-        <p>
-          A confirmation email has been sent to <strong>{order.customerEmail}</strong>
-        </p>
-        <p>
-          If you have any questions about your order, please contact our support team.
-        </p>
+        </div>
       </div>
+      <AuthFooter />
     </div>
   );
 };
