@@ -1,0 +1,66 @@
+/* ===== AUTH FOOTER - MATCHES NAVBAR STYLING ===== */
+
+.auth-footer {
+  background: rgba(193, 163, 127, 0.9);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 15px 0;
+  margin-top: 0;
+  text-align: center;
+  width: 100%;
+  position: relative;
+  /* Remove any gaps or white lines */
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.auth-footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+.auth-footer-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.auth-footer-logo {
+  height: 25px;
+  width: auto;
+  vertical-align: middle;
+}
+
+.auth-footer-text {
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #000000;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+/* Override any conflicting styles */
+.auth-footer * {
+  box-sizing: border-box;
+}
+
+.auth-footer img,
+.auth-footer span {
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure no white gaps or lines appear */
+.auth-footer::before,
+.auth-footer::after {
+  display: none;
+}
+
+/* Override any parent container margins that might create gaps */
+.auth-footer {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}

@@ -111,45 +111,61 @@
   border: 1px solid #f5c6cb;
 }
 
-.form-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 30px;
+.partnership-form .form-actions {
+  display: flex !important;
+  gap: 15px !important;
+  justify-content: center !important;
+  align-items: stretch !important;
+  margin-top: 30px !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 44px !important;
 }
 
-.cancel-button,
-.submit-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s;
+.partnership-form .form-actions .cancel-button,
+.partnership-form .form-actions .submit-button {
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 5px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s !important;
+  width: 140px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 140px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  position: relative !important;
+  top: 0 !important;
 }
 
-.cancel-button {
-  background: #6c757d;
-  color: white;
+.partnership-form .form-actions .cancel-button {
+  background: #000000 !important;
+  color: white !important;
 }
 
-.cancel-button:hover {
-  background: #5a6268;
+.partnership-form .form-actions .cancel-button:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #000000 !important;
 }
 
-.submit-button {
-  background: #27ae60;
-  color: white;
+.partnership-form .form-actions .submit-button {
+  background: #D4B996 !important;
+  color: black !important;
 }
 
-.submit-button:hover:not(:disabled) {
-  background: #229954;
+.partnership-form .form-actions .submit-button:hover:not(:disabled) {
+  background: #C4A986 !important;
 }
 
-.submit-button:disabled {
-  background: #95a5a6;
-  cursor: not-allowed;
+.partnership-form .form-actions .submit-button:disabled {
+  background: #95a5a6 !important;
+  cursor: not-allowed !important;
 }
 
 /* Responsive design */
@@ -167,12 +183,22 @@
     padding: 15px;
   }
   
-  .form-actions {
-    flex-direction: column;
+  .partnership-form .form-actions {
+    flex-direction: row !important;
+    gap: 15px !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    height: 44px !important;
   }
   
-  .cancel-button,
-  .submit-button {
-    width: 100%;
+  .partnership-form .form-actions .cancel-button,
+  .partnership-form .form-actions .submit-button {
+    width: 120px !important;
+    height: 44px !important;
+    flex: 0 0 120px !important;
+    min-width: unset !important;
+    margin: 0 !important;
+    position: relative !important;
+    top: 0 !important;
   }
 }

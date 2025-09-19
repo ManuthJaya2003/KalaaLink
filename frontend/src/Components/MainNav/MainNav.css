@@ -40,6 +40,19 @@
   margin-right: auto;
 }
 
+.brand-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  height: 30px;
+  width: auto;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
 .brand-title {
   font-family: 'Georgia', serif;
   font-size: 2rem;
@@ -52,19 +65,15 @@
   position: relative;
 }
 
-.brand-title::before {
-  content: '🎨';
-  position: absolute;
-  left: -30px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.2rem;
-  opacity: 0.8;
+.navbar-brand a:hover .brand-title {
+  color: #ffffff;
+  transform: translateY(-3px);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.navbar-brand a:hover .brand-title {
-  color: #333333;
-  transform: translateY(-1px);
+.navbar-brand a:hover .logo-icon {
+  transform: translateY(-3px) scale(1.05);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 /* Navigation items */
@@ -79,23 +88,10 @@
   position: relative;
 }
 
-.navbar-item h1::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #27ae60, #3498db);
-  transition: width 0.3s ease;
-}
-
 .navbar-item h1:hover {
-  color: #333333;
-}
-
-.navbar-item h1:hover::after {
-  width: 100%;
+  color: #ffffff;
+  transform: translateY(-3px);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Auth items styling */
@@ -105,27 +101,17 @@
   padding: 8px 16px;
   border-radius: 20px;
   border: 2px solid transparent;
-  background: #d5f4e6;
+  background: #ffffff;
   color: #000000;
   font-weight: 600;
   transition: all 0.3s ease;
 }
 
 .auth-item h1:hover {
-  background: #27ae60;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
-}
-
-/* Login button specific */
-.navbar-item.auth-item:first-of-type h1 {
-  background: #ffeaa7;
-}
-
-.navbar-item.auth-item:first-of-type h1:hover {
-  background: #fdcb6e;
-  color: white;
+  background: #000000;
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Cart icon styling */
@@ -137,8 +123,9 @@
 }
 
 .navbar-item a:hover .cart-icon {
-  color: #333333;
-  transform: scale(1.1);
+  color: #ffffff;
+  transform: translateY(-3px) scale(1.1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 /* Profile icon styling */
@@ -150,8 +137,9 @@
 }
 
 .navbar-item a:hover .profile-icon {
-  color: #333333;
-  transform: scale(1.1);
+  color: #ffffff;
+  transform: translateY(-3px) scale(1.1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 /* Logout button styling */
@@ -169,16 +157,17 @@
   padding: 8px 16px;
   border-radius: 20px;
   border: 2px solid transparent;
-  background: #ff7675;
-  color: white;
+  background: #ffffff;
+  color: #000000;
   font-weight: 600;
   transition: all 0.3s ease;
 }
 
 .logout-btn h1:hover {
-  background: #d63031;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(214, 48, 49, 0.3);
+  background: #000000;
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Ensure links in nav have no underline */
@@ -207,9 +196,9 @@
     font-size: 1.5rem;
   }
   
-  .brand-title::before {
-    left: -25px;
-    font-size: 1rem;
+  .logo-icon {
+    height: 26px;
+    width: auto;
   }
   
   .auth-item h1 {
@@ -251,9 +240,9 @@
     font-size: 1.2rem;
   }
   
-  .brand-title::before {
-    left: -20px;
-    font-size: 0.9rem;
+  .logo-icon {
+    height: 22px;
+    width: auto;
   }
   
   .auth-item h1 {

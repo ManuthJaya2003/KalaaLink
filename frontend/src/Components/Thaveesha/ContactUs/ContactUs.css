@@ -4,6 +4,7 @@
   padding: 20px; 
   max-width: 1200px;
   margin: 0 auto;
+  margin-top: 60px; /* Moved content up to be just under navigation bar */
 }
 
 /* Admin Dashboard Style Header for Complaints */
@@ -664,14 +665,39 @@
 }
 
 .icon-circle { 
-  width: 34px; 
-  height: 34px; 
+  width: 36px; 
+  height: 36px; 
   border-radius: 50%; 
-  background: #f0e7f6; 
-  color: #6f2da8; 
-  display: grid; 
-  place-items: center; 
-  font-size: 18px; 
+  background: #ffffff !important; /* White background for icons */
+  color: #C1A37F !important; /* Beige color for icons */
+  display: grid !important; 
+  place-items: center !important; 
+  font-size: 20px !important; /* Slightly larger icons */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important; /* Enhanced shadow for lift effect */
+  border: 1px solid #e0e0e0 !important; /* Subtle border for definition */
+  transition: all 0.3s ease !important; /* Smooth transition for interactive effects */
+  cursor: pointer !important; /* Make icons appear clickable */
+  position: relative !important; /* For better hover effects */
+}
+
+.icon-circle:hover {
+  transform: translateY(-2px) !important; /* Lift effect on hover */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important; /* Enhanced shadow on hover */
+  color: #A68B5B !important; /* Darker beige on hover */
+  border-color: #C1A37F !important; /* Beige border on hover */
+  background: #ffffff !important; /* Ensure white background is maintained */
+}
+
+.icon-circle:active {
+  transform: translateY(0) !important; /* Return to original position when clicked */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important; /* Reduced shadow when clicked */
+  background: #ffffff !important; /* Ensure white background is maintained */
+}
+
+.icon-circle:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(193, 163, 127, 0.3) !important; /* Focus ring for accessibility */
+  background: #ffffff !important; /* Ensure white background is maintained */
 }
 
 .contact-item h4 {
@@ -688,19 +714,20 @@
 }
 
 .contact-item a {
-  color: #6f2da8;
+  color: #C1A37F; /* Beige color for email link */
   text-decoration: none;
   font-weight: 500;
 }
 
 .contact-item a:hover {
   text-decoration: underline;
+  color: #A68B5B; /* Darker beige on hover */
 }
 
 .help-section { 
   text-align: center; 
-  margin: 40px 0 28px; 
-  padding: 20px 0;
+  margin: 40px 0 5px; /* Further reduced bottom margin for more compact spacing */
+  padding: 20px 0 5px 0; /* Reduced bottom padding for more compact feel */
 }
 
 .help-section h2 {
@@ -710,6 +737,20 @@
   margin: 0 0 16px 0;
   letter-spacing: -0.5px;
   line-height: 1.2;
+  position: relative;
+}
+
+.help-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(193, 163, 127, 0.9), transparent);
+  border-radius: 1px;
+  z-index: 1;
 }
 
 .help-section p {
@@ -722,21 +763,105 @@
   font-weight: 400;
 }
 
+.help-subtext {
+  font-size: 1rem !important;
+  color: #777 !important;
+  margin: 0 auto 25px auto !important;
+  max-width: 700px !important;
+  line-height: 1.7 !important;
+  font-weight: 400 !important;
+}
+
+/* Override any existing button styles for Lodge a Complaint button */
 .help-btn { 
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-  color: #fff; 
-  border: none; 
-  padding: 12px 22px; 
-  border-radius: 10px; 
-  cursor: pointer; 
-  font-size: 15px;
-  font-weight: 500;
-  transition: all 0.2s ease;
+  background: #000000 !important; 
+  background-image: none !important; /* Override any gradient backgrounds */
+  color: #ffffff !important; 
+  border: none !important; 
+  padding: 15px 30px !important; /* Slightly smaller than before */
+  border-radius: 12px !important; 
+  cursor: pointer !important; 
+  font-size: 16px !important; /* Slightly smaller font */
+  font-weight: 600 !important; /* Bolder font weight */
+  transition: all 0.3s ease !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15) !important; /* Enhanced shadow */
+  margin-bottom: 0 !important; /* Remove any bottom margin */
+  min-width: 180px !important; /* Slightly smaller minimum width */
+  text-transform: none !important; /* Prevent any text transformation */
 }
 
 .help-btn:hover { 
-  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-  transform: translateY(-1px);
+  background: #C1A37F !important; /* Beige color on hover */
+  background-image: none !important; /* Override any gradient backgrounds on hover */
+  color: #ffffff !important;
+  transform: translateY(-2px) !important; /* More pronounced lift effect */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important; /* Enhanced shadow on hover */
+}
+
+.help-btn:active {
+  background: #A68B5B !important; /* Darker beige when clicked */
+  background-image: none !important; /* Override any gradient backgrounds when clicked */
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important; /* Reduced shadow when clicked */
+}
+
+.help-btn:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 4px rgba(193, 163, 127, 0.4) !important; /* Enhanced focus ring */
+}
+
+/* Specific styles for complaint form buttons */
+.modal-actions .help-btn {
+  background: rgba(193, 163, 127, 0.9) !important; /* Navigation bar color */
+  color: #000000 !important;
+  padding: 12px 24px !important;
+  width: 140px !important;
+  height: 44px !important;
+  border-radius: 8px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s !important;
+  box-shadow: none !important;
+  transform: none !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+.modal-actions .help-btn:hover {
+  background: #000000 !important;
+  color: #ffffff !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.modal-actions .secondary-btn {
+  background: #000000 !important;
+  color: #ffffff !important;
+  padding: 12px 24px !important;
+  width: 140px !important;
+  height: 44px !important;
+  border-radius: 8px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s !important;
+  border: 1px solid #000000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+.modal-actions .secondary-btn:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
 }
 
 .secondary-btn { 
@@ -753,6 +878,23 @@
 .secondary-btn:hover {
   background: #e9ecef;
   border-color: #adb5bd;
+}
+
+/* Override for modal actions to ensure proper styling */
+.modal-actions .secondary-btn:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+/* Ensure modal actions container has no background */
+.modal-actions {
+  background: none !important;
+  border: none !important;
+  padding: 8px 0 0 0 !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
 }
 
 .secondary-btn:disabled { 
@@ -958,6 +1100,7 @@
   
   .contact-container {
     padding: 15px;
+    margin-top: 50px; /* Adjusted for smaller screens */
   }
   
   .about-text h2,
@@ -965,15 +1108,26 @@
     font-size: 2rem;
   }
   
+  .help-section h2::after {
+    width: 60px;
+    height: 2px;
+  }
+  
   .about-text p,
   .help-section p {
     font-size: 1rem;
+  }
+  
+  .help-subtext {
+    font-size: 0.9rem !important;
+    max-width: 100% !important;
   }
 }
 
 @media (max-width: 768px) {
   .contact-container {
     padding: 15px;
+    margin-top: 40px; /* Adjusted for mobile devices */
   }
   
   .about-section {
@@ -991,10 +1145,20 @@
     font-size: 1.8rem;
   }
   
+  .help-section h2::after {
+    width: 50px;
+    height: 2px;
+  }
+  
   .about-text p,
   .help-section p {
     font-size: 0.9rem;
     max-width: 100%;
+  }
+  
+  .help-subtext {
+    font-size: 0.85rem !important;
+    max-width: 100% !important;
   }
   
   .contact-card {
@@ -1014,9 +1178,18 @@
 }
 
 @media (max-width: 480px) {
+  .contact-container {
+    margin-top: 30px; /* Adjusted for very small screens */
+  }
+  
   .about-text h2,
   .help-section h2 {
     font-size: 1.5rem;
+  }
+  
+  .help-section h2::after {
+    width: 40px;
+    height: 2px;
   }
   
   .about-text p,
@@ -1024,13 +1197,19 @@
     font-size: 0.85rem;
   }
   
+  .help-subtext {
+    font-size: 0.8rem !important;
+    max-width: 100% !important;
+  }
+  
   .contact-card {
     padding: 15px;
   }
   
   .help-btn {
-    padding: 10px 18px;
-    font-size: 14px;
+    padding: 14px 28px !important; /* Slightly smaller on mobile too */
+    font-size: 15px !important;
+    min-width: 160px !important;
   }
   
   .secondary-btn {

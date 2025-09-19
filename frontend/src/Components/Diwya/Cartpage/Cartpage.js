@@ -5,6 +5,7 @@ import MainNav from '../../MainNav/MainNav';
 import MainFooter from '../../MainFooter/MainFooter';
 import MapPicker from '../../Manuth/BookArtist/MapPicker';
 import axios from 'axios';
+import './Cartpage.css';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -48,9 +49,12 @@ const CartPage = () => {
       return;
     }
 
-    if (checkoutData.useDelivery && !checkoutData.deliveryAddress.address) {
-      setError('Delivery address is required when delivery is selected');
-      return;
+    if (checkoutData.useDelivery) {
+      const { address, city, district, contactNumber } = checkoutData.deliveryAddress;
+      if (!address || !city || !district || !contactNumber) {
+        setError('All delivery fields (address, city, district, contact number) are required when delivery is selected');
+        return;
+      }
     }
 
     try {
@@ -102,13 +106,6 @@ const CartPage = () => {
     }
   };
 
-  const handleDebugCart = () => {
-    if (window.debugCart) {
-      window.debugCart();
-    } else {
-      console.log('Debug function not available');
-    }
-  };
 
   // Safely handle undefined cart with default empty array
   const totalPrice = (cart || []).reduce((total, item) => total + item.price * item.quantity, 0);
@@ -116,28 +113,17 @@ const CartPage = () => {
   return (
     <div className="cart-page">
       <MainNav />
-      <main className="cart-main">
+      <main className="cart-main" style={{ paddingTop: '100px' }}>
         <div className="cart-container">
-          <h1 style={{ textAlign: 'center', fontSize: '28px', fontWeight: 'bold', marginBottom: '20px' }}>
-            Shopping Cart
-          </h1>
+          <div className="cart-header">
+            <h1 className="cart-title">
+              Shopping Cart
+            </h1>
+            <p className="cart-subtitle">Find all your goodies here</p>
+          </div>
       {cart.length === 0 ? (
         <div style={{ textAlign: 'center', color: '#6b7280' }}>
           <p>Your cart is empty</p>
-          <button
-            onClick={handleDebugCart}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#10b981',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              marginTop: '10px'
-            }}
-          >
-            Debug Cart
-          </button>
         </div>
       ) : (
         <>
@@ -157,21 +143,14 @@ const CartPage = () => {
               }}
             >
               <div>
-                <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '10px' }}>{item.artType}</h3>
+                <h3 className="cart-product-name">{item.artType}</h3>
                 <p><strong>Price:</strong> LKR {item.price} x {item.quantity} = LKR {(item.price * item.quantity).toFixed(2)}</p>
                 <p><strong>Size:</strong> {item.size}</p>
                 <p><strong>Artist:</strong> {item.artistName}</p>
               </div>
               <button
                 onClick={() => handleRemoveFromCart(item._id)}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#ef4444',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
+                className="cart-remove-btn"
               >
                 Remove
               </button>
@@ -182,42 +161,15 @@ const CartPage = () => {
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '10px' }}>
               <button
                 onClick={handleCheckout}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#3b82f6',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
+                className="cart-checkout-btn"
               >
                 Checkout
               </button>
               <button
                 onClick={handleClearCart}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#ef4444',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
+                className="cart-clear-btn"
               >
                 Clear Cart
-              </button>
-              <button
-                onClick={handleDebugCart}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#10b981',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                Debug Cart
               </button>
             </div>
           </div>

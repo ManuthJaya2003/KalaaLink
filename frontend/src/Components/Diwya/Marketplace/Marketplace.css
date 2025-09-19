@@ -1,5 +1,302 @@
 /* ===== MARKETPLACE PAGE STYLES ===== */
 
+/* Marketplace Hero Video Section - Matching Events/Artists/Donations exactly */
+.marketplace-hero-video {
+  position: relative;
+  width: 100%;
+  height: 60vh; /* Height from top to bottom edge of old widget position */
+  min-height: 400px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  z-index: 1; /* Ensure video is behind navbar */
+  top: 0; /* Ensure video starts from the very top */
+  display: block;
+  visibility: visible;
+}
+
+/* Background Video */
+.marketplace-background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  display: block;
+  visibility: visible;
+}
+
+/* Video Loading State */
+.marketplace-background-video::-webkit-media-controls {
+  display: none !important;
+}
+
+.marketplace-background-video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+.marketplace-background-video::-webkit-media-controls-play-button {
+  display: none !important;
+}
+
+.marketplace-background-video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+}
+
+/* Ensure video is always visible */
+.marketplace-hero-video video {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Search and Filter Bar - Two row layout */
+.search-filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: var(--space-xs) 0 var(--space-lg) 0;
+  padding: 0 var(--space-md);
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* First row - Search bar only */
+.search-filter-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  margin-bottom: var(--space-xs);
+}
+
+/* Second row - All filter dropdowns */
+.search-filter-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  width: 100%;
+  min-width: 0;
+}
+
+.search-group {
+  flex: 0 0 auto;
+  width: 500px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: var(--radius-small);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-light-gray);
+  overflow: hidden;
+}
+
+.search-input {
+  width: 100% !important;
+  padding: 4px 45px 4px 12px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--color-text-primary) !important;
+  font-size: var(--text-sm) !important;
+  transition: all 0.3s ease !important;
+  box-sizing: border-box !important;
+  height: 28px !important;
+  box-shadow: none !important;
+  line-height: 20px !important;
+  vertical-align: middle !important;
+}
+
+.search-button {
+  position: absolute !important;
+  right: 2px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  padding: 2px 8px !important;
+  border: none !important;
+  border-radius: 3px !important;
+  background: #C1A37F !important;
+  color: black !important;
+  font-weight: 600 !important;
+  font-size: var(--text-xs) !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 2;
+  min-width: 40px;
+  margin: 0;
+}
+
+.search-button:hover {
+  background: white !important;
+  color: black !important;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-accent-green);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 140px;
+  flex: 0 0 auto;
+  background: white;
+  border-radius: var(--radius-small);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-light-gray);
+  padding: 0;
+  align-items: stretch;
+  max-width: 160px;
+  height: 32px;
+}
+
+.filter-select {
+  padding: 4px 12px !important;
+  border-radius: var(--radius-small) !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--color-text-primary) !important;
+  font-size: var(--text-sm) !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  height: 32px !important;
+  box-shadow: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  line-height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--color-accent-green);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.1);
+  background: white;
+}
+
+.filter-select:disabled {
+  background: rgba(245, 245, 220, 0.3);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.clear-btn {
+  padding: 4px 16px !important;
+  border: none !important;
+  border-radius: 3px !important;
+  background: #C1A37F !important;
+  background-color: #C1A37F !important;
+  color: black !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+  font-size: var(--text-xs) !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  min-width: 100px;
+}
+
+.clear-btn:hover:not(:disabled) {
+  background: white !important;
+  background-color: white !important;
+  color: black !important;
+  color: #000000 !important;
+}
+
+.clear-btn:disabled {
+  background: rgba(245, 245, 220, 0.3) !important;
+  color: var(--color-text-muted) !important;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Marketplace Container - Matching Events/Artists/Donations exactly */
+.marketplace-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-md) var(--space-3xl) var(--space-md);
+  background: var(--color-off-white);
+  min-height: 100vh;
+}
+
+/* Marketplace Text Section - Matching Events/Artists/Donations exactly */
+.marketplace-text-section {
+  text-align: center;
+  margin: var(--space-sm) 0 0 0;
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: auto;
+  overflow: visible;
+}
+
+/* Marketplace Title and Subtitle - Matching Events/Artists/Donations exactly */
+.marketplace-title {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--color-text-dark);
+  text-align: center;
+  margin: 0 0 var(--space-sm) 0;
+  line-height: 1.2;
+  position: relative;
+}
+
+.marketplace-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(193, 163, 127, 0.9), transparent);
+  border-radius: 1px;
+  z-index: 1;
+}
+
+.marketplace-subtitle {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: var(--space-sm) auto var(--space-sm) auto;
+  line-height: 1.4;
+  font-weight: 400;
+  display: block !important;
+  opacity: 0.85;
+  max-width: 400px;
+  position: relative;
+  z-index: 10;
+  visibility: visible !important;
+  overflow: visible;
+  white-space: nowrap;
+}
+
 .marketplace-page {
   min-height: 100vh;
   display: flex;
@@ -10,6 +307,7 @@
 .marketplace-main {
   flex: 1;
   padding: var(--space-xl, 2rem) 0;
+  padding-top: 0 !important;
 }
 
 .marketplace-container {
@@ -45,47 +343,48 @@
 /* Action Buttons */
 .marketplace-action-buttons {
   display: flex;
-  justify-content: center;
-  gap: var(--space-md, 1rem);
-  margin-top: var(--space-lg, 1.5rem);
+  align-items: center;
+  gap: var(--space-sm, 0.5rem);
+  margin-left: var(--space-md, 1rem);
 }
 
 .marketplace-btn {
   display: flex;
   align-items: center;
   gap: var(--space-sm, 0.5rem);
-  padding: var(--space-md, 1rem) var(--space-lg, 1.5rem);
+  padding: 2px 12px;
   border: none;
   border-radius: var(--radius-lg, 0.75rem);
   font-family: var(--font-family-sans, 'Inter', sans-serif);
-  font-size: var(--text-base, 1rem);
+  font-size: var(--text-sm, 0.875rem);
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-normal, 0.2s ease);
   text-decoration: none;
   box-shadow: var(--shadow-soft, 0 2px 8px rgba(0, 0, 0, 0.1));
+  height: 28px;
 }
 
 .marketplace-btn-cart {
-  background: var(--color-accent-red, #ef4444);
-  color: var(--color-white, #ffffff);
+  background: #C1A37F;
+  color: #000000;
 }
 
 .marketplace-btn-cart:hover {
-  background: var(--color-accent-red-dark, #dc2626);
+  background: #B8956A;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-medium, 0 4px 12px rgba(239, 68, 68, 0.3));
+  box-shadow: var(--shadow-medium, 0 4px 12px rgba(193, 163, 127, 0.3));
 }
 
 .marketplace-btn-customize {
-  background: var(--color-accent-purple, #8b5cf6);
-  color: var(--color-white, #ffffff);
+  background: #000000;
+  color: #ffffff;
 }
 
 .marketplace-btn-customize:hover {
-  background: var(--color-accent-purple-dark, #7c3aed);
+  background: #333333;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-medium, 0 4px 12px rgba(139, 92, 246, 0.3));
+  box-shadow: var(--shadow-medium, 0 4px 12px rgba(0, 0, 0, 0.3));
 }
 
 .btn-icon {
@@ -110,13 +409,16 @@
 
 .marketplace-modal-content {
   background: var(--color-white, #ffffff);
-  border-radius: var(--radius-lg, 0.75rem);
-  max-width: 700px;
-  width: 90%;
-  max-height: 90vh;
+  border-radius: 12px;
+  max-width: 800px;
+  width: 100%;
+  height: 650px;
   overflow: hidden;
-  box-shadow: var(--shadow-large, 0 20px 40px rgba(0, 0, 0, 0.3));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 @keyframes modalSlideIn {
@@ -134,42 +436,85 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-lg, 1.5rem) var(--space-xl, 2rem);
+  padding: 20px;
   border-bottom: 1px solid var(--color-light-gray, #e5e7eb);
   background: var(--color-off-white, #f8f9fa);
+  border-radius: 12px 12px 0 0;
+  flex-shrink: 0;
 }
 
 .modal-header h2 {
   margin: 0;
   font-family: var(--font-family-serif, 'Georgia', serif);
-  font-size: var(--text-2xl, 1.5rem);
-  font-weight: 700;
-  color: var(--color-text-dark, #1f2937);
+  font-size: 24px;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 .modal-close-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: transparent;
+  width: 30px;
+  height: 30px;
+  background: none;
   border: none;
-  border-radius: var(--radius-md, 0.5rem);
+  border-radius: 0;
   cursor: pointer;
-  color: var(--color-text-secondary, #6b7280);
-  transition: all var(--transition-normal, 0.2s ease);
+  color: #999;
+  padding: 0;
+  font-size: 24px;
+  font-weight: 400;
+  transition: all 0.3s ease;
 }
 
 .modal-close-btn:hover {
-  background: var(--color-light-gray, #e5e7eb);
-  color: var(--color-text-dark, #1f2937);
+  background: none;
+  color: #666666;
+  transform: none;
 }
 
 .modal-body {
-  max-height: calc(90vh - 80px);
+  flex: 1;
   overflow-y: auto;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  justify-content: flex-start;
+}
+
+/* Responsive Grid Layout for Customization Form */
+@media (max-width: 768px) {
+  .marketplace-modal-content {
+    max-width: 95%;
+    width: 95%;
+    height: 90vh;
+  }
+  
+  .marketplace-modal-content form div[style*="gridTemplateColumns: repeat(3, 1fr)"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .marketplace-modal-content {
+    max-width: 90%;
+    width: 90%;
+  }
+  
+  .marketplace-modal-content form div[style*="gridTemplateColumns: repeat(3, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+}
+
+@media (max-width: 1200px) and (min-width: 1025px) {
+  .marketplace-modal-content {
+    max-width: 85%;
+    width: 85%;
+  }
 }
 
 /* Success Message Styles */
@@ -236,45 +581,56 @@
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-xl, 2rem);
   padding: var(--space-md, 1rem) 0;
 }
 
 .product-card {
-  background: var(--color-white, #ffffff);
-  border: 1px solid var(--color-light-gray, #e5e7eb);
-  border-radius: var(--radius-lg, 0.75rem);
-  padding: var(--space-lg, 1.5rem);
-  text-align: center;
-  box-shadow: var(--shadow-soft, 0 2px 8px rgba(0, 0, 0, 0.1));
-  transition: all var(--transition-normal, 0.3s ease);
+  background: white;
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-normal);
+  border: 1px solid var(--color-light-gray);
   cursor: pointer;
+  position: relative;
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-medium, 0 8px 25px rgba(0, 0, 0, 0.15));
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-medium);
+}
+
+.product-image-container {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
 }
 
 .product-image {
   width: 100%;
-  height: 200px;
+  height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-md, 0.5rem);
-  margin-bottom: var(--space-md, 1rem);
+  transition: transform var(--transition-normal);
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
 }
 
 .product-info {
-  margin-bottom: var(--space-lg, 1.5rem);
+  padding: 2px;
 }
 
 .product-title {
-  font-family: var(--font-family-serif, 'Georgia', serif);
-  font-size: var(--text-xl, 1.25rem);
+  font-size: var(--text-2xl);
   font-weight: 700;
-  color: var(--color-text-dark, #1f2937);
-  margin: 0 0 var(--space-sm, 0.5rem) 0;
+  color: var(--color-text-dark);
+  margin-bottom: 2px;
+  line-height: 1.1;
+  font-style: normal;
 }
 
 .product-artist,
@@ -291,6 +647,97 @@
   font-size: var(--text-lg, 1.125rem);
   margin: var(--space-md, 1rem) 0;
 }
+
+/* Product Card Buttons */
+.product-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs, 0.25rem);
+  margin-top: var(--space-md, 1rem);
+  padding: 0 2px;
+}
+
+.product-buttons-row {
+  display: flex;
+  gap: var(--space-xs, 0.25rem);
+  width: 100%;
+}
+
+.product-buttons .btn {
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: none;
+  padding: 8px 12px;
+  font-size: 13px;
+  min-width: 60px;
+  flex: 1;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Post a Review button should span full width */
+.product-buttons-row:last-child .btn {
+  flex: 1;
+  width: 100%;
+}
+
+/* Ensure proper spacing between button rows */
+.product-buttons-row {
+  margin-bottom: var(--space-xs, 0.25rem);
+}
+
+.product-buttons-row:last-child {
+  margin-bottom: 0;
+}
+
+/* View Details Button - Beige background */
+.product-buttons .btn.btn-primary {
+  background: rgba(193, 163, 127, 0.9) !important;
+  color: black !important;
+  border: none !important;
+}
+
+.product-buttons .btn.btn-primary:hover {
+  background: #000000 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Add to Cart Button - Black background with white text */
+.product-buttons .btn.btn-secondary {
+  background: black !important;
+  color: white !important;
+  border: none !important;
+}
+
+.product-buttons .btn.btn-secondary:hover {
+  background: white !important;
+  color: black !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Post a Review Button - White background with black text */
+.product-buttons .btn.btn-review {
+  background: white !important;
+  color: black !important;
+  border: 2px solid rgba(193, 163, 127, 0.9) !important;
+}
+
+.product-buttons .btn.btn-review:hover {
+  border: 2px solid rgba(193, 163, 127, 0.9) !important;
+  background: white !important;
+  color: black !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
 
 .product-actions {
   display: flex;
@@ -445,6 +892,177 @@
   gap: var(--space-sm, 0.5rem);
   margin: var(--space-sm, 0.5rem) 0;
 }
+
+/* ===== PRODUCT REVIEWS SECTION STYLES - EXACT MATCH TO ARTIST PAGE ===== */
+
+.product-reviews-section {
+  margin: 8px auto;
+  padding: 12px;
+  background: var(--color-off-white, #f8f9fa);
+  border-radius: var(--radius-organic, 8px);
+  border: 1px solid var(--color-soft-border, #e5e7eb);
+  position: relative;
+  border-left: none !important;
+  border-right: 1px solid var(--color-soft-border, #e5e7eb) !important;
+  border-top: 1px solid var(--color-soft-border, #e5e7eb) !important;
+  border-bottom: 1px solid var(--color-soft-border, #e5e7eb) !important;
+  width: 80%;
+  min-height: 80px;
+  max-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  overflow: visible;
+}
+
+.product-reviews-section.no-reviews-section {
+  background: var(--color-off-white, #f8f9fa);
+  border: 1px solid var(--color-soft-border, #e5e7eb);
+  padding: 8px;
+  margin: 8px auto;
+}
+
+.product-reviews-section::after {
+  content: "";
+  display: none;
+}
+
+.product-reviews-section.no-reviews-section {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.product-reviews-section.no-reviews-section::after {
+  content: "";
+  display: none;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 2px;
+  width: 100%;
+  justify-content: center;
+}
+
+.rating-display .rating-text {
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text-medium, #4b5563);
+  font-weight: 600;
+}
+
+.latest-review {
+  margin-top: 4px;
+  padding: 4px;
+  background: white;
+  border-radius: var(--radius-soft, 4px);
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  width: 100%;
+}
+
+.review-navigation {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs, 0.25rem);
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  width: 100%;
+  justify-content: center;
+}
+
+.review-content {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  padding: 0 4px;
+}
+
+.review-nav-btn {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: #C1A37F;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: none;
+}
+
+.review-nav-btn:hover {
+  background: transparent;
+  border: none;
+  color: #B8956A;
+  transform: scale(1.2);
+  box-shadow: none;
+}
+
+.review-nav-btn:active {
+  transform: scale(1.1);
+  color: #A0825A;
+}
+
+.review-indicators {
+  text-align: center;
+  margin-top: 2px;
+}
+
+.review-counter {
+  font-size: 8px;
+  color: var(--color-text-muted, #9ca3af);
+  background: rgba(193, 163, 127, 0.2);
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.review-snippet {
+  font-style: italic;
+  color: var(--color-text-medium, #4b5563);
+  font-size: var(--text-sm, 0.875rem);
+  line-height: 1.4;
+  margin: 0 0 var(--space-xs, 0.25rem) 0;
+  text-align: center;
+}
+
+.review-author {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-light, #6b7280);
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 2px;
+  background: none;
+  border: none;
+  margin: 0;
+}
+
+.no-reviews-text {
+  color: var(--color-text-muted, #9ca3af);
+  font-size: var(--text-xs, 0.75rem);
+  font-style: italic;
+  margin: 0;
+}
+
 
 .stars {
   display: flex;
@@ -694,8 +1312,38 @@
 }
 
 .btn-secondary:hover {
-  background: var(--color-text-secondary, #6b7280);
-  color: var(--color-white, #ffffff);
+  background: white !important;
+  color: black !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Review Modal specific button styles */
+.review-modal .btn-primary {
+  background: black !important;
+  color: white !important;
+  border: none !important;
+}
+
+.review-modal .btn-primary:hover {
+  background: black !important;
+  color: white !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.review-modal .btn-secondary {
+  background: white !important;
+  color: black !important;
+  border: 2px solid rgba(193, 163, 127, 0.9) !important;
+}
+
+.review-modal .btn-secondary:hover {
+  background: white !important;
+  color: black !important;
+  border: 2px solid rgba(193, 163, 127, 0.9) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
 .btn:disabled {
@@ -763,23 +1411,144 @@
   margin: 0 0 var(--space-sm, 0.5rem) 0;
 }
 
-/* Responsive Design */
+/* Responsive Design - Matching Events/Artists exactly */
+@media (max-width: 1024px) {
+  .marketplace-hero-video {
+    height: 60vh;
+    min-height: 350px;
+  }
+  
+  .marketplace-background-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+@media (max-width: 1024px) {
+  .search-filter-bar {
+    margin: var(--space-xs) 0 var(--space-lg) 0;
+    gap: var(--space-sm);
+    padding: 0 var(--space-md);
+  }
+  
+  .search-group {
+    width: 400px;
+  }
+  
+  .filter-group {
+    min-width: 120px;
+    max-width: 140px;
+  }
+  
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg, 1.5rem);
+  }
+}
+
 @media (max-width: 768px) {
+  .marketplace-hero-video {
+    height: 50vh;
+    min-height: 300px;
+  }
+  
+  .marketplace-background-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .marketplace-title {
+    font-size: var(--text-4xl);
+  }
+  
+  .marketplace-subtitle {
+    font-size: var(--text-lg) !important;
+    max-width: 500px !important;
+    margin: auto !important;
+    text-align: center !important;
+    width: 100% !important;
+    line-height: 1.4 !important;
+    color: #000000 !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+  }
+  
+  .search-filter-bar {
+    gap: var(--space-sm);
+    margin: var(--space-xs) 0 var(--space-md) 0;
+    padding: 0 var(--space-md);
+  }
+  
+  .search-filter-left {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .search-filter-right {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    width: 100%;
+  }
+  
+  .search-group {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .filter-group {
+    min-width: 120px;
+    flex: 1;
+    max-width: 140px;
+  }
+  
+  .search-input {
+    font-size: var(--text-xs) !important;
+    padding: 3px 35px 3px 8px !important;
+    height: 24px !important;
+    box-sizing: border-box !important;
+    line-height: 18px !important;
+    vertical-align: middle !important;
+  }
+  
+  .search-button {
+    padding: 1px 6px !important;
+    font-size: 7px !important;
+    height: 20px !important;
+  }
+  
+  .filter-select {
+    height: 24px !important;
+    padding: 3px 8px !important;
+    font-size: var(--text-xs) !important;
+    box-sizing: border-box !important;
+    line-height: 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+  
+  .clear-btn {
+    height: 24px !important;
+    padding: 3px 8px !important;
+    font-size: var(--text-xs) !important;
+    box-sizing: border-box !important;
+    line-height: 18px !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
   .marketplace-main {
     padding: var(--space-md, 1rem) 0;
+    padding-top: 0 !important;
   }
   
   .marketplace-container {
     padding: 0 var(--space-md, 1rem);
-  }
-  
-  .marketplace-header {
-    margin-bottom: var(--space-lg, 1.5rem);
-    padding: var(--space-lg, 1.5rem) 0;
-  }
-  
-  .marketplace-title {
-    font-size: var(--text-3xl, 2rem);
   }
   
   .marketplace-subtitle {
@@ -787,15 +1556,18 @@
   }
   
   .marketplace-action-buttons {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: var(--space-sm, 0.5rem);
+    gap: var(--space-xs, 0.25rem);
+    margin-left: var(--space-sm, 0.5rem);
   }
   
   .marketplace-btn {
-    width: 100%;
-    max-width: 280px;
+    width: auto;
+    max-width: 140px;
     justify-content: center;
+    padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+    font-size: var(--text-sm, 0.875rem);
   }
   
   .marketplace-modal-content {
@@ -824,7 +1596,7 @@
   }
 
   .products-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-lg, 1.5rem);
   }
 
@@ -878,5 +1650,142 @@
 
   .latest-review {
     margin: var(--space-xs, 0.25rem) 0;
+  }
+
+  /* Review Section Responsive - Match Artist page */
+  .product-reviews-section {
+    margin: 1px 0;
+    padding: 1px;
+  }
+  
+  .rating-display {
+    gap: 2px;
+    margin-bottom: 1px;
+  }
+  
+  .rating-display .rating-text {
+    font-size: var(--text-xs, 0.75rem);
+  }
+  
+  .review-snippet {
+    font-size: var(--text-xs, 0.75rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .marketplace-hero-video {
+    height: 45vh;
+    min-height: 250px;
+  }
+  
+  .marketplace-background-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .marketplace-title {
+    font-size: var(--text-3xl);
+  }
+  
+  .marketplace-subtitle {
+    font-size: var(--text-base) !important;
+    max-width: 400px !important;
+    margin: auto !important;
+    padding: 0 var(--space-sm) !important;
+    text-align: center !important;
+    width: 100% !important;
+    line-height: 1.4 !important;
+    color: #000000 !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+  }
+  
+  .search-filter-bar {
+    margin: var(--space-xs) 0 var(--space-md) 0;
+    gap: var(--space-xs);
+    padding: 0 var(--space-md);
+  }
+  
+  .search-group {
+    width: 100%;
+  }
+  
+  .filter-group {
+    min-width: 100px;
+    max-width: 120px;
+  }
+  
+  .search-input {
+    font-size: var(--text-xs) !important;
+    padding: 3px 35px 3px 8px !important;
+    height: 24px !important;
+    box-sizing: border-box !important;
+    line-height: 18px !important;
+    vertical-align: middle !important;
+  }
+  
+  .search-button {
+    padding: 1px 6px !important;
+    font-size: 7px !important;
+    height: 20px !important;
+  }
+  
+  .filter-group {
+    min-width: 80px;
+  }
+  
+  .filter-select {
+    height: 24px !important;
+    padding: 3px 8px !important;
+    font-size: var(--text-xs) !important;
+    box-sizing: border-box !important;
+    line-height: 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+  
+  .clear-btn {
+    height: 24px !important;
+    padding: 3px 8px !important;
+    font-size: var(--text-xs) !important;
+    box-sizing: border-box !important;
+    line-height: 18px !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Review Section Mobile Responsive - Match Artist page */
+  .product-reviews-section {
+    padding: 0px;
+  }
+  
+  .rating-display .rating-text {
+    font-size: var(--text-xs, 0.75rem);
+  }
+  
+  .review-snippet {
+    font-size: 11px;
+  }
+  
+  .review-author {
+    font-size: 10px;
+  }
+}
+
+/* Ensure video maintains aspect ratio on all devices */
+@media (orientation: landscape) and (max-height: 500px) {
+  .marketplace-hero-video {
+    height: 60vh;
+    min-height: 60vh;
+  }
+  
+  .marketplace-background-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }

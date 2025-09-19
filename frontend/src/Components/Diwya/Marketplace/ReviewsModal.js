@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 
 const ReviewsModal = ({ product, reviews, onClose }) => {
   const handleBackdropClick = (e) => {
@@ -28,7 +29,7 @@ const ReviewsModal = ({ product, reviews, onClose }) => {
     return (totalRating / reviews.length).toFixed(1);
   };
 
-  return (
+  return createPortal(
     <div 
       className="modal-overlay"
       onClick={handleBackdropClick}
@@ -92,7 +93,8 @@ const ReviewsModal = ({ product, reviews, onClose }) => {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

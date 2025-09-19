@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 // ✅ Main navbar integration - using main project navigation for consistency
 import MainNav from "../../MainNav/MainNav";
+import AuthFooter from "../../Common/AuthFooter";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
@@ -161,11 +162,13 @@ function DonorPackageDetails() {
       {/* ✅ Main navbar integration - ensures consistent navigation across all subsystems */}
       <MainNav />
       <div className="donor-package-details-container">
-        <h1>Donor Package Details</h1>
+        <div className="donor-details-text-section">
+          <h1 className="donor-details-title">Donor Details</h1>
+          <p className="donor-details-subtitle">Complete your donation information to support our mission</p>
+        </div>
 
       <form onSubmit={handleConfirm}>
         <label htmlFor="FirstName">First Name</label>
-        <br />
         <input
           type="text"
           name="FirstName"
@@ -173,11 +176,8 @@ function DonorPackageDetails() {
           value={inputs.FirstName}
           required
         />
-        <br />
-        <br />
 
         <label htmlFor="LastName">Last Name</label>
-        <br />
         <input
           type="text"
           name="LastName"
@@ -185,11 +185,8 @@ function DonorPackageDetails() {
           value={inputs.LastName}
           required
         />
-        <br />
-        <br />
 
         <label htmlFor="PhoneNumber">Phone Number</label>
-        <br />
         <input
           type="tel"
           name="PhoneNumber"
@@ -197,11 +194,8 @@ function DonorPackageDetails() {
           value={inputs.PhoneNumber}
           required
         />
-        <br />
-        <br />
 
         <label htmlFor="Email">Email</label>
-        <br />
         <input
           type="email"
           name="Email"
@@ -209,22 +203,16 @@ function DonorPackageDetails() {
           value={inputs.Email}
           required
         />
-        <br />
-        <br />
 
         <label htmlFor="Address">Address</label>
-        <br />
         <textarea
           name="Address"
           onChange={handleChange}
           value={inputs.Address}
           required
         ></textarea>
-        <br />
-        <br />
 
         <label htmlFor="Amount">Amount</label>
-        <br />
         <input
           type="number"
           name="Amount"
@@ -233,32 +221,34 @@ function DonorPackageDetails() {
           min="167"
           required
         />
-        <br />
-        <br />
 
         <label htmlFor="DonorNote">Donor Note</label>
-        <br />
         <textarea
           name="DonorNote"
           onChange={handleChange}
           value={inputs.DonorNote}
         ></textarea>
-        <br />
-        <br />
 
         {/* Buttons */}
-        <button type="button" id="cancel" onClick={handleCancel}>
-          Cancel
-        </button>
-        <button type="submit">Confirm Donation</button>
-        <button type="button" onClick={handleUpdate}>
-          Update Donor
-        </button>
-        <button type="button" onClick={handleDelete}>
-          Delete Donor
-        </button>
+        <div className="button-container">
+          <div className="primary-buttons">
+            <button type="button" id="cancel" onClick={handleCancel}>
+              Cancel
+            </button>
+            <button type="submit">Confirm Donation</button>
+          </div>
+          <div className="secondary-buttons">
+            <button type="button" onClick={handleUpdate}>
+              Update Donor
+            </button>
+            <button type="button" onClick={handleDelete}>
+              Delete Donor
+            </button>
+          </div>
+        </div>
       </form>
       </div>
+      <AuthFooter />
     </div>
   );
 }

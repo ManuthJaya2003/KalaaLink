@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
 import PasswordInput from '../Common/PasswordInput';
+import AuthFooter from '../Common/AuthFooter';
 import { useAuth } from '../../contexts/AuthContext';
 import './Login.css';
 
@@ -52,82 +53,95 @@ function Login() {
       <MainNav />
       <div className="login-container">
         <div className="login-card">
-          <div className="login-header">
-            <h1 className="login-title">Welcome Back</h1>
-            <p className="login-subtitle">Sign in to your account to continue</p>
-          </div>
+          <div className="login-form-section">
+            <div className="login-header">
+              <h1 className="login-title">Welcome Back</h1>
+              <p className="login-subtitle">Sign in to your account to continue</p>
+            </div>
 
-          <form onSubmit={handleSubmit}>
-            {error && (
-              <div className="error-message" style={{ 
-                color: 'red', 
-                marginBottom: '1rem', 
-                textAlign: 'center',
-                fontSize: '0.9rem'
-              }}>
-                {error}
+            <form onSubmit={handleSubmit}>
+              {error && (
+                <div className="error-message" style={{ 
+                  color: 'red', 
+                  marginBottom: '1rem', 
+                  textAlign: 'center',
+                  fontSize: '0.9rem'
+                }}>
+                  {error}
+                </div>
+              )}
+
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="form-input"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  disabled={loading}
+                />
               </div>
-            )}
 
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">Email Address</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="form-input"
-                placeholder="Enter your email"
-                value={formData.email}
+              <PasswordInput
+                id="password"
+                name="password"
+                value={formData.password}
                 onChange={handleInputChange}
+                placeholder="Enter your password"
+                label="Password"
                 required
                 disabled={loading}
               />
+
+              <button 
+                type="submit" 
+                className="submit-btn"
+                disabled={loading}
+                style={{ opacity: loading ? 0.7 : 1 }}
+              >
+                {loading ? 'Signing In...' : 'Sign In'}
+              </button>
+            </form>
+
+            <div className="forgot-password">
+              <Link to="/forgot-password">Forgot your password?</Link>
             </div>
 
-            <PasswordInput
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder="Enter your password"
-              label="Password"
-              required
-              disabled={loading}
-            />
+            <div className="login-divider">
+              <span>or</span>
+            </div>
 
-            <button 
-              type="submit" 
-              className="submit-btn"
-              disabled={loading}
-              style={{ opacity: loading ? 0.7 : 1 }}
-            >
-              {loading ? 'Signing In...' : 'Sign In'}
-            </button>
-          </form>
+            <div className="login-options">
+              <Link to="/professional_login" className="login-option">
+                Professional Login
+              </Link>
+              <Link to="/artist_login" className="login-option">
+                Artist Login
+              </Link>
+            </div>
 
-          <div className="forgot-password">
-            <Link to="/forgot-password">Forgot your password?</Link>
+            <div className="signup-section">
+              <span>Don't have an account? </span>
+              <Link to="/signup">Sign up here</Link>
+            </div>
           </div>
-
-          <div className="login-divider">
-            <span>or</span>
-          </div>
-
-          <div className="login-options">
-            <Link to="/professional_login" className="login-option">
-              Professional Login
-            </Link>
-            <Link to="/artist_login" className="login-option">
-              Artist Login
-            </Link>
-          </div>
-
-          <div className="signup-section">
-            <span>Don't have an account? </span>
-            <Link to="/signup">Sign up here</Link>
+          
+          <div className="login-image-section">
+            <div className="login-image-placeholder">
+              <div className="placeholder-content">
+                <div className="placeholder-icon">🎨</div>
+                <h3>Join Our Creative Community</h3>
+                <p>Connect with artists, showcase your talent, and discover amazing events.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <AuthFooter />
     </div>
   );
 }

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import MainNav from "../../MainNav/MainNav";
+import MainFooter from "../../MainFooter/MainFooter";
 import Event from "../Event/Event";
 import TestimonialModal from "./TestimonialModal";
 import EventTestimonials from "./EventTestimonials";
@@ -24,6 +25,10 @@ function Events({ events: propEvents }) {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showTestimonialModal, setShowTestimonialModal] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
+  
+  // Testimonials navigation
+  const testimonialsRef = useRef(null);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
   
   // Search and filter state
   const [searchTerm, setSearchTerm] = useState("");
@@ -192,24 +197,82 @@ function Events({ events: propEvents }) {
     setTestimonials(prev => [newTestimonial, ...prev]);
   };
 
+  // Testimonials scroll function
+  const scrollTestimonials = (direction) => {
+    const slider = testimonialsRef.current;
+    if (!slider) return;
+    
+    const cardWidth = 350; // Width of each testimonial card
+    const gap = 30; // Gap between cards
+    const scrollAmount = cardWidth + gap;
+    
+    if (direction === 'next') {
+      setCurrentTestimonial(prev => prev + 1);
+      slider.scrollBy({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+    } else {
+      setCurrentTestimonial(prev => Math.max(prev - 1, 0));
+      slider.scrollBy({
+        left: -scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // Autoplay testimonials
+  useEffect(() => {
+    const autoplayInterval = setInterval(() => {
+      const slider = testimonialsRef.current;
+      if (slider) {
+        const cardWidth = 350;
+        const gap = 30;
+        const scrollAmount = cardWidth + gap;
+        slider.scrollBy({
+          left: scrollAmount,
+          behavior: 'smooth'
+        });
+        setCurrentTestimonial(prev => prev + 1);
+      }
+    }, 5000); // Auto-scroll every 5 seconds
+
+    return () => clearInterval(autoplayInterval);
+  }, []);
 
   // Loading state
   if (loading) {
     return (
       <div>
         <MainNav />
+        {/* Hero Video Section */}
+        <div className="events-hero-video">
+          <video
+            className="events-background-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+          >
+            <source src="/eventHeroBar.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
         <div className="events-container">
-          <div className="events-header">
-            <h1 className="events-title">Our Events</h1>
-            <p className="events-subtitle">
-              Discover amazing events and book your tickets today
-            </p>
+          <div className="events-text-section">
+            <h2 className="events-title">Our Events</h2>
+            <p className="events-subtitle">Discover extraordinary events and book your tickets today</p>
+            <button className="refresh-button" onClick={fetchEvents} disabled={loading}>
+              {loading ? "Refreshing..." : "Refresh Events"}
+            </button>
           </div>
           <div className="loading-state">
             <div className="loading-spinner"></div>
             <p className="loading-text">Loading events...</p>
           </div>
         </div>
+        
+        <MainFooter />
       </div>
     );
   }
@@ -219,12 +282,26 @@ function Events({ events: propEvents }) {
     return (
       <div>
         <MainNav />
+        {/* Hero Video Section */}
+        <div className="events-hero-video">
+          <video
+            className="events-background-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+          >
+            <source src="/eventHeroBar.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
         <div className="events-container">
-          <div className="events-header">
-            <h1 className="events-title">Our Events</h1>
-            <p className="events-subtitle">
-              Discover amazing events and book your tickets today
-            </p>
+          <div className="events-text-section">
+            <h2 className="events-title">Our Events</h2>
+            <p className="events-subtitle">Discover extraordinary events and book your tickets today</p>
+            <button className="refresh-button" onClick={fetchEvents} disabled={loading}>
+              {loading ? "Refreshing..." : "Refresh Events"}
+            </button>
           </div>
           <div className="error-state">
             <p className="error-text">{error}</p>
@@ -233,6 +310,8 @@ function Events({ events: propEvents }) {
             </button>
           </div>
         </div>
+        
+        <MainFooter />
       </div>
     );
   }
@@ -240,102 +319,105 @@ function Events({ events: propEvents }) {
   return (
     <div>
       <MainNav />
+      {/* Hero Video Section */}
+      <div className="events-hero-video">
+        <video
+          className="events-background-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+        >
+          <source src="/eventHeroBar.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
       <div className="events-container">
-        <div className="events-header">
-          <h1 className="events-title">Our Events</h1>
-          <p className="events-subtitle">
-            Discover amazing events and book your tickets today
-          </p>
-          <button className="refresh-button" onClick={fetchEvents} disabled={loading}>
-            {loading ? "Refreshing..." : "🔄 Refresh Events"}
-          </button>
+        <div className="events-text-section">
+          <h2 className="events-title">Our Events</h2>
+          <p className="events-subtitle">Discover extraordinary events and book your tickets today</p>
         </div>
 
-        {/* Search and Filter Section */}
+        {/* Search and Filter Bar */}
         {Array.isArray(events) && events.length > 0 && (
-          <div className="search-filter-section">
-            <div className="search-filter-container">
-              {/* Search Bar */}
-              <div className="search-container">
+          <div className="search-filter-bar">
+            <div className="search-filter-left">
+              <div className="search-group">
                 <input
                   type="text"
-                  placeholder="Search events by name, description, or venue..."
+                  placeholder="Search events..."
+                  className="search-input"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
                 />
-                <div className="search-icon">🔍</div>
-              </div>
-
-              {/* Filter Dropdowns */}
-              <div className="filters-container">
-                {/* Category Filter */}
-                <div className="filter-group">
-                  <label className="filter-label">Category</label>
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="filter-select"
-                  >
-                    <option value="All Categories">All Categories</option>
-                    {getUniqueCategories().map((category, index) => (
-                      <option key={index} value={category}>{category}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Date Filter */}
-                <div className="filter-group">
-                  <label className="filter-label">Date</label>
-                  <select
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="filter-select"
-                  >
-                    <option value="Any Date">Any Date</option>
-                    {getUniqueDates().map((date, index) => (
-                      <option key={index} value={date}>
-                        {new Date(date).toLocaleDateString()}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Location Filter */}
-                <div className="filter-group">
-                  <label className="filter-label">Location</label>
-                  <select
-                    value={selectedLocation}
-                    onChange={(e) => setSelectedLocation(e.target.value)}
-                    className="filter-select"
-                  >
-                    <option value="Any Location">Any Location</option>
-                    {getUniqueLocations().map((location, index) => (
-                      <option key={index} value={location}>{location}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Clear Filters Button */}
-                <button
-                  onClick={() => {
-                    setSearchTerm("");
-                    setSelectedCategory("All Categories");
-                    setSelectedDate("Any Date");
-                    setSelectedLocation("Any Location");
-                  }}
-                  className="clear-filters-btn"
-                >
-                  Clear All
+                <button className="search-button" onClick={() => {}}>
+                  Search
                 </button>
               </div>
             </div>
 
-            {/* Results Count */}
-            <div className="results-info">
-              <p className="results-text">
-                Showing {filteredEvents.length} of {events.length} events
-              </p>
+            <div className="search-filter-right">
+              <div className="filter-group">
+                <select
+                  id="category-filter"
+                  className="filter-select"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="All Categories">All Categories</option>
+                  {getUniqueCategories().map((category, index) => (
+                    <option key={index} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filter-group">
+                <select
+                  id="date-filter"
+                  className="filter-select"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                >
+                  <option value="Any Date">Any Date</option>
+                  {getUniqueDates().map((date, index) => (
+                    <option key={index} value={date}>
+                      {new Date(date).toLocaleDateString()}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filter-group">
+                <select
+                  id="location-filter"
+                  className="filter-select"
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
+                >
+                  <option value="Any Location">Any Location</option>
+                  {getUniqueLocations().map((location, index) => (
+                    <option key={index} value={location}>
+                      {location}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                className="clear-btn"
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("All Categories");
+                  setSelectedDate("Any Date");
+                  setSelectedLocation("Any Location");
+                }}
+                disabled={!searchTerm && selectedCategory === "All Categories" && selectedDate === "Any Date" && selectedLocation === "Any Location"}
+              >
+                Clear Filters
+              </button>
             </div>
           </div>
         )}
@@ -397,7 +479,7 @@ function Events({ events: propEvents }) {
         {/* Details Modal */}
         {showDetailsModal && selectedEvent && (
           <div className="modal-overlay" onClick={closeModals}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-content event-details-modal" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h3 className="modal-title">{selectedEvent.eventTitle}</h3>
                 <button className="modal-close" onClick={closeModals}>×</button>
@@ -410,32 +492,28 @@ function Events({ events: propEvents }) {
                     className="modal-image" 
                   />
                 )}
-                <div className="modal-details">
-                  <div className="detail-item">
-                    <span className="detail-label">Date</span>
-                    <span className="detail-value">{new Date(selectedEvent.eventDate).toLocaleDateString()}</span>
+                <div className="event-info-layout">
+                  <div className="info-row">
+                    <span className="info-label">Date</span>
+                    <span className="info-value">{new Date(selectedEvent.eventDate).toLocaleDateString()}</span>
                   </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Time</span>
-                    <span className="detail-value">{selectedEvent.eventTime}</span>
+                  <div className="info-row">
+                    <span className="info-label">Time</span>
+                    <span className="info-value">{selectedEvent.eventTime}</span>
                   </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Venue</span>
-                    <span className="detail-value">{selectedEvent.eventVenue}</span>
+                  <div className="info-row">
+                    <span className="info-label">Venue</span>
+                    <span className="info-value">{selectedEvent.eventVenue}</span>
                   </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Description</span>
-                    <span className="detail-value">{selectedEvent.description || "No description available"}</span>
+                  <div className="info-row">
+                    <span className="info-label">Price</span>
+                    <span className="info-value price">Rs.{selectedEvent.priceCustomer}</span>
                   </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Price</span>
-                    <span className="detail-value price">Rs.{selectedEvent.priceCustomer}</span>
+                  <div className="info-row">
+                    <span className="info-label">Description</span>
+                    <span className="info-value">{selectedEvent.description || "No description available"}</span>
                   </div>
                 </div>
-                <EnhancedBookingForm 
-                  event={selectedEvent} 
-                  onClose={closeModals}
-                />
               </div>
             </div>
           </div>
@@ -453,13 +531,28 @@ function Events({ events: propEvents }) {
               Leave a Testimonial
             </button>
           </div>
-          <div className="testimonials-grid">
-            <EventTestimonials eventId={null} />
+          <div className="testimonials-wrapper">
+            <button 
+              className="testimonial-nav-btn testimonial-prev" 
+              onClick={() => scrollTestimonials('prev')}
+            >
+              <span>‹</span>
+            </button>
+            <div className="testimonials-slider" ref={testimonialsRef}>
+              <EventTestimonials eventId={null} />
+            </div>
+            <button 
+              className="testimonial-nav-btn testimonial-next" 
+              onClick={() => scrollTestimonials('next')}
+            >
+              <span>›</span>
+            </button>
           </div>
         </div>
 
       </div>
       
+      <MainFooter />
       
       {/* Render TestimonialModal using portal to ensure it's at root level */}
       {showTestimonialModal && createPortal(

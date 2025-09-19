@@ -37,7 +37,7 @@ function EventTestimonials({ eventId }) {
         key={index}
         style={{
           color: index < rating ? '#ffc107' : '#e0e0e0',
-          fontSize: '18px',
+          fontSize: '16px',
           marginRight: '2px'
         }}
       >
@@ -106,73 +106,79 @@ function EventTestimonials({ eventId }) {
   }
 
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-      gap: '20px',
-      marginTop: '20px'
-    }}>
+    <>
       {testimonials.map((testimonial) => (
         <div
           key={testimonial._id}
           style={{
+            flex: '0 0 350px',
             backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '20px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            border: '1px solid #e9ecef',
-            transition: 'transform 0.2s, box-shadow 0.2s'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.15)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+            borderRadius: '15px',
+            padding: '30px',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s ease',
+            border: '2px solid transparent',
+            minHeight: '280px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between'
           }}
         >
-          {/* Header with name and rating */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            marginBottom: '15px'
-          }}>
-            <div>
-              <h4 style={{
-                margin: '0 0 5px 0',
-                color: '#2c3e50',
-                fontSize: '16px',
-                fontWeight: '600'
-              }}>
-                {testimonial.customerName}
-              </h4>
-              {!eventId && testimonial.eventId?.eventTitle && (
-                <div style={{ fontSize: '12px', color: '#007bff', marginBottom: '3px', fontWeight: '500' }}>
-                  {testimonial.eventId.eventTitle}
-                </div>
-              )}
-              <div style={{ fontSize: '12px', color: '#6c757d' }}>
-                {formatDate(testimonial.createdAt)}
-              </div>
+          {/* Event Name - Normal page text */}
+          {!eventId && testimonial.eventId?.eventTitle && (
+            <div style={{ 
+              fontSize: '0.9rem', 
+              color: 'rgba(193, 163, 127, 0.8)', 
+              fontWeight: '500', 
+              marginBottom: '15px',
+              textAlign: 'left'
+            }}>
+              {testimonial.eventId.eventTitle}
             </div>
-            <div style={{ textAlign: 'right' }}>
-              {renderStars(testimonial.rating)}
-            </div>
-          </div>
+          )}
 
           {/* Message */}
           <div style={{
-            color: '#495057',
+            color: '#000000',
             lineHeight: '1.6',
-            fontSize: '14px'
+            fontSize: '1.1rem',
+            marginBottom: '25px',
+            fontStyle: 'italic',
+            flex: 1
           }}>
-            "{testimonial.message}"
+            {testimonial.message}
+          </div>
+
+          {/* Author section */}
+          <div style={{
+            paddingTop: '20px'
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <div style={{
+                  fontSize: '1.1rem',
+                  fontWeight: '600',
+                  color: '#000000',
+                  marginBottom: '5px'
+                }}>
+                  {testimonial.customerName}
+                </div>
+                <div style={{ fontSize: '0.9rem', color: 'rgba(193, 163, 127, 0.8)', fontWeight: '500' }}>
+                  {formatDate(testimonial.createdAt)}
+                </div>
+              </div>
+              <div>
+                {renderStars(testimonial.rating)}
+              </div>
+            </div>
           </div>
         </div>
       ))}
-    </div>
+    </>
   );
 }
 

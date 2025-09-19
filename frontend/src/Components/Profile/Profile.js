@@ -639,7 +639,7 @@ function Profile() {
               rel="noopener noreferrer"
               className="directions-btn"
             >
-              📍 Get Directions
+              Get Directions
             </a>
           </div>
         )}
@@ -686,7 +686,7 @@ function Profile() {
               rel="noopener noreferrer"
               className="directions-btn"
             >
-              📍 Get Directions
+              Get Directions
             </a>
           </div>
         )}

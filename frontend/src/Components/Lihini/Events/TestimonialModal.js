@@ -147,18 +147,21 @@ function TestimonialModal({ isOpen, onClose, eventId, onTestimonialSubmitted }) 
       <div style={{
         backgroundColor: 'white',
         borderRadius: '12px',
-        padding: '30px',
+        padding: '20px',
         maxWidth: '500px',
         width: '100%',
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)'
+        height: '650px',
+        overflow: 'hidden',
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative'
       }}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '25px'
+          marginBottom: '15px'
         }}>
           <h2 style={{
             margin: 0,
@@ -188,11 +191,11 @@ function TestimonialModal({ isOpen, onClose, eventId, onTestimonialSubmitted }) 
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '20px' }}>
+        <form onSubmit={handleSubmit} style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
+          <div style={{ marginBottom: '12px' }}>
             <label style={{
               display: 'block',
-              marginBottom: '8px',
+              marginBottom: '4px',
               fontWeight: '500',
               color: '#2c3e50'
             }}>
@@ -222,10 +225,10 @@ function TestimonialModal({ isOpen, onClose, eventId, onTestimonialSubmitted }) 
             </select>
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '12px' }}>
             <label style={{
               display: 'block',
-              marginBottom: '8px',
+              marginBottom: '4px',
               fontWeight: '500',
               color: '#2c3e50'
             }}>
@@ -249,10 +252,10 @@ function TestimonialModal({ isOpen, onClose, eventId, onTestimonialSubmitted }) 
             />
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '12px' }}>
             <label style={{
               display: 'block',
-              marginBottom: '8px',
+              marginBottom: '4px',
               fontWeight: '500',
               color: '#2c3e50'
             }}>
@@ -274,10 +277,10 @@ function TestimonialModal({ isOpen, onClose, eventId, onTestimonialSubmitted }) 
             </div>
           </div>
 
-          <div style={{ marginBottom: '25px' }}>
+          <div style={{ marginBottom: '12px' }}>
             <label style={{
               display: 'block',
-              marginBottom: '8px',
+              marginBottom: '4px',
               fontWeight: '500',
               color: '#2c3e50'
             }}>
@@ -316,9 +319,9 @@ function TestimonialModal({ isOpen, onClose, eventId, onTestimonialSubmitted }) 
             <div style={{
               backgroundColor: '#f8d7da',
               color: '#721c24',
-              padding: '12px',
+              padding: '8px',
               borderRadius: '8px',
-              marginBottom: '20px',
+              marginBottom: '12px',
               border: '1px solid #f5c6cb'
             }}>
               {error}
@@ -327,22 +330,72 @@ function TestimonialModal({ isOpen, onClose, eventId, onTestimonialSubmitted }) 
 
           <div style={{
             display: 'flex',
-            gap: '15px',
-            justifyContent: 'flex-end'
+            gap: '12px',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: '10px',
+            paddingTop: '0',
+            backgroundColor: 'transparent',
+            padding: '0',
+            margin: '0',
+            borderRadius: '0',
+            width: '100%',
+            flexShrink: 0,
+            position: 'relative',
+            zIndex: 10,
+            height: '40px',
+            visibility: 'visible',
+            opacity: 1
           }}>
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
               style={{
-                padding: '12px 24px',
-                border: '2px solid #6c757d',
+                padding: '10px 20px',
+                border: '2px solid #000000',
                 borderRadius: '8px',
-                backgroundColor: 'white',
-                color: '#6c757d',
-                fontSize: '16px',
+                backgroundColor: '#000000',
+                background: '#000000',
+                color: '#ffffff',
+                fontSize: '14px',
+                fontWeight: '600',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.6 : 1
+                opacity: loading ? 0.6 : 1,
+                transition: 'all 0.3s ease',
+                flex: 1,
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                outline: 'none',
+                textTransform: 'none',
+                letterSpacing: '0.5px',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                visibility: 'visible',
+                position: 'relative',
+                zIndex: 1000,
+                backgroundImage: 'none',
+                backgroundGradient: 'none',
+                alignSelf: 'flex-end'
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) {
+                  e.target.style.backgroundColor = '#ffffff';
+                  e.target.style.color = '#000000';
+                  e.target.style.borderColor = '#ffffff';
+                  e.target.style.transform = 'translateY(-1px)';
+                  e.target.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!loading) {
+                  e.target.style.backgroundColor = '#000000';
+                  e.target.style.color = '#ffffff';
+                  e.target.style.borderColor = '#000000';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                }
               }}
             >
               Cancel
@@ -351,14 +404,49 @@ function TestimonialModal({ isOpen, onClose, eventId, onTestimonialSubmitted }) 
               type="submit"
               disabled={loading}
               style={{
-                padding: '12px 24px',
-                border: 'none',
+                padding: '10px 20px',
+                border: '2px solid #C1A37F',
                 borderRadius: '8px',
-                backgroundColor: loading ? '#6c757d' : '#007bff',
-                color: 'white',
-                fontSize: '16px',
+                backgroundColor: loading ? '#6c757d' : '#C1A37F',
+                background: loading ? '#6c757d' : '#C1A37F',
+                color: loading ? '#ffffff' : '#000000',
+                fontSize: '14px',
+                fontWeight: '600',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                transition: 'background-color 0.2s'
+                transition: 'all 0.3s ease',
+                flex: 1,
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                outline: 'none',
+                textTransform: 'none',
+                letterSpacing: '0.5px',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                visibility: 'visible',
+                position: 'relative',
+                zIndex: 1000,
+                backgroundImage: 'none',
+                backgroundGradient: 'none',
+                alignSelf: 'flex-end'
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) {
+                  e.target.style.backgroundColor = '#000000';
+                  e.target.style.color = '#ffffff';
+                  e.target.style.borderColor = '#000000';
+                  e.target.style.transform = 'translateY(-1px)';
+                  e.target.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!loading) {
+                  e.target.style.backgroundColor = '#C1A37F';
+                  e.target.style.color = '#000000';
+                  e.target.style.borderColor = '#C1A37F';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                }
               }}
             >
               {loading ? 'Submitting...' : 'Submit Testimonial'}

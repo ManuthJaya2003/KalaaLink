@@ -342,7 +342,7 @@ function VenueMap({ event, height = "400px" }) {
           disabled={isCalculatingRoute}
           className="btn btn-primary directions-btn"
         >
-          {isCalculatingRoute ? '🔄 Calculating...' : '🚗 Get Directions'}
+          {isCalculatingRoute ? '🔄 Calculating...' : 'Get Directions'}
         </button>
         
         {showDirections && (

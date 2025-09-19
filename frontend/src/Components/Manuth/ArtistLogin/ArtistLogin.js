@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import MainNav from '../../MainNav/MainNav';
 import PasswordInput from '../../Common/PasswordInput';
+import AuthFooter from '../../Common/AuthFooter';
 import '../../Login/Login.css';
+import './ArtistLogin.css';
 
 function ArtistLogin() {
   const [email, setEmail] = useState("");
@@ -44,93 +46,104 @@ function ArtistLogin() {
       <MainNav />
       <div className="login-container">
         <div className="login-card">
-          <div className="login-header">
-            <h1 className="login-title">Artist Login</h1>
-            <p className="login-subtitle">Sign in to your artist account</p>
-          </div>
-
-          {error && (
-            <div style={{ 
-              color: "#dc3545", 
-              textAlign: "center", 
-              marginBottom: "20px",
-              padding: "10px",
-              backgroundColor: "#f8d7da",
-              border: "1px solid #f5c6cb",
-              borderRadius: "8px",
-              fontSize: "0.9rem"
-            }}>
-              {error}
+          <div className="login-form-section">
+            <div className="login-header">
+              <h1 className="login-title">Artist Login</h1>
+              <p className="login-subtitle">Sign in to your artist account</p>
             </div>
-          )}
 
-          <form onSubmit={handleLogin}>
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">Email Address</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="form-input"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+            {error && (
+              <div style={{ 
+                color: "#dc3545", 
+                textAlign: "center", 
+                marginBottom: "15px",
+                padding: "8px",
+                backgroundColor: "#f8d7da",
+                border: "1px solid #f5c6cb",
+                borderRadius: "6px",
+                fontSize: "0.8rem"
+              }}>
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleLogin}>
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="form-input"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <PasswordInput
+                id="password"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                label="Password"
                 required
               />
+
+              <button type="submit" className="submit-btn">
+                Sign In
+              </button>
+            </form>
+
+            <div className="forgot-password">
+              <button 
+                type="button"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#667eea',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  padding: '0',
+                  fontFamily: 'inherit'
+                }}
+                onClick={() => setError("Contact support to reset your password.")}
+              >
+                Forgot your password?
+              </button>
             </div>
 
-            <PasswordInput
-              id="password"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              label="Password"
-              required
-            />
+            <div className="login-divider">
+              <span>or</span>
+            </div>
 
-            <button type="submit" className="submit-btn">
-              Sign In
-            </button>
-          </form>
+            <div className="login-options">
+              <a href="/login" className="login-option">
+                Back to Main Login
+              </a>
+            </div>
 
-          <div className="forgot-password">
-            <button 
-              type="button"
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#667eea',
-                textDecoration: 'underline',
-                cursor: 'pointer',
-                fontSize: '0.9rem',
-                padding: '0',
-                fontFamily: 'inherit'
-              }}
-              onClick={() => setError("Contact support to reset your password.")}
-            >
-              Forgot your password?
-            </button>
+            <div className="signup-section">
+              <span>Don't have an artist account? </span>
+              <a href="/artist_registration">Register here</a>
+            </div>
           </div>
 
-          <div className="login-divider">
-            <span>or</span>
-          </div>
-
-          <div className="login-options">
-            <a href="/login" className="login-option">
-              Back to Main Login
-            </a>
-          </div>
-
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
-            <span style={{ color: '#666' }}>Don't have an artist account? </span>
-            <a href="/artist_registration" style={{ color: '#667eea', textDecoration: 'none', fontWeight: '600' }}>
-              Register here
-            </a>
+          <div className="login-image-section">
+            <div className="login-image-placeholder">
+              <div className="placeholder-content">
+                <div className="placeholder-icon">🎨</div>
+                <h3>Artist Portal</h3>
+                <p>Access your artist dashboard, manage your profile, showcase your work, and connect with the creative community.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <AuthFooter />
     </div>
   );
 }

@@ -15,7 +15,14 @@ function MainNav() {
       <ul className="navbar-list">
         <li className="navbar-item navbar-brand">
           <Link to="/">
-            <h1 className="brand-title">KalaaLink</h1>
+            <div className="brand-container">
+              <img 
+                src="/logo.png" 
+                alt="KalaaLink Logo" 
+                className="logo-icon"
+              />
+              <h1 className="brand-title">KalaaLink</h1>
+            </div>
           </Link>
         </li>
         <li className="navbar-item">

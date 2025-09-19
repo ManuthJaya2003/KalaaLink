@@ -20,7 +20,7 @@ function Event({ event, onBookNow, onViewDetails }) {
         {eventDescription && (
           <p className="event-description">{eventDescription}</p>
         )}
-        <p className="detail-value price">Rs.{priceCustomer}</p>
+        <p className="detail-value price">Ticket Price (pp): Rs.{priceCustomer}</p>
 
         <div className="event-buttons">
           <button onClick={onBookNow} className="btn btn-primary">Book Now</button>

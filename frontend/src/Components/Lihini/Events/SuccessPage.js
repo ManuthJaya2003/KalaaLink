@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import MainNav from "../../MainNav/MainNav";
+import AuthFooter from "../../Common/AuthFooter";
 import VenueMap from "./VenueMap";
 import "../Event/Event.css";
 
@@ -150,8 +151,16 @@ function SuccessPage() {
             margin-bottom: 20px;
           }
           .ticket-logo {
-            font-size: 48px;
             margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          .ticket-logo img {
+            height: 60px;
+            width: auto;
+            max-width: 200px;
+            object-fit: contain;
           }
           .ticket-details {
             background: #f8f9fa;
@@ -223,7 +232,9 @@ function SuccessPage() {
       <body>
         <div class="ticket">
           <div class="ticket-header">
-            <div class="ticket-logo">🎫</div>
+            <div class="ticket-logo">
+              <img src="/logo.png" alt="KalaaLink Logo" />
+            </div>
             <div class="ticket-title">EVENT TICKET</div>
             <div class="ticket-subtitle">KalaaLink - Your Gateway to Art & Culture</div>
           </div>
@@ -315,16 +326,18 @@ function SuccessPage() {
     ticketWindow.document.close();
   };
 
+
   if (loading) {
     return (
       <div>
         <MainNav />
         <div className="success-container">
-          <div className="loading-spinner">
-            <div className="spinner"></div>
-            <p>Verifying your payment...</p>
+          <div className="success-card">
+            <h1 className="success-title">Payment Successful!</h1>
+            <p className="success-subtitle">Loading...</p>
           </div>
         </div>
+        <AuthFooter />
       </div>
     );
   }
@@ -358,37 +371,46 @@ function SuccessPage() {
             Your event booking has been confirmed and payment has been processed.
           </p>
 
-          {booking && (
-            <div className="booking-details">
-              <h3>Booking Details</h3>
-              <div className="detail-row">
-                <span className="detail-label">Event:</span>
-                <span className="detail-value">{booking.event?.eventTitle || "Event"}</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Customer:</span>
-                <span className="detail-value">{booking.customerName}</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Email:</span>
-                <span className="detail-value">{booking.customerEmail}</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Tickets:</span>
-                <span className="detail-value">{booking.ticketsBooked}</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Booking Date:</span>
-                <span className="detail-value">
-                  {new Date(booking.bookingDate).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Status:</span>
-                <span className="detail-value status-confirmed">Confirmed</span>
-              </div>
+          <div style={{
+            textAlign: 'center',
+            maxWidth: '500px',
+            margin: '0 auto',
+            background: '#f9fafb',
+            padding: '20px',
+            borderRadius: '12px',
+            border: '1px solid #e5e7eb'
+          }}>
+            <div style={{ marginBottom: '16px' }}>
+              <img src="/logo.png" alt="KalaaLink Logo" style={{ height: '50px', width: 'auto', maxWidth: '150px' }} />
             </div>
-          )}
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600', color: '#2D3748' }}>Booking Details</h3>
+            <div style={{ display: 'block', padding: '8px 0', borderBottom: '1px solid #e5e7eb', textAlign: 'center' }}>
+              <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Event:</span>
+              <span style={{ color: '#2D3748', fontWeight: '500', fontSize: '16px', display: 'inline', marginLeft: '8px' }}>{booking?.event?.eventTitle || "Event"}</span>
+            </div>
+            <div style={{ display: 'block', padding: '8px 0', borderBottom: '1px solid #e5e7eb', textAlign: 'center' }}>
+              <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Customer:</span>
+              <span style={{ color: '#2D3748', fontWeight: '500', fontSize: '16px', display: 'inline', marginLeft: '8px' }}>{booking?.customerName || "Customer"}</span>
+            </div>
+            <div style={{ display: 'block', padding: '8px 0', borderBottom: '1px solid #e5e7eb', textAlign: 'center' }}>
+              <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Email:</span>
+              <span style={{ color: '#2D3748', fontWeight: '500', fontSize: '16px', display: 'inline', marginLeft: '8px' }}>{booking?.customerEmail || "customer@email.com"}</span>
+            </div>
+            <div style={{ display: 'block', padding: '8px 0', borderBottom: '1px solid #e5e7eb', textAlign: 'center' }}>
+              <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Tickets:</span>
+              <span style={{ color: '#2D3748', fontWeight: '500', fontSize: '16px', display: 'inline', marginLeft: '8px' }}>{booking?.ticketsBooked || "1"}</span>
+            </div>
+            <div style={{ display: 'block', padding: '8px 0', borderBottom: '1px solid #e5e7eb', textAlign: 'center' }}>
+              <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Booking Date:</span>
+              <span style={{ color: '#2D3748', fontWeight: '500', fontSize: '16px', display: 'inline', marginLeft: '8px' }}>
+                {booking?.bookingDate ? new Date(booking.bookingDate).toLocaleDateString() : new Date().toLocaleDateString()}
+              </span>
+            </div>
+            <div style={{ display: 'block', padding: '8px 0', textAlign: 'center' }}>
+              <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Status:</span>
+              <span style={{ color: '#2D3748', fontWeight: '500', fontSize: '16px', display: 'inline', marginLeft: '8px' }}>Confirmed</span>
+            </div>
+          </div>
 
           <div className="success-actions">
             <button onClick={handleDownloadTicket} className="btn btn-success">
@@ -400,12 +422,16 @@ function SuccessPage() {
           </div>
 
           {/* Venue Map Section */}
-          {booking?.event && (
-            <div className="venue-section">
-              <h3 className="venue-section-title">📍 Event Location</h3>
+          <div className="venue-section">
+            <h3 className="venue-section-title">📍 Event Location</h3>
+            {booking?.event ? (
               <VenueMap event={booking.event} height="350px" />
-            </div>
-          )}
+            ) : (
+              <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+                <p>Event location details will be available once booking data is loaded.</p>
+              </div>
+            )}
+          </div>
 
           <div className="success-info">
             <p>
@@ -416,6 +442,7 @@ function SuccessPage() {
           </div>
         </div>
       </div>
+      <AuthFooter />
     </div>
   );
 }

@@ -91,8 +91,7 @@ const ViewReviewsModal = ({ isOpen, onClose, artist }) => {
         <div className="view-reviews-modal-body">
           {loading ? (
             <div className="loading-container">
-              <div className="loading-spinner"></div>
-              <p>Loading reviews...</p>
+              <p>Loading...</p>
             </div>
           ) : error ? (
             <div className="error-container">

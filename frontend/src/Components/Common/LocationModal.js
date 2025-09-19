@@ -204,7 +204,7 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
               className="btn btn-success"
               style={{ marginLeft: '10px' }}
             >
-              🗺️ Get Directions
+              Get Directions
             </button>
 
             {showDirections && (

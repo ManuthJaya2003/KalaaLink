@@ -391,8 +391,8 @@
 }
 
 .directions-btn {
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
-  color: white;
+  background: #000000 !important;
+  color: white !important;
   text-decoration: none;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
@@ -401,14 +401,22 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .directions-btn:hover {
-  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  background: #333333 !important;
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(39, 174, 96, 0.3);
-  color: white;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3) !important;
+  color: white !important;
   text-decoration: none;
+  outline: none !important;
+}
+
+.directions-btn:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .no-bookings {

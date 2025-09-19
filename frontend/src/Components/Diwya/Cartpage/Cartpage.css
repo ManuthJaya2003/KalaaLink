@@ -1,0 +1,99 @@
+/* ===== CART PAGE STYLES ===== */
+
+/* Cart Header Styling - Matching other pages */
+.cart-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.cart-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  position: relative;
+  color: #1f2937;
+}
+
+.cart-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(193, 163, 127, 0.9), transparent);
+  border-radius: 1px;
+  z-index: 1;
+}
+
+.cart-subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  text-align: center;
+  margin: 0;
+  line-height: 1.4;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+/* Product Name Styling */
+.cart-product-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #C1A37F; /* Beige color */
+}
+
+/* Button Styling */
+.cart-checkout-btn {
+  padding: 10px 20px;
+  background-color: #C1A37F; /* Beige color */
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.cart-checkout-btn:hover {
+  background-color: #B8956A;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(193, 163, 127, 0.3);
+}
+
+.cart-clear-btn {
+  padding: 10px 20px;
+  background-color: #000; /* Black color */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.cart-clear-btn:hover {
+  background-color: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.cart-remove-btn {
+  padding: 8px 16px;
+  background-color: #fff; /* White background */
+  color: #C1A37F; /* Beige text */
+  border: 2px solid #C1A37F; /* Beige outline */
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.cart-remove-btn:hover {
+  background-color: #C1A37F;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(193, 163, 127, 0.3);
+}

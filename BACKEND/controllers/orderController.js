@@ -120,6 +120,65 @@ exports.createMarketplaceOrder = async (req, res) => {
       totalAmount: savedOrder.totalAmount
     });
 
+    // Create delivery record immediately if delivery is requested
+    if (savedOrder.useDelivery && savedOrder.deliveryAddress) {
+      console.log('🚚 Creating delivery records for order:', {
+        orderId: savedOrder._id,
+        useDelivery: savedOrder.useDelivery,
+        deliveryAddress: savedOrder.deliveryAddress,
+        itemsCount: savedOrder.items.length
+      });
+      
+      try {
+        // Create delivery record for each item in the order
+        for (const item of savedOrder.items) {
+          const delivery = new Delivery({
+            artId: item.productId,
+            orderId: savedOrder._id, // Link to the order
+            customerName: savedOrder.customerName,
+            customerEmail: savedOrder.customerEmail,
+            address: savedOrder.deliveryAddress.address,
+            city: savedOrder.deliveryAddress.city,
+            district: savedOrder.deliveryAddress.district,
+            postalCode: savedOrder.deliveryAddress.postalCode,
+            contactNumber: savedOrder.deliveryAddress.contactNumber,
+            coordinates: savedOrder.deliveryAddress.coordinates,
+            deliveryStatus: 'Pending',
+            quantity: item.quantity,
+            productName: item.productName,
+            productPrice: item.price
+          });
+          
+          await delivery.save();
+          console.log('✅ Delivery record created immediately:', {
+            deliveryId: delivery._id,
+            orderId: savedOrder._id,
+            productName: item.productName,
+            customerName: savedOrder.customerName,
+            status: 'Pending'
+          });
+        }
+        
+        console.log('✅ All delivery records created successfully for order:', savedOrder._id);
+      } catch (deliveryError) {
+        console.error('❌ Error creating delivery records immediately:', deliveryError);
+        console.error('❌ Delivery creation error details:', {
+          error: deliveryError.message,
+          stack: deliveryError.stack,
+          orderId: savedOrder._id,
+          useDelivery: savedOrder.useDelivery,
+          deliveryAddress: savedOrder.deliveryAddress
+        });
+        // Don't fail the order creation if delivery creation fails
+      }
+    } else {
+      console.log('⚠️ Delivery creation skipped:', {
+        orderId: savedOrder._id,
+        useDelivery: savedOrder.useDelivery,
+        hasDeliveryAddress: !!savedOrder.deliveryAddress
+      });
+    }
+
     // Create Stripe checkout session
     const lineItems = validatedItems.map(item => ({
       price_data: {
@@ -238,35 +297,42 @@ exports.handleStripeWebhook = async (req, res) => {
       
       await order.save();
       
-      // Create delivery record if delivery is requested
+      // Create delivery record if delivery is requested and not already created
       if (order.useDelivery && order.deliveryAddress) {
         try {
-          // Create delivery record for each item in the order
-          for (const item of order.items) {
-            const delivery = new Delivery({
-              artId: item.productId,
-              orderId: order._id, // Link to the order
-              customerName: order.customerName,
-              customerEmail: order.customerEmail,
-              address: order.deliveryAddress.address,
-              city: order.deliveryAddress.city,
-              district: order.deliveryAddress.district,
-              postalCode: order.deliveryAddress.postalCode,
-              contactNumber: order.deliveryAddress.contactNumber,
-              coordinates: order.deliveryAddress.coordinates,
-              deliveryStatus: 'Pending',
-              quantity: item.quantity,
-              productName: item.productName,
-              productPrice: item.price
-            });
-            
-            await delivery.save();
-            console.log('✅ Delivery record created:', {
-              deliveryId: delivery._id,
-              orderId: order._id,
-              productName: item.productName,
-              customerName: order.customerName
-            });
+          // Check if deliveries already exist for this order
+          const existingDeliveries = await Delivery.find({ orderId: order._id });
+          
+          if (existingDeliveries.length === 0) {
+            // Create delivery record for each item in the order
+            for (const item of order.items) {
+              const delivery = new Delivery({
+                artId: item.productId,
+                orderId: order._id, // Link to the order
+                customerName: order.customerName,
+                customerEmail: order.customerEmail,
+                address: order.deliveryAddress.address,
+                city: order.deliveryAddress.city,
+                district: order.deliveryAddress.district,
+                postalCode: order.deliveryAddress.postalCode,
+                contactNumber: order.deliveryAddress.contactNumber,
+                coordinates: order.deliveryAddress.coordinates,
+                deliveryStatus: 'Pending',
+                quantity: item.quantity,
+                productName: item.productName,
+                productPrice: item.price
+              });
+              
+              await delivery.save();
+              console.log('✅ Delivery record created on payment confirmation:', {
+                deliveryId: delivery._id,
+                orderId: order._id,
+                productName: item.productName,
+                customerName: order.customerName
+              });
+            }
+          } else {
+            console.log('✅ Delivery records already exist for order:', order._id);
           }
         } catch (deliveryError) {
           console.error('❌ Error creating delivery records:', deliveryError);
@@ -515,35 +581,42 @@ exports.confirmOrderPayment = async (req, res) => {
           
           await order.save();
           
-          // Create delivery record if delivery is requested
+          // Create delivery record if delivery is requested and not already created
           if (order.useDelivery && order.deliveryAddress) {
             try {
-              // Create delivery record for each item in the order
-              for (const item of order.items) {
-                const delivery = new Delivery({
-                  artId: item.productId,
-                  orderId: order._id, // Link to the order
-                  customerName: order.customerName,
-                  customerEmail: order.customerEmail,
-                  address: order.deliveryAddress.address,
-                  city: order.deliveryAddress.city,
-                  district: order.deliveryAddress.district,
-                  postalCode: order.deliveryAddress.postalCode,
-                  contactNumber: order.deliveryAddress.contactNumber,
-                  coordinates: order.deliveryAddress.coordinates,
-                  deliveryStatus: 'Pending',
-                  quantity: item.quantity,
-                  productName: item.productName,
-                  productPrice: item.price
-                });
-                
-                await delivery.save();
-                console.log('✅ Delivery record created via payment confirmation:', {
-                  deliveryId: delivery._id,
-                  orderId: order._id,
-                  productName: item.productName,
-                  customerName: order.customerName
-                });
+              // Check if deliveries already exist for this order
+              const existingDeliveries = await Delivery.find({ orderId: order._id });
+              
+              if (existingDeliveries.length === 0) {
+                // Create delivery record for each item in the order
+                for (const item of order.items) {
+                  const delivery = new Delivery({
+                    artId: item.productId,
+                    orderId: order._id, // Link to the order
+                    customerName: order.customerName,
+                    customerEmail: order.customerEmail,
+                    address: order.deliveryAddress.address,
+                    city: order.deliveryAddress.city,
+                    district: order.deliveryAddress.district,
+                    postalCode: order.deliveryAddress.postalCode,
+                    contactNumber: order.deliveryAddress.contactNumber,
+                    coordinates: order.deliveryAddress.coordinates,
+                    deliveryStatus: 'Pending',
+                    quantity: item.quantity,
+                    productName: item.productName,
+                    productPrice: item.price
+                  });
+                  
+                  await delivery.save();
+                  console.log('✅ Delivery record created via payment confirmation:', {
+                    deliveryId: delivery._id,
+                    orderId: order._id,
+                    productName: item.productName,
+                    customerName: order.customerName
+                  });
+                }
+              } else {
+                console.log('✅ Delivery records already exist for order:', order._id);
               }
             } catch (deliveryError) {
               console.error('❌ Error creating delivery records via payment confirmation:', deliveryError);
@@ -601,35 +674,42 @@ exports.confirmOrderPayment = async (req, res) => {
       
       await order.save();
       
-      // Create delivery record if delivery is requested
+      // Create delivery record if delivery is requested and not already created
       if (order.useDelivery && order.deliveryAddress) {
         try {
-          // Create delivery record for each item in the order
-          for (const item of order.items) {
-            const delivery = new Delivery({
-              artId: item.productId,
-              orderId: order._id, // Link to the order
-              customerName: order.customerName,
-              customerEmail: order.customerEmail,
-              address: order.deliveryAddress.address,
-              city: order.deliveryAddress.city,
-              district: order.deliveryAddress.district,
-              postalCode: order.deliveryAddress.postalCode,
-              contactNumber: order.deliveryAddress.contactNumber,
-              coordinates: order.deliveryAddress.coordinates,
-              deliveryStatus: 'Pending',
-              quantity: item.quantity,
-              productName: item.productName,
-              productPrice: item.price
-            });
-            
-            await delivery.save();
-            console.log('✅ Delivery record created via manual payment confirmation:', {
-              deliveryId: delivery._id,
-              orderId: order._id,
-              productName: item.productName,
-              customerName: order.customerName
-            });
+          // Check if deliveries already exist for this order
+          const existingDeliveries = await Delivery.find({ orderId: order._id });
+          
+          if (existingDeliveries.length === 0) {
+            // Create delivery record for each item in the order
+            for (const item of order.items) {
+              const delivery = new Delivery({
+                artId: item.productId,
+                orderId: order._id, // Link to the order
+                customerName: order.customerName,
+                customerEmail: order.customerEmail,
+                address: order.deliveryAddress.address,
+                city: order.deliveryAddress.city,
+                district: order.deliveryAddress.district,
+                postalCode: order.deliveryAddress.postalCode,
+                contactNumber: order.deliveryAddress.contactNumber,
+                coordinates: order.deliveryAddress.coordinates,
+                deliveryStatus: 'Pending',
+                quantity: item.quantity,
+                productName: item.productName,
+                productPrice: item.price
+              });
+              
+              await delivery.save();
+              console.log('✅ Delivery record created via manual payment confirmation:', {
+                deliveryId: delivery._id,
+                orderId: order._id,
+                productName: item.productName,
+                customerName: order.customerName
+              });
+            }
+          } else {
+            console.log('✅ Delivery records already exist for order:', order._id);
           }
         } catch (deliveryError) {
           console.error('❌ Error creating delivery records via manual payment confirmation:', deliveryError);
@@ -704,32 +784,39 @@ exports.manualUpdatePaymentStatus = async (req, res) => {
       // Create delivery record if delivery is requested and order wasn't already paid
       if (previousStatus !== 'paid' && order.useDelivery && order.deliveryAddress) {
         try {
-          // Create delivery record for each item in the order
-          for (const item of order.items) {
-            const delivery = new Delivery({
-              artId: item.productId,
-              orderId: order._id, // Link to the order
-              customerName: order.customerName,
-              customerEmail: order.customerEmail,
-              address: order.deliveryAddress.address,
-              city: order.deliveryAddress.city,
-              district: order.deliveryAddress.district,
-              postalCode: order.deliveryAddress.postalCode,
-              contactNumber: order.deliveryAddress.contactNumber,
-              coordinates: order.deliveryAddress.coordinates,
-              deliveryStatus: 'Pending',
-              quantity: item.quantity,
-              productName: item.productName,
-              productPrice: item.price
-            });
-            
-            await delivery.save();
-            console.log('✅ Delivery record created via manual payment status update:', {
-              deliveryId: delivery._id,
-              orderId: order._id,
-              productName: item.productName,
-              customerName: order.customerName
-            });
+          // Check if deliveries already exist for this order
+          const existingDeliveries = await Delivery.find({ orderId: order._id });
+          
+          if (existingDeliveries.length === 0) {
+            // Create delivery record for each item in the order
+            for (const item of order.items) {
+              const delivery = new Delivery({
+                artId: item.productId,
+                orderId: order._id, // Link to the order
+                customerName: order.customerName,
+                customerEmail: order.customerEmail,
+                address: order.deliveryAddress.address,
+                city: order.deliveryAddress.city,
+                district: order.deliveryAddress.district,
+                postalCode: order.deliveryAddress.postalCode,
+                contactNumber: order.deliveryAddress.contactNumber,
+                coordinates: order.deliveryAddress.coordinates,
+                deliveryStatus: 'Pending',
+                quantity: item.quantity,
+                productName: item.productName,
+                productPrice: item.price
+              });
+              
+              await delivery.save();
+              console.log('✅ Delivery record created via manual payment status update:', {
+                deliveryId: delivery._id,
+                orderId: order._id,
+                productName: item.productName,
+                customerName: order.customerName
+              });
+            }
+          } else {
+            console.log('✅ Delivery records already exist for order:', order._id);
           }
         } catch (deliveryError) {
           console.error('❌ Error creating delivery records via manual payment status update:', deliveryError);

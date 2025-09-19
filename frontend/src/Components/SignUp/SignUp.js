@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
 import PasswordInput from '../Common/PasswordInput';
+import AuthFooter from '../Common/AuthFooter';
 import { useAuth } from '../../contexts/AuthContext';
 import '../Login/Login.css';
 import './SignUp.css';
@@ -63,6 +64,7 @@ function SignUp() {
       <MainNav />
       <div className="login-container">
         <div className="login-card">
+          <div className="login-form-section">
           <div className="login-header">
             <h1 className="login-title">Create Account</h1>
             <p className="login-subtitle">Join us and start your journey</p>
@@ -170,9 +172,21 @@ function SignUp() {
           <div className="signup-section">
             <span>Already have an account? </span>
             <Link to="/login">Sign in here</Link>
+            </div>
+          </div>
+
+          <div className="login-image-section">
+            <div className="login-image-placeholder">
+              <div className="placeholder-content">
+                <div className="placeholder-icon">🎨</div>
+                <h3>Join Our Creative Community</h3>
+                <p>Connect with artists, showcase your talent, and discover amazing events.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <AuthFooter />
     </div>
   );
 }

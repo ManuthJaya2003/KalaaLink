@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // ✅ Global navbar integration - reusing existing main navigation for consistency with Artists, Events, and Marketplace
 import MainNav from '../../MainNav/MainNav';
+import MainFooter from '../../MainFooter/MainFooter';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ImpactStories from '../ImpactStories/ImpactStories';
@@ -75,61 +76,93 @@ function DonorDashboard() {
     <div>
       {/* ✅ Global navbar integration - ensures identical navbar styling, height, and design as Artists, Events, and Marketplace */}
       <MainNav />
-      <div className="donor-dashboard-container">
-        <div className="donor-dashboard-header">
-          <h1>Make a Donation</h1>
-          <p>Every donation, big or small, makes a significant impact.</p>
-        </div>
-      <div className="package-buttons">
-        {packages.map((pkg) => (
-          <button
-            key={pkg._id}
-            type="button"
-            className={inputs.package === pkg.name ? 'selected' : ''}
-            onClick={() => handlePackageSelect(pkg)}
-          >
-            {pkg.name} (LKR {pkg.amount?.toLocaleString()})
-          </button>
-        ))}
-        <button
-          type="button"
-          className={inputs.package === 'Custom' ? 'selected' : ''}
-          onClick={() => handlePackageSelect({ name: 'Custom', amount: '', _id: null })}
+      
+      {/* Donation Hero Video Section */}
+      <div className="donation-hero-video">
+        <video
+          className="donation-background-video"
+          autoPlay
+          muted
+          loop
+          playsInline
         >
-          Custom
-        </button>
+          <source src="/donationHeroVid.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </div>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="package">Choose a Package</label>
-        <br />
-        <select name="package" onChange={handleChange} value={inputs.package} required>
-          {packages.map((pkg) => (
-            <option key={pkg._id} value={pkg.name}>
-              {pkg.name} (LKR {pkg.amount?.toLocaleString()})
-            </option>
-          ))}
-          <option value="Custom">Custom</option>
-        </select>
-        <br />
-        <br />
-        {inputs.package === 'Custom' && (
-          <>
-            <label htmlFor="customAmount">Enter Custom Amount</label>
-            <br />
-            <input
-              type="number"
-              name="customAmount"
-              onChange={handleChange}
-              value={inputs.customAmount}
-              min="10"
-              required
-            />
-            <br />
-            <br />
-          </>
-        )}
-        <button type="submit">Proceed to Payment</button>
-      </form>
+      
+      {/* Support Our Talented Artists Section - Matching Events page styling */}
+      <div className="donor-support-section">
+        <div className="donor-support-text-section">
+          <h2 className="donor-support-title">Support Our Talented Artists</h2>
+          <p className="donor-support-subtitle">Help talented artists continue creating amazing work and bring their artistic visions to life</p>
+        </div>
+      </div>
+      
+      <div className="donor-dashboard-container">
+        {/* Complimentary text before packages */}
+        <div className="packages-intro">
+          <p className="packages-intro-text">We offer a variety of packages for you to choose from to donate to our talented artists.</p>
+        </div>
+
+        {/* Donation Package Buttons */}
+        <div className="package-buttons-container">
+          <div className="package-buttons">
+            {packages.map((pkg) => (
+              <button
+                key={pkg._id}
+                type="button"
+                className={`package-button ${pkg.name.toLowerCase()}-package ${inputs.package === pkg.name ? 'selected' : ''}`}
+                onClick={() => handlePackageSelect(pkg)}
+              >
+                {pkg.name} (LKR {pkg.amount?.toLocaleString()})
+              </button>
+            ))}
+            <button
+              type="button"
+              className={`package-button custom-package ${inputs.package === 'Custom' ? 'selected' : ''}`}
+              onClick={() => handlePackageSelect({ name: 'Custom', amount: '', _id: null })}
+            >
+              Custom
+            </button>
+          </div>
+        </div>
+
+        {/* Small note before form */}
+        <div className="form-intro">
+          <p className="form-intro-text">Every contribution makes an impact.</p>
+        </div>
+
+        {/* Choose Package Form */}
+        <div className="donation-form-container">
+          <form onSubmit={handleSubmit} className="donation-form">
+            <label htmlFor="package">Choose a Package</label>
+            <select name="package" onChange={handleChange} value={inputs.package} required>
+              {packages.map((pkg) => (
+                <option key={pkg._id} value={pkg.name}>
+                  {pkg.name} (LKR {pkg.amount?.toLocaleString()})
+                </option>
+              ))}
+              <option value="Custom">Custom</option>
+            </select>
+            
+            {inputs.package === 'Custom' && (
+              <div className="custom-amount-section">
+                <label htmlFor="customAmount">Enter Custom Amount</label>
+                <input
+                  type="number"
+                  name="customAmount"
+                  onChange={handleChange}
+                  value={inputs.customAmount}
+                  min="10"
+                  required
+                />
+              </div>
+            )}
+            
+            <button type="submit" className="submit-button">Proceed to Payment</button>
+          </form>
+        </div>
       </div>
       
       {/* ✅ Impact Stories Section */}
@@ -162,6 +195,9 @@ function DonorDashboard() {
           }}
         />
       )}
+      
+      {/* ✅ Footer - matching exactly with artist/home/events pages */}
+      <MainFooter />
     </div>
   );
 }

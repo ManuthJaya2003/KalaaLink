@@ -12,51 +12,8 @@ import './Marketplace.css';
 
 const BASE_URL = 'http://localhost:5000/api/art';
 
-const ProductCard = ({ product, onAddToCart }) => {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
-  const [reviews, setReviews] = useState([]);
-  const [averageRating, setAverageRating] = useState(0);
-  const [latestReview, setLatestReview] = useState(null);
-
-  // Fetch reviews for this product
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/reviews/product/${product._id}`);
-        const productReviews = response.data;
-        setReviews(productReviews);
-        
-        if (productReviews.length > 0) {
-          // Calculate average rating
-          const totalRating = productReviews.reduce((sum, review) => sum + review.rating, 0);
-          const avgRating = totalRating / productReviews.length;
-          setAverageRating(avgRating);
-          
-          // Set latest review
-          setLatestReview(productReviews[0]);
-        }
-      } catch (error) {
-        console.error('Error fetching reviews:', error);
-      }
-    };
-
-    fetchReviews();
-  }, [product._id]);
-
-  const handleReviewSubmit = (newReview) => {
-    setReviews(prev => [newReview, ...prev]);
-    
-    // Recalculate average rating
-    const updatedReviews = [newReview, ...reviews];
-    const totalRating = updatedReviews.reduce((sum, review) => sum + review.rating, 0);
-    const avgRating = totalRating / updatedReviews.length;
-    setAverageRating(avgRating);
-    
-    // Update latest review
-    setLatestReview(newReview);
-  };
+const ProductCard = ({ product, onAddToCart, onViewDetails, onPostReview, onViewReviews, onBuyNow, reviews, averageRating, latestReview }) => {
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
 
   const renderStars = (rating) => {
     const stars = [];
@@ -79,93 +36,129 @@ const ProductCard = ({ product, onAddToCart }) => {
     return stars;
   };
 
+  const handlePreviousReview = () => {
+    if (reviews && reviews.length > 0) {
+      setCurrentReviewIndex(prev => 
+        prev === 0 ? reviews.length - 1 : prev - 1
+      );
+    }
+  };
+
+  const handleNextReview = () => {
+    if (reviews && reviews.length > 0) {
+      setCurrentReviewIndex(prev => 
+        prev === reviews.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
   return (
     <div className="product-card">
-      <img
-        src={product.image}
-        alt={product.artType}
-        className="product-image"
-        onError={(e) => {
-          e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjOUI1Q0Y2Ii8+CjxwYXRoIGQ9Ik0xMzUgODVIMTY1VjExNUgxMzVWODVaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K';
-        }}
-      />
+      <div className="product-image-container">
+        <img
+          src={product.image}
+          alt={product.artType}
+          className="product-image"
+          onError={(e) => {
+            e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjOUI1Q0Y2Ii8+CjxwYXRoIGQ9Ik0xMzUgODVIMTY1VjExNUgxMzVWODVaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K';
+          }}
+        />
+      </div>
       <div className="product-info">
         <h3 className="product-title">{product.artType}</h3>
         <p className="product-artist"><strong>Artist:</strong> {product.artistName}</p>
-        <p className="product-size"><strong>Size:</strong> {product.size}</p>
-        <p className="product-frame"><strong>Frame:</strong> {product.frameSize}</p>
+        <p className="product-price">LKR {product.price}</p>
         
-        {/* Star Rating Display */}
-        {averageRating > 0 && (
-          <div className="product-rating">
+        {/* Reviews Section - Always show with proper content */}
+        <div className="product-reviews-section">
+          <div className="rating-display">
             <div className="stars">
               {renderStars(averageRating)}
             </div>
-            <span className="rating-text">{averageRating.toFixed(1)} / 5</span>
+            <span className="rating-text">
+              {averageRating.toFixed(1)} ({reviews ? reviews.length : 0} review{(reviews ? reviews.length : 0) !== 1 ? 's' : ''})
+            </span>
           </div>
-        )}
-        
-        {/* Latest Review Preview */}
-        {latestReview && (
           <div className="latest-review">
-            <p className="review-preview">
-              <strong>{latestReview.customerName}:</strong> {latestReview.comment.substring(0, 50)}...
-            </p>
-            <button 
-              className="view-reviews-btn"
-              onClick={() => setIsReviewsModalOpen(true)}
-            >
-              View More Reviews
-            </button>
+            <div className="review-navigation">
+              {reviews && reviews.length > 1 && (
+                <button 
+                  className="review-nav-btn prev-btn"
+                  onClick={handlePreviousReview}
+                  title="Previous review"
+                >
+                  ‹
+                </button>
+              )}
+              <div className="review-content">
+                {reviews && reviews.length > 0 ? (
+                  <>
+                    <p className="review-snippet">
+                      "{reviews[currentReviewIndex].comment.substring(0, 80)}
+                      {reviews[currentReviewIndex].comment.length > 80 ? '...' : ''}"
+                    </p>
+                    <p className="review-author">- {reviews[currentReviewIndex].customerName}</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="review-snippet">No reviews yet</p>
+                    <p className="review-author">- Be the first to review</p>
+                  </>
+                )}
+              </div>
+              {reviews && reviews.length > 1 && (
+                <button 
+                  className="review-nav-btn next-btn"
+                  onClick={handleNextReview}
+                  title="Next review"
+                >
+                  ›
+                </button>
+              )}
+            </div>
+            {reviews && reviews.length > 1 && (
+              <div className="review-indicators">
+                <span className="review-counter">
+                  {currentReviewIndex + 1} of {reviews.length}
+                </span>
+              </div>
+            )}
           </div>
-        )}
-        
-        <p className="product-price">LKR {product.price}</p>
+        </div>
       </div>
-      <div className="product-actions">
-        <button
-          onClick={() => setIsPopupOpen(true)}
-          className="btn btn-primary"
-        >
-          View Details
-        </button>
-        <button
-          onClick={() => onAddToCart(product)}
-          className="btn btn-success"
-        >
-          Add to Cart
-        </button>
-        <button
-          onClick={() => setIsReviewModalOpen(true)}
-          className="btn btn-secondary"
-        >
-          Post a Review
-        </button>
+      <div className="product-buttons">
+        <div className="product-buttons-row">
+          <button
+            onClick={() => onBuyNow(product)}
+            className="btn btn-primary"
+          >
+            Buy Now
+          </button>
+          <button
+            onClick={() => onViewDetails(product)}
+            className="btn btn-secondary"
+          >
+            View Details
+          </button>
+        </div>
+        <div className="product-buttons-row">
+          <button
+            onClick={() => onAddToCart(product)}
+            className="btn btn-secondary"
+          >
+            Add to Cart
+          </button>
+        </div>
+        <div className="product-buttons-row">
+          <button
+            onClick={() => onPostReview(product)}
+            className="btn btn-review"
+          >
+            Post a Review
+          </button>
+        </div>
       </div>
 
-      {isPopupOpen && (
-        <ProductPopup 
-          product={product} 
-          onClose={() => setIsPopupOpen(false)} 
-          onAddToCart={onAddToCart}
-        />
-      )}
-
-      {isReviewModalOpen && (
-        <ReviewModal
-          product={product}
-          onClose={() => setIsReviewModalOpen(false)}
-          onReviewSubmit={handleReviewSubmit}
-        />
-      )}
-
-      {isReviewsModalOpen && (
-        <ReviewsModal
-          product={product}
-          reviews={reviews}
-          onClose={() => setIsReviewsModalOpen(false)}
-        />
-      )}
     </div>
   );
 };
@@ -184,6 +177,15 @@ function Marketplace() {
     frameOption: '',
     style: ''
   });
+
+  // Modal states
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const [productReviews, setProductReviews] = useState({});
+  const [productRatings, setProductRatings] = useState({});
+  const [productLatestReviews, setProductLatestReviews] = useState({});
 
   const fetchProducts = async () => {
     try {
@@ -318,38 +320,329 @@ function Marketplace() {
     };
   }, []);
 
+  // Fetch reviews for a product
+  const fetchProductReviews = async (productId) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/reviews/product/${productId}`);
+      const reviews = response.data;
+      
+      setProductReviews(prev => ({
+        ...prev,
+        [productId]: reviews
+      }));
+      
+      if (reviews.length > 0) {
+        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+        const avgRating = totalRating / reviews.length;
+        
+        setProductRatings(prev => ({
+          ...prev,
+          [productId]: avgRating
+        }));
+        
+        setProductLatestReviews(prev => ({
+          ...prev,
+          [productId]: reviews[0]
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
+
+  // Modal handlers
+  const handleViewDetails = (product) => {
+    setSelectedProduct(product);
+    setIsPopupOpen(true);
+  };
+
+  const handlePostReview = (product) => {
+    setSelectedProduct(product);
+    setIsReviewModalOpen(true);
+    // Fetch reviews if not already loaded
+    if (!productReviews[product._id]) {
+      fetchProductReviews(product._id);
+    }
+  };
+
+  const handleViewReviews = (product) => {
+    setSelectedProduct(product);
+    setIsReviewsModalOpen(true);
+    // Fetch reviews if not already loaded
+    if (!productReviews[product._id]) {
+      fetchProductReviews(product._id);
+    }
+  };
+
+  const handleBuyNow = async (product) => {
+    // Buy Now handler for product cards
+    try {
+      // Prepare order data
+      const orderData = {
+        items: [{
+          productId: product._id,
+          quantity: 1
+        }],
+        customerName: 'Guest Customer',
+        customerEmail: 'guest@example.com',
+        customerPhone: '',
+        deliveryAddress: null,
+        useDelivery: false
+      };
+
+      console.log('Creating order with data:', orderData);
+
+      // Create order and get Stripe checkout URL
+      const response = await axios.post('http://localhost:5000/api/orders/marketplace', orderData);
+      
+      console.log('Order creation response:', response.data);
+      
+      if (response.data.url) {
+        // Redirect to Stripe checkout
+        window.location.href = response.data.url;
+      } else {
+        console.error('Failed to create checkout session');
+      }
+    } catch (err) {
+      console.error('Error creating order:', err);
+    }
+  };
+
+
+  const handleReviewSubmit = (newReview) => {
+    if (selectedProduct) {
+      const productId = selectedProduct._id;
+      const updatedReviews = [newReview, ...(productReviews[productId] || [])];
+      
+      setProductReviews(prev => ({
+        ...prev,
+        [productId]: updatedReviews
+      }));
+      
+      // Recalculate average rating
+      const totalRating = updatedReviews.reduce((sum, review) => sum + review.rating, 0);
+      const avgRating = totalRating / updatedReviews.length;
+      
+      setProductRatings(prev => ({
+        ...prev,
+        [productId]: avgRating
+      }));
+      
+      // Update latest review
+      setProductLatestReviews(prev => ({
+        ...prev,
+        [productId]: newReview
+      }));
+    }
+  };
+
+  // Add to cart handler for modals
+  const handleAddToCart = (product) => {
+    console.log('Adding product to cart:', product);
+    // This will be handled by the cart context in the actual implementation
+    alert(`${product.artType} added to cart!`);
+  };
+
   return (
     <div className="marketplace-page">
       <MainNav />
       
+      {/* Marketplace Hero Video Section */}
+      <div className="marketplace-hero-video">
+        <video
+          className="marketplace-background-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+        >
+          <source src="/marketplaceHeroVid.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <div className="marketplace-container">
+        {/* Art Marketplace Text Section - Matching Events/Artists/Donations exactly */}
+        <div className="marketplace-text-section">
+          <h2 className="marketplace-title">Art Marketplace</h2>
+          <p className="marketplace-subtitle">Discover unique artworks from talented artists around the world</p>
+        </div>
+
       <main className="marketplace-main">
-        <div className="marketplace-container">
-          <header className="marketplace-header">
-            <h1 className="marketplace-title">Art Marketplace</h1>
-            <p className="marketplace-subtitle">
-              Discover unique artworks from talented artists around the world
-            </p>
-            <MarketplaceActionButtons />
-          </header>
-          
-        <MarketplaceContent 
-          products={filteredProducts} 
-          loading={loading} 
-          error={error} 
-          onRetry={fetchProducts}
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onClearFilters={clearFilters}
-        />
+        <div className="marketplace-content">
+          {/* Search and Filter Bar - Matching Events page styling */}
+          {Array.isArray(products) && products.length > 0 && (
+            <div className="search-filter-bar">
+              <div className="search-filter-left">
+                <div className="search-group">
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    className="search-input"
+                    value=""
+                    onChange={() => {}}
+                  />
+                  <button className="search-button" onClick={() => {}}>
+                    Search
+                  </button>
+                </div>
+                <MarketplaceActionButtons />
+              </div>
+
+              <div className="search-filter-right">
+                {/* Price Range Filter */}
+                <div className="filter-group">
+                  <select
+                    id="price-filter"
+                    className="filter-select"
+                    value={filters.priceRange}
+                    onChange={(e) => handleFilterChange('priceRange', e.target.value)}
+                  >
+                    <option value="">All Prices</option>
+                    <option value="below-10000">Below 10,000</option>
+                    <option value="10000-50000">10,000 – 50,000</option>
+                    <option value="50000-200000">50,000 – 200,000</option>
+                    <option value="above-200000">Above 200,000</option>
+                  </select>
+                </div>
+
+                {/* Material/Medium Filter */}
+                <div className="filter-group">
+                  <select
+                    id="material-filter"
+                    className="filter-select"
+                    value={filters.material}
+                    onChange={(e) => handleFilterChange('material', e.target.value)}
+                  >
+                    <option value="">All Materials</option>
+                    <option value="photography">Photography</option>
+                    <option value="painting">Painting</option>
+                    <option value="drawing">Drawing</option>
+                    <option value="mixed media">Mixed Media</option>
+                    <option value="digital">Digital Art</option>
+                    <option value="sculpture">Sculpture</option>
+                  </select>
+                </div>
+
+                {/* Color Palette Filter */}
+                <div className="filter-group">
+                  <select
+                    id="color-filter"
+                    className="filter-select"
+                    value={filters.colorPalette}
+                    onChange={(e) => handleFilterChange('colorPalette', e.target.value)}
+                  >
+                    <option value="">All Colors</option>
+                    <option value="red">Red</option>
+                    <option value="blue">Blue</option>
+                    <option value="green">Green</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="purple">Purple</option>
+                    <option value="orange">Orange</option>
+                    <option value="black">Black</option>
+                    <option value="white">White</option>
+                    <option value="brown">Brown</option>
+                    <option value="pink">Pink</option>
+                  </select>
+                </div>
+
+                {/* Frame Options Filter */}
+                <div className="filter-group">
+                  <select
+                    id="frame-filter"
+                    className="filter-select"
+                    value={filters.frameOption}
+                    onChange={(e) => handleFilterChange('frameOption', e.target.value)}
+                  >
+                    <option value="">All Frame Types</option>
+                    <option value="framed">Framed</option>
+                    <option value="unframed">Unframed</option>
+                    <option value="ready-to-hang">Ready to Hang</option>
+                  </select>
+                </div>
+
+                {/* Style/Genre Filter */}
+                <div className="filter-group">
+                  <select
+                    id="style-filter"
+                    className="filter-select"
+                    value={filters.style}
+                    onChange={(e) => handleFilterChange('style', e.target.value)}
+                  >
+                    <option value="">All Styles</option>
+                    <option value="abstract">Abstract</option>
+                    <option value="realism">Realism</option>
+                    <option value="modern">Modern</option>
+                    <option value="traditional">Traditional</option>
+                    <option value="contemporary">Contemporary</option>
+                    <option value="minimalist">Minimalist</option>
+                    <option value="impressionist">Impressionist</option>
+                  </select>
+                </div>
+
+                <button
+                  className="clear-btn"
+                  onClick={clearFilters}
+                  disabled={!filters.priceRange && !filters.material && !filters.colorPalette && !filters.frameOption && !filters.style}
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+          )}
+
+          <MarketplaceContent 
+            products={filteredProducts} 
+            loading={loading} 
+            error={error} 
+            onRetry={fetchProducts}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onClearFilters={clearFilters}
+            onViewDetails={handleViewDetails}
+            onPostReview={handlePostReview}
+            onViewReviews={handleViewReviews}
+            onBuyNow={handleBuyNow}
+            productReviews={productReviews}
+            productRatings={productRatings}
+            productLatestReviews={productLatestReviews}
+          />
         </div>
       </main>
+      </div>
       
       <MainFooter />
+      
+      {/* Modals */}
+      {isPopupOpen && selectedProduct && (
+        <ProductPopup 
+          product={selectedProduct} 
+          onClose={() => setIsPopupOpen(false)} 
+          onAddToCart={handleAddToCart}
+        />
+      )}
+
+      {isReviewModalOpen && selectedProduct && (
+        <ReviewModal
+          product={selectedProduct}
+          onClose={() => setIsReviewModalOpen(false)}
+          onReviewSubmit={handleReviewSubmit}
+        />
+      )}
+
+      {isReviewsModalOpen && selectedProduct && (
+        <ReviewsModal
+          product={selectedProduct}
+          reviews={productReviews[selectedProduct._id] || []}
+          onClose={() => setIsReviewsModalOpen(false)}
+        />
+      )}
+
     </div>
   );
 }
 
-const MarketplaceContent = ({ products, loading, error, onRetry, filters, onFilterChange, onClearFilters }) => {
+const MarketplaceContent = ({ products, loading, error, onRetry, filters, onFilterChange, onClearFilters, onViewDetails, onPostReview, onViewReviews, onBuyNow, productReviews, productRatings, productLatestReviews }) => {
   const { setCart } = useCart();
 
   const handleAddToCart = (product) => {
@@ -408,113 +701,19 @@ const MarketplaceContent = ({ products, loading, error, onRetry, filters, onFilt
 
   return (
     <div className="marketplace-products">
-      {/* Filter Panel */}
-      <div className="filter-panel">
-        <h3>Filter Products</h3>
-        <div className="filter-grid">
-          {/* Price Range Filter */}
-          <div className="filter-group">
-            <label>Price Range (LKR)</label>
-            <select 
-              value={filters.priceRange} 
-              onChange={(e) => onFilterChange('priceRange', e.target.value)}
-            >
-              <option value="">All Prices</option>
-              <option value="below-10000">Below 10,000</option>
-              <option value="10000-50000">10,000 – 50,000</option>
-              <option value="50000-200000">50,000 – 200,000</option>
-              <option value="above-200000">Above 200,000</option>
-            </select>
-          </div>
-
-          {/* Material/Medium Filter */}
-          <div className="filter-group">
-            <label>Material / Medium</label>
-            <select 
-              value={filters.material} 
-              onChange={(e) => onFilterChange('material', e.target.value)}
-            >
-              <option value="">All Materials</option>
-              <option value="photography">Photography</option>
-              <option value="painting">Painting</option>
-              <option value="drawing">Drawing</option>
-              <option value="mixed media">Mixed Media</option>
-              <option value="digital">Digital Art</option>
-              <option value="sculpture">Sculpture</option>
-            </select>
-          </div>
-
-          {/* Color Palette Filter */}
-          <div className="filter-group">
-            <label>Color Palette</label>
-            <select 
-              value={filters.colorPalette} 
-              onChange={(e) => onFilterChange('colorPalette', e.target.value)}
-            >
-              <option value="">All Colors</option>
-              <option value="red">Red</option>
-              <option value="blue">Blue</option>
-              <option value="green">Green</option>
-              <option value="yellow">Yellow</option>
-              <option value="purple">Purple</option>
-              <option value="orange">Orange</option>
-              <option value="black">Black</option>
-              <option value="white">White</option>
-              <option value="brown">Brown</option>
-              <option value="pink">Pink</option>
-            </select>
-          </div>
-
-          {/* Frame Options Filter */}
-          <div className="filter-group">
-            <label>Frame Options</label>
-            <select 
-              value={filters.frameOption} 
-              onChange={(e) => onFilterChange('frameOption', e.target.value)}
-            >
-              <option value="">All Frame Types</option>
-              <option value="framed">Framed</option>
-              <option value="unframed">Unframed</option>
-              <option value="ready-to-hang">Ready to Hang</option>
-            </select>
-          </div>
-
-          {/* Style/Genre Filter */}
-          <div className="filter-group">
-            <label>Style / Genre</label>
-            <select 
-              value={filters.style} 
-              onChange={(e) => onFilterChange('style', e.target.value)}
-            >
-              <option value="">All Styles</option>
-              <option value="abstract">Abstract</option>
-              <option value="realism">Realism</option>
-              <option value="modern">Modern</option>
-              <option value="traditional">Traditional</option>
-              <option value="contemporary">Contemporary</option>
-              <option value="minimalist">Minimalist</option>
-              <option value="impressionist">Impressionist</option>
-            </select>
-          </div>
-
-          {/* Clear Filters Button */}
-          <div className="filter-group">
-            <button 
-              className="clear-filters-btn"
-              onClick={onClearFilters}
-            >
-              Clear All Filters
-            </button>
-          </div>
-        </div>
-      </div>
-
       <div className="products-grid">
         {products.map(product => (
           <ProductCard 
             key={product._id} 
             product={product} 
-            onAddToCart={handleAddToCart} 
+            onAddToCart={handleAddToCart}
+            onViewDetails={onViewDetails}
+            onPostReview={onPostReview}
+            onViewReviews={onViewReviews}
+            onBuyNow={onBuyNow}
+            reviews={productReviews[product._id] || []}
+            averageRating={productRatings[product._id] || 0}
+            latestReview={productLatestReviews[product._id] || null}
           />
         ))}
       </div>
@@ -613,5 +812,6 @@ function MarketplaceActionButtons() {
     </>
   );
 }
+
 
 export default Marketplace;

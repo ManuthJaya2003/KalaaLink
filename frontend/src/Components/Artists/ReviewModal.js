@@ -153,7 +153,7 @@ const ReviewModal = ({ isOpen, onClose, artist, onReviewSubmitted }) => {
                 value={formData.review}
                 onChange={handleInputChange}
                 placeholder="Share your experience with this artist..."
-                rows="4"
+                rows="2"
                 required
                 disabled={isSubmitting}
               />

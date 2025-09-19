@@ -11,15 +11,6 @@
   margin-top: var(--space-3xl);
 }
 
-.footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--color-accent-green), var(--color-accent-blue));
-}
 
 .footer-container {
   max-width: 1200px;
@@ -38,25 +29,28 @@
   position: relative;
 }
 
+.footer-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: var(--space-md);
+}
+
+.footer-logo {
+  height: 35px;
+  width: auto;
+  vertical-align: middle;
+}
+
 .footer-section h2 {
   font-family: var(--font-family-serif);
   font-size: var(--text-2xl);
   font-weight: 700;
   color: #000000;
-  margin-bottom: var(--space-md);
+  margin: 0;
   position: relative;
 }
 
-.footer-section h2::after {
-  content: '';
-  position: absolute;
-  bottom: -var(--space-xs);
-  left: 0;
-  width: 40px;
-  height: 2px;
-  background: var(--color-accent-green);
-  border-radius: var(--radius-small);
-}
 
 .footer-section h3 {
   font-family: var(--font-family-serif);
@@ -67,16 +61,6 @@
   position: relative;
 }
 
-.footer-section h3::after {
-  content: '';
-  position: absolute;
-  bottom: -var(--space-xs);
-  left: 0;
-  width: 30px;
-  height: 2px;
-  background: var(--color-accent-green);
-  border-radius: var(--radius-small);
-}
 
 .footer-section p {
   color: #000000;
@@ -144,6 +128,12 @@
   font-weight: 600;
 }
 
+.social-icons a svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
 .social-icons a:hover {
   background: #333333;
   transform: translateY(-2px);
@@ -159,17 +149,6 @@
   position: relative;
 }
 
-.footer-bottom::before {
-  content: '🌸';
-  position: absolute;
-  left: 50%;
-  top: -10px;
-  transform: translateX(-50%);
-  background: #C1A37F;
-  padding: 0 var(--space-sm);
-  font-size: var(--text-lg);
-  opacity: 0.8;
-}
 
 .footer-bottom p {
   margin: 0;
@@ -188,11 +167,6 @@
     text-align: center;
   }
   
-  .footer-section h2::after,
-  .footer-section h3::after {
-    left: 50%;
-    transform: translateX(-50%);
-  }
   
   .social-icons {
     justify-content: center;

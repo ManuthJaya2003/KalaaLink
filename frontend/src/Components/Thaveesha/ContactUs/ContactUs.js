@@ -105,7 +105,12 @@ function ContactUs() {
         <section className="help-section">
           <h2>Help Center</h2>
           <p>Have a problem or need assistance? We're here to help.</p>
-          <button className="help-btn" onClick={openComplaintForm}>Open A Complaint</button>
+          <p className="help-subtext">
+            Our dedicated support team is available to assist you with any questions, concerns, or issues you may have. 
+            Whether you need help with your account, have questions about our services, or want to report a problem, 
+            we're committed to providing you with timely and helpful assistance.
+          </p>
+          <button className="help-btn" onClick={openComplaintForm}>Lodge a Complaint</button>
         </section>
 
         {/* Complaint Form Modal */}

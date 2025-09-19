@@ -34,36 +34,38 @@
 }
 
 .geocode-btn {
-  padding: 12px 20px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: 12px 20px !important;
+  background: #000000 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .geocode-btn:hover {
-  background: #2563eb;
+  background: #ffffff !important;
+  color: #000000 !important;
   transform: translateY(-1px);
 }
 
 .toggle-map-btn {
   width: 100%;
-  padding: 12px 20px;
-  background: #10b981;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: 12px 20px !important;
+  background: #000000 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .toggle-map-btn:hover {
-  background: #059669;
+  background: #ffffff !important;
+  color: #000000 !important;
   transform: translateY(-1px);
 }
 

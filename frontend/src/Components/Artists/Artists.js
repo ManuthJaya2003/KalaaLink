@@ -55,8 +55,10 @@ function Artists() {
   const [isViewReviewsModalOpen, setIsViewReviewsModalOpen] = useState(false);
   const [artistReviews, setArtistReviews] = useState({});
   const [artistRatings, setArtistRatings] = useState({});
+  const [currentReviewIndex, setCurrentReviewIndex] = useState({});
   
   // Filtering state
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [genres, setGenres] = useState([]);
@@ -111,9 +113,19 @@ function Artists() {
     setSelectedCategory("");
   }, [selectedGenre]);
 
-  // Filter artists based on selected genre and category
+  // Filter artists based on search term, selected genre and category
   useEffect(() => {
     let filtered = artists;
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(artist => 
+        artist.artistName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        artist.genre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        artist.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (artist.bio && artist.bio.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
 
     if (selectedGenre) {
       filtered = filtered.filter(artist => artist.genre === selectedGenre);
@@ -124,7 +136,7 @@ function Artists() {
     }
 
     setFilteredArtists(filtered);
-  }, [artists, selectedGenre, selectedCategory]);
+  }, [artists, searchTerm, selectedGenre, selectedCategory]);
 
   // Handle URL parameters for payment success/cancelled
   useEffect(() => {
@@ -223,6 +235,10 @@ function Artists() {
   };
 
   // Filter handlers
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
   const handleGenreChange = (e) => {
     setSelectedGenre(e.target.value);
   };
@@ -232,6 +248,7 @@ function Artists() {
   };
 
   const handleClearFilters = () => {
+    setSearchTerm("");
     setSelectedGenre("");
     setSelectedCategory("");
   };
@@ -284,6 +301,27 @@ function Artists() {
   const handleViewReviews = (artist) => {
     setSelectedArtist(artist);
     setIsViewReviewsModalOpen(true);
+  };
+
+  // Review navigation functions
+  const handlePreviousReview = (artistId) => {
+    const reviews = artistReviews[artistId] || [];
+    const currentIndex = currentReviewIndex[artistId] || 0;
+    const newIndex = currentIndex > 0 ? currentIndex - 1 : reviews.length - 1;
+    setCurrentReviewIndex(prev => ({
+      ...prev,
+      [artistId]: newIndex
+    }));
+  };
+
+  const handleNextReview = (artistId) => {
+    const reviews = artistReviews[artistId] || [];
+    const currentIndex = currentReviewIndex[artistId] || 0;
+    const newIndex = currentIndex < reviews.length - 1 ? currentIndex + 1 : 0;
+    setCurrentReviewIndex(prev => ({
+      ...prev,
+      [artistId]: newIndex
+    }));
   };
 
   // Handle review submission
@@ -342,13 +380,87 @@ function Artists() {
   return (
     <div>
       <MainNav />
+      
+      {/* Hero Video Section */}
+      <div className="artists-hero-video">
+        <video
+          className="artists-background-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+        >
+          <source src="/artist-hero-video.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
       <div className="artists-container">
-        <div className="artists-header">
-          <h1 className="artists-title">Our Artists</h1>
-          <p className="artists-subtitle">
-            Discover the incredible talent we represent. Book them for your next
-            event or view their stunning portfolios.
-          </p>
+        {/* Explore Artists Text */}
+        <div className="explore-artists-text">
+          <h2 className="artists-title">Explore our amazing artists</h2>
+          <p className="artists-subtitle">Discover talented artists across various genres and categories.</p>
+        </div>
+
+        {/* Search and Filter Bar */}
+        <div className="search-filter-bar">
+          <div className="search-filter-left">
+            <div className="search-group">
+              <input
+                type="text"
+                placeholder="Search artists..."
+                className="search-input"
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+              <button className="search-button" onClick={() => {}}>
+                Search
+              </button>
+            </div>
+          </div>
+
+          <div className="search-filter-right">
+            <div className="filter-group">
+              <select
+                id="genre-filter"
+                className="filter-select"
+                value={selectedGenre}
+                onChange={handleGenreChange}
+              >
+                <option value="">All Genres</option>
+                {genres.map((genre, index) => (
+                  <option key={index} value={genre}>
+                    {genre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <select
+                id="category-filter"
+                className="filter-select"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                disabled={!selectedGenre}
+              >
+                <option value="">All Categories</option>
+                {categories.map((category, index) => (
+                  <option key={index} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              className="clear-btn"
+              onClick={handleClearFilters}
+              disabled={!searchTerm && !selectedGenre && !selectedCategory}
+            >
+              Clear Filters
+            </button>
+          </div>
         </div>
 
         {/* Payment Status Messages */}
@@ -366,51 +478,6 @@ function Artists() {
           </div>
         )}
 
-        {/* Filter Controls */}
-        <div className="filter-container">
-          <div className="filter-group">
-            <label htmlFor="genre-filter" className="filter-label">Genre:</label>
-            <select
-              id="genre-filter"
-              className="filter-select"
-              value={selectedGenre}
-              onChange={handleGenreChange}
-            >
-              <option value="">All Genres</option>
-              {genres.map((genre, index) => (
-                <option key={index} value={genre}>
-                  {genre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label htmlFor="category-filter" className="filter-label">Category:</label>
-            <select
-              id="category-filter"
-              className="filter-select"
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-              disabled={!selectedGenre}
-            >
-              <option value="">All Categories</option>
-              {categories.map((category, index) => (
-                <option key={index} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            className="clear-btn"
-            onClick={handleClearFilters}
-            disabled={!selectedGenre && !selectedCategory}
-          >
-            Clear Filters
-          </button>
-        </div>
 
         {filteredArtists.length === 0 ? (
           <p>No artists found.</p>
@@ -450,7 +517,7 @@ function Artists() {
                   <p className="artist-category">{artist.category}</p>
 
                   {/* Review Section */}
-                  <div className="artist-reviews-section">
+                  <div className={`artist-reviews-section ${(!artistRatings[artist._id] || artistRatings[artist._id].totalReviews === 0) ? 'no-reviews-section' : ''}`}>
                     {artistRatings[artist._id] && artistRatings[artist._id].totalReviews > 0 ? (
                       <>
                         <div className="rating-display">
@@ -461,48 +528,81 @@ function Artists() {
                         </div>
                         {artistReviews[artist._id] && artistReviews[artist._id].length > 0 && (
                           <div className="latest-review">
-                            <p className="review-snippet">
-                              "{artistReviews[artist._id][0].review.substring(0, 80)}
-                              {artistReviews[artist._id][0].review.length > 80 ? '...' : ''}"
-                            </p>
-                            <p className="review-author">- {artistReviews[artist._id][0].customerName}</p>
+                            <div className="review-navigation">
+                              {artistReviews[artist._id].length > 1 && (
+                                <button 
+                                  className="review-nav-btn prev-btn"
+                                  onClick={() => handlePreviousReview(artist._id)}
+                                  title="Previous review"
+                                >
+                                  ‹
+                                </button>
+                              )}
+                              <div className="review-content">
+                                <p className="review-snippet">
+                                  "{artistReviews[artist._id][currentReviewIndex[artist._id] || 0].review.substring(0, 80)}
+                                  {artistReviews[artist._id][currentReviewIndex[artist._id] || 0].review.length > 80 ? '...' : ''}"
+                                </p>
+                                <p className="review-author">- {artistReviews[artist._id][currentReviewIndex[artist._id] || 0].customerName}</p>
+                              </div>
+                              {artistReviews[artist._id].length > 1 && (
+                                <button 
+                                  className="review-nav-btn next-btn"
+                                  onClick={() => handleNextReview(artist._id)}
+                                  title="Next review"
+                                >
+                                  ›
+                                </button>
+                              )}
+                            </div>
+                            {artistReviews[artist._id].length > 1 && (
+                              <div className="review-indicators">
+                                <span className="review-counter">
+                                  {(currentReviewIndex[artist._id] || 0) + 1} of {artistReviews[artist._id].length}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         )}
                       </>
                     ) : (
                       <div className="no-reviews">
-                        <span className="no-reviews-text">No reviews yet</span>
+                        <span className="no-reviews-text">No reviews</span>
                       </div>
                     )}
                   </div>
 
                   <div className="artist-buttons">
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => handleBookNow(artist)}
-                    >
-                      Book Now
-                    </button>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => handleViewDetails(artist)}
-                    >
-                      View Details
-                    </button>
-                    <button
-                      className="btn btn-review"
-                      onClick={() => handlePostReview(artist)}
-                    >
-                      Post Review
-                    </button>
-                    {artistRatings[artist._id] && artistRatings[artist._id].totalReviews > 0 && (
+                    <div className="artist-buttons-row">
                       <button
-                        className="btn btn-reviews"
-                        onClick={() => handleViewReviews(artist)}
+                        className="btn btn-primary"
+                        onClick={() => handleBookNow(artist)}
                       >
-                        View Reviews
+                        Book Now
                       </button>
-                    )}
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => handleViewDetails(artist)}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                    <div className="artist-buttons-column">
+                      <button
+                        className="btn btn-review btn-wide"
+                        onClick={() => handlePostReview(artist)}
+                      >
+                        Post Review
+                      </button>
+                      {artistRatings[artist._id] && artistRatings[artist._id].totalReviews > 0 && (
+                        <button
+                          className="btn btn-reviews btn-wide"
+                          onClick={() => handleViewReviews(artist)}
+                        >
+                          View Reviews
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -534,38 +634,33 @@ function Artists() {
               )}
 
               <div className="modal-details">
-                <div className="detail-item">
-                  <span className="detail-label">ID</span>
-                  <span className="detail-value">{selectedArtist._id}</span>
+                <div className="detail-item" style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0px', width: '100%', marginBottom: '8px'}}>
+                  <span className="detail-label" style={{width: '80px', minWidth: '80px', maxWidth: '80px', flexShrink: 0, margin: 0, padding: 0}}>Genre</span>
+                  <span className="detail-value" style={{flex: '0 0 auto', margin: 0, padding: 0, marginLeft: '0px'}}>{selectedArtist.genre}</span>
                 </div>
 
-                <div className="detail-item">
-                  <span className="detail-label">Genre</span>
-                  <span className="detail-value">{selectedArtist.genre}</span>
-                </div>
-
-                <div className="detail-item">
-                  <span className="detail-label">Category</span>
-                  <span className="detail-value">
+                <div className="detail-item" style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0px', width: '100%', marginBottom: '8px'}}>
+                  <span className="detail-label" style={{width: '80px', minWidth: '80px', maxWidth: '80px', flexShrink: 0, margin: 0, padding: 0}}>Category</span>
+                  <span className="detail-value" style={{flex: '0 0 auto', margin: 0, padding: 0, marginLeft: '0px'}}>
                     {selectedArtist.category}
                   </span>
                 </div>
 
-                <div className="detail-item">
-                  <span className="detail-label">Booking Price</span>
-                  <span className="detail-value price">
+                <div className="detail-item" style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0px', width: '100%'}}>
+                  <span className="detail-label" style={{width: '80px', minWidth: '80px', maxWidth: '80px', flexShrink: 0, margin: 0, padding: 0}}>Booking Price</span>
+                  <span className="detail-value price" style={{flex: '0 0 auto', margin: 0, padding: 0, marginLeft: '0px'}}>
                     LKR {selectedArtist.bookingPrice}
                   </span>
                 </div>
 
-                <div className="detail-item">
-                  <span className="detail-label">Summary</span>
-                  <span className="detail-value">{selectedArtist.summary}</span>
+                <div className="detail-item" style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: '0px', width: '100%', marginBottom: '8px'}}>
+                  <span className="detail-label" style={{width: '80px', minWidth: '80px', maxWidth: '80px', flexShrink: 0, margin: 0, padding: 0}}>Summary</span>
+                  <span className="detail-value" style={{flex: '0 0 auto', margin: 0, padding: 0, marginLeft: '0px'}}>{selectedArtist.summary}</span>
                 </div>
 
-                <div className="detail-item">
-                  <span className="detail-label">Bio</span>
-                  <span className="detail-value">{selectedArtist.bio}</span>
+                <div className="detail-item" style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: '0px', width: '100%', marginBottom: '8px'}}>
+                  <span className="detail-label" style={{width: '80px', minWidth: '80px', maxWidth: '80px', flexShrink: 0, margin: 0, padding: 0}}>Bio</span>
+                  <span className="detail-value" style={{flex: '0 0 auto', margin: 0, padding: 0, marginLeft: '0px'}}>{selectedArtist.bio}</span>
                 </div>
               </div>
             </div>

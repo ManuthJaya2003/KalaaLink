@@ -16,9 +16,10 @@
   background: white;
   border-radius: 12px;
   width: 100%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-width: 700px;
+  height: auto;
+  max-height: 95vh;
+  overflow: visible;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.3s ease-out;
 }
@@ -38,7 +39,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: 8px 16px;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -71,17 +72,18 @@
 }
 
 .review-modal-body {
-  padding: 24px;
+  padding: 6px 12px 8px 12px;
+  min-height: 400px;
 }
 
 .artist-info {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-  padding: 16px;
+  gap: 6px;
+  margin-bottom: 6px;
+  padding: 4px;
   background-color: #f9fafb;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .artist-profile-image {
@@ -96,7 +98,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -122,13 +124,17 @@
 .review-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
 }
 
 .form-group label {
@@ -139,19 +145,28 @@
 
 .form-group input,
 .form-group textarea {
-  padding: 12px;
+  padding: 10px;
   border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
   transition: border-color 0.2s ease;
   font-family: inherit;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none !important;
+  border-color: #C1A37F !important;
+  box-shadow: 0 0 0 2px rgba(193, 163, 127, 0.2) !important;
+}
+
+/* Remove all green outlines from form elements */
+.review-modal input:focus,
+.review-modal textarea:focus,
+.review-modal select:focus {
+  outline: none !important;
+  border-color: #C1A37F !important;
+  box-shadow: 0 0 0 2px rgba(193, 163, 127, 0.2) !important;
 }
 
 .form-group input:disabled,
@@ -162,35 +177,48 @@
 
 .form-group textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 40px;
 }
 
 .error-message {
   background-color: #fef2f2;
   color: #dc2626;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 6px;
+  border-radius: 6px;
   border: 1px solid #fecaca;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
+  margin: 0;
 }
 
 .form-actions {
   display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 8px;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 4px 0 0 0;
+  border-top: 1px solid #e5e7eb;
 }
 
-.btn {
-  padding: 12px 24px;
+.review-modal-content .btn,
+.review-modal-body .btn,
+.review-form .btn {
+  padding: 6px 12px;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 100px;
+  width: 90px;
+  height: 32px;
+  text-align: center;
+  flex-shrink: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn:disabled {
@@ -198,27 +226,128 @@
   cursor: not-allowed;
 }
 
-.btn-secondary {
-  background-color: #f3f4f6;
-  color: #374151;
+.review-modal-content .btn-secondary,
+.review-modal-body .btn-secondary,
+.review-form .btn-secondary {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
 }
 
-.btn-secondary:hover:not(:disabled) {
-  background-color: #e5e7eb;
-}
-
-.btn-primary {
-  background-color: #667eea;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: #5a67d8;
+.review-modal-content .btn-secondary:hover:not(:disabled),
+.review-modal-body .btn-secondary:hover:not(:disabled),
+.review-form .btn-secondary:hover:not(:disabled) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.review-modal-content .btn-secondary:focus,
+.review-modal-body .btn-secondary:focus,
+.review-form .btn-secondary:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.review-modal-content .btn-secondary:active,
+.review-modal-body .btn-secondary:active,
+.review-form .btn-secondary:active {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  transform: translateY(0);
+}
+
+/* Maximum specificity for submit button */
+.review-modal-overlay .review-modal-content .btn-primary,
+.review-modal-overlay .review-modal-body .btn-primary,
+.review-modal-overlay .review-form .btn-primary,
+.review-modal-content .btn-primary,
+.review-modal-body .btn-primary,
+.review-form .btn-primary,
+button.btn.btn-primary {
+  background: #C1A37F !important;
+  background-color: #C1A37F !important;
+  background-image: none !important;
+  color: #000000 !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+}
+
+.review-modal-overlay .review-modal-content .btn-primary:hover:not(:disabled),
+.review-modal-overlay .review-modal-body .btn-primary:hover:not(:disabled),
+.review-modal-overlay .review-form .btn-primary:hover:not(:disabled),
+.review-modal-content .btn-primary:hover:not(:disabled),
+.review-modal-body .btn-primary:hover:not(:disabled),
+.review-form .btn-primary:hover:not(:disabled),
+button.btn.btn-primary:hover:not(:disabled) {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.review-modal-overlay .review-modal-content .btn-primary:focus,
+.review-modal-overlay .review-modal-body .btn-primary:focus,
+.review-modal-overlay .review-form .btn-primary:focus,
+.review-modal-content .btn-primary:focus,
+.review-modal-body .btn-primary:focus,
+.review-form .btn-primary:focus,
+button.btn.btn-primary:focus {
+  background: #C1A37F !important;
+  background-color: #C1A37F !important;
+  background-image: none !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(193, 163, 127, 0.3) !important;
+}
+
+.review-modal-overlay .review-modal-content .btn-primary:active,
+.review-modal-overlay .review-modal-body .btn-primary:active,
+.review-modal-overlay .review-form .btn-primary:active,
+.review-modal-content .btn-primary:active,
+.review-modal-body .btn-primary:active,
+.review-form .btn-primary:active,
+button.btn.btn-primary:active {
+  background: #C1A37F !important;
+  background-color: #C1A37F !important;
+  background-image: none !important;
+  color: #000000 !important;
+  transform: translateY(0);
 }
 
 .btn-primary:active:not(:disabled) {
   transform: translateY(0);
+}
+
+/* Final override for submit button - maximum specificity */
+button[type="submit"].btn.btn-primary,
+.review-modal button[type="submit"],
+.review-modal .btn-primary[type="submit"] {
+  background: #C1A37F !important;
+  background-color: #C1A37F !important;
+  background-image: none !important;
+  color: #000000 !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+button[type="submit"].btn.btn-primary:hover,
+.review-modal button[type="submit"]:hover,
+.review-modal .btn-primary[type="submit"]:hover {
+  background: #B8956A !important;
+  background-color: #B8956A !important;
+  background-image: none !important;
+  color: #000000 !important;
 }
 
 /* Responsive design */
