@@ -144,7 +144,7 @@ function BookArtist() {
 
       if (!res.data || !res.data.url) {
         console.error("Payment session URL missing:", res.data);
-        showMessage("Payment session creation failed", "error");
+        showMessage("Payment session creation failed. Please try again.", "error");
         return;
       }
 
@@ -152,7 +152,13 @@ function BookArtist() {
       window.location.href = res.data.url;
     } catch (err) {
       console.error("Payment error:", err.response || err);
-      const errorMessage = err.response?.data?.message || err.message || "Payment setup failed";
+      console.error("Error details:", {
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        data: err.response?.data,
+        message: err.message
+      });
+      const errorMessage = err.response?.data?.message || err.message || "Payment setup failed. Please try again.";
       showMessage(errorMessage, "error");
     } finally {
       setIsProcessing(false);

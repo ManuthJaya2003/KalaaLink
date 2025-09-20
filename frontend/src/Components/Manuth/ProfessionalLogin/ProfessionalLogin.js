@@ -176,12 +176,12 @@ function ProfessionalLogin() {
           </div>
 
           <div className="login-image-section">
-            <div className="login-image-placeholder">
-              <div className="placeholder-content">
-                <div className="placeholder-icon">👔</div>
-                <h3>Professional Access</h3>
-                <p>Manage your organization's events, artists, and operations with our professional tools.</p>
-              </div>
+            <div className="login-image-container">
+              <img 
+                src="/professionalLogin.jpg" 
+                alt="Professional Login" 
+                className="login-image"
+              />
             </div>
           </div>
         </div>

@@ -1,0 +1,369 @@
+/* Edit Artist Modal Styles */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0 24px;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.modal-form {
+  padding: 0 24px 24px 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #374151;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #C1A37F;
+  box-shadow: 0 0 0 3px rgba(193, 163, 127, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* BULLETPROOF BUTTON ALIGNMENT */
+.modal-actions {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 20px !important;
+  margin-top: 32px !important;
+  padding: 24px 0 !important;
+  border-top: 1px solid #e5e7eb !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.edit-artist-modal .modal-actions {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 20px !important;
+  margin-top: 32px !important;
+  padding: 24px 0 !important;
+  border-top: 1px solid #e5e7eb !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.modal-actions .btn {
+  display: inline-block !important;
+  width: 120px !important;
+  height: 44px !important;
+  padding: 12px 24px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  text-align: center !important;
+  line-height: 20px !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+}
+
+.edit-artist-modal .modal-actions .btn {
+  display: inline-block !important;
+  width: 120px !important;
+  height: 44px !important;
+  padding: 12px 24px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  text-align: center !important;
+  line-height: 20px !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+}
+
+.modal-actions .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* High specificity button overrides for Edit Artist Modal */
+.edit-artist-modal .modal-actions .btn-secondary,
+.edit-artist-modal .modal-actions button.btn-secondary,
+.modal-overlay .edit-artist-modal .modal-actions .btn-secondary,
+.modal-overlay .edit-artist-modal .modal-actions button.btn-secondary {
+  background: #000000 !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  min-width: 120px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+.edit-artist-modal .modal-actions .btn-secondary:hover:not(:disabled),
+.edit-artist-modal .modal-actions button.btn-secondary:hover:not(:disabled),
+.modal-overlay .edit-artist-modal .modal-actions .btn-secondary:hover:not(:disabled),
+.modal-overlay .edit-artist-modal .modal-actions button.btn-secondary:hover:not(:disabled) {
+  background: #333333 !important;
+  transform: translateY(-1px);
+}
+
+.edit-artist-modal .modal-actions .btn-primary,
+.edit-artist-modal .modal-actions button.btn-primary,
+.modal-overlay .edit-artist-modal .modal-actions .btn-primary,
+.modal-overlay .edit-artist-modal .modal-actions button.btn-primary {
+  background: #C1A37F !important;
+  color: #000000 !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  min-width: 120px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+.edit-artist-modal .modal-actions .btn-primary:hover:not(:disabled),
+.edit-artist-modal .modal-actions button.btn-primary:hover:not(:disabled),
+.modal-overlay .edit-artist-modal .modal-actions .btn-primary:hover:not(:disabled),
+.modal-overlay .edit-artist-modal .modal-actions button.btn-primary:hover:not(:disabled) {
+  background: #a68b5f !important;
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 10px;
+  }
+  
+  .modal-content {
+    max-height: 95vh;
+  }
+  
+  .modal-header {
+    padding: 20px 20px 0 20px;
+  }
+  
+  .modal-form {
+    padding: 0 20px 20px 20px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+  
+  .modal-actions .btn {
+    width: 100%;
+  }
+}
+
+/* Form validation styles */
+.form-input:invalid,
+.form-textarea:invalid {
+  border-color: #ef4444;
+}
+
+.form-input:valid,
+.form-textarea:valid {
+  border-color: #10b981;
+}
+
+/* Loading state */
+.btn:disabled {
+  position: relative;
+}
+
+.btn:disabled::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  border: 2px solid transparent;
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Additional high specificity overrides to ensure button styling */
+div.modal-overlay div.edit-artist-modal div.modal-actions button.btn-secondary {
+  background: #000000 !important;
+  color: white !important;
+  border: none !important;
+}
+
+div.modal-overlay div.edit-artist-modal div.modal-actions button.btn-primary {
+  background: #C1A37F !important;
+  color: #000000 !important;
+  border: none !important;
+}
+
+/* Maximum specificity overrides */
+.modal-overlay .edit-artist-modal .modal-actions button[type="button"].btn-secondary {
+  background: #000000 !important;
+  color: white !important;
+  border: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 120px !important;
+  height: 44px !important;
+}
+
+.modal-overlay .edit-artist-modal .modal-actions button[type="submit"].btn-primary {
+  background: #C1A37F !important;
+  color: #000000 !important;
+  border: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 120px !important;
+  height: 44px !important;
+}
+
+/* NUCLEAR OPTION - FORCE PERFECT ALIGNMENT */
+.edit-artist-modal .modal-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 20px !important;
+  width: 100% !important;
+  margin: 32px auto 0 auto !important;
+  padding: 24px 0 !important;
+  text-align: center !important;
+}
+
+.edit-artist-modal .modal-actions .btn {
+  display: inline-block !important;
+  width: 120px !important;
+  height: 44px !important;
+  margin: 0 !important;
+  padding: 12px 24px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  text-align: center !important;
+  line-height: 20px !important;
+  vertical-align: top !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+}
+
+/* OVERRIDE EVERYTHING */
+div.modal-overlay div.edit-artist-modal div.modal-actions {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 20px !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+div.modal-overlay div.edit-artist-modal div.modal-actions button {
+  display: inline-block !important;
+  width: 120px !important;
+  height: 44px !important;
+  margin: 0 !important;
+  padding: 12px 24px !important;
+  text-align: center !important;
+  line-height: 20px !important;
+  vertical-align: top !important;
+}

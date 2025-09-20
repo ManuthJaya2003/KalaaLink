@@ -7,6 +7,7 @@ const API_URL = 'http://localhost:5000/api/crew-requests';
 function CrewRequestsTab() {
   const [crewRequests, setCrewRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all'); // all, pending, approved, rejected
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -23,9 +24,21 @@ function CrewRequestsTab() {
     try {
       setLoading(true);
       const response = await axios.get(API_URL);
-      setCrewRequests(response.data);
+      console.log('Crew requests response:', response.data);
+      
+      const requests = response.data.crewRequests || response.data || [];
+      
+      // Ensure all requests have a status
+      const normalizedRequests = requests.map(request => ({
+        ...request,
+        status: request.status || 'pending'
+      }));
+      
+      setCrewRequests(normalizedRequests);
+      setError(null);
     } catch (error) {
       console.error('Error fetching crew requests:', error);
+      setError('Failed to fetch crew requests. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -165,7 +178,8 @@ function CrewRequestsTab() {
 
   // Get status badge class
   const getStatusBadgeClass = (status) => {
-    switch (status) {
+    if (!status) return 'status-pending';
+    switch (status.toLowerCase()) {
       case 'pending': return 'status-pending';
       case 'approved': return 'status-approved';
       case 'rejected': return 'status-rejected';
@@ -209,7 +223,6 @@ function CrewRequestsTab() {
   if (loading) {
     return (
       <div className="crew-requests-loading">
-        <div className="loading-spinner"></div>
         <p>Loading crew requests...</p>
       </div>
     );
@@ -217,9 +230,9 @@ function CrewRequestsTab() {
 
   return (
     <div className="crew-requests-tab">
-      <div className="tab-header">
-        <h2>👷 Crew Requests Management</h2>
-        <p>Review and manage crew requests from event managers</p>
+      <div className="section-header">
+        <h1>Crew Requests Management</h1>
+        <p className="section-subtitle">Review and manage crew requests from event managers</p>
       </div>
 
       {/* Filter Tabs */}
@@ -262,7 +275,7 @@ function CrewRequestsTab() {
               onClick={() => handleClearRequests(filter)}
               disabled={crewRequests.filter(r => r.status === filter).length === 0}
             >
-              🗑️ Clear {filter.charAt(0).toUpperCase() + filter.slice(1)}
+              Clear {filter.charAt(0).toUpperCase() + filter.slice(1)}
             </button>
           </div>
         </div>
@@ -272,7 +285,6 @@ function CrewRequestsTab() {
       <div className="crew-requests-list">
         {filteredRequests.length === 0 ? (
           <div className="no-requests">
-            <div className="no-requests-icon">📋</div>
             <h3>No crew requests found</h3>
             <p>No crew requests match the current filter.</p>
           </div>
@@ -283,91 +295,109 @@ function CrewRequestsTab() {
                 <div className="request-info">
                   <h3 className="event-title">{request.eventId?.eventTitle || 'Event Not Found'}</h3>
                   <p className="event-details">
-                    📅 {formatDate(request.eventId?.eventDate)} at {formatTime(request.eventId?.eventTime)}
+                    {formatDate(request.eventId?.eventDate)} at {formatTime(request.eventId?.eventTime)}
                     <br />
-                    📍 {request.eventId?.eventVenue}
+                    {request.eventId?.eventVenue}
                   </p>
                 </div>
-                <div className="request-status">
-                  <span className={`status-badge ${getStatusBadgeClass(request.status)}`}>
-                    {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                  </span>
+                <div className={`widget-status ${getStatusBadgeClass(request.status)}`}>
+                  {request.status ? request.status.charAt(0).toUpperCase() + request.status.slice(1) : 'Pending'}
                 </div>
               </div>
 
               <div className="request-details">
-                <div className="detail-row">
-                  <span className="detail-label">👷 Crew Type:</span>
-                  <span className="detail-value">{getCrewTypeDisplay(request.crewType)}</span>
+                <div className="detail-item">
+                  <div className="detail-label">Crew Type</div>
+                  <div className="detail-value">{getCrewTypeDisplay(request.crewType)}</div>
                 </div>
-                <div className="detail-row">
-                  <span className="detail-label">📝 Details:</span>
-                  <span className="detail-value">{request.crewDetails}</span>
+                
+                <div className="detail-item">
+                  <div className="detail-label">Details</div>
+                  <div className="detail-value">{request.crewDetails}</div>
                 </div>
-                <div className="detail-row">
-                  <span className="detail-label">📅 Required Date:</span>
-                  <span className="detail-value">{formatDate(request.requiredDate)}</span>
+                
+                <div className="detail-item">
+                  <div className="detail-label">Required Date</div>
+                  <div className="detail-value">{formatDate(request.requiredDate)}</div>
                 </div>
-                <div className="detail-row">
-                  <span className="detail-label">⏰ Required Time:</span>
-                  <span className="detail-value">{formatTime(request.requiredTime)}</span>
+                
+                <div className="detail-item">
+                  <div className="detail-label">Required Time</div>
+                  <div className="detail-value">{formatTime(request.requiredTime)}</div>
                 </div>
-                <div className="detail-row">
-                  <span className="detail-label">⏱️ Duration:</span>
-                  <span className="detail-value">{request.estimatedDuration}</span>
+                
+                <div className="detail-item">
+                  <div className="detail-label">Duration</div>
+                  <div className="detail-value">{request.estimatedDuration}</div>
                 </div>
+                
                 {request.specialRequirements && (
-                  <div className="detail-row">
-                    <span className="detail-label">⭐ Special Requirements:</span>
-                    <span className="detail-value">{request.specialRequirements}</span>
+                  <div className="detail-item">
+                    <div className="detail-label">Special Requirements</div>
+                    <div className="detail-value">{request.specialRequirements}</div>
                   </div>
                 )}
-                <div className="detail-row">
-                  <span className="detail-label">👤 Requested By:</span>
-                  <span className="detail-value">{request.requestedBy}</span>
+                
+                <div className="detail-item">
+                  <div className="detail-label">Requested By</div>
+                  <div className="detail-value">{request.requestedBy}</div>
                 </div>
-                <div className="detail-row">
-                  <span className="detail-label">📅 Requested At:</span>
-                  <span className="detail-value">{formatDate(request.requestedAt)}</span>
+                
+                <div className="detail-item">
+                  <div className="detail-label">Requested At</div>
+                  <div className="detail-value">{formatDate(request.requestedAt)}</div>
                 </div>
+                
+                <div className="detail-item status-item">
+                  <div className="detail-label">Status</div>
+                  <div className="detail-value">
+                    <span className={`status-badge ${getStatusBadgeClass(request.status)}`}>
+                      {request.status ? request.status.charAt(0).toUpperCase() + request.status.slice(1) : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+                
                 {request.reviewedAt && (
-                  <div className="detail-row">
-                    <span className="detail-label">👤 Reviewed By:</span>
-                    <span className="detail-value">{request.reviewedBy}</span>
+                  <div className="detail-item">
+                    <div className="detail-label">Reviewed By</div>
+                    <div className="detail-value">{request.reviewedBy}</div>
                   </div>
                 )}
+                
                 {request.adminNotes && (
-                  <div className="detail-row">
-                    <span className="detail-label">📝 Admin Notes:</span>
-                    <span className="detail-value">{request.adminNotes}</span>
+                  <div className="detail-item">
+                    <div className="detail-label">Admin Notes</div>
+                    <div className="detail-value">{request.adminNotes}</div>
                   </div>
                 )}
               </div>
 
               <div className="request-actions">
-                {request.status === 'pending' && (
-                  <>
-                    <button 
-                      className="action-button approve-button"
-                      onClick={() => openStatusModal(request)}
-                    >
-                      ✅ Approve
-                    </button>
-                    <button 
-                      className="action-button reject-button"
-                      onClick={() => openStatusModal(request)}
-                    >
-                      ❌ Reject
-                    </button>
-                  </>
-                )}
-                <button 
-                  className="action-button delete-button"
-                  onClick={() => handleIndividualDelete(request)}
-                  title="Delete this crew request"
-                >
-                  🗑️ Delete
-                </button>
+                <div className="action-buttons">
+                  {request.status === 'pending' && (
+                    <>
+                      <button 
+                        className="action-button approve-button"
+                        onClick={() => openStatusModal(request)}
+                      >
+                        Approve
+                      </button>
+                      <button 
+                        className="action-button reject-button"
+                        onClick={() => openStatusModal(request)}
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+                  <button 
+                    className="action-button delete-button"
+                    onClick={() => handleIndividualDelete(request)}
+                    title="Delete this crew request"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           ))
@@ -403,13 +433,13 @@ function CrewRequestsTab() {
                 className="action-button approve-button"
                 onClick={() => handleStatusUpdate(selectedRequest._id, 'approved')}
               >
-                ✅ Approve Request
+                Approve Request
               </button>
               <button 
                 className="action-button reject-button"
                 onClick={() => handleStatusUpdate(selectedRequest._id, 'rejected')}
               >
-                ❌ Reject Request
+                Reject Request
               </button>
               <button 
                 className="action-button cancel-button"
@@ -427,14 +457,14 @@ function CrewRequestsTab() {
         <div className="clear-confirm-modal">
           <div className="clear-confirm-content">
             <div className="modal-header">
-              <h3>⚠️ Confirm Clear Operation</h3>
+              <h3>Confirm Clear Operation</h3>
               <button className="close-button" onClick={cancelClearRequests}>×</button>
             </div>
             
             <div className="modal-body">
               <p><strong>Are you sure you want to clear all {clearStatus} crew requests?</strong></p>
               <p>This action will permanently delete <strong>{crewRequests.filter(r => r.status === clearStatus).length}</strong> crew request(s) from the database.</p>
-              <p className="warning-text">⚠️ This action cannot be undone!</p>
+              <p className="warning-text">This action cannot be undone!</p>
             </div>
             
             <div className="modal-actions">
@@ -444,13 +474,10 @@ function CrewRequestsTab() {
                 disabled={isClearing}
               >
                 {isClearing ? (
-                  <>
-                    <span className="spinner"></span>
-                    Clearing...
-                  </>
+                  'Clearing...'
                 ) : (
                   <>
-                    🗑️ Yes, Clear All {clearStatus.charAt(0).toUpperCase() + clearStatus.slice(1)}
+                    Yes, Clear All {clearStatus.charAt(0).toUpperCase() + clearStatus.slice(1)}
                   </>
                 )}
               </button>
@@ -471,7 +498,7 @@ function CrewRequestsTab() {
         <div className="individual-delete-modal">
           <div className="individual-delete-content">
             <div className="modal-header">
-              <h3>⚠️ Confirm Delete</h3>
+              <h3>Confirm Delete</h3>
               <button className="close-button" onClick={cancelIndividualDelete}>×</button>
             </div>
             
@@ -483,7 +510,7 @@ function CrewRequestsTab() {
                 <p><strong>Status:</strong> {requestToDelete.status.charAt(0).toUpperCase() + requestToDelete.status.slice(1)}</p>
                 <p><strong>Requested By:</strong> {requestToDelete.requestedBy}</p>
               </div>
-              <p className="warning-text">⚠️ This action cannot be undone!</p>
+              <p className="warning-text">This action cannot be undone!</p>
             </div>
             
             <div className="modal-actions">
@@ -493,13 +520,10 @@ function CrewRequestsTab() {
                 disabled={isDeleting}
               >
                 {isDeleting ? (
-                  <>
-                    <span className="spinner"></span>
-                    Deleting...
-                  </>
+                  'Deleting...'
                 ) : (
                   <>
-                    🗑️ Yes, Delete Request
+                    Yes, Delete Request
                   </>
                 )}
               </button>

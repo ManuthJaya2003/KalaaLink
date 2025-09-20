@@ -133,8 +133,11 @@ function SystemOverview() {
   if (loading) {
     return (
       <div className="system-overview">
+        <div className="section-header">
+          <h1>Analytics</h1>
+          <p className="section-subtitle">Monitor system performance and track key metrics across all departments</p>
+        </div>
         <div className="loading-container">
-          <div className="loading-spinner"></div>
           <p>Loading system data...</p>
         </div>
       </div>
@@ -157,18 +160,9 @@ function SystemOverview() {
 
   return (
     <div className="system-overview" id="system-overview-content">
-      <div className="system-header">
-        <h2>System Overview</h2>
-        <button onClick={generateSystemReport} className="generate-report-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14,2 14,8 20,8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10,9 9,9 8,9"/>
-          </svg>
-          Generate System Report
-        </button>
+      <div className="section-header">
+        <h1>Analytics</h1>
+        <p className="section-subtitle">Monitor system performance and track key metrics across all departments</p>
       </div>
 
       <div className="stats-cards">
@@ -259,18 +253,18 @@ function SystemOverview() {
       <div className="charts-section">
         <h2 className="charts-title">System Analytics</h2>
         
-        {chartLoading ? (
-          <div className="charts-loading">
-            <div className="loading-spinner"></div>
-            <p>Loading charts...</p>
-          </div>
-        ) : (
-          <div className="charts-grid">
-            <OverviewBarChart data={chartData.barChart} />
-            <OverviewLineChart data={chartData.lineChart} />
-            <RevenuePieChart data={chartData.pieChart} />
-          </div>
-        )}
+        <div className="charts-grid">
+          <OverviewBarChart data={chartData.barChart} />
+          <OverviewLineChart data={chartData.lineChart} />
+          <RevenuePieChart data={chartData.pieChart} />
+        </div>
+      </div>
+
+      {/* Generate Report Button */}
+      <div className="report-section">
+        <button onClick={generateSystemReport} className="generate-report-btn">
+          Generate System Report
+        </button>
       </div>
     </div>
   );

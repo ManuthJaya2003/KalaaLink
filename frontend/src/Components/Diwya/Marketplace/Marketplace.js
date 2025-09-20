@@ -166,7 +166,7 @@ const ProductCard = ({ product, onAddToCart, onViewDetails, onPostReview, onView
 function Marketplace() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
   // Filter states
@@ -189,7 +189,6 @@ function Marketplace() {
 
   const fetchProducts = async () => {
     try {
-      setLoading(true);
       setError('');
       console.log('Marketplace: Fetching products from:', BASE_URL);
       
@@ -209,8 +208,6 @@ function Marketplace() {
       console.error('Marketplace: Error fetching products:', err);
       setError(`Failed to load products: ${err.response?.data?.message || err.message}`);
       setProducts([]);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -593,7 +590,6 @@ function Marketplace() {
 
           <MarketplaceContent 
             products={filteredProducts} 
-            loading={loading} 
             error={error} 
             onRetry={fetchProducts}
             filters={filters}
@@ -642,7 +638,7 @@ function Marketplace() {
   );
 }
 
-const MarketplaceContent = ({ products, loading, error, onRetry, filters, onFilterChange, onClearFilters, onViewDetails, onPostReview, onViewReviews, onBuyNow, productReviews, productRatings, productLatestReviews }) => {
+const MarketplaceContent = ({ products, error, onRetry, filters, onFilterChange, onClearFilters, onViewDetails, onPostReview, onViewReviews, onBuyNow, productReviews, productRatings, productLatestReviews }) => {
   const { setCart } = useCart();
 
   const handleAddToCart = (product) => {
@@ -667,14 +663,6 @@ const MarketplaceContent = ({ products, loading, error, onRetry, filters, onFilt
   };
 
 
-  if (loading) {
-    return (
-      <div className="marketplace-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading products...</p>
-      </div>
-    );
-  }
 
   if (error) {
     return (

@@ -18,7 +18,7 @@ console.log("Using key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || "pk_te
 
 function Events({ events: propEvents }) {
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -40,7 +40,6 @@ function Events({ events: propEvents }) {
   // Fetch events from backend API
   const fetchEvents = async () => {
     try {
-      setLoading(true);
       setError(null);
       
       console.log("Attempting to fetch events from backend...");
@@ -65,8 +64,6 @@ function Events({ events: propEvents }) {
       } else {
         setError("Failed to load events. Please try again later.");
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -240,42 +237,6 @@ function Events({ events: propEvents }) {
     return () => clearInterval(autoplayInterval);
   }, []);
 
-  // Loading state
-  if (loading) {
-    return (
-      <div>
-        <MainNav />
-        {/* Hero Video Section */}
-        <div className="events-hero-video">
-          <video
-            className="events-background-video"
-            autoPlay
-            muted
-            loop
-            playsInline
-          >
-            <source src="/eventHeroBar.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-        <div className="events-container">
-          <div className="events-text-section">
-            <h2 className="events-title">Our Events</h2>
-            <p className="events-subtitle">Discover extraordinary events and book your tickets today</p>
-            <button className="refresh-button" onClick={fetchEvents} disabled={loading}>
-              {loading ? "Refreshing..." : "Refresh Events"}
-            </button>
-          </div>
-          <div className="loading-state">
-            <div className="loading-spinner"></div>
-            <p className="loading-text">Loading events...</p>
-          </div>
-        </div>
-        
-        <MainFooter />
-      </div>
-    );
-  }
 
   // Error state
   if (error) {
@@ -299,8 +260,8 @@ function Events({ events: propEvents }) {
           <div className="events-text-section">
             <h2 className="events-title">Our Events</h2>
             <p className="events-subtitle">Discover extraordinary events and book your tickets today</p>
-            <button className="refresh-button" onClick={fetchEvents} disabled={loading}>
-              {loading ? "Refreshing..." : "Refresh Events"}
+            <button className="refresh-button" onClick={fetchEvents}>
+              Refresh Events
             </button>
           </div>
           <div className="error-state">

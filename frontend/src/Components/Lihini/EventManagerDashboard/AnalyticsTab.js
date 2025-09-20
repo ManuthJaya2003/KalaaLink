@@ -13,20 +13,16 @@ import "./AnalyticsTab.css";
 
 function AnalyticsTab() {
   const [analyticsData, setAnalyticsData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        setLoading(true);
         const response = await axios.get("http://localhost:5000/eventBookings/analytics");
         setAnalyticsData(response.data);
-        setLoading(false);
       } catch (err) {
         console.error("Error fetching analytics:", err);
         setError(err.response?.data?.message || err.message);
-        setLoading(false);
       }
     };
 
@@ -56,6 +52,45 @@ function AnalyticsTab() {
     // Create a new window for the report
     const reportWindow = window.open('', '_blank', 'width=1000,height=800');
     
+    // Ensure we have data with fallbacks
+    const data = analyticsData || {};
+    const summary = data.summary || {};
+    const chartData = data.chartData || [];
+    
+    // Debug: Log the data structure
+    console.log('Analytics Data:', data);
+    console.log('Summary:', summary);
+    console.log('Total Revenue:', summary.totalRevenue);
+    console.log('Total Refunds:', summary.totalRefunds);
+    console.log('Chart Data:', chartData);
+    console.log('Chart Data Length:', chartData.length);
+    console.log('First Chart Item:', chartData[0]);
+    console.log('All Chart Items:', chartData.map(item => ({ name: item.name || item.eventTitle, tickets: item.tickets || item.ticketsSold })));
+    
+    // If no data, show a message in the PDF
+    if (!data || Object.keys(data).length === 0) {
+      console.log('No analytics data available');
+    }
+    
+    // Handle pre-formatted strings from backend
+    const formatCurrency = (value) => {
+      if (value === null || value === undefined) return 'LKR 0';
+      // If it's already a formatted string, return as is
+      if (typeof value === 'string' && value.includes('LKR')) return value;
+      // If it's a number, format it
+      if (typeof value === 'number') return `LKR ${value.toLocaleString()}`;
+      return 'LKR 0';
+    };
+    
+    const formatNumber = (value) => {
+      if (value === null || value === undefined) return '0';
+      // If it's already a formatted string, return as is
+      if (typeof value === 'string') return value;
+      // If it's a number, format it
+      if (typeof value === 'number') return value.toLocaleString();
+      return '0';
+    };
+    
     const reportHTML = `
       <!DOCTYPE html>
       <html>
@@ -73,7 +108,7 @@ function AnalyticsTab() {
           
           .report-header {
             text-align: center;
-            border-bottom: 3px solid #667eea;
+            border-bottom: 3px solid #C1A37F;
             padding-bottom: 20px;
             margin-bottom: 40px;
           }
@@ -114,54 +149,144 @@ function AnalyticsTab() {
           
           .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-bottom: 30px;
+            align-items: start;
           }
           
           .summary-item {
             background: #f8f9fa;
             padding: 20px;
-            border-radius: 12px;
+            border-radius: 8px;
             text-align: center;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #C1A37F;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
           }
           
           .summary-item.negative {
-            border-left-color: #e74c3c;
+            border-left-color: #C1A37F;
           }
           
           .summary-value {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             color: #2c3e50;
             margin-bottom: 8px;
+            line-height: 1.2;
           }
           
           .summary-label {
             font-size: 14px;
             color: #6c757d;
             font-weight: 600;
+            margin-bottom: 4px;
           }
           
           .summary-description {
             font-size: 12px;
             color: #6c757d;
-            margin-top: 8px;
+            margin-top: 4px;
+            line-height: 1.3;
           }
           
           .chart-section {
             margin-bottom: 40px;
           }
           
-          .chart-placeholder {
+          .chart-container {
             background: #f8f9fa;
-            border: 2px dashed #dee2e6;
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center;
-            color: #6c757d;
+            border-radius: 8px;
+            padding: 30px;
             margin: 20px 0;
+            border: 1px solid #e9ecef;
+          }
+          
+          .chart-container h3 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-size: 18px;
+            text-align: center;
+          }
+          
+          .bar-chart {
+            margin: 20px 0;
+          }
+          
+          .bar-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+          }
+          
+          .bar-label {
+            min-width: 150px;
+            font-size: 12px;
+            color: #2c3e50;
+            font-weight: 500;
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          
+          .bar-wrapper {
+            flex: 1;
+            position: relative;
+            height: 25px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+          }
+          
+          .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+          }
+          
+          .bar-value {
+            position: absolute;
+            right: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #2c3e50;
+            z-index: 2;
+          }
+          
+          .chart-summary {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+            text-align: center;
+          }
+          
+          .chart-summary p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #6c757d;
+          }
+          
+          .no-data-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px dashed #dee2e6;
+          }
+          
+          .no-data-message p {
+            margin: 10px 0;
+            font-size: 14px;
           }
           
           .table-section {
@@ -179,7 +304,7 @@ function AnalyticsTab() {
           }
           
           .report-table th {
-            background: #667eea;
+            background: #C1A37F;
             color: white;
             padding: 16px 12px;
             text-align: left;
@@ -224,6 +349,52 @@ function AnalyticsTab() {
             body { margin: 20px; }
             .page-break { page-break-before: always; }
           }
+          
+          @media (max-width: 768px) {
+            .summary-grid {
+              grid-template-columns: repeat(2, 1fr);
+              gap: 15px;
+            }
+            
+            .bar-item {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 8px;
+            }
+            
+            .bar-label {
+              min-width: auto;
+              text-align: left;
+              width: 100%;
+            }
+            
+            .bar-wrapper {
+              width: 100%;
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .summary-grid {
+              grid-template-columns: 1fr;
+              gap: 15px;
+            }
+            
+            .chart-container {
+              padding: 20px;
+            }
+            
+            .bar-item {
+              margin-bottom: 12px;
+            }
+            
+            .bar-label {
+              font-size: 11px;
+            }
+            
+            .bar-value {
+              font-size: 10px;
+            }
+          }
         </style>
       </head>
       <body>
@@ -240,27 +411,27 @@ function AnalyticsTab() {
           <h2 class="section-title">Executive Summary</h2>
           <div class="summary-grid">
             <div class="summary-item">
-              <div class="summary-value">LKR {analyticsData.summary.totalRevenue}</div>
+              <div class="summary-value">${summary.totalRevenue || 'LKR 0'}</div>
               <div class="summary-label">Total Revenue</div>
               <div class="summary-description">From all event ticket sales</div>
             </div>
             <div class="summary-item">
-              <div class="summary-value">${analyticsData.summary.ticketsSold}</div>
+              <div class="summary-value">${summary.ticketsSold || '0'}</div>
               <div class="summary-label">Tickets Sold</div>
               <div class="summary-description">Across all events</div>
             </div>
             <div class="summary-item">
-              <div class="summary-value">${analyticsData.summary.activeEvents}</div>
+              <div class="summary-value">${summary.activeEvents || '0'}</div>
               <div class="summary-label">Active Events</div>
               <div class="summary-description">Currently listed</div>
             </div>
             <div class="summary-item negative">
-              <div class="summary-value">LKR {analyticsData.summary.totalRefunds}</div>
+              <div class="summary-value">${summary.totalRefunds || 'LKR 0'}</div>
               <div class="summary-label">Total Refunds</div>
               <div class="summary-description">Processed across all events</div>
             </div>
             <div class="summary-item negative">
-              <div class="summary-value">${analyticsData.summary.refundedTickets}</div>
+              <div class="summary-value">${summary.refundedTickets || '0'}</div>
               <div class="summary-label">Refunded Tickets</div>
               <div class="summary-description">Due to cancellations</div>
             </div>
@@ -271,13 +442,49 @@ function AnalyticsTab() {
           <h2 class="section-title">Ticket Sales Performance</h2>
           <p>Visual representation of tickets sold per event. This chart shows the distribution of ticket sales across different events, helping identify the most popular events and areas for improvement.</p>
           
-          <div class="chart-placeholder">
-            <h3>📊 Ticket Sales Chart</h3>
-            <p>Chart data for ${analyticsData.chartData.length} events</p>
-            <p>Total tickets sold: ${analyticsData.chartData.reduce((sum, item) => sum + item.tickets, 0)}</p>
+          <div class="chart-container">
+            <h3>📊 Ticket Sales by Event</h3>
+            ${chartData.length > 0 ? `
+            <div class="bar-chart">
+              ${chartData.map((event, index) => {
+                // Handle both 'tickets' and 'ticketsSold' properties
+                const ticketCount = event.tickets || event.ticketsSold || 0;
+                const maxTickets = Math.max(...chartData.map(e => e.tickets || e.ticketsSold || 0));
+                const percentage = maxTickets > 0 ? (ticketCount / maxTickets) * 100 : 0;
+                
+                // Debug logging for each bar
+                console.log(`Bar ${index + 1}:`, {
+                  eventName: event.name || event.eventTitle,
+                  ticketCount: ticketCount,
+                  maxTickets: maxTickets,
+                  percentage: percentage
+                });
+                
+                return `
+                  <div class="bar-item">
+                    <div class="bar-label">${event.name || event.eventTitle || 'Unknown Event'}</div>
+                    <div class="bar-wrapper">
+                      <div class="bar-fill" style="width: ${percentage}%; background-color: #C1A37F;"></div>
+                      <div class="bar-value">${formatNumber(ticketCount)}</div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+            <div class="chart-summary">
+              <p><strong>Total Events:</strong> ${chartData.length}</p>
+              <p><strong>Total Tickets Sold:</strong> ${formatNumber(chartData.reduce((sum, item) => sum + (item.tickets || item.ticketsSold || 0), 0))}</p>
+            </div>
+            ` : `
+            <div class="no-data-message">
+              <p>No ticket sales data available for chart visualization.</p>
+              <p>This could mean there are no paid bookings or events with ticket sales yet.</p>
+            </div>
+            `}
           </div>
           
           <h3>Event Performance Details:</h3>
+          ${chartData.length > 0 ? `
           <table class="report-table">
             <thead>
               <tr>
@@ -287,15 +494,24 @@ function AnalyticsTab() {
               </tr>
             </thead>
             <tbody>
-              ${analyticsData.chartData.map(event => `
+              ${chartData.map(event => {
+                const ticketCount = event.tickets || event.ticketsSold || 0;
+                return `
                 <tr>
-                  <td>${event.name}</td>
-                  <td>${event.tickets}</td>
-                  <td>${event.tickets > 100 ? '🟢 Excellent' : event.tickets > 50 ? '🟡 Good' : '🔴 Needs Attention'}</td>
+                  <td>${event.name || event.eventTitle || 'Unknown Event'}</td>
+                  <td>${formatNumber(ticketCount)}</td>
+                  <td>${ticketCount > 100 ? '🟢 Excellent' : ticketCount > 50 ? '🟡 Good' : '🔴 Needs Attention'}</td>
                 </tr>
-              `).join('')}
+              `;
+              }).join('')}
             </tbody>
           </table>
+          ` : `
+          <div class="no-data-message">
+            <p>No event performance data available.</p>
+            <p>Performance details will appear here once there are paid bookings.</p>
+          </div>
+          `}
         </div>
         
         <div class="table-section">
@@ -379,15 +595,6 @@ function AnalyticsTab() {
     reportWindow.document.close();
   };
 
-  if (loading) {
-    return (
-      <div className="analytics-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading analytics data...</p>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="analytics-error">
@@ -403,17 +610,15 @@ function AnalyticsTab() {
 
   return (
     <div className="analytics-container">
-      {/* Main Header with Title and Button */}
-      <div className="analytics-main-header">
-        <button className="generate-report-btn" onClick={handleGenerateReport}>
-          📄 Generate Report
-        </button>
+      {/* Page Header */}
+      <div className="analytics-page-header">
+        <h1 className="analytics-page-title">Event Analytics</h1>
+        <p className="analytics-page-subtitle">Comprehensive insights and performance metrics for your events</p>
       </div>
 
       {/* Summary Cards */}
       <div className="summary-cards">
         <div className="summary-card">
-          <div className="card-icon">💰</div>
           <div className="card-content">
             <h3>Total Revenue</h3>
             <div className="card-value">{analyticsData.summary.totalRevenue}</div>
@@ -422,7 +627,6 @@ function AnalyticsTab() {
         </div>
 
         <div className="summary-card">
-          <div className="card-icon">🎫</div>
           <div className="card-content">
             <h3>Tickets Sold</h3>
             <div className="card-value">{analyticsData.summary.ticketsSold}</div>
@@ -431,7 +635,6 @@ function AnalyticsTab() {
         </div>
 
         <div className="summary-card">
-          <div className="card-icon">👥</div>
           <div className="card-content">
             <h3>Active Events</h3>
             <div className="card-value">{analyticsData.summary.activeEvents}</div>
@@ -440,7 +643,6 @@ function AnalyticsTab() {
         </div>
 
         <div className="summary-card negative">
-          <div className="card-icon">💸</div>
           <div className="card-content">
             <h3>Total Refunds</h3>
             <div className="card-value">{analyticsData.summary.totalRefunds}</div>
@@ -449,7 +651,6 @@ function AnalyticsTab() {
         </div>
 
         <div className="summary-card negative">
-          <div className="card-icon">↩️</div>
           <div className="card-content">
             <h3>Refunded Tickets</h3>
             <div className="card-value">{analyticsData.summary.refundedTickets}</div>
@@ -466,22 +667,24 @@ function AnalyticsTab() {
           <p>A visual breakdown of tickets sold per event.</p>
           
           <div className="chart-container">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={analyticsData.chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <ResponsiveContainer width="100%" height={500}>
+              <BarChart data={analyticsData.chartData} margin={{ top: 20, right: 20, left: 20, bottom: 80 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="name" 
-                  angle={-45}
+                  angle={-30}
                   textAnchor="end"
                   height={80}
                   interval={0}
+                  tick={{ fontSize: 11 }}
+                  tickLine={false}
                 />
                 <YAxis />
                 <Tooltip 
                   formatter={(value) => [value, 'Tickets Sold']}
                   labelStyle={{ color: '#333' }}
                 />
-                <Bar dataKey="tickets" fill="#667eea" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="tickets" fill="#C1A37F" radius={[4, 4, 0, 0]} maxBarSize={60} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -543,6 +746,13 @@ function AnalyticsTab() {
           </div>
         </div>
       )}
+
+      {/* Generate Report Button at Bottom */}
+      <div className="analytics-bottom-section">
+        <button className="generate-report-btn-bottom" onClick={handleGenerateReport}>
+          Generate Report
+        </button>
+      </div>
     </div>
   );
 }

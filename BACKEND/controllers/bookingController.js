@@ -120,6 +120,46 @@ const deleteBooking = async (req, res) => {
   }
 };
 
+// Bulk delete bookings by payment status
+const deleteBookingsByStatus = async (req, res) => {
+  const { status } = req.params;
+  
+  // Validate status parameter
+  const validStatuses = ['paid', 'pending', 'failed'];
+  if (!validStatuses.includes(status.toLowerCase())) {
+    return res.status(400).json({ 
+      message: "Invalid status. Must be one of: paid, pending, failed" 
+    });
+  }
+
+  try {
+    // Find bookings with the specified payment status
+    const bookingsToDelete = await Booking.find({ paymentStatus: status.toLowerCase() });
+    
+    if (bookingsToDelete.length === 0) {
+      return res.status(404).json({ 
+        message: `No bookings found with status: ${status}`,
+        deletedCount: 0
+      });
+    }
+
+    // Delete all bookings with the specified status
+    const result = await Booking.deleteMany({ paymentStatus: status.toLowerCase() });
+    
+    return res.status(200).json({ 
+      message: `Successfully deleted ${result.deletedCount} bookings with status: ${status}`,
+      deletedCount: result.deletedCount,
+      status: status.toLowerCase()
+    });
+  } catch (err) {
+    console.error("Error deleting bookings by status:", err);
+    return res.status(500).json({ 
+      message: "Error deleting bookings by status",
+      error: err.message 
+    });
+  }
+};
+
 // Get comprehensive booking analytics for dashboard
 const getBookingAnalytics = async (req, res) => {
   try {
@@ -328,6 +368,7 @@ const handleStripeWebhook = async (req, res) => {
       const bookingId = session.metadata.bookingId;
       await Booking.findByIdAndUpdate(bookingId, { 
         status: "paid",
+        paymentStatus: "paid",
         paymentIntentId: session.payment_intent,
         sessionId: session.id
       });
@@ -348,6 +389,7 @@ module.exports = {
   createBooking,
   updateBookingStatus,
   deleteBooking,
+  deleteBookingsByStatus,
   getBookingAnalytics,
   createStripeCheckoutSession,
   handleStripeWebhook

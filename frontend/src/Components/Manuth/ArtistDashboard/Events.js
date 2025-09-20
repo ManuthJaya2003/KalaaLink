@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MainNav from "../../MainNav/MainNav";
 import ArtistNav from "../ArtistNav/ArtistNav.js";
+import AuthFooter from "../../Common/AuthFooter";
 import "./Events.css";
 
 const BACKEND_URL = "http://localhost:5000";
@@ -230,17 +231,7 @@ function Events() {
   };
 
   if (loading) {
-    return (
-      <div className="events-page">
-        <MainNav />
-        <div className="events-container">
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-            <p>Loading events...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   if (error) {
@@ -261,21 +252,12 @@ function Events() {
     <div className="events-page">
       <MainNav />
       
-      {/* Events Header */}
-      <header className="events-header-main">
-        <div className="events-header-container">
-          <h1 className="events-header-title">
-            <span className="events-header-icon">🎵</span>
-            Available Events
-          </h1>
-          <p className="events-header-subtitle">Browse and register for upcoming events to perform at</p>
-        </div>
-      </header>
-
       {/* Artist Navigation */}
       <ArtistNav />
 
       <div className="events-container">
+        <h1 className="events-main-title">Available Events</h1>
+        <p className="events-main-subtitle">Browse and register for upcoming events to perform at</p>
 
       <div className="events-grid">
         {events.length === 0 ? (
@@ -296,7 +278,7 @@ function Events() {
                     <img src={`${BACKEND_URL}${event.image}`} alt={event.eventTitle} />
                   ) : (
                     <div className="event-placeholder">
-                      <span>🎵</span>
+                      <span>Event Image</span>
                     </div>
                   )}
                 </div>
@@ -306,15 +288,15 @@ function Events() {
                   
                   <div className="event-details">
                     <div className="event-info">
-                      <span className="info-icon">📅</span>
+                      <span className="info-icon">Date:</span>
                       <span>{new Date(event.eventDate).toLocaleDateString()}</span>
                     </div>
                     <div className="event-info">
-                      <span className="info-icon">🕒</span>
+                      <span className="info-icon">Time:</span>
                       <span>{event.eventTime}</span>
                     </div>
                     <div className="event-info">
-                      <span className="info-icon">📍</span>
+                      <span className="info-icon">Location:</span>
                       <span>{event.eventVenue}</span>
                     </div>
                   </div>
@@ -345,15 +327,15 @@ function Events() {
                   <div className="event-actions">
                     {isRegistered ? (
                       <button className="btn-registered" disabled>
-                        ✅ Registered
+                        Registered
                       </button>
                     ) : isPast ? (
                       <button className="btn-past" disabled>
-                        ⏰ Event Passed
+                        Event Passed
                       </button>
                     ) : isFull ? (
                       <button className="btn-full" disabled>
-                        🚫 Event Full
+                        Event Full
                       </button>
                     ) : (
                       <button
@@ -375,7 +357,7 @@ function Events() {
       {successMessage && (
         <div className="success-banner">
           <div className="success-content">
-            <span className="success-icon">✅</span>
+            <span className="success-icon">Success</span>
             <span className="success-text">{successMessage}</span>
             <button className="success-close" onClick={() => setSuccessMessage("")}>×</button>
           </div>
@@ -399,6 +381,7 @@ function Events() {
         </div>
       )}
       </div>
+      <AuthFooter />
     </div>
   );
 }

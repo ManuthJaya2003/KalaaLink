@@ -21,6 +21,21 @@ function DonationManagerDashboard() {
   const [donationFilter, setDonationFilter] = useState('all'); // all, pending, paid
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [partnershipRequests, setPartnershipRequests] = useState([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingPackage, setEditingPackage] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+    amount: '',
+    description: '',
+    isActive: true
+  });
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addFormData, setAddFormData] = useState({
+    name: '',
+    amount: '',
+    description: '',
+    isActive: true
+  });
 
   // Check if user is authenticated as donation manager
   useEffect(() => {
@@ -85,14 +100,150 @@ function DonationManagerDashboard() {
     }
   };
 
-  // ✅ Handle package edit navigation
+  // ✅ Handle package edit - open modal
   const handleEditPackage = (packageId) => {
-    navigate(`/updatepackage/${packageId}`);
+    const packageToEdit = packages.find(pkg => pkg._id === packageId);
+    if (packageToEdit) {
+      setEditingPackage(packageToEdit);
+      setEditFormData({
+        name: packageToEdit.name || '',
+        amount: packageToEdit.amount || '',
+        description: packageToEdit.description || '',
+        isActive: packageToEdit.isActive !== undefined ? packageToEdit.isActive : true
+      });
+      setShowEditModal(true);
+    }
   };
 
   // ✅ Handle donation filtering
   const handleDonationFilter = (status) => {
     setDonationFilter(status);
+  };
+
+  // ✅ Handle edit form input changes
+  const handleEditInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setEditFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  // ✅ Handle save package changes
+  const handleSavePackage = async () => {
+    if (!editingPackage) return;
+
+    // Validation - same as original Edit page
+    if (!editFormData.name || !editFormData.amount) {
+      alert('Package name and amount are required');
+      return;
+    }
+    if (Number(editFormData.amount) < 10) {
+      alert('Minimum amount is LKR 10');
+      return;
+    }
+
+    try {
+      const response = await axios.put(`http://localhost:5000/package/${editingPackage._id}`, {
+        name: String(editFormData.name),
+        amount: Number(editFormData.amount),
+        description: String(editFormData.description || ''),
+        isActive: Boolean(editFormData.isActive)
+      });
+
+      // Check if response contains package data (successful update)
+      if (response.data && response.data.package) {
+        alert('Package updated successfully!');
+        setShowEditModal(false);
+        setEditingPackage(null);
+        fetchData(); // Refresh the packages list
+      } else {
+        alert('Failed to update package');
+      }
+    } catch (error) {
+      console.error('Error updating package:', error);
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(`Error: ${error.response.data.message}`);
+      } else {
+        alert('Failed to update package. Please try again.');
+      }
+    }
+  };
+
+  // ✅ Handle cancel edit
+  const handleCancelEdit = () => {
+    setShowEditModal(false);
+    setEditingPackage(null);
+    setEditFormData({
+      name: '',
+      amount: '',
+      description: '',
+      isActive: true
+    });
+  };
+
+  // ✅ Handle add form input changes
+  const handleAddInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setAddFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  // ✅ Handle save new package
+  const handleSaveNewPackage = async () => {
+    // Validation - same as original Add Package page
+    if (!addFormData.name || !addFormData.amount) {
+      alert('Package name and amount are required');
+      return;
+    }
+    if (Number(addFormData.amount) < 10) {
+      alert('Minimum amount is LKR 10');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/package', {
+        name: String(addFormData.name),
+        amount: Number(addFormData.amount),
+        description: String(addFormData.description || ''),
+        isActive: Boolean(addFormData.isActive)
+      });
+
+      // Check if response contains package data (successful creation)
+      if (response.data && response.data.package) {
+        alert('Package added successfully!');
+        setShowAddModal(false);
+        setAddFormData({
+          name: '',
+          amount: '',
+          description: '',
+          isActive: true
+        });
+        fetchData(); // Refresh the packages list
+      } else {
+        alert('Failed to add package');
+      }
+    } catch (error) {
+      console.error('Error adding package:', error);
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(`Error: ${error.response.data.message}`);
+      } else {
+        alert('Failed to add package. Please try again.');
+      }
+    }
+  };
+
+  // ✅ Handle cancel add
+  const handleCancelAdd = () => {
+    setShowAddModal(false);
+    setAddFormData({
+      name: '',
+      amount: '',
+      description: '',
+      isActive: true
+    });
   };
 
 
@@ -211,20 +362,6 @@ function DonationManagerDashboard() {
     }
   };
 
-  const getButtonStyle = (isActive) => ({
-    background: isActive ? "#34495e" : "transparent",
-    border: "none",
-    color: "white",
-    textAlign: "left",
-    padding: "10px 0",
-    margin: "5px 0",
-    cursor: "pointer",
-    borderRadius: "5px",
-    fontSize: "16px",
-    fontWeight: isActive ? "bold" : "normal",
-    transition: "all 0.3s ease",
-    width: "100%"
-  });
 
   const getTotalDonations = () => {
     return donations
@@ -381,124 +518,112 @@ function DonationManagerDashboard() {
     doc.save(fileName);
   };
 
-  // Home Tab Component
-  const HomeTab = () => (
-      <div style={{ padding: "20px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px" }}>
-          <h2 style={{ color: "#2c3e50", margin: "0" }}>Donation Manager Dashboard</h2>
-          <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            {lastUpdated && (
-              <div style={{ 
-                fontSize: "12px", 
-                color: "#666", 
-                background: "#f8f9fa", 
-                padding: "5px 10px", 
-                borderRadius: "4px",
-                border: "1px solid #dee2e6"
-              }}>
-                Last updated: {lastUpdated.toLocaleTimeString()}
-              </div>
-            )}
-            <button
-              onClick={generatePDFReport}
-              style={{
-                background: "#27ae60",
-                color: "white",
-                border: "none",
-                padding: "10px 20px",
-                borderRadius: "5px",
-                cursor: "pointer",
-                fontSize: "14px",
-                fontWeight: "bold",
-                transition: "background-color 0.3s",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px"
-              }}
-              onMouseEnter={(e) => e.target.style.background = "#229954"}
-              onMouseLeave={(e) => e.target.style.background = "#27ae60"}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14,2 14,8 20,8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10,9 9,9 8,9"></polyline>
-              </svg>
-              Generate Report
-            </button>
-          </div>
-        </div>
+  // Analytics Tab Component
+  const AnalyticsTab = () => (
+    <div className="analytics-container">
+      <div className="analytics-page-header">
+        <h1 className="analytics-page-title">Donation Analytics</h1>
+        <p className="analytics-page-subtitle">
+          Track donation performance, package statistics, and donor insights
+        </p>
+      </div>
       
       {/* Summary Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "20px", marginBottom: "30px" }}>
-        <div style={{ background: "white", padding: "20px", borderRadius: "10px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
-          <h3 style={{ color: "#27ae60", margin: "0 0 10px 0" }}>Total Donations</h3>
-          <p style={{ fontSize: "24px", fontWeight: "bold", margin: "0", color: "#2c3e50" }}>
-            LKR {getTotalDonations().toLocaleString()}
-          </p>
+      <div className="summary-cards">
+        <div className="summary-card">
+          <div className="card-content">
+            <h3>Total Donations</h3>
+            <div className="card-value">LKR {getTotalDonations().toLocaleString()}</div>
+            <p>All time revenue</p>
+          </div>
         </div>
-        
-        <div style={{ background: "white", padding: "20px", borderRadius: "10px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
-          <h3 style={{ color: "#3498db", margin: "0 0 10px 0" }}>Active Packages</h3>
-          <p style={{ fontSize: "24px", fontWeight: "bold", margin: "0", color: "#2c3e50" }}>
-            {getActivePackages()}
-          </p>
+        <div className="summary-card">
+          <div className="card-content">
+            <h3>Active Packages</h3>
+            <div className="card-value">{getActivePackages()}</div>
+            <p>Currently available</p>
+          </div>
         </div>
-        
-        <div style={{ background: "white", padding: "20px", borderRadius: "10px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
-          <h3 style={{ color: "#e74c3c", margin: "0 0 10px 0" }}>Total Donors</h3>
-          <p style={{ fontSize: "24px", fontWeight: "bold", margin: "0", color: "#2c3e50" }}>
-            {getTotalDonors()}
-          </p>
+        <div className="summary-card">
+          <div className="card-content">
+            <h3>Total Donors</h3>
+            <div className="card-value">{getTotalDonors()}</div>
+            <p>Unique contributors</p>
+          </div>
+        </div>
+        <div className="summary-card">
+          <div className="card-content">
+            <h3>Pending Donations</h3>
+            <div className="card-value">{donations.filter(d => d.paymentStatus === 'pending').length}</div>
+            <p>Awaiting payment</p>
+          </div>
+        </div>
+        <div className="summary-card">
+          <div className="card-content">
+            <h3>Completed Donations</h3>
+            <div className="card-value">{donations.filter(d => d.paymentStatus === 'paid').length}</div>
+            <p>Successfully processed</p>
+          </div>
         </div>
       </div>
 
-      {/* Recent Donations */}
-      <div style={{ background: "white", padding: "20px", borderRadius: "10px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
-        <h3 style={{ color: "#2c3e50", marginBottom: "20px" }}>Recent Donations</h3>
-        {donations.length > 0 ? (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      {/* Main Content */}
+      <div className="analytics-main">
+        {/* Recent Donations Table */}
+        <div className="table-section">
+          <h2>Recent Donations</h2>
+          <p>Latest donation transactions and their status</p>
+          
+          <div className="table-container">
+            <table className="analytics-table">
               <thead>
-                <tr style={{ background: "#f8f9fa" }}>
-                  <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Donor Name</th>
-                  <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Email</th>
-                  <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Amount</th>
-                  <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dee2e6" }}>Date</th>
+                <tr>
+                  <th>Donor Name</th>
+                  <th>Email</th>
+                  <th>Package</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
                 </tr>
               </thead>
               <tbody>
                 {donations
                   .filter(donation => donation.paymentStatus === 'paid')
-                  .slice(0, 5)
+                  .slice(0, 10)
                   .map((donation, index) => (
-                  <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                    <td style={{ padding: "12px" }}>{donation.FirstName} {donation.LastName}</td>
-                    <td style={{ padding: "12px" }}>{donation.Email}</td>
-                    <td style={{ padding: "12px", fontWeight: "bold", color: "#27ae60" }}>
-                      LKR {donation.Amount?.toLocaleString()}
+                  <tr key={index}>
+                    <td>{donation.FirstName} {donation.LastName}</td>
+                    <td>{donation.Email}</td>
+                    <td>{packages.find(pkg => pkg._id === donation.packageId)?.name || 'Unknown'}</td>
+                    <td className="revenue-cell">LKR {donation.Amount?.toLocaleString()}</td>
+                    <td>
+                      <span style={{
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                        background: donation.paymentStatus === 'paid' ? '#d4edda' : '#f8d7da',
+                        color: donation.paymentStatus === 'paid' ? '#155724' : '#721c24'
+                      }}>
+                        {donation.paymentStatus}
+                      </span>
                     </td>
-                    <td style={{ padding: "12px" }}>
-                      {new Date(donation.paymentDate || donation.createdAt || Date.now()).toLocaleDateString()}
-                    </td>
+                    <td>{new Date(donation.paymentDate || donation.createdAt || Date.now()).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        ) : (
-          <p style={{ color: "#666", textAlign: "center", padding: "20px" }}>No donations yet</p>
-        )}
-      </div>
+        </div>
 
-      {/* Package Donation Statistics Pie Chart */}
-      <div style={{ background: "white", padding: "20px", borderRadius: "10px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)", marginTop: "20px" }}>
-        <h3 style={{ color: "#2c3e50", marginBottom: "20px" }}>Donations by Package</h3>
-        {getPackageDonationStats().length > 0 ? (
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <div style={{ flex: "1", minWidth: "300px" }}>
-              <ResponsiveContainer width="100%" height={300}>
+        {/* Chart Section */}
+        <div className="chart-section">
+          <h2>Donations by Package</h2>
+          <p>Visual breakdown of donations received per package</p>
+          
+          <div className="chart-container">
+            {getPackageDonationStats().length > 0 ? (
+              <ResponsiveContainer width="100%" height={500}>
                 <PieChart>
                   <Pie
                     data={getPackageDonationStats()}
@@ -506,7 +631,7 @@ function DonationManagerDashboard() {
                     cy="50%"
                     labelLine={false}
                     label={({ name, percent }) => `${name} (${(percent * 100).toFixed(1)}%)`}
-                    outerRadius={80}
+                    outerRadius={120}
                     fill="#8884d8"
                     dataKey="value"
                   >
@@ -521,48 +646,79 @@ function DonationManagerDashboard() {
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
-            </div>
-            <div style={{ flex: "1", minWidth: "200px" }}>
-              <h4 style={{ color: "#2c3e50", marginBottom: "15px" }}>Package Details</h4>
-              {getPackageDonationStats().map((stat, index) => (
-                <div key={stat.name} style={{ 
-                  display: "flex", 
-                  justifyContent: "space-between", 
-                  alignItems: "center", 
-                  padding: "8px 0",
-                  borderBottom: index < getPackageDonationStats().length - 1 ? "1px solid #eee" : "none"
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <div style={{ 
-                      width: "12px", 
-                      height: "12px", 
-                      backgroundColor: COLORS[index % COLORS.length],
-                      borderRadius: "2px"
-                    }}></div>
-                    <span style={{ fontSize: "14px", fontWeight: "500" }}>{stat.name}</span>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: "14px", fontWeight: "bold", color: "#27ae60" }}>
-                      LKR {stat.value.toLocaleString()}
-                    </div>
-                    <div style={{ fontSize: "12px", color: "#666" }}>
-                      {stat.count} donation{stat.count !== 1 ? 's' : ''}
-                    </div>
-                  </div>
-                </div>
-              ))}
+            ) : (
+              <div className="analytics-error">
+                <p>No donation data available</p>
+                <p>Package donation statistics will appear here once donations are received.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Section */}
+      <div className="analytics-bottom-section">
+        <button
+          onClick={generatePDFReport}
+          className="generate-report-btn-bottom"
+        >
+          📊 Generate Full Report
+        </button>
+      </div>
+    </div>
+  );
+
+  // Home Tab Component
+  const HomeTab = () => (
+    <div className="home-tab">
+      <div className="welcome-section">
+        <h1>Welcome to the Donation Manager Dashboard</h1>
+        <p className="welcome-subtitle">
+          Manage donation packages, track donations, and analyze impact all in one place.
+        </p>
+      </div>
+      
+      <div className="dashboard-grid">
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h3>Quick Actions</h3>
+          </div>
+          <div className="card-content">
+            <p>Get started with these common tasks:</p>
+            <ul className="action-list">
+              <li>Create a new donation package</li>
+              <li>View all donations</li>
+              <li>Manage impact stories</li>
+              <li>Review partnership requests</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h3>Dashboard Overview</h3>
+          </div>
+          <div className="card-content">
+            <p>Use the sidebar navigation to access different sections:</p>
+            <div className="feature-list">
+              <div className="feature-item">
+                <strong>Analytics:</strong> Track donation metrics and performance
+              </div>
+              <div className="feature-item">
+                <strong>Manage Packages:</strong> Create and edit donation packages
+              </div>
+              <div className="feature-item">
+                <strong>View Donations:</strong> Monitor all donation transactions
+              </div>
+              <div className="feature-item">
+                <strong>Impact Stories:</strong> Manage success stories and testimonials
+              </div>
+              <div className="feature-item">
+                <strong>Partnership Requests:</strong> Review and manage partnership inquiries
+              </div>
             </div>
           </div>
-        ) : (
-          <div style={{ 
-            textAlign: "center", 
-            padding: "40px", 
-            color: "#666" 
-          }}>
-            <h4 style={{ marginBottom: "10px" }}>No donation data available</h4>
-            <p style={{ margin: "0" }}>Package donation statistics will appear here once donations are received.</p>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
@@ -578,7 +734,7 @@ function DonationManagerDashboard() {
           </p>
         </div>
         <button
-          onClick={() => navigate('/addpackages')}
+          onClick={() => setShowAddModal(true)}
           style={{
             background: "#27ae60",
             color: "white",
@@ -634,63 +790,23 @@ function DonationManagerDashboard() {
                 LKR {pkg.amount?.toLocaleString()}
               </p>
               <p style={{ color: "#666", margin: "0 0 15px 0" }}>{pkg.description || "No description"}</p>
-              <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              <div className="package-actions">
                 <button
                   onClick={() => handleEditPackage(pkg._id)}
-                  style={{
-                    background: "#3498db",
-                    color: "white",
-                    border: "none",
-                    padding: "8px 16px",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                    transition: "background-color 0.3s"
-                  }}
-                  onMouseEnter={(e) => e.target.style.background = "#2980b9"}
-                  onMouseLeave={(e) => e.target.style.background = "#3498db"}
+                  className="edit-button-beige"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDeletePackage(pkg._id, pkg.name)}
                   disabled={deletingPackage === pkg._id}
-                  style={{
-                    background: deletingPackage === pkg._id ? "#95a5a6" : "#e74c3c",
-                    color: "white",
-                    border: "none",
-                    padding: "8px 16px",
-                    borderRadius: "5px",
-                    cursor: deletingPackage === pkg._id ? "not-allowed" : "pointer",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                    transition: "background-color 0.3s",
-                    opacity: deletingPackage === pkg._id ? 0.7 : 1
-                  }}
-                  onMouseEnter={(e) => {
-                    if (deletingPackage !== pkg._id) {
-                      e.target.style.background = "#c0392b";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (deletingPackage !== pkg._id) {
-                      e.target.style.background = "#e74c3c";
-                    }
-                  }}
+                  className="delete-button-red"
                 >
                   {deletingPackage === pkg._id ? "Deleting..." : "Delete"}
                 </button>
-                <span style={{ 
-                  padding: "8px 12px", 
-                  borderRadius: "5px", 
-                  fontSize: "12px",
-                  background: pkg.isActive ? "#d4edda" : "#f8d7da",
-                  color: pkg.isActive ? "#155724" : "#721c24",
-                  fontWeight: "bold"
-                }}>
-                  {pkg.isActive ? "Active" : "Inactive"}
-                </span>
+              </div>
+              <div className={`package-status ${pkg.isActive ? 'active' : 'inactive'}`}>
+                {pkg.isActive ? "Active" : "Inactive"}
               </div>
             </div>
           ))}
@@ -1122,78 +1238,264 @@ function DonationManagerDashboard() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      {/* Top Navigation Bar */}
-      <div style={{
-        background: "#34495e",
-        color: "white",
-        padding: "15px 20px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        borderBottom: "2px solid #2c3e50",
-      }}>
-        <h1 style={{ margin: 0, fontSize: "24px", fontWeight: "bold" }}>
-          Donation Manager Dashboard
-        </h1>
-        <button
-          onClick={handleSignOut}
-          style={{
-            background: "#e74c3c",
-            color: "white",
-            border: "none",
-            padding: "10px 20px",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "bold",
-            transition: "background-color 0.3s",
-          }}
-          onMouseEnter={(e) => e.target.style.background = "#c0392b"}
-          onMouseLeave={(e) => e.target.style.background = "#e74c3c"}
-        >
-          Sign Out
-        </button>
-      </div>
-
-      {/* Main Dashboard Container */}
-      <div style={{ display: "flex", flex: 1 }}>
-        {/* Sidebar */}
-        <div style={{
-          width: "220px",
-          background: "#2c3e50",
-          color: "white",
-          display: "flex",
-          flexDirection: "column",
-          padding: "20px",
-        }}>
-          <h2 style={{ marginBottom: "30px" }}>Dashboard</h2>
-          <button onClick={() => setActiveTab("home")} style={getButtonStyle(activeTab === "home")}>
+    <div className="dashboard-page">
+      {/* Fixed Sidebar */}
+      <div className="dashboard-sidebar">
+        <div className="sidebar-header">
+          <h2 className="sidebar-title">Dashboard</h2>
+          <div className="sidebar-logo">
+            <img src="/logo.png" alt="KalaaLink Logo" className="logo-icon" />
+          </div>
+        </div>
+        <nav className="sidebar-nav">
+          <button 
+            onClick={() => setActiveTab("home")} 
+            className={`sidebar-btn ${activeTab === "home" ? "active" : ""}`}
+          >
             Home
           </button>
-          <button onClick={() => setActiveTab("packages")} style={getButtonStyle(activeTab === "packages")}>
+          <button 
+            onClick={() => setActiveTab("analytics")} 
+            className={`sidebar-btn ${activeTab === "analytics" ? "active" : ""}`}
+          >
+            Analytics
+          </button>
+          <button 
+            onClick={() => setActiveTab("packages")} 
+            className={`sidebar-btn ${activeTab === "packages" ? "active" : ""}`}
+          >
             Manage Packages
           </button>
-          <button onClick={() => setActiveTab("donations")} style={getButtonStyle(activeTab === "donations")}>
+          <button 
+            onClick={() => setActiveTab("donations")} 
+            className={`sidebar-btn ${activeTab === "donations" ? "active" : ""}`}
+          >
             View Donations
           </button>
-          <button onClick={() => setActiveTab("impactStories")} style={getButtonStyle(activeTab === "impactStories")}>
+          <button 
+            onClick={() => setActiveTab("impactStories")} 
+            className={`sidebar-btn ${activeTab === "impactStories" ? "active" : ""}`}
+          >
             Impact Stories
           </button>
-          <button onClick={() => setActiveTab("partnerships")} style={getButtonStyle(activeTab === "partnerships")}>
+          <button 
+            onClick={() => setActiveTab("partnerships")} 
+            className={`sidebar-btn ${activeTab === "partnerships" ? "active" : ""}`}
+          >
             Partnership Requests
           </button>
-        </div>
+          <button 
+            onClick={handleSignOut} 
+            className="sidebar-btn signout-btn"
+          >
+            Sign Out
+          </button>
+        </nav>
+      </div>
 
-        {/* Main Content */}
-        <div style={{ flex: 1, background: "#f8f9fa" }}>
+      {/* Main Content Area */}
+      <div className="dashboard-main">
+        {/* Content Area */}
+        <div className="dashboard-content">
           {activeTab === "home" && <HomeTab />}
+          {activeTab === "analytics" && <AnalyticsTab />}
           {activeTab === "packages" && <PackagesTab />}
           {activeTab === "donations" && <DonationsTab />}
           {activeTab === "impactStories" && <ImpactStoriesManagement />}
           {activeTab === "partnerships" && <PartnershipsTab />}
         </div>
       </div>
+
+      {/* Edit Package Modal */}
+      {showEditModal && (
+        <div className="form-overlay">
+          <div className="form-container">
+            <div className="form-header">
+              <h3>Edit Package</h3>
+              <button onClick={handleCancelEdit} className="close-button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            <div className="story-form">
+              {/* Hidden input for package ID */}
+              <input
+                type="hidden"
+                name="packageId"
+                value={editingPackage?._id || ''}
+              />
+              
+              <div className="form-group">
+                <label htmlFor="edit-name">Package Name *</label>
+                <input
+                  type="text"
+                  id="edit-name"
+                  name="name"
+                  value={editFormData.name}
+                  onChange={handleEditInputChange}
+                  placeholder="Enter package name"
+                  required
+                  minLength="1"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-amount">Amount (LKR) *</label>
+                <input
+                  type="number"
+                  id="edit-amount"
+                  name="amount"
+                  value={editFormData.amount}
+                  onChange={handleEditInputChange}
+                  placeholder="Enter package amount"
+                  min="10"
+                  step="0.01"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-description">Description *</label>
+                <textarea
+                  id="edit-description"
+                  name="description"
+                  value={editFormData.description}
+                  onChange={handleEditInputChange}
+                  placeholder="Enter package description"
+                  rows="4"
+                  required
+                  minLength="1"
+                />
+              </div>
+
+              <div className="form-group checkbox-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="isActive"
+                    checked={editFormData.isActive}
+                    onChange={handleEditInputChange}
+                  />
+                  <span className="checkmark"></span>
+                  Active (package is available for donations)
+                </label>
+              </div>
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="cancel-button"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSavePackage}
+                  className="submit-button"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Package Modal */}
+      {showAddModal && (
+        <div className="form-overlay">
+          <div className="form-container">
+            <div className="form-header">
+              <h3>Add New Package</h3>
+              <button onClick={handleCancelAdd} className="close-button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            <div className="story-form">
+              <div className="form-group">
+                <label htmlFor="add-name">Package Name *</label>
+                <input
+                  type="text"
+                  id="add-name"
+                  name="name"
+                  value={addFormData.name}
+                  onChange={handleAddInputChange}
+                  placeholder="Enter package name"
+                  required
+                  minLength="1"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="add-amount">Amount (LKR) *</label>
+                <input
+                  type="number"
+                  id="add-amount"
+                  name="amount"
+                  value={addFormData.amount}
+                  onChange={handleAddInputChange}
+                  placeholder="Enter package amount"
+                  min="10"
+                  step="0.01"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="add-description">Description *</label>
+                <textarea
+                  id="add-description"
+                  name="description"
+                  value={addFormData.description}
+                  onChange={handleAddInputChange}
+                  placeholder="Enter package description"
+                  rows="4"
+                  required
+                  minLength="1"
+                />
+              </div>
+
+              <div className="form-group checkbox-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="isActive"
+                    checked={addFormData.isActive}
+                    onChange={handleAddInputChange}
+                  />
+                  <span className="checkmark"></span>
+                  Active (package is available for donations)
+                </label>
+              </div>
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  onClick={handleCancelAdd}
+                  className="cancel-button"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveNewPackage}
+                  className="submit-button"
+                >
+                  Add Package
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

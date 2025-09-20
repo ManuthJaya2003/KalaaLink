@@ -17,6 +17,7 @@ function Orders() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState(null);
+  const [clearLoading, setClearLoading] = useState(false);
 
   const fetchOrders = async () => {
     try {
@@ -113,6 +114,22 @@ function Orders() {
     setShowUpdateModal(true);
   };
 
+  const handleClearOrder = async (orderId) => {
+    if (window.confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
+      try {
+        setClearLoading(true);
+        await axios.delete(`${ORDER_URL}/${orderId}`);
+        await fetchOrders();
+        alert('Order deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting order:', error);
+        alert('Failed to delete order. Please try again.');
+      } finally {
+        setClearLoading(false);
+      }
+    }
+  };
+
   const getPaymentStatusClass = (status) => {
     switch (status) {
       case 'paid': return 'status-badge status-paid';
@@ -178,6 +195,7 @@ function Orders() {
             <th>Total</th>
             <th>Payment Status</th>
             <th>Order Date</th>
+            <th>Clear</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -194,8 +212,21 @@ function Orders() {
               <td><span className={getPaymentStatusClass(order.paymentStatus)}>{order.paymentStatus || 'pending'}</span></td>
               <td>{formatDate(order.createdAt)}</td>
               <td>
-                <button onClick={() => console.log('View details for order:', order._id)}>View Details</button>
-                <button onClick={() => openUpdateModal(order)}>Update Status</button>
+                <button 
+                  className="btn btn-clear-black"
+                  onClick={() => handleClearOrder(order._id)}
+                  disabled={clearLoading}
+                >
+                  Clear
+                </button>
+              </td>
+              <td>
+                <button 
+                  className="btn btn-update"
+                  onClick={() => openUpdateModal(order)}
+                >
+                  Update Status
+                </button>
               </td>
             </tr>
           ))}
@@ -219,8 +250,19 @@ function Orders() {
             {order.paidAt && <div>Paid At: {formatDate(order.paidAt)}</div>}
           </div>
           <div className="order-card-footer">
-            <button onClick={() => console.log('View details for order:', order._id)}>View Details</button>
-            <button onClick={() => openUpdateModal(order)}>Update Status</button>
+            <button 
+              className="btn btn-clear-black"
+              onClick={() => handleClearOrder(order._id)}
+              disabled={clearLoading}
+            >
+              Clear
+            </button>
+            <button 
+              className="btn btn-update"
+              onClick={() => openUpdateModal(order)}
+            >
+              Update Status
+            </button>
           </div>
         </div>
       ))}
@@ -234,8 +276,10 @@ function Orders() {
     <div className="orders-container">
       {/* Header */}
       <div className="orders-header">
-        <h2>Orders Management</h2>
-        <p>Manage and track all marketplace orders</p>
+        <div className="orders-title-section">
+          <h2>Orders Management</h2>
+          <p>Manage and track all marketplace orders.</p>
+        </div>
                  {webhookStatus && (
            <div className={`webhook-status ${webhookStatus.hasWebhookSecret ? 'success' : 'warning'}`}>
              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -260,7 +304,9 @@ function Orders() {
              </span>
            </div>
          )}
-        <button onClick={handleRefresh}>Refresh</button>
+        <div className="header-actions">
+          <button className="btn btn-refresh" onClick={handleRefresh}>Refresh</button>
+        </div>
       </div>
 
       {/* Filters and View Mode */}
@@ -295,27 +341,39 @@ function Orders() {
       {showUpdateModal && selectedOrder && (
         <div className="modal-overlay" onClick={() => setShowUpdateModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <h3>Update Payment Status</h3>
-            <p>Order ID: {selectedOrder._id.slice(-8)}</p>
-            <p>Customer: {selectedOrder.customerName}</p>
-            <p>Current Status: <span className={getPaymentStatusClass(selectedOrder.paymentStatus)}>{selectedOrder.paymentStatus}</span></p>
-            <p>Total Amount: {formatCurrency(selectedOrder.totalAmount || selectedOrder.amount)}</p>
-
-            <div className="status-buttons">
-              {['paid', 'pending', 'failed', 'cancelled', 'refunded'].map(status => (
-                <button
-                  key={status}
-                  className={status === selectedOrder.paymentStatus ? 'current' : ''}
-                  onClick={() => handleUpdatePaymentStatus(selectedOrder._id, status)}
-                  disabled={updateLoading}
-                >
-                  <span className={getPaymentStatusClass(status)}>{status}</span>
-                </button>
-              ))}
+            <div className="modal-header">
+              <h3 style={{ color: '#000000' }}>Update Payment Status</h3>
+              <button className="modal-close" onClick={() => setShowUpdateModal(false)}>×</button>
             </div>
+            
+            <div className="modal-body">
+              <div className="order-info">
+                <p><strong>Order ID:</strong> {selectedOrder._id.slice(-8)}</p>
+                <p><strong>Customer:</strong> {selectedOrder.customerName}</p>
+                <p><strong>Current Status:</strong> <span className={getPaymentStatusClass(selectedOrder.paymentStatus)}>{selectedOrder.paymentStatus}</span></p>
+                <p><strong>Total Amount:</strong> {formatCurrency(selectedOrder.totalAmount || selectedOrder.amount)}</p>
+              </div>
 
-            {updateLoading && <p>Updating payment status...</p>}
-            <button onClick={() => setShowUpdateModal(false)}>Close</button>
+              <div className="status-buttons">
+                <h4>Select New Status:</h4>
+                {['paid', 'pending', 'failed', 'cancelled', 'refunded'].map(status => (
+                  <button
+                    key={status}
+                    className={`btn btn-status-${status} ${status === selectedOrder.paymentStatus ? 'current' : ''}`}
+                    onClick={() => handleUpdatePaymentStatus(selectedOrder._id, status)}
+                    disabled={updateLoading}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+
+              {updateLoading && <p className="loading-text">Updating payment status...</p>}
+            </div>
+            
+            <div className="modal-footer">
+              <button className="btn btn-cancel-black" onClick={() => setShowUpdateModal(false)}>Cancel</button>
+            </div>
           </div>
         </div>
       )}

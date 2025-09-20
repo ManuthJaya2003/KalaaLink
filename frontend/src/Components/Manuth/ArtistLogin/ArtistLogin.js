@@ -133,12 +133,12 @@ function ArtistLogin() {
           </div>
 
           <div className="login-image-section">
-            <div className="login-image-placeholder">
-              <div className="placeholder-content">
-                <div className="placeholder-icon">🎨</div>
-                <h3>Artist Portal</h3>
-                <p>Access your artist dashboard, manage your profile, showcase your work, and connect with the creative community.</p>
-              </div>
+            <div className="login-image-container">
+              <img 
+                src="/artistLogin.jpg" 
+                alt="Artist Login" 
+                className="login-image"
+              />
             </div>
           </div>
         </div>

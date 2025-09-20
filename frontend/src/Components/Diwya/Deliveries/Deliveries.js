@@ -17,31 +17,31 @@ L.Icon.Default.mergeOptions({
 const deliveryIcons = {
   Pending: L.divIcon({
     className: 'custom-delivery-marker',
-    html: '<div style="background-color: #f59e0b; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">⏳</div>',
+    html: '<div style="background-color: #f59e0b; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">P</div>',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   }),
   Dispatched: L.divIcon({
     className: 'custom-delivery-marker',
-    html: '<div style="background-color: #3b82f6; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🚚</div>',
+    html: '<div style="background-color: #3b82f6; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">D</div>',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   }),
   'In Transit': L.divIcon({
     className: 'custom-delivery-marker',
-    html: '<div style="background-color: #8b5cf6; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🚛</div>',
+    html: '<div style="background-color: #8b5cf6; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">T</div>',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   }),
   Delivered: L.divIcon({
     className: 'custom-delivery-marker',
-    html: '<div style="background-color: #10b981; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">✅</div>',
+    html: '<div style="background-color: #10b981; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">✓</div>',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   }),
   Failed: L.divIcon({
     className: 'custom-delivery-marker',
-    html: '<div style="background-color: #ef4444; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">❌</div>',
+    html: '<div style="background-color: #ef4444; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">X</div>',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   }),
@@ -93,7 +93,7 @@ function DeliveryMap({ delivery, isVisible }) {
         borderRadius: '8px'
       }}>
         <div style={{ textAlign: 'center', color: '#6b7280' }}>
-          <p>🗺️ Map temporarily unavailable</p>
+          <p>Map temporarily unavailable</p>
           <p style={{ fontSize: '14px' }}>Address: {delivery.address}, {delivery.city}</p>
         </div>
       </div>
@@ -129,7 +129,7 @@ function DeliveryMap({ delivery, isVisible }) {
           >
             <Popup>
               <div>
-                <h4>🚚 Delivery Location</h4>
+                <h4>Delivery Location</h4>
                 <p><strong>Customer:</strong> {delivery.customerName}</p>
                 <p><strong>Product:</strong> {delivery.productName || delivery.artId?.artType}</p>
                 <p><strong>Status:</strong> {delivery.deliveryStatus}</p>
@@ -173,7 +173,7 @@ function Deliveries() {
       setStats(statsRes.data);
       setError('');
     } catch (err) {
-      console.error('❌ Error fetching deliveries:', err);
+      console.error('Error fetching deliveries:', err);
       setError('Failed to fetch deliveries');
     } finally {
       setLoading(false);
@@ -307,9 +307,15 @@ function Deliveries() {
   if (loading) {
     return (
       <div className="deliveries-container">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>Loading deliveries...</p>
+        <div className="deliveries-header">
+          <h2>Delivery Management</h2>
+          <p>Manage and track all delivery orders</p>
+        </div>
+        <div className="deliveries-list">
+          <div className="empty-state">
+            <h3>Loading deliveries...</h3>
+            <p>Please wait while we fetch your delivery data.</p>
+          </div>
         </div>
       </div>
     );
@@ -341,28 +347,24 @@ function Deliveries() {
       {stats && (
         <div className="stats-grid">
           <div className="stat-card">
-            <div className="stat-icon">📦</div>
             <div className="stat-content">
               <h3>{stats.total}</h3>
               <p>Total Deliveries</p>
             </div>
           </div>
           <div className="stat-card pending">
-            <div className="stat-icon">⏳</div>
             <div className="stat-content">
               <h3>{stats.pending}</h3>
               <p>Pending</p>
             </div>
           </div>
           <div className="stat-card dispatched">
-            <div className="stat-icon">🚚</div>
             <div className="stat-content">
               <h3>{stats.dispatched}</h3>
               <p>Dispatched</p>
             </div>
           </div>
           <div className="stat-card delivered">
-            <div className="stat-icon">✅</div>
             <div className="stat-content">
               <h3>{stats.delivered}</h3>
               <p>Delivered</p>
@@ -407,7 +409,7 @@ function Deliveries() {
             onClick={() => setShowClearModal(true)}
             disabled={!stats?.delivered || stats.delivered === 0}
           >
-            🧹 Clear Completed ({stats?.delivered || 0})
+            Clear Completed ({stats?.delivered || 0})
           </button>
         </div>
       </div>
@@ -416,7 +418,6 @@ function Deliveries() {
       <div className="deliveries-list">
         {filteredDeliveries.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">📦</div>
             <h3>No deliveries found</h3>
             <p>No deliveries match the current filter.</p>
           </div>
@@ -429,7 +430,7 @@ function Deliveries() {
                   <h3>{delivery.productName || delivery.artId?.artType || 'Unknown Product'}</h3>
                   <p className="customer-name">{delivery.customerName}</p>
                   <p className="delivery-address">
-                    📍 {delivery.address}, {delivery.city}, {delivery.district}
+                    {delivery.address}, {delivery.city}, {delivery.district}
                   </p>
                 </div>
                 <div className="delivery-status">
@@ -493,7 +494,7 @@ function Deliveries() {
                   className="btn btn-secondary"
                   onClick={() => handleShowMap(delivery)}
                 >
-                  🗺️ View Map
+                  View Map
                 </button>
                 
                 {delivery.deliveryStatus === 'Pending' && (
@@ -501,7 +502,7 @@ function Deliveries() {
                     className="btn btn-primary"
                     onClick={() => setDispatchModal({ isOpen: true, delivery })}
                   >
-                    🚚 Dispatch
+                    Dispatch
                   </button>
                 )}
                 
@@ -509,7 +510,7 @@ function Deliveries() {
                   className="btn btn-outline"
                   onClick={() => setStatusModal({ isOpen: true, delivery })}
                 >
-                  📝 Update Status
+                  Update Status
                 </button>
               </div>
             </div>
@@ -533,7 +534,7 @@ function Deliveries() {
                 <p><strong>Product:</strong> {selectedDelivery.productName || selectedDelivery.artId?.artType}</p>
                 {!selectedDelivery.coordinates && (
                   <p style={{ color: '#f59e0b', fontSize: '14px' }}>
-                    ⚠️ Exact coordinates not available - showing approximate location
+                    Exact coordinates not available - showing approximate location
                   </p>
                 )}
               </div>
@@ -582,7 +583,7 @@ function Deliveries() {
                   className="btn btn-primary"
                   onClick={() => handleDispatch(dispatchModal.delivery._id)}
                 >
-                  🚚 Dispatch Delivery
+                  Dispatch Delivery
                 </button>
               </div>
             </div>
@@ -639,7 +640,7 @@ function Deliveries() {
                   onClick={() => handleStatusUpdate(statusModal.delivery._id)}
                   disabled={!statusUpdate.status}
                 >
-                  📝 Update Status
+                  Update Status
                 </button>
               </div>
             </div>
@@ -652,17 +653,17 @@ function Deliveries() {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h3>🧹 Clear Completed Deliveries</h3>
+              <h3>Clear Completed Deliveries</h3>
               <button className="modal-close" onClick={() => setShowClearModal(false)}>×</button>
             </div>
             
             <div className="modal-body">
               <div className="clear-warning">
-                <p><strong>⚠️ Warning:</strong> This action will permanently delete all completed and failed deliveries.</p>
+                <p><strong>Warning:</strong> This action will permanently delete all completed and failed deliveries.</p>
                 <p>This includes:</p>
                 <ul>
-                  <li>✅ Delivered orders</li>
-                  <li>❌ Failed deliveries</li>
+                  <li>Delivered orders</li>
+                  <li>Failed deliveries</li>
                 </ul>
                 <p><strong>This action cannot be undone!</strong></p>
               </div>

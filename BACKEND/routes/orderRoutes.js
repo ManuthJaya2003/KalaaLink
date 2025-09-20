@@ -26,6 +26,9 @@ router.post('/confirm-payment', orderController.confirmOrderPayment);
 // Manual payment status update (for testing and emergency use)
 router.put('/:orderId/payment-status', orderController.manualUpdatePaymentStatus);
 
+// Delete order
+router.delete('/:orderId', orderController.deleteOrder);
+
 // Stripe webhook for marketplace orders
 router.post('/webhook', express.raw({ type: 'application/json' }), orderController.handleStripeWebhook);
 

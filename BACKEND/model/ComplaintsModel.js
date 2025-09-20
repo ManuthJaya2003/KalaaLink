@@ -31,6 +31,8 @@ const complaintsSchema = new Schema({
         enum:['Pending', 'Accepted', 'Rejected'],
         default:'Pending'
     }
+}, {
+    timestamps: true // This will automatically add createdAt and updatedAt fields
 })
 
 module.exports = mongoose.model(

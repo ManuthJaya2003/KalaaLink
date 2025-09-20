@@ -36,6 +36,10 @@ const UserManagementTab = () => {
       setSignupStats(statsData.monthlyStats || []);
       setRecentUsers(usersData.users || []);
       
+      // Debug: Log the user data
+      console.log('Recent users data:', usersData.users);
+      console.log('All users data:', allUsersData.users);
+      
       // Separate active and inactive users
       const allUsers = allUsersData.users || [];
       const active = allUsers.filter(user => user.isActive !== false);
@@ -250,8 +254,11 @@ const UserManagementTab = () => {
   if (loading) {
     return (
       <div className="user-management-container">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
+        <div className="section-header">
+          <h1>User Management</h1>
+          <p className="section-subtitle">Manage user accounts and view signup statistics</p>
+        </div>
+        <div className="loading-container">
           <p>Loading user data...</p>
         </div>
       </div>
@@ -274,27 +281,9 @@ const UserManagementTab = () => {
 
   return (
     <div className="user-management-container">
-      <div className="user-management-header">
-        <div className="header-content">
-          <div className="header-text">
-            <h2>User Management</h2>
-            <p>Manage user accounts and view signup statistics</p>
-          </div>
-          <button 
-            onClick={generateReport}
-            className="generate-report-btn"
-            title="Generate and download User Management Statistics Report"
-          >
-            <svg className="report-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14,2 14,8 20,8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
-              <polyline points="10,9 9,9 8,9"/>
-            </svg>
-            Generate Report
-          </button>
-        </div>
+      <div className="section-header">
+        <h1>User Management</h1>
+        <p className="section-subtitle">Manage user accounts and view signup statistics</p>
       </div>
 
       {/* User Status Charts */}
@@ -423,6 +412,17 @@ const UserManagementTab = () => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Generate Report Button */}
+      <div className="report-section">
+        <button 
+          onClick={generateReport}
+          className="generate-report-btn"
+          title="Generate and download User Management Statistics Report"
+        >
+          Generate Report
+        </button>
       </div>
     </div>
   );

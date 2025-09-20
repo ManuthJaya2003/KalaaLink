@@ -148,19 +148,21 @@ function EmployeeManagement() {
 
   return (
     <div className="employee-management">
-      <div className="employee-header">
+      <div className="section-header">
         <h1>Employee Management</h1>
-        <div className="header-actions">
-          <button className="btn-refresh" onClick={loadEmployees} disabled={loading}>
-            🔄 Refresh
-          </button>
-          <button className="btn-cleanup" onClick={cleanupInactiveEmployees} disabled={loading}>
-            🧹 Cleanup Inactive
-          </button>
-          <button className="btn-add" onClick={openAddModal}>
-            Add Employee
-          </button>
-        </div>
+        <p className="section-subtitle">Manage staff members, roles, and permissions across all departments</p>
+      </div>
+
+      <div className="header-actions">
+        <button className="btn-refresh" onClick={loadEmployees} disabled={loading}>
+          Refresh
+        </button>
+        <button className="btn-cleanup" onClick={cleanupInactiveEmployees} disabled={loading}>
+          Cleanup Inactive
+        </button>
+        <button className="btn-add" onClick={openAddModal}>
+          Add Employee
+        </button>
       </div>
 
       {error && (
@@ -202,22 +204,24 @@ function EmployeeManagement() {
                 </td>
                 <td>
                   <span className={`online-indicator ${employee.isOnline ? 'online' : 'offline'}`}>
-                    {employee.isOnline ? '🟢 Online' : '🔴 Offline'}
+                    {employee.isOnline ? 'Online' : 'Offline'}
                   </span>
                 </td>
                 <td>
-                  <button 
-                    className="btn-edit" 
-                    onClick={() => openEditModal(employee)}
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    className="btn-delete" 
-                    onClick={() => handleDelete(employee._id)}
-                  >
-                    Delete
-                  </button>
+                  <div className="action-buttons">
+                    <button 
+                      className="btn-edit" 
+                      onClick={() => openEditModal(employee)}
+                    >
+                      Edit
+                    </button>
+                    <button 
+                      className="btn-delete" 
+                      onClick={() => handleDelete(employee._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

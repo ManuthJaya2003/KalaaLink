@@ -226,37 +226,29 @@ form {
   transition: all 0.3s ease !important;
 }
 
-/* Image Placeholder */
-.login-image-placeholder {
-  text-align: center !important;
-  color: white !important;
-  padding: 30px !important;
-  border-radius: 20px !important;
+/* Image Container */
+.login-image-container {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
   overflow: hidden !important;
+  border-radius: 20px !important;
 }
 
-.placeholder-content {
-  max-width: 100% !important;
+.login-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  border-radius: 20px !important;
+  transition: transform 0.3s ease !important;
 }
 
-.placeholder-icon {
-  font-size: 3rem !important;
-  margin-bottom: 15px !important;
-  display: block !important;
-}
-
-.placeholder-content h3 {
-  font-size: 1.2rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 10px !important;
-  color: white !important;
-}
-
-.placeholder-content p {
-  font-size: 0.8rem !important;
-  line-height: 1.4 !important;
-  color: rgba(255, 255, 255, 0.9) !important;
-  margin: 0 !important;
+.login-image:hover {
+  transform: scale(1.05) !important;
 }
 
 /* Responsive Design */
@@ -301,8 +293,15 @@ form {
     border-radius: 20px !important;
   }
   
-  .placeholder-content {
-    max-width: 100% !important;
+  .login-image-container {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  .login-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
   
   .login-options {
@@ -360,8 +359,19 @@ form {
   
   .login-image-section {
     min-height: 100px !important;
-    padding: 10px !important;
+    padding: 0 !important;
     border-radius: 20px !important;
+  }
+  
+  .login-image-container {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  .login-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
   
   .form-input {

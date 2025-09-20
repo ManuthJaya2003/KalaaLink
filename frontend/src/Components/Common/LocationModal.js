@@ -46,12 +46,90 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
   const [routeInfo, setRouteInfo] = useState(null);
   const [showDirections, setShowDirections] = useState(false);
   const [isCalculatingRoute, setIsCalculatingRoute] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [locationError, setLocationError] = useState(null);
+  const [locationTimestamp, setLocationTimestamp] = useState(null);
   const mapRef = useRef(null);
 
   // Venue coordinates from booking
   const venueCoords = booking?.eventLocation?.lat && booking?.eventLocation?.lng 
     ? { lat: booking.eventLocation.lat, lng: booking.eventLocation.lng }
     : { lat: 6.9271, lng: 79.8612 }; // Default to Colombo
+
+  // Get user's current location
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      console.log('Requesting user location...');
+      setIsGettingLocation(true);
+      setLocationError(null);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const currentTime = new Date();
+          const locationData = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            timestamp: currentTime
+          };
+          
+          console.log('Location detected successfully:', locationData);
+          setUserLocation(locationData);
+          setLocationTimestamp(currentTime);
+          setIsGettingLocation(false);
+          setLocationError(null);
+        },
+        (error) => {
+          console.log('Error getting user location:', error);
+          setIsGettingLocation(false);
+          let errorMessage = 'Unable to get your location. ';
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage += 'Please enable location services and try again.';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage += 'Location information is unavailable.';
+              break;
+            case error.TIMEOUT:
+              errorMessage += 'Location request timed out.';
+              break;
+            default:
+              errorMessage += 'An unknown error occurred.';
+              break;
+          }
+          setLocationError(errorMessage);
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+      );
+    } else {
+      setLocationError('Geolocation is not supported by this browser.');
+      setIsGettingLocation(false);
+    }
+  };
+
+  // Generate Google Maps directions URL
+  const getDirectionsUrl = () => {
+    if (!userLocation) return null;
+    return `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${venueCoords.lat},${venueCoords.lng}`;
+  };
+
+  // Automatically detect user location when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      // Always get fresh location when modal opens
+      console.log('Modal opened, getting user location...');
+      getUserLocation();
+    }
+  }, [isOpen]);
+
+  // Reset location state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setUserLocation(null);
+      setLocationError(null);
+      setIsGettingLocation(false);
+      setLocationTimestamp(null);
+    }
+  }, [isOpen]);
 
   const calculateDistance = (start, end) => {
     const R = 6371; // Earth's radius in kilometers
@@ -122,22 +200,34 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
   };
 
   const handleGetDirections = () => {
+    console.log('Get Directions clicked, userLocation:', userLocation);
     if (userLocation) {
-      calculateRoute(userLocation, venueCoords);
+      // Open Google Maps with current location as starting point
+      const directionsUrl = `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${venueCoords.lat},${venueCoords.lng}`;
+      console.log('Opening Google Maps with URL:', directionsUrl);
+      window.open(directionsUrl, '_blank', 'noopener,noreferrer');
     } else {
+      // If no location is available, get it first
+      console.log('No user location available, requesting location...');
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
             const location = { lat: latitude, lng: longitude };
+            console.log('Location obtained for directions:', location);
             setUserLocation(location);
-            calculateRoute(location, venueCoords);
+            // Open Google Maps with the newly obtained location
+            const directionsUrl = `https://www.google.com/maps/dir/${location.lat},${location.lng}/${venueCoords.lat},${venueCoords.lng}`;
+            console.log('Opening Google Maps with URL:', directionsUrl);
+            window.open(directionsUrl, '_blank', 'noopener,noreferrer');
           },
           (error) => {
             alert('Please enable location services to get directions.');
           },
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
         );
+      } else {
+        alert('Geolocation is not supported by this browser.');
       }
     }
   };
@@ -156,76 +246,136 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        {/* Modern Header with Icon */}
         <div className="modal-header">
-          <h3>{title}</h3>
-          <button className="modal-close" onClick={onClose}>×</button>
+          <div className="header-content">
+            <div className="header-icon">📍</div>
+            <h3>{title}</h3>
+          </div>
+          <button className="modal-close" onClick={onClose}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
         
         <div className="modal-body">
-          <div className="booking-details">
-            <h4>{booking?.eventType || 'Event'}</h4>
-            <p><strong>Venue:</strong> {booking?.eventVenue}</p>
-            <p><strong>Date:</strong> {new Date(booking?.eventDate).toLocaleDateString()}</p>
-            <p><strong>Time:</strong> {booking?.eventTime}</p>
-          </div>
-
-          <div className="map-controls">
-            <button
-              onClick={handleGetDirections}
-              disabled={isCalculatingRoute}
-              className="btn btn-primary"
-            >
-              {isCalculatingRoute ? '🔄 Calculating...' : '🚗 Request Directions'}
-            </button>
-
-            <button
-              onClick={() => {
-                const userLocation = navigator.geolocation ? 
-                  new Promise((resolve) => {
-                    navigator.geolocation.getCurrentPosition(
-                      (position) => resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
-                      () => resolve(null),
-                      { enableHighAccuracy: true, timeout: 5000 }
-                    );
-                  }) : 
-                  Promise.resolve(null);
-                
-                userLocation.then((currentLocation) => {
-                  if (currentLocation) {
-                    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation.lat},${currentLocation.lng}&destination=${venueCoords.lat},${venueCoords.lng}`;
-                    window.open(googleMapsUrl, '_blank');
-                  } else {
-                    // If location access fails, use venue as destination only
-                    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${venueCoords.lat},${venueCoords.lng}`;
-                    window.open(googleMapsUrl, '_blank');
-                  }
-                });
-              }}
-              className="btn btn-success"
-              style={{ marginLeft: '10px' }}
-            >
-              Get Directions
-            </button>
-
-            {showDirections && (
-              <button onClick={clearDirections} className="btn btn-secondary">
-                ❌ Clear Route
-              </button>
-            )}
-
-            {routeInfo && (
-              <div className="route-info">
-                <span><strong>Distance:</strong> {routeInfo.distance} km</span>
-                <span><strong>Time:</strong> ~{routeInfo.time}</span>
+          {/* Event Details Card */}
+          <div className="event-details-card">
+            <div className="event-header">
+              <h4>{booking?.eventType || 'Event'}</h4>
+            </div>
+            <div className="event-info-grid">
+              <div className="info-item">
+                <div className="info-icon">🏢</div>
+                <div className="info-content">
+                  <span className="info-label">Venue</span>
+                  <span className="info-value">{booking?.eventVenue}</span>
+                </div>
               </div>
-            )}
+              <div className="info-item">
+                <div className="info-icon">📅</div>
+                <div className="info-content">
+                  <span className="info-label">Date</span>
+                  <span className="info-value">{new Date(booking?.eventDate).toLocaleDateString()}</span>
+                </div>
+              </div>
+              <div className="info-item">
+                <div className="info-icon">🕒</div>
+                <div className="info-content">
+                  <span className="info-label">Time</span>
+                  <span className="info-value">{booking?.eventTime}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
+          {/* Location Status Card */}
+          <div className="location-status-card">
+            {isGettingLocation ? (
+              <div className="status-loading">
+                <div className="loading-spinner">
+                  <div className="spinner"></div>
+                </div>
+                <p>Detecting your current location...</p>
+              </div>
+            ) : locationError ? (
+              <div className="status-error">
+                <div className="status-icon">⚠️</div>
+                <div className="status-content">
+                  <h5>Location Error</h5>
+                  <p>{locationError}</p>
+                  <button 
+                    className="btn btn-outline"
+                    onClick={getUserLocation}
+                  >
+                    <span className="btn-icon">🔄</span>
+                    Try Again
+                  </button>
+                </div>
+              </div>
+            ) : userLocation ? (
+              <div className="status-success">
+                <div className="status-icon">✅</div>
+                <div className="status-content">
+                  <h5>Location Detected</h5>
+                  <div className="location-details">
+                    <div className="location-item">
+                      <div className="item-icon">📍</div>
+                      <div className="item-content">
+                        <span className="item-label">Coordinates</span>
+                        <span className="item-value">{userLocation.lat.toFixed(6)}, {userLocation.lng.toFixed(6)}</span>
+                      </div>
+                    </div>
+                    <div className="location-item">
+                      <div className="item-icon">🕒</div>
+                      <div className="item-content">
+                        <span className="item-label">Detected</span>
+                        <span className="item-value">{locationTimestamp ? locationTimestamp.toLocaleTimeString() : 'Just now'}</span>
+                      </div>
+                    </div>
+                    {userLocation.accuracy && (
+                      <div className="location-item">
+                        <div className="item-icon">🎯</div>
+                        <div className="item-content">
+                          <span className="item-label">Accuracy</span>
+                          <span className="item-value">±{Math.round(userLocation.accuracy)}m</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          {/* Action Buttons */}
+          {userLocation && (
+            <div className="action-buttons">
+              <button
+                onClick={handleGetDirections}
+                className="btn btn-primary"
+              >
+                <span className="btn-icon">🗺️</span>
+                Get Directions
+              </button>
+              <button 
+                className="btn btn-secondary"
+                onClick={getUserLocation}
+              >
+                <span className="btn-icon">🔄</span>
+                Refresh Location
+              </button>
+            </div>
+          )}
+
+          {/* Map Container */}
           <div className="map-container">
             <MapContainer
               center={venueCoords}
               zoom={15}
-              style={{ height: '400px', width: '100%' }}
+              style={{ height: '450px', width: '100%' }}
               ref={mapRef}
             >
               <TileLayer
@@ -236,34 +386,23 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
               {/* Venue marker */}
               <Marker position={venueCoords} icon={venueIcon}>
                 <Popup>
-                  <div>
+                  <div className="venue-popup">
                     <h4>🎯 Event Venue</h4>
                     <p>{booking?.eventVenue}</p>
                   </div>
                 </Popup>
               </Marker>
 
-              {/* User location marker */}
+              {/* User location marker (if available) */}
               {userLocation && (
                 <Marker position={userLocation} icon={userIcon}>
                   <Popup>
-                    <div>
+                    <div className="user-popup">
                       <h4>📍 Your Location</h4>
                       <p>You are here</p>
                     </div>
                   </Popup>
                 </Marker>
-              )}
-
-              {/* Route polyline */}
-              {showDirections && routeCoordinates.length > 0 && (
-                <Polyline
-                  positions={routeCoordinates}
-                  color="#667eea"
-                  weight={4}
-                  opacity={0.8}
-                  dashArray="10, 5"
-                />
               )}
 
               <MapUpdater center={venueCoords} zoom={15} />

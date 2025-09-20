@@ -1,105 +1,150 @@
 .user-management-container {
-  background: white;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  margin-bottom: 0;
+  font-family: 'Arial', sans-serif;
 }
 
-.user-management-header {
-  margin-bottom: 30px;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 20px;
-}
-
-.header-content {
+/* ===== SECTION HEADER STYLES ===== */
+.section-header {
+  text-align: left;
+  margin-bottom: 2rem;
+  padding: 0;
+  background: transparent;
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  width: 100%;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+  flex-direction: column;
 }
 
-.header-text h2 {
-  color: #333;
-  margin: 0 0 10px 0;
-  font-size: 1.8rem;
+.section-header * {
+  border-bottom: none !important;
+  border-top: none !important;
+}
+
+.section-header h1 {
+  font-size: 1.875rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  position: relative;
+  text-align: left;
+  width: 100%;
+  font-family: 'Georgia', serif;
 }
 
-.header-text p {
-  color: #666;
+.section-header h1::after {
+  display: none !important;
+}
+
+.dashboard-content .section-header h1::after {
+  display: none !important;
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  color: #6b7280;
   margin: 0;
-  font-size: 1rem;
+  line-height: 1.5;
+  text-align: left;
+  width: 100%;
+  font-weight: 400;
+  border: none;
+  border-bottom: none;
+  border-top: none;
 }
 
-/* Generate Report Button */
-.generate-report-btn {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
+.section-subtitle::after {
+  display: none !important;
+}
+
+.section-subtitle::before {
+  display: none !important;
+}
+
+/* Nuclear option - remove any possible lines */
+.section-header,
+.section-header h1,
+.section-header p,
+.section-subtitle {
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+.section-header::after,
+.section-header::before,
+.section-header h1::after,
+.section-header h1::before,
+.section-header p::after,
+.section-header p::before,
+.section-subtitle::after,
+.section-subtitle::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* ===== REPORT SECTION ===== */
+.report-section {
+  margin-top: 2rem;
+  text-align: center;
+  padding: 2rem;
+  background: white;
   border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #C1A37F;
+}
+
+.generate-report-btn {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
+  font-family: inherit;
 }
 
 .generate-report-btn:hover {
+  background: #333333;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-  background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
-}
-
-.generate-report-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-}
-
-.report-icon {
-  flex-shrink: 0;
-  transition: transform 0.3s ease;
-}
-
-.generate-report-btn:hover .report-icon {
-  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Charts Section */
 .charts-section {
-  margin-bottom: 40px;
+  margin-bottom: 2rem;
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #C1A37F;
 }
 
 .charts-section h3 {
-  color: #333;
-  margin: 0 0 30px 0;
-  font-size: 1.6rem;
+  color: #2c3e50;
+  margin: 0 0 1.5rem 0;
+  font-size: 1.25rem;
   font-weight: 700;
-  text-align: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  text-align: left;
+  font-family: 'Georgia', serif;
 }
 
 /* Individual Chart Section */
 .chart-section {
-  margin-bottom: 30px;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e0e0e0;
+  margin-bottom: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.25rem;
+  border: 1px solid #e5e7eb;
 }
 
 .chart-section h4 {
@@ -157,8 +202,8 @@
 }
 
 .users-table thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #f8f9fa;
+  color: #2c3e50;
 }
 
 .users-table th {
@@ -173,6 +218,7 @@
   padding: 15px 12px;
   border-bottom: 1px solid #f0f0f0;
   vertical-align: middle;
+  text-align: left;
 }
 
 .users-table tbody tr:hover {
@@ -190,23 +236,49 @@
 }
 
 .status-badge {
-  display: inline-block;
+  display: inline-block !important;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  min-width: 80px;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle !important;
+  margin: 0;
+  line-height: 1.2;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  float: none !important;
 }
 
 .status-badge.active {
-  background: #d4edda;
-  color: #155724;
+  background: #d4edda !important;
+  color: #155724 !important;
+  border: 1px solid #c3e6cb;
 }
 
 .status-badge.inactive {
-  background: #f8d7da;
-  color: #721c24;
+  background: #f8d7da !important;
+  color: #721c24 !important;
+  border: 1px solid #f5c6cb;
+}
+
+/* Status column specific alignment */
+.users-table td:nth-child(4) {
+  text-align: center;
+  position: relative;
+  overflow: visible;
+}
+
+.users-table td:nth-child(4) .status-badge {
+  margin: 0 auto;
+  position: relative !important;
 }
 
 .deactivate-btn {
@@ -285,7 +357,7 @@
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
+  border-top: 4px solid #C1A37F;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20px;
@@ -308,8 +380,8 @@
 }
 
 .retry-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #C1A37F;
+  color: #000000;
   border: none;
   padding: 10px 20px;
   border-radius: 6px;

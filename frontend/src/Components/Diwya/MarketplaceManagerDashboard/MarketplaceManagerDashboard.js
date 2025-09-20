@@ -4,10 +4,13 @@ import axios from 'axios';
 import MainNav from '../../MainNav/MainNav';
 import ProductDetails from '../ProductDetails/ProductDetails';
 import Product from '../Product/Product';
+import HomeTab from './HomeTab';
+import AnalyticsTab from './AnalyticsTab';
+import CustomizationsTab from './CustomizationsTab';
 import './MarketplaceManagerDashboard.css';
 
 function MarketplaceManagerDashboard() {
-  const [activeTab, setActiveTab] = useState('products');
+  const [activeTab, setActiveTab] = useState('home');
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [customizations, setCustomizations] = useState([]);
   const [deliveries, setDeliveries] = useState([]);
@@ -48,6 +51,18 @@ function MarketplaceManagerDashboard() {
     fetchCounts();
   }, []);
 
+  // Listen for add product modal trigger from ProductDetails
+  useEffect(() => {
+    const handleOpenAddProductModal = () => {
+      setShowAddProductModal(true);
+    };
+    
+    window.addEventListener('openAddProductModal', handleOpenAddProductModal);
+    return () => {
+      window.removeEventListener('openAddProductModal', handleOpenAddProductModal);
+    };
+  }, []);
+
   const handleAddProduct = () => {
     setShowAddProductModal(true);
   };
@@ -64,105 +79,90 @@ function MarketplaceManagerDashboard() {
 
   return (
     <div className="marketplace-dashboard-page">
-      <MainNav />
-      
-      {/* Dashboard Header */}
-      <header className="marketplace-dashboard-header">
-        <div className="marketplace-dashboard-header-container">
-          <div className="marketplace-dashboard-header-left">
-            <h1 className="marketplace-dashboard-header-title">Marketplace Manager Dashboard</h1>
-            <p className="marketplace-dashboard-welcome-message">
-              Welcome back! Manage your marketplace inventory, orders, and deliveries efficiently.
-            </p>
+      {/* Fixed Sidebar */}
+      <aside className="marketplace-dashboard-sidebar">
+        <div className="sidebar-header">
+          <h1 className="sidebar-title">Marketplace Manager</h1>
+          <div className="sidebar-logo">
+            <img src="/logo.png" alt="KalaaLink Logo" className="logo-icon" />
           </div>
-          <button className="marketplace-dashboard-signout-btn" onClick={handleSignOut}>
-            <svg className="signout-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16,17 21,12 16,7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-            <span>Sign Out</span>
-          </button>
         </div>
-      </header>
-      
-      {/* Dashboard Navigation */}
-      <nav className="marketplace-dashboard-nav">
-        <div className="marketplace-dashboard-nav-container">
+        
+        <nav className="sidebar-nav">
           <button 
-            className={`marketplace-nav-btn ${activeTab === 'products' ? 'active' : ''}`}
+            className={`sidebar-btn ${activeTab === 'home' ? 'active' : ''}`}
+            onClick={() => setActiveTab('home')}
+          >
+            Home
+          </button>
+          <button 
+            className={`sidebar-btn ${activeTab === 'analytics' ? 'active' : ''}`}
+            onClick={() => setActiveTab('analytics')}
+          >
+            Analytics
+          </button>
+          <button 
+            className={`sidebar-btn ${activeTab === 'products' ? 'active' : ''}`}
             onClick={() => setActiveTab('products')}
           >
-            <svg className="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <circle cx="8.5" cy="8.5" r="1.5"></circle>
-              <polyline points="21,15 16,10 5,21"></polyline>
-            </svg>
             Products
           </button>
           <button 
-            className={`marketplace-nav-btn ${activeTab === 'orders' ? 'active' : ''}`}
+            className={`sidebar-btn ${activeTab === 'orders' ? 'active' : ''}`}
             onClick={() => setActiveTab('orders')}
           >
-            <svg className="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-            </svg>
             Orders ({orders.length})
           </button>
           <button 
-            className={`marketplace-nav-btn ${activeTab === 'deliveries' ? 'active' : ''}`}
+            className={`sidebar-btn ${activeTab === 'deliveries' ? 'active' : ''}`}
             onClick={() => setActiveTab('deliveries')}
           >
-            <svg className="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-6"></path>
-            </svg>
             Deliveries ({deliveries.length})
           </button>
           <button 
-            className="marketplace-nav-btn marketplace-nav-btn-customize"
-            onClick={() => navigate('/customizationdetails')}
+            className={`sidebar-btn ${activeTab === 'customizations' ? 'active' : ''}`}
+            onClick={() => setActiveTab('customizations')}
           >
-            <svg className="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-            </svg>
             Customizations ({customizations.length})
           </button>
           <button 
-            className="marketplace-nav-btn marketplace-nav-btn-marketplace"
-            onClick={() => navigate('/marketplace')}
+            className="sidebar-btn signout-btn"
+            onClick={handleSignOut}
           >
-            <svg className="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9,22 9,12 15,12 15,22"></polyline>
-            </svg>
-            View Marketplace
+            Sign Out
           </button>
-        </div>
-      </nav>
+        </nav>
+      </aside>
       
+      {/* Main Content Area */}
       <main className="marketplace-dashboard-main">
-        <div className="marketplace-dashboard-container">
-          {/* Add Product Button - Only show on Products tab */}
-          {activeTab === 'products' && (
-            <div className="add-product-section">
-              <button 
-                className="add-product-btn"
-                onClick={handleAddProduct}
-              >
-                <svg className="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                Add New Product
-              </button>
-            </div>
-          )}
-          
-          <ProductDetails 
-            activeTab={activeTab} 
-            onTabChange={setActiveTab}
-          />
+        <div className="marketplace-dashboard-content">
+          <div className="marketplace-dashboard-container">
+            {/* Tab Content */}
+            {activeTab === 'home' && <HomeTab />}
+            {activeTab === 'analytics' && <AnalyticsTab />}
+            {activeTab === 'products' && (
+              <ProductDetails 
+                activeTab={activeTab} 
+                onTabChange={setActiveTab}
+              />
+            )}
+            {activeTab === 'orders' && (
+              <ProductDetails 
+                activeTab={activeTab} 
+                onTabChange={setActiveTab}
+              />
+            )}
+            {activeTab === 'deliveries' && (
+              <ProductDetails 
+                activeTab={activeTab} 
+                onTabChange={setActiveTab}
+              />
+            )}
+            {activeTab === 'customizations' && (
+              <CustomizationsTab customizations={customizations} />
+            )}
+          </div>
         </div>
       </main>
 

@@ -12,39 +12,33 @@
 }
 
 /* Events Header */
-.events-header-main {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.events-header-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 32px 20px;
-  text-align: center;
-}
-
-.events-header-title {
-  font-size: 2.5rem;
+/* Events Main Title */
+.events-main-title {
+  font-size: 2rem;
   font-weight: 700;
-  color: #1e3a8a;
-  margin: 0 0 16px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
+  color: #000000;
+  margin: 0 0 8px 0;
+  text-align: center;
+  position: relative;
 }
 
-.events-header-icon {
-  font-size: 3rem;
+.events-main-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, #C1A37F 0%, #a88b6a 100%);
+  border-radius: 2px;
 }
 
-.events-header-subtitle {
+.events-main-subtitle {
   font-size: 1.1rem;
   color: #6b7280;
-  margin: 0;
-  line-height: 1.6;
+  margin: 0 0 32px 0;
+  text-align: center;
 }
 
 /* Legacy header styles for backward compatibility */
@@ -98,7 +92,7 @@
 }
 
 .event-card.registered::before {
-  content: "✅ Registered";
+  content: "Registered";
   position: absolute;
   top: 12px;
   right: 12px;
@@ -117,7 +111,7 @@
 }
 
 .event-card.past::before {
-  content: "⏰ Past Event";
+  content: "Past Event";
   position: absolute;
   top: 12px;
   right: 12px;
@@ -150,7 +144,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #C1A37F 0%, #a88b6a 100%);
   color: white;
   font-size: 3rem;
 }
@@ -267,12 +261,12 @@
 }
 
 .btn-register {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #C1A37F 0%, #a88b6a 100%);
   color: white;
 }
 
 .btn-register:hover {
-  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  background: linear-gradient(135deg, #a88b6a 0%, #8b735a 100%);
   transform: translateY(-1px);
 }
 
@@ -294,36 +288,6 @@
   cursor: not-allowed;
 }
 
-/* Loading Container */
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 20px;
-  text-align: center;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e5e7eb;
-  border-top: 4px solid #8b5cf6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-container p {
-  color: #6b7280;
-  font-size: 1.1rem;
-  margin: 0;
-}
 
 /* Error Container */
 .error-container {
@@ -339,7 +303,7 @@
 
 .btn-retry {
   padding: 12px 24px;
-  background: #8b5cf6;
+  background: #C1A37F;
   color: white;
   border: none;
   border-radius: 8px;
@@ -350,7 +314,7 @@
 }
 
 .btn-retry:hover {
-  background: #7c3aed;
+  background: #a88b6a;
 }
 
 /* No Events */
@@ -472,8 +436,8 @@
 }
 
 .card-element-container .StripeElement--focus {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  border-color: #C1A37F;
+  box-shadow: 0 0 0 3px rgba(193, 163, 127, 0.1);
 }
 
 .form-actions {
@@ -503,12 +467,12 @@
 }
 
 .btn-pay {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #C1A37F 0%, #a88b6a 100%);
   color: white;
 }
 
 .btn-pay:hover:not(:disabled) {
-  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  background: linear-gradient(135deg, #a88b6a 0%, #8b735a 100%);
   transform: translateY(-1px);
 }
 
@@ -594,16 +558,8 @@
     padding: 24px 0;
   }
   
-  .events-header-title {
-    font-size: 2rem;
-  }
-  
-  .events-header-icon {
-    font-size: 2.5rem;
-  }
-  
-  .events-header h2 {
-    font-size: 2rem;
+  .events-main-title {
+    font-size: 1.5rem;
   }
   
   .events-grid {
@@ -632,19 +588,11 @@
 }
 
 @media (max-width: 480px) {
-  .events-header-title {
-    font-size: 1.75rem;
+  .events-main-title {
+    font-size: 1.4rem;
   }
   
-  .events-header-icon {
-    font-size: 2rem;
-  }
-  
-  .events-header h2 {
-    font-size: 1.75rem;
-  }
-  
-  .events-header p {
+  .events-main-subtitle {
     font-size: 1rem;
   }
   

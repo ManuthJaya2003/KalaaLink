@@ -3,22 +3,17 @@ import axios from "axios";
 
 function TestimonialsTab() {
   const [testimonials, setTestimonials] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [deleteLoading, setDeleteLoading] = useState(null);
 
   // Fetch all testimonials
   const fetchTestimonials = async () => {
     try {
-      setLoading(true);
       setError(null);
       const response = await axios.get("http://localhost:5000/api/testimonials");
       setTestimonials(response.data.data || []);
     } catch (err) {
       console.error("Error fetching testimonials:", err);
       setError("Failed to fetch testimonials");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -29,7 +24,6 @@ function TestimonialsTab() {
     }
 
     try {
-      setDeleteLoading(testimonialId);
       await axios.delete(`http://localhost:5000/api/testimonials/${testimonialId}`);
       
       // Remove from local state
@@ -39,8 +33,6 @@ function TestimonialsTab() {
     } catch (err) {
       console.error("Error deleting testimonial:", err);
       alert("Failed to delete testimonial");
-    } finally {
-      setDeleteLoading(null);
     }
   };
 
@@ -74,30 +66,11 @@ function TestimonialsTab() {
     fetchTestimonials();
   }, []);
 
-  if (loading) {
-    return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <div style={{ fontSize: '18px', color: '#666' }}>Loading testimonials...</div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <div style={{ fontSize: '18px', color: '#e74c3c' }}>{error}</div>
-        <button
-          onClick={fetchTestimonials}
-          style={{
-            marginTop: '10px',
-            padding: '10px 20px',
-            backgroundColor: '#3498db',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}
-        >
+      <div className="error-container">
+        <div className="error-message">{error}</div>
+        <button onClick={fetchTestimonials} className="btn btn-primary">
           Retry
         </button>
       </div>
@@ -262,30 +235,10 @@ function TestimonialsTab() {
                     }}>
                       <button
                         onClick={() => handleDeleteTestimonial(testimonial._id)}
-                        disabled={deleteLoading === testimonial._id}
-                        style={{
-                          backgroundColor: '#e74c3c',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 12px',
-                          borderRadius: '4px',
-                          cursor: deleteLoading === testimonial._id ? 'not-allowed' : 'pointer',
-                          fontSize: '12px',
-                          opacity: deleteLoading === testimonial._id ? 0.6 : 1,
-                          transition: 'background-color 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                          if (deleteLoading !== testimonial._id) {
-                            e.target.style.backgroundColor = '#c0392b';
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (deleteLoading !== testimonial._id) {
-                            e.target.style.backgroundColor = '#e74c3c';
-                          }
-                        }}
+                        className="btn btn-secondary"
+                        style={{ fontSize: '12px', padding: '8px 12px' }}
                       >
-                        {deleteLoading === testimonial._id ? 'Deleting...' : 'Delete'}
+                        Delete
                       </button>
                     </td>
                   </tr>

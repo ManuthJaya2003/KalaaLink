@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
+import AuthFooter from '../Common/AuthFooter';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 import jsPDF from 'jspdf';
@@ -49,6 +50,8 @@ function Profile() {
   const [expandedMaps, setExpandedMaps] = useState({});
   const [artistLocations, setArtistLocations] = useState({});
   const [userLocation, setUserLocation] = useState(null);
+  const [showArtistMap, setShowArtistMap] = useState(false);
+  const [showEventMap, setShowEventMap] = useState(false);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -76,6 +79,45 @@ function Profile() {
       return () => clearInterval(interval);
     }
   }, [isAuthenticated, user]);
+
+  // Listen for payment success events and update booking status
+  useEffect(() => {
+    const handlePaymentSuccess = (event) => {
+      console.log('Payment success event received:', event.detail);
+      // Refresh booking data when payment is successful
+      fetchUserData();
+    };
+
+    // Listen for URL changes that might indicate payment completion
+    const handleUrlChange = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('session_id') || urlParams.get('payment_success')) {
+        console.log('Payment completion detected from URL');
+        fetchUserData();
+      }
+    };
+
+    // Listen for storage changes (if payment status is stored in localStorage)
+    const handleStorageChange = (e) => {
+      if (e.key === 'paymentSuccess' || e.key === 'bookingUpdated') {
+        console.log('Payment status change detected in storage');
+        fetchUserData();
+      }
+    };
+
+    window.addEventListener('paymentSuccess', handlePaymentSuccess);
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Check URL on component mount
+    handleUrlChange();
+    
+    return () => {
+      window.removeEventListener('paymentSuccess', handlePaymentSuccess);
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   // Get user's current location
   const getUserLocation = () => {
@@ -134,12 +176,13 @@ function Profile() {
     setLoading(true);
     try {
       // Fetch artist bookings, event bookings, orders, donations, and reviews in parallel
-      const [artistBookingsRes, eventBookingsRes, ordersRes, donationsRes, reviewsRes] = await Promise.allSettled([
+      const [artistBookingsRes, eventBookingsRes, ordersRes, donationsRes, artistReviewsRes, eventTestimonialsRes] = await Promise.allSettled([
         axios.get('http://localhost:5000/bookings'),
         axios.get('http://localhost:5000/eventBookings'),
         axios.get('http://localhost:5000/api/orders'),
         axios.get('http://localhost:5000/donor'),
-        axios.get('http://localhost:5000/api/artist-reviews')
+        axios.get('http://localhost:5000/api/artist-reviews'),
+        axios.get('http://localhost:5000/api/event-testimonials/testimonials')
       ]);
 
       if (artistBookingsRes.status === 'fulfilled') {
@@ -196,21 +239,60 @@ function Profile() {
         setDonations([]);
       }
 
-      if (reviewsRes.status === 'fulfilled') {
-        // Filter reviews for current user
-        const reviewsData = reviewsRes.value.data;
+      // Process artist reviews
+      let artistReviews = [];
+      if (artistReviewsRes.status === 'fulfilled') {
+        const reviewsData = artistReviewsRes.value.data;
         const reviewsArray = reviewsData.reviews || reviewsData || [];
-        const userReviews = Array.isArray(reviewsArray) ? reviewsArray.filter(
+        artistReviews = Array.isArray(reviewsArray) ? reviewsArray.filter(
           review => review.customerName === user?.firstName + ' ' + user?.lastName || 
                    review.customerName === user?.firstName ||
-                   review.customerName === user?.lastName
+                   review.customerName === user?.lastName ||
+                   review.customerEmail === user?.email
         ) : [];
-        setReviews(userReviews);
-        console.log(`Found ${userReviews.length} reviews for user ${user?.email}`);
+        console.log(`Found ${artistReviews.length} artist reviews for user ${user?.email}`);
       } else {
-        console.error('Reviews request failed:', reviewsRes.reason);
-        setReviews([]);
+        console.error('Artist reviews request failed:', artistReviewsRes.reason);
       }
+
+      // Process event testimonials
+      let eventTestimonials = [];
+      if (eventTestimonialsRes.status === 'fulfilled') {
+        const testimonialsData = eventTestimonialsRes.value.data;
+        const testimonialsArray = testimonialsData.testimonials || testimonialsData || [];
+        eventTestimonials = Array.isArray(testimonialsArray) ? testimonialsArray.filter(
+          testimonial => testimonial.customerName === user?.firstName + ' ' + user?.lastName || 
+                       testimonial.customerName === user?.firstName ||
+                       testimonial.customerName === user?.lastName ||
+                       testimonial.customerEmail === user?.email
+        ) : [];
+        console.log(`Found ${eventTestimonials.length} event testimonials for user ${user?.email}`);
+      } else {
+        console.error('Event testimonials request failed:', eventTestimonialsRes.reason);
+      }
+
+      // Combine and format all reviews
+      const allReviews = [
+        ...artistReviews.map(review => ({
+          ...review,
+          type: 'artist',
+          title: `Review for ${review.artist?.artistName || review.artist?.stageName || 'Artist'}`,
+          rating: review.rating,
+          comment: review.review,
+          date: review.createdAt
+        })),
+        ...eventTestimonials.map(testimonial => ({
+          ...testimonial,
+          type: 'event',
+          title: `Testimonial for ${testimonial.event?.eventTitle || testimonial.event?.name || 'Event'}`,
+          rating: testimonial.rating || 5, // Default to 5 if no rating
+          comment: testimonial.testimonial || testimonial.comment,
+          date: testimonial.createdAt
+        }))
+      ];
+
+      setReviews(allReviews);
+      console.log(`Found ${allReviews.length} total reviews/testimonials for user ${user?.email}`);
     } catch (error) {
       console.error('Error fetching user data:', error);
     } finally {
@@ -239,8 +321,8 @@ function Profile() {
     const pageHeight = doc.internal.pageSize.getHeight();
     
     // Set up colors
-    const primaryColor = [39, 174, 96]; // Green
-    const secondaryColor = [44, 62, 80]; // Dark blue
+    const primaryColor = [0, 0, 0]; // Black
+    const secondaryColor = [0, 0, 0]; // Black
     const lightGray = [245, 247, 250];
     
     // Header
@@ -301,7 +383,7 @@ function Profile() {
           head: [['#', 'Artist', 'Event Type', 'Date', 'Status', 'Payment']],
           body: artistBookingData,
           theme: 'grid',
-          headStyles: { fillColor: [52, 152, 219] },
+          headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
           margin: { left: 20, right: 20 }
         });
         
@@ -329,7 +411,7 @@ function Profile() {
           head: [['#', 'Event', 'Date', 'Tickets', 'Status', 'Payment ID']],
           body: eventBookingData,
           theme: 'grid',
-          headStyles: { fillColor: [46, 204, 113] },
+          headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
           margin: { left: 20, right: 20 }
         });
         
@@ -359,7 +441,7 @@ function Profile() {
         head: [['#', 'Order ID', 'Date', 'Status', 'Total']],
         body: orderData,
         theme: 'grid',
-        headStyles: { fillColor: primaryColor, textColor: [255, 255, 255] },
+        headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
         alternateRowStyles: { fillColor: lightGray },
         margin: { left: 20, right: 20 }
       });
@@ -387,7 +469,7 @@ function Profile() {
         head: [['#', 'Package', 'Date', 'Status', 'Amount']],
         body: donationData,
         theme: 'grid',
-        headStyles: { fillColor: primaryColor, textColor: [255, 255, 255] },
+        headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
         alternateRowStyles: { fillColor: lightGray },
         margin: { left: 20, right: 20 }
       });
@@ -568,6 +650,97 @@ function Profile() {
     }));
   };
 
+  // Clear individual booking functions with API calls
+  const clearArtistBooking = async (bookingId) => {
+    if (window.confirm('Are you sure you want to remove this artist booking? This action cannot be undone.')) {
+      try {
+        setLoading(true);
+        const response = await axios.delete(`http://localhost:5000/bookings/${bookingId}`);
+        
+        if (response.status === 200) {
+          // Only remove from frontend after successful backend deletion
+          setArtistBookings(prev => prev.filter(booking => booking._id !== bookingId));
+          setExpandedMaps(prev => {
+            const newExpandedMaps = { ...prev };
+            delete newExpandedMaps[`artist-${bookingId}`];
+            return newExpandedMaps;
+          });
+          showNotification('Artist booking deleted successfully', 'success');
+        }
+      } catch (error) {
+        console.error('Error deleting artist booking:', error);
+        showNotification('Failed to delete artist booking. Please try again.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const clearEventBooking = async (bookingId) => {
+    if (window.confirm('Are you sure you want to remove this event booking? This action cannot be undone.')) {
+      try {
+        setLoading(true);
+        const response = await axios.delete(`http://localhost:5000/eventBookings/${bookingId}`);
+        
+        if (response.status === 200) {
+          // Only remove from frontend after successful backend deletion
+          setEventBookings(prev => prev.filter(booking => booking._id !== bookingId));
+          setExpandedMaps(prev => {
+            const newExpandedMaps = { ...prev };
+            delete newExpandedMaps[`event-${bookingId}`];
+            return newExpandedMaps;
+          });
+          showNotification('Event booking deleted successfully', 'success');
+        }
+      } catch (error) {
+        console.error('Error deleting event booking:', error);
+        showNotification('Failed to delete event booking. Please try again.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const clearOrder = async (orderId) => {
+    if (window.confirm('Are you sure you want to remove this order? This action cannot be undone.')) {
+      try {
+        setLoading(true);
+        const response = await axios.delete(`http://localhost:5000/api/orders/${orderId}`);
+        
+        if (response.status === 200) {
+          // Only remove from frontend after successful backend deletion
+          setOrders(prev => prev.filter(order => order._id !== orderId));
+          showNotification('Order deleted successfully', 'success');
+        }
+      } catch (error) {
+        console.error('Error deleting order:', error);
+        showNotification('Failed to delete order. Please try again.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const clearDonation = async (donationId) => {
+    if (window.confirm('Are you sure you want to remove this donation? This action cannot be undone.')) {
+      try {
+        setLoading(true);
+        const response = await axios.delete(`http://localhost:5000/donor/${donationId}`);
+        
+        if (response.status === 200) {
+          // Only remove from frontend after successful backend deletion
+          setDonations(prev => prev.filter(donation => donation._id !== donationId));
+          showNotification('Donation deleted successfully', 'success');
+        }
+      } catch (error) {
+        console.error('Error deleting donation:', error);
+        showNotification('Failed to delete donation. Please try again.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   const getDirectionsUrl = (destination) => {
     if (!userLocation) return null;
     return `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${destination.lat},${destination.lng}`;
@@ -694,6 +867,58 @@ function Profile() {
     );
   };
 
+  // Map component for orders
+  const OrderMap = ({ order }) => {
+    // Use delivery address coordinates if available, otherwise default to Colombo
+    const deliveryLocation = order.deliveryAddress?.coordinates || {
+      lat: 6.9271,
+      lng: 79.8612
+    };
+
+    return (
+      <div className="booking-map">
+        <MapContainer
+          center={[deliveryLocation.lat, deliveryLocation.lng]}
+          zoom={13}
+          style={{ height: '300px', width: '100%' }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          <Marker position={[deliveryLocation.lat, deliveryLocation.lng]}>
+            <Popup>
+              <div>
+                <h4>Order #{order._id?.slice(-8)}</h4>
+                <p>Delivery Address</p>
+                {order.deliveryAddress && (
+                  <div>
+                    <p>{order.deliveryAddress.address}</p>
+                    <p>{order.deliveryAddress.city}, {order.deliveryAddress.district}</p>
+                    <p>{order.deliveryAddress.postalCode}</p>
+                  </div>
+                )}
+              </div>
+            </Popup>
+          </Marker>
+        </MapContainer>
+        
+        {userLocation && (
+          <div className="map-actions">
+            <a
+              href={getDirectionsUrl(deliveryLocation)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="directions-btn"
+            >
+              Get Directions
+            </a>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   if (!isAuthenticated || !user) {
     return null; // Will redirect to login
   }
@@ -705,6 +930,9 @@ function Profile() {
       <div className="profile-container">
         <div className="profile-header">
           <h1>My Profile</h1>
+          <p className="profile-subtext">
+            Manage your account settings, view booking history, and track your orders and donations
+          </p>
         </div>
 
         <div className="profile-content">
@@ -739,7 +967,7 @@ function Profile() {
                   onClick={openEditModal}
                   title="Edit your profile information"
                 >
-                  ✏️ Edit Profile
+                  Edit Profile
                 </button>
                 
                 <button 
@@ -747,7 +975,7 @@ function Profile() {
                   onClick={generateActivityPDF}
                   title="Download your activity report as PDF"
                 >
-                  📄 Download My Activity PDF
+                  Download My Activity PDF
                 </button>
                 
                 <button 
@@ -755,7 +983,7 @@ function Profile() {
                   onClick={() => setShowDeleteConfirm(true)}
                   title="Delete your profile permanently"
                 >
-                  🗑️ Delete Profile
+                  Delete Profile
                 </button>
               </div>
             </div>
@@ -833,97 +1061,135 @@ function Profile() {
                       {/* Artist Bookings Section */}
                       <div className="booking-section">
                         <h4 className="section-title">
-                          🎤 Artist Bookings ({artistBookings.length})
+                          Artist Bookings ({artistBookings.length})
                         </h4>
-                        {artistBookings.length > 0 ? (
-                          <div className="bookings-list">
-                            {artistBookings.map((booking, index) => (
-                              <div key={`artist-${index}`} className="booking-item">
-                                <div className="booking-info">
-                                  <h5>{booking.artist?.stageName || booking.artist?.artistName || (booking.artist?.firstName && booking.artist?.lastName ? `${booking.artist.firstName} ${booking.artist.lastName}` : booking.artist?.firstName || booking.artist?.lastName || 'Artist Booking')}</h5>
-                                  <p><strong>Event Type:</strong> {booking.eventType}</p>
-                                  <p><strong>Date:</strong> {formatDate(booking.eventDate)} at {booking.eventTime}</p>
-                                  <p><strong>Venue:</strong> {booking.eventVenue}</p>
-                                  <p><strong>Status:</strong> 
-                                    <span className={`status-badge status-${booking.status}`}>
-                                      {booking.status}
-                                    </span>
-                                  </p>
-                                  <p><strong>Payment:</strong> 
-                                    <span className={`payment-badge payment-${booking.paymentStatus}`}>
-                                      {booking.paymentStatus}
-                                    </span>
-                                  </p>
+                        
+                        {artistBookings.map((booking, index) => (
+                          <div key={`artist-${index}`} className="booking-widget">
+                            <div className="widget-header">
+                              <h5 className="widget-title">
+                                {booking.artist?.stageName || booking.artist?.artistName || (booking.artist?.firstName && booking.artist?.lastName ? `${booking.artist.firstName} ${booking.artist.lastName}` : booking.artist?.firstName || booking.artist?.lastName || 'Artist Booking')}
+                              </h5>
+                              <div className="widget-actions">
+                                <button 
+                                  className="widget-btn map-btn"
+                                  onClick={() => toggleMap(`artist-${booking._id}`)}
+                                >
+                                  {expandedMaps[`artist-${booking._id}`] ? 'Hide Map' : 'Show Map & Directions'}
+                                </button>
+                                <button 
+                                  className="widget-btn clear-btn"
+                                  onClick={() => clearArtistBooking(booking._id)}
+                                >
+                                  Clear Booking
+                                </button>
+                              </div>
+                            </div>
+                            
+                            <div className="widget-content">
+                              <div className="info-stack">
+                                <div className="info-line">
+                                  <span className="info-label">Event Type:</span>
+                                  <span className="info-value">{booking.eventType}</span>
                                 </div>
-                                
-                                {/* Map Section */}
-                                <div className="map-section">
-                                  <button 
-                                    className="toggle-map-btn"
-                                    onClick={() => toggleMap(`artist-${booking._id}`)}
-                                  >
-                                    {expandedMaps[`artist-${booking._id}`] ? '🗺️ Hide Map' : '🗺️ Show Map & Track Artist'}
-                                  </button>
-                                  
-                                  {expandedMaps[`artist-${booking._id}`] && (
-                                    <div className="map-container">
-                                      <ArtistBookingMap booking={booking} />
-                                    </div>
-                                  )}
+                                <div className="info-line">
+                                  <span className="info-label">Event Name:</span>
+                                  <span className="info-value">{booking.artist?.stageName || booking.artist?.artistName || (booking.artist?.firstName && booking.artist?.lastName ? `${booking.artist.firstName} ${booking.artist.lastName}` : booking.artist?.firstName || booking.artist?.lastName || 'Artist Booking')}</span>
+                                </div>
+                                <div className="info-line">
+                                  <span className="info-label">Date:</span>
+                                  <span className="info-value">{formatDate(booking.eventDate)} at {booking.eventTime}</span>
+                                </div>
+                                <div className="info-line">
+                                  <span className="info-label">Venue:</span>
+                                  <span className="info-value">{booking.eventVenue}</span>
+                                </div>
+                                <div className="info-line">
+                                  <span className="info-label">Payment:</span>
+                                  <span className={`payment-badge payment-${(booking.paymentStatus === 'paid' || booking.status === 'paid') ? 'paid' : 'not-paid'}`}>
+                                    {(booking.paymentStatus === 'paid' || booking.status === 'paid') ? 'Paid' : 'Not Paid'}
+                                  </span>
                                 </div>
                               </div>
-                            ))}
+                            </div>
+                            
+                            {expandedMaps[`artist-${booking._id}`] && (
+                              <div className="map-container">
+                                <ArtistBookingMap booking={booking} />
+                              </div>
+                            )}
                           </div>
-                        ) : (
-                          <p className="no-bookings">No artist bookings found.</p>
-                        )}
+                        ))}
                       </div>
 
                       {/* Event Bookings Section */}
                       <div className="booking-section">
                         <h4 className="section-title">
-                          🎫 Event Bookings ({eventBookings.length})
+                          Event Bookings ({eventBookings.length})
                         </h4>
-                        {eventBookings.length > 0 ? (
-                          <div className="bookings-list">
-                            {eventBookings.map((booking, index) => (
-                              <div key={`event-${index}`} className="booking-item">
-                                <div className="booking-info">
-                                  <h5>{booking.event?.eventTitle || booking.event?.name || 'Event Booking'}</h5>
-                                  <p><strong>Date:</strong> {formatDate(booking.bookingDate)}</p>
-                                  <p><strong>Venue:</strong> {booking.event?.eventVenue || booking.event?.venue?.name || 'Venue TBD'}</p>
-                                  <p><strong>Tickets:</strong> {booking.ticketsBooked} ticket(s)</p>
-                                  <p><strong>Status:</strong> 
-                                    <span className={`status-badge status-${booking.status}`}>
-                                      {booking.status}
-                                    </span>
-                                  </p>
-                                  {booking.paymentIntentId && (
-                                    <p><strong>Payment ID:</strong> {booking.paymentIntentId.slice(-8)}</p>
-                                  )}
-                                </div>
-                                
-                                {/* Map Section */}
-                                <div className="map-section">
-                                  <button 
-                                    className="toggle-map-btn"
-                                    onClick={() => toggleMap(`event-${booking._id}`)}
-                                  >
-                                    {expandedMaps[`event-${booking._id}`] ? '🗺️ Hide Map' : '🗺️ Show Map & Directions'}
-                                  </button>
-                                  
-                                  {expandedMaps[`event-${booking._id}`] && (
-                                    <div className="map-container">
-                                      <EventBookingMap booking={booking} />
-                                    </div>
-                                  )}
-                                </div>
+                        
+                        {eventBookings.map((booking, index) => (
+                          <div key={`event-${index}`} className="booking-widget">
+                            <div className="widget-header">
+                              <h5 className="widget-title">
+                                {booking.event?.eventTitle || booking.event?.name || 'Event Booking'}
+                              </h5>
+                              <div className="widget-actions">
+                                <button 
+                                  className="widget-btn map-btn"
+                                  onClick={() => toggleMap(`event-${booking._id}`)}
+                                >
+                                  {expandedMaps[`event-${booking._id}`] ? 'Hide Map' : 'Show Map & Directions'}
+                                </button>
+                                <button 
+                                  className="widget-btn clear-btn"
+                                  onClick={() => clearEventBooking(booking._id)}
+                                >
+                                  Clear Booking
+                                </button>
                               </div>
-                            ))}
+                            </div>
+                            
+                            <div className="widget-content">
+                              <div className="info-stack">
+                                <div className="info-line">
+                                  <span className="info-label">Event Name:</span>
+                                  <span className="info-value">{booking.event?.eventTitle || booking.event?.name || 'Event Booking'}</span>
+                                </div>
+                                <div className="info-line">
+                                  <span className="info-label">Date:</span>
+                                  <span className="info-value">{formatDate(booking.bookingDate)}</span>
+                                </div>
+                                <div className="info-line">
+                                  <span className="info-label">Venue:</span>
+                                  <span className="info-value">{booking.event?.eventVenue || booking.event?.venue?.name || 'Venue TBD'}</span>
+                                </div>
+                                <div className="info-line">
+                                  <span className="info-label">Tickets:</span>
+                                  <span className="info-value">{booking.ticketsBooked} ticket(s)</span>
+                                </div>
+                                <div className="info-line">
+                                  <span className="info-label">Payment:</span>
+                                  <span className={`payment-badge payment-${(booking.paymentStatus === 'paid' || booking.status === 'paid') ? 'paid' : 'not-paid'}`}>
+                                    {(booking.paymentStatus === 'paid' || booking.status === 'paid') ? 'Paid' : 'Not Paid'}
+                                  </span>
+                                </div>
+                                {booking.paymentIntentId && (
+                                  <div className="info-line">
+                                    <span className="info-label">Payment ID:</span>
+                                    <span className="info-value">{booking.paymentIntentId.slice(-8)}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {expandedMaps[`event-${booking._id}`] && (
+                              <div className="map-container">
+                                <EventBookingMap booking={booking} />
+                              </div>
+                            )}
                           </div>
-                        ) : (
-                          <p className="no-bookings">No event bookings found.</p>
-                        )}
+                        ))}
                       </div>
                     </div>
                   )}
@@ -932,19 +1198,71 @@ function Profile() {
 
               {activeTab === 'orders' && (
                 <div className="orders-history">
-                  <h3>Order History</h3>
+                  <h3>Marketplace Purchases ({orders.length})</h3>
                   {loading ? (
                     <p>Loading orders...</p>
                   ) : orders.length > 0 ? (
-                    <div className="orders-list">
+                    <div className="booking-section">
                       {orders.map((order, index) => (
-                        <div key={index} className="order-item">
-                          <div className="order-info">
-                            <h4>Order #{order._id?.slice(-8) || index + 1}</h4>
-                            <p><strong>Date:</strong> {formatDate(order.createdAt)}</p>
-                            <p><strong>Status:</strong> {order.status || 'Processing'}</p>
-                            <p><strong>Total:</strong> LKR {order.totalAmount || '0.00'}</p>
+                        <div key={`order-${index}`} className="booking-widget order-widget">
+                          <div className="widget-header">
+                            <h5 className="widget-title">
+                              Order #{order._id?.slice(-8) || index + 1}
+                            </h5>
+                            <div className="widget-actions">
+                              <button 
+                                className="widget-btn map-btn"
+                                onClick={() => toggleMap(`order-${order._id}`)}
+                              >
+                                {expandedMaps[`order-${order._id}`] ? 'Hide Map' : 'Show Map & Directions'}
+                              </button>
+                              <button 
+                                className="widget-btn clear-btn"
+                                onClick={() => clearOrder(order._id)}
+                              >
+                                Clear Order
+                              </button>
+                            </div>
                           </div>
+                          
+                          <div className="widget-content">
+                            <div className="info-stack">
+                              <div className="info-line">
+                                <span className="info-label">Order ID:</span>
+                                <span className="info-value">#{order._id?.slice(-8) || index + 1}</span>
+                              </div>
+                              <div className="info-line">
+                                <span className="info-label">Date:</span>
+                                <span className="info-value">{formatDate(order.createdAt)}</span>
+                              </div>
+                              <div className="info-line">
+                                <span className="info-label">Total:</span>
+                                <span className="info-value">LKR {order.totalAmount || '0.00'}</span>
+                              </div>
+                              <div className="info-line">
+                                <span className="info-label">Items:</span>
+                                <span className="info-value">{order.items?.length || 0} item(s)</span>
+                              </div>
+                              <div className="info-line">
+                                <span className="info-label">Payment:</span>
+                                <span className={`payment-badge payment-${(order.paymentStatus === 'paid' || order.status === 'paid' || order.status === 'completed') ? 'paid' : 'not-paid'}`}>
+                                  {(order.paymentStatus === 'paid' || order.status === 'paid' || order.status === 'completed') ? 'Paid' : 'Not Paid'}
+                                </span>
+                              </div>
+                              {order.paymentIntentId && (
+                                <div className="info-line">
+                                  <span className="info-label">Payment ID:</span>
+                                  <span className="info-value">{order.paymentIntentId.slice(-8)}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {expandedMaps[`order-${order._id}`] && (
+                            <div className="map-container">
+                              <OrderMap order={order} />
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -956,25 +1274,50 @@ function Profile() {
 
               {activeTab === 'donations' && (
                 <div className="donations-history">
-                  <h3>Donation History</h3>
+                  <h3>Donation History ({donations.length})</h3>
                   {loading ? (
                     <p>Loading donations...</p>
                   ) : donations.length > 0 ? (
-                    <div className="donations-list">
+                    <div className="booking-section">
                       {donations.map((donation, index) => (
-                        <div key={index} className="donation-item">
-                          <div className="donation-info">
-                            <h4>{donation.packageName || 'Donation'}</h4>
-                            <p><strong>Date:</strong> {formatDate(donation.createdAt || donation.Date)}</p>
-                            <p><strong>Amount:</strong> LKR {donation.Amount || donation.amount || '0.00'}</p>
-                            <p><strong>Status:</strong> 
-                              <span className={`status-badge status-${donation.paymentStatus || donation.status || 'completed'}`}>
-                                {donation.paymentStatus || donation.status || 'Completed'}
-                              </span>
-                            </p>
-                            {donation.DonorNote && (
-                              <p><strong>Note:</strong> {donation.DonorNote}</p>
-                            )}
+                        <div key={index} className="booking-widget donation-widget">
+                          <div className="widget-header">
+                            <h5 className="widget-title">
+                              {donation.packageName || 'Donation'}
+                            </h5>
+                            <div className="widget-actions">
+                              <button 
+                                className="widget-btn clear-btn"
+                                onClick={() => clearDonation(donation._id)}
+                              >
+                                Clear Donation
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div className="widget-content">
+                            <div className="info-stack">
+                              <div className="info-line">
+                                <span className="info-label">Date:</span>
+                                <span className="info-value">{formatDate(donation.createdAt || donation.Date)}</span>
+                              </div>
+                              <div className="info-line">
+                                <span className="info-label">Amount:</span>
+                                <span className="info-value">LKR {donation.Amount || donation.amount || '0.00'}</span>
+                              </div>
+                              <div className="info-line">
+                                <span className="info-label">Payment:</span>
+                                <span className={`payment-badge payment-${(donation.paymentStatus === 'paid' || donation.status === 'paid' || donation.status === 'completed') ? 'paid' : 'not-paid'}`}>
+                                  {(donation.paymentStatus === 'paid' || donation.status === 'paid' || donation.status === 'completed') ? 'Paid' : 'Not Paid'}
+                                </span>
+                              </div>
+                              {donation.DonorNote && (
+                                <div className="info-line">
+                                  <span className="info-label">Note:</span>
+                                  <span className="info-value">{donation.DonorNote}</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -987,31 +1330,50 @@ function Profile() {
 
               {activeTab === 'reviews' && (
                 <div className="reviews-history">
-                  <h3>My Reviews</h3>
+                  <h3>My Reviews ({reviews.length})</h3>
                   {loading ? (
                     <p>Loading reviews...</p>
                   ) : reviews.length > 0 ? (
-                    <div className="reviews-list">
+                    <div className="booking-section">
                       {reviews.map((review, index) => (
-                        <div key={index} className="review-item">
-                          <div className="review-info">
-                            <h4>Review for {review.artist?.artistName || 'Artist'}</h4>
-                            <div className="review-rating">
-                              <span className="stars">
-                                {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                        <div key={index} className="booking-widget review-widget">
+                          <div className="widget-header">
+                            <h5 className="widget-title">
+                              {review.title}
+                            </h5>
+                            <div className="widget-actions">
+                              <span className="review-type-badge">
+                                {review.type === 'artist' ? 'Artist Review' : 'Event Testimonial'}
                               </span>
-                              <span className="rating-text">{review.rating} out of 5 stars</span>
                             </div>
-                            <p className="review-text">"{review.review}"</p>
-                            <p className="review-date">
-                              <strong>Posted:</strong> {formatDate(review.createdAt)}
-                            </p>
+                          </div>
+                          
+                          <div className="widget-content">
+                            <div className="info-stack">
+                              <div className="info-line">
+                                <span className="info-label">Rating:</span>
+                                <div className="review-rating">
+                                  <span className="stars">
+                                    {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                                  </span>
+                                  <span className="rating-text">{review.rating} out of 5 stars</span>
+                                </div>
+                              </div>
+                              <div className="info-line">
+                                <span className="info-label">Comment:</span>
+                                <span className="info-value review-comment">"{review.comment}"</span>
+                              </div>
+                              <div className="info-line">
+                                <span className="info-label">Posted:</span>
+                                <span className="info-value">{formatDate(review.date)}</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p>No reviews found. Start reviewing artists you've booked!</p>
+                    <p>No reviews found. Start reviewing artists you've booked or events you've attended!</p>
                   )}
                 </div>
               )}
@@ -1030,13 +1392,20 @@ function Profile() {
 
       {/* Edit Profile Modal */}
       {showEditModal && (
-        <div className="modal-overlay">
-          <div className="modal-content edit-modal">
-            <div className="modal-header">
-              <h3>✏️ Edit Profile</h3>
+        <div className="edit-modal-overlay">
+          <div className="edit-modal-content">
+            <div className="edit-modal-header">
+              <h3>Edit Profile</h3>
+              <button 
+                className="edit-modal-close"
+                onClick={closeEditModal}
+                disabled={editing}
+              >
+                ×
+              </button>
             </div>
             <form onSubmit={handleEditSubmit} className="edit-form">
-              <div className="modal-body">
+              <div className="edit-modal-body">
                 {/* Profile Picture Upload */}
                 <div className="form-group">
                   <label className="form-label">Profile Picture</label>
@@ -1060,7 +1429,7 @@ function Profile() {
                       className="file-input"
                     />
                     <label htmlFor="profilePicture" className="file-input-label">
-                      📷 Choose New Picture
+                      Choose New Picture
                     </label>
                     {editErrors.profilePicture && (
                       <p className="error-message">{editErrors.profilePicture}</p>
@@ -1141,10 +1510,10 @@ function Profile() {
                 </div>
               </div>
 
-              <div className="modal-footer">
+              <div className="edit-modal-footer">
                 <button 
                   type="button"
-                  className="cancel-btn"
+                  className="btn btn-secondary"
                   onClick={closeEditModal}
                   disabled={editing}
                 >
@@ -1152,7 +1521,7 @@ function Profile() {
                 </button>
                 <button 
                   type="submit"
-                  className="save-btn"
+                  className="btn btn-primary"
                   disabled={editing}
                 >
                   {editing ? 'Saving...' : 'Save Changes'}
@@ -1194,6 +1563,7 @@ function Profile() {
           </div>
         </div>
       )}
+      <AuthFooter />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./OverviewApplicationsTab.css";
+import "./AnalyticsTab.css";
 
 const BASE_URL = "http://localhost:5000/artists/applications";
 
@@ -91,11 +92,15 @@ function OverviewApplicationsTab() {
 
   return (
     <div className="overview-applications-container">
+      {/* Page Header */}
+      <div className="analytics-page-header">
+        <h1 className="analytics-page-title">Applications</h1>
+        <p className="analytics-page-subtitle">Review and manage artist applications for approval</p>
+      </div>
       {/* Pending Applications Table */}
       <div className="applications-section">
         <div className="section-header">
           <h2 className="section-title pending">
-            <span className="status-icon">⏳</span>
             Pending Applications ({pendingArtists.length})
           </h2>
         </div>
@@ -134,15 +139,15 @@ function OverviewApplicationsTab() {
                       {artist.createdAt ? new Date(artist.createdAt).toLocaleDateString() : "—"}
                     </td>
                     <td className="status">
-                      <span className="status-badge pending-badge">⏳ Pending</span>
+                      <span className="status-badge pending-badge">Pending</span>
                     </td>
                     <td className="actions">
                       <div className="action-buttons">
                         <button onClick={() => approveArtist(artist._id)} className="btn-approve">
-                          ✅ Approve
+                          Approve
                         </button>
                         <button onClick={() => rejectArtist(artist._id)} className="btn-reject">
-                          ❌ Reject
+                          Reject
                         </button>
                       </div>
                     </td>
@@ -158,7 +163,6 @@ function OverviewApplicationsTab() {
       <div className="applications-section">
         <div className="section-header">
           <h2 className="section-title approved">
-            <span className="status-icon">✅</span>
             Approved Artists ({approvedArtists.length})
           </h2>
         </div>
@@ -196,7 +200,7 @@ function OverviewApplicationsTab() {
                       {artist.updatedAt ? new Date(artist.updatedAt).toLocaleDateString() : "—"}
                     </td>
                     <td className="status">
-                      <span className="status-badge approved-badge">✅ Approved</span>
+                      <span className="status-badge approved-badge">Approved</span>
                     </td>
                   </tr>
                 ))}
@@ -210,7 +214,6 @@ function OverviewApplicationsTab() {
       <div className="applications-section">
         <div className="section-header">
           <h2 className="section-title rejected">
-            <span className="status-icon">❌</span>
             Rejected Artists ({rejectedArtists.length})
           </h2>
           {rejectedArtists.length > 0 && (
@@ -219,7 +222,7 @@ function OverviewApplicationsTab() {
               className="btn-clear-rejected"
               title="Clear all rejected artists"
             >
-              🗑️ Clear All
+              Clear All
             </button>
           )}
         </div>
@@ -257,7 +260,7 @@ function OverviewApplicationsTab() {
                       {artist.updatedAt ? new Date(artist.updatedAt).toLocaleDateString() : "—"}
                     </td>
                     <td className="status">
-                      <span className="status-badge rejected-badge">❌ Rejected</span>
+                      <span className="status-badge rejected-badge">Rejected</span>
                     </td>
                   </tr>
                 ))}

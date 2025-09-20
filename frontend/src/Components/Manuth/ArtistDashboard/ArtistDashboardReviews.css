@@ -1,27 +1,49 @@
 /* Artist Dashboard Reviews Styles */
 
+.reviews-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc;
+}
+
 .artist-dashboard-reviews {
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
+  margin-top: 20px; /* Small gap after ArtistNavbar */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.reviews-header {
-  margin-bottom: 32px;
-  text-align: center;
-}
-
-.reviews-header h2 {
+/* Reviews Main Title */
+.reviews-main-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #1e3a8a;
+  color: #000000;
   margin: 0 0 8px 0;
+  text-align: center;
+  position: relative;
 }
 
-.reviews-header p {
+.reviews-main-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, #C1A37F 0%, #a88b6a 100%);
+  border-radius: 2px;
+}
+
+.reviews-main-subtitle {
   color: #6b7280;
   font-size: 1.1rem;
   margin: 0 0 16px 0;
+  text-align: center;
 }
 
 .reviews-stats {
@@ -46,8 +68,7 @@
   color: #92400e;
 }
 
-/* Loading and Error States */
-.loading-container,
+/* Error States */
 .error-container {
   display: flex;
   flex-direction: column;
@@ -55,16 +76,6 @@
   justify-content: center;
   padding: 48px 24px;
   text-align: center;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e5e7eb;
-  border-top: 4px solid #3b82f6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
 }
 
 .loading-spinner-small {
@@ -295,7 +306,7 @@
     padding: 16px;
   }
   
-  .reviews-header h2 {
+  .reviews-main-title {
     font-size: 1.5rem;
   }
   

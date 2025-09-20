@@ -450,12 +450,14 @@
 }
 
 .edit-button {
-  background: #3498db;
-  color: white;
+  background: #C1A37F;
+  color: #000000;
 }
 
 .edit-button:hover {
-  background: #2980b9;
+  background: #a68b5f;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(193, 163, 127, 0.3);
 }
 
 .toggle-button.activate {

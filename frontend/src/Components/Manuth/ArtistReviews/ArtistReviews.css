@@ -197,7 +197,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -206,20 +206,17 @@
   font-size: 0.9rem;
 }
 
-.artist-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.artist-info strong {
+.artist-name {
+  font-weight: normal;
   color: #1f2937;
   font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 .artist-details {
   color: #6b7280;
   font-size: 0.8rem;
+  margin-top: 4px;
 }
 
 .rating-cell {
@@ -230,10 +227,17 @@
   max-width: 300px;
 }
 
+.review-text p {
+  font-weight: normal;
+  font-style: italic;
+}
+
 .review-content p {
   margin: 0;
   color: #374151;
   line-height: 1.4;
+  font-weight: normal;
+  font-style: italic;
   font-size: 0.9rem;
 }
 
@@ -276,12 +280,12 @@
 }
 
 .btn-delete {
-  background: #ef4444;
-  color: white;
+  background: #dc3545 !important;
+  color: white !important;
 }
 
 .btn-delete:hover {
-  background: #dc2626;
+  background: #c82333 !important;
 }
 
 .btn-delete:disabled {
@@ -290,19 +294,38 @@
 }
 
 .btn-danger {
-  background: #ef4444;
-  color: white;
+  background: #dc3545 !important;
+  color: white !important;
   padding: 8px 16px;
   font-size: 0.9rem;
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #dc2626;
+  background: #c82333 !important;
 }
 
 .btn-danger:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Button Overrides for Artist Reviews */
+.artist-reviews-container .btn-danger {
+  background: #dc3545 !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.artist-reviews-container .btn-danger:hover {
+  background: #c82333 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3) !important;
 }
 
 /* Delete Confirmation Modal */
@@ -420,7 +443,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;

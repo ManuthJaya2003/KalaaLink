@@ -5,8 +5,6 @@ import "./BookingsTab.css";
 function BookingsTab({ events = [] }) {
   const [bookings, setBookings] = useState([]);
   const [artists, setArtists] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [artistsLoading, setArtistsLoading] = useState(false);
   const [filter, setFilter] = useState("all"); // all, pending, paid, cancelled
   const [selectedEvent, setSelectedEvent] = useState("");
 
@@ -16,8 +14,6 @@ function BookingsTab({ events = [] }) {
       setBookings(res.data.bookings || []);
     } catch (err) {
       console.error("Failed to fetch bookings:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -27,15 +23,12 @@ function BookingsTab({ events = [] }) {
       return;
     }
     
-    setArtistsLoading(true);
     try {
       const res = await axios.get(`http://localhost:5000/artistsEventRegistration/${eventId}`);
       setArtists(res.data.artists || []);
     } catch (err) {
       console.error("Failed to fetch artists:", err);
       setArtists([]);
-    } finally {
-      setArtistsLoading(false);
     }
   };
 
@@ -52,7 +45,7 @@ function BookingsTab({ events = [] }) {
   }, []);
 
   const handleClear = async (id) => {
-    if (!window.confirm("Are you sure you want to clear this pending booking? This will delete the booking record.")) return;
+    if (!window.confirm("Are you sure you want to clear this booking? This will permanently delete the booking record.")) return;
 
     try {
       await axios.delete(`http://localhost:5000/eventBookings/${id}`);
@@ -131,11 +124,6 @@ function BookingsTab({ events = [] }) {
 
   const stats = getStats();
 
-  if (loading) return (
-    <div style={{ textAlign: "center", padding: "40px" }}>
-      <div style={{ fontSize: "18px", color: "#666" }}>Loading bookings...</div>
-    </div>
-  );
 
   return (
     <div style={{ padding: "20px" }}>
@@ -200,7 +188,7 @@ function BookingsTab({ events = [] }) {
             onClick={() => setFilter("all")}
             style={{
               ...filterButtonStyle,
-              backgroundColor: filter === "all" ? "#3b82f6" : "#f3f4f6",
+              backgroundColor: filter === "all" ? "#C1A37F" : "#f3f4f6",
               color: filter === "all" ? "white" : "#374151"
             }}
           >
@@ -262,6 +250,7 @@ function BookingsTab({ events = [] }) {
                   <th style={thStyle}>Booking Date</th>
                   <th style={thStyle}>Status</th>
                   <th style={thStyle}>Actions</th>
+                  <th style={thStyle}>Clear</th>
                 </tr>
               </thead>
               <tbody>
@@ -282,29 +271,33 @@ function BookingsTab({ events = [] }) {
                       {getStatusBadge(b.status)}
                     </td>
                     <td style={tdStyle}>
-                      {b.status === "pending" && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        {b.status === "paid" && (
+                          <button 
+                            onClick={() => handleRefund(b._id)} 
+                            style={cancelButtonStyle}
+                            title="Refund this confirmed booking"
+                          >
+                            Refund
+                          </button>
+                        )}
+                        {b.status === "cancelled" && (
+                          <span style={{ color: "#dc2626", fontSize: "12px" }}>
+                            ✗ Cancelled
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td style={tdStyle}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <button 
                           onClick={() => handleClear(b._id)} 
-                          style={cancelButtonStyle}
-                          title="Clear this pending booking (no payment made)"
+                          className="clear-button"
+                          title="Clear this booking record"
                         >
                           Clear
                         </button>
-                      )}
-                      {b.status === "paid" && (
-                        <button 
-                          onClick={() => handleRefund(b._id)} 
-                          style={cancelButtonStyle}
-                          title="Refund this confirmed booking"
-                        >
-                          Refund
-                        </button>
-                      )}
-                      {b.status === "cancelled" && (
-                        <span style={{ color: "#dc2626", fontSize: "12px" }}>
-                          ✗ Cancelled
-                        </span>
-                      )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -323,10 +316,6 @@ function BookingsTab({ events = [] }) {
         {!selectedEvent ? (
           <div style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
             Please select an event to view registered artists.
-          </div>
-        ) : artistsLoading ? (
-          <div style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
-            Loading artists...
           </div>
         ) : artists.length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
@@ -394,6 +383,13 @@ const filterButtonStyle = {
   transition: "all 0.2s"
 };
 
+// Add hover effect styles
+const filterButtonHoverStyle = {
+  ...filterButtonStyle,
+  backgroundColor: "#000000",
+  color: "white"
+};
+
 const tableStyle = {
   borderCollapse: "collapse",
   width: "100%",
@@ -430,6 +426,18 @@ const cancelButtonStyle = {
   color: "white",
   border: "none",
   borderRadius: "4px",
+  cursor: "pointer",
+  fontSize: "12px",
+  fontWeight: "500",
+  transition: "all 0.2s"
+};
+
+const clearButtonStyle = {
+  padding: "6px 12px",
+  backgroundColor: "#000000 !important",
+  color: "white !important",
+  border: "none !important",
+  borderRadius: "4px !important",
   cursor: "pointer",
   fontSize: "12px",
   fontWeight: "500",

@@ -10,16 +10,32 @@ import BookingsTab from "./BookingsTab"; // ✅ new import
 import TestimonialsTab from "./TestimonialsTab"; // ✅ new import
 import { useParams } from "react-router-dom";
 import logoutEmployee from "../../../utils/employeeLogout";
+import "./EventManagerDashboard.css";
 
 function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
   const [activeTab, setActiveTab] = useState("home");
   const { id } = useParams(); // ✅ check if we are updating a specific event
   const navigate = useNavigate();
+  const [managerName, setManagerName] = useState("Manager");
 
   // Sign out function
   const handleSignOut = () => {
     logoutEmployee(navigate, "/");
   };
+
+  // Get greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
+  // Fetch manager name (you can replace this with actual manager data)
+  useEffect(() => {
+    // This would typically come from your authentication context or API
+    setManagerName("Manager");
+  }, []);
 
   // Fetch events
   const fetchEvents = async () => {
@@ -42,95 +58,78 @@ function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      {/* Top Navigation Bar */}
-      <div
-        style={{
-          background: "#34495e",
-          color: "white",
-          padding: "15px 20px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          borderBottom: "2px solid #2c3e50",
-        }}
-      >
-        <h1 style={{ margin: 0, fontSize: "24px", fontWeight: "bold" }}>
-          Event Manager Dashboard
-        </h1>
-        <button
-          onClick={handleSignOut}
-          style={{
-            background: "#e74c3c",
-            color: "white",
-            border: "none",
-            padding: "10px 20px",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "bold",
-            transition: "background-color 0.3s",
-          }}
-          onMouseEnter={(e) => e.target.style.background = "#c0392b"}
-          onMouseLeave={(e) => e.target.style.background = "#e74c3c"}
-        >
-          Sign Out
-        </button>
+    <div className="dashboard-page">
+      {/* Fixed Sidebar */}
+      <div className="dashboard-sidebar">
+        <div className="sidebar-header">
+          <h2 className="sidebar-title">Dashboard</h2>
+          <div className="sidebar-logo">
+            <img src="/logo.png" alt="KalaaLink Logo" className="logo-icon" />
+          </div>
+        </div>
+        <nav className="sidebar-nav">
+          <button 
+            onClick={() => setActiveTab("home")} 
+            className={`sidebar-btn ${activeTab === "home" ? "active" : ""}`}
+          >
+            Home
+          </button>
+          <button 
+            onClick={() => setActiveTab("organize")} 
+            className={`sidebar-btn ${activeTab === "organize" ? "active" : ""}`}
+          >
+            Organize Event
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("ongoing");
+              fetchEvents(); // refresh events when opening ongoing tab
+            }}
+            className={`sidebar-btn ${activeTab === "ongoing" ? "active" : ""}`}
+          >
+            Ongoing Events
+          </button>
+          <button 
+            onClick={() => setActiveTab("analytics")} 
+            className={`sidebar-btn ${activeTab === "analytics" ? "active" : ""}`}
+          >
+            Analytics
+          </button>
+          <button 
+            onClick={() => setActiveTab("bookings")} 
+            className={`sidebar-btn ${activeTab === "bookings" ? "active" : ""}`}
+          >
+            Bookings
+          </button>
+          <button 
+            onClick={() => setActiveTab("testimonials")} 
+            className={`sidebar-btn ${activeTab === "testimonials" ? "active" : ""}`}
+          >
+            Testimonials
+          </button>
+          <button 
+            onClick={handleSignOut} 
+            className="sidebar-btn signout-btn"
+          >
+            Sign Out
+          </button>
+        </nav>
       </div>
 
-      {/* Main Dashboard Container */}
-      <div style={{ display: "flex", flex: 1 }}>
-        {/* Sidebar */}
-        <div
-          style={{
-            width: "220px",
-            background: "#2c3e50",
-            color: "white",
-            display: "flex",
-            flexDirection: "column",
-            padding: "20px",
-          }}
-        >
-        <h2 style={{ marginBottom: "30px" }}>Dashboard</h2>
-        <button onClick={() => setActiveTab("home")} style={getButtonStyle(activeTab === "home")}>Home</button>
-        <button onClick={() => setActiveTab("organize")} style={getButtonStyle(activeTab === "organize")}>Organize Event</button>
-        <button
-          onClick={() => {
-            setActiveTab("ongoing");
-            fetchEvents(); // refresh events when opening ongoing tab
-          }}
-          style={getButtonStyle(activeTab === "ongoing")}
-        >
-          Ongoing Events
-        </button>
-        <button onClick={() => setActiveTab("analytics")} style={getButtonStyle(activeTab === "analytics")}>Analytics</button>
-        <button onClick={() => setActiveTab("bookings")} style={getButtonStyle(activeTab === "bookings")}>Bookings</button> {/* ✅ new button */}
-        <button onClick={() => setActiveTab("testimonials")} style={getButtonStyle(activeTab === "testimonials")}>Testimonials</button> {/* ✅ new button */}
-        </div>
-
-        {/* Main Content */}
-        <div style={{ flex: 1, padding: "20px" }}>
+      {/* Main Content Area */}
+      <div className="dashboard-main">
+        {/* Content Area */}
+        <div className="dashboard-content">
           {activeTab === "home" && <HomeTab />}
           {activeTab === "organize" && <OrganizeEventForm events={events} setEvents={setEvents} />}
           {activeTab === "ongoing" && <OngoingEventsTable events={events} setEvents={setEvents} />}
           {activeTab === "analytics" && <AnalyticsTab />}
-          {activeTab === "bookings" && <BookingsTab events={events} />} {/* ✅ new tab content */}
-          {activeTab === "testimonials" && <TestimonialsTab />} {/* ✅ new tab content */}
+          {activeTab === "bookings" && <BookingsTab events={events} />}
+          {activeTab === "testimonials" && <TestimonialsTab />}
         </div>
       </div>
     </div>
   );
 }
-
-const getButtonStyle = (isActive) => ({
-  background: isActive ? "#34495e" : "transparent",
-  border: "none",
-  color: "white",
-  textAlign: "left",
-  padding: "10px 0",
-  cursor: "pointer",
-  fontSize: "16px",
-  fontWeight: isActive ? "bold" : "normal",
-});
 
 export default EventManagerDashboard;

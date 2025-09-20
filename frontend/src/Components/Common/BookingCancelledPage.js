@@ -18,8 +18,8 @@ function BookingCancelledPage() {
     }
   };
 
-  const handleGoHome = () => {
-    navigate('/');
+  const handleBrowseArtists = () => {
+    navigate('/artists');
   };
 
   return (
@@ -52,9 +52,9 @@ function BookingCancelledPage() {
               Try Again
             </button>
             
-            <button className="btn-secondary" onClick={handleGoHome}>
-              <span className="btn-icon">🏠</span>
-              Go Home
+            <button className="btn-secondary" onClick={handleBrowseArtists}>
+              <span className="btn-icon">🎨</span>
+              Browse Artists
             </button>
           </div>
 

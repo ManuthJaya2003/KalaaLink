@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
+import AuthFooter from '../Common/AuthFooter';
 import { useAuth } from '../../contexts/AuthContext';
 import '../Login/Login.css';
 import './ForgotPassword.css';
@@ -48,32 +49,22 @@ function ForgotPassword() {
   return (
     <div>
       <MainNav />
-      <div className="login-container">
+      <div className="login-container forgot-password-container">
         <div className="login-card">
           <div className="login-header">
             <h1 className="login-title">Reset Password</h1>
-            <p className="login-subtitle">Enter your email and new password</p>
+            <p className="login-subtitle">Enter your email and new password to reset your account</p>
           </div>
 
           <form onSubmit={handleSubmit}>
             {error && (
-              <div className="error-message" style={{ 
-                color: 'red', 
-                marginBottom: '1rem', 
-                textAlign: 'center',
-                fontSize: '0.9rem'
-              }}>
+              <div className="error-message">
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="success-message" style={{ 
-                color: 'green', 
-                marginBottom: '1rem', 
-                textAlign: 'center',
-                fontSize: '0.9rem'
-              }}>
+              <div className="success-message">
                 {success}
               </div>
             )}
@@ -85,7 +76,7 @@ function ForgotPassword() {
                 id="email"
                 name="email"
                 className="form-input"
-                placeholder="Enter your email"
+                placeholder="Enter your email address"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -105,6 +96,7 @@ function ForgotPassword() {
                 onChange={handleChange}
                 required
                 disabled={loading}
+                minLength="6"
               />
             </div>
 
@@ -112,7 +104,6 @@ function ForgotPassword() {
               type="submit" 
               className="submit-btn"
               disabled={loading}
-              style={{ opacity: loading ? 0.7 : 1 }}
             >
               {loading ? 'Updating Password...' : 'Update Password'}
             </button>
@@ -124,6 +115,7 @@ function ForgotPassword() {
           </div>
         </div>
       </div>
+      <AuthFooter />
     </div>
   );
 }

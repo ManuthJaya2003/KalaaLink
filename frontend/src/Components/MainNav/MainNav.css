@@ -47,7 +47,7 @@
 }
 
 .logo-icon {
-  height: 30px;
+  height: 22px;
   width: auto;
   margin-right: 8px;
   vertical-align: middle;
@@ -101,14 +101,14 @@
   padding: 8px 16px;
   border-radius: 20px;
   border: 2px solid transparent;
-  background: #ffffff;
-  color: #000000;
+  background: #000000;
+  color: #ffffff;
   font-weight: 600;
   transition: all 0.3s ease;
 }
 
 .auth-item h1:hover {
-  background: #000000;
+  background: #333333;
   color: #ffffff;
   transform: translateY(-3px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -157,14 +157,14 @@
   padding: 8px 16px;
   border-radius: 20px;
   border: 2px solid transparent;
-  background: #ffffff;
-  color: #000000;
+  background: #000000;
+  color: #ffffff;
   font-weight: 600;
   transition: all 0.3s ease;
 }
 
 .logout-btn h1:hover {
-  background: #000000;
+  background: #333333;
   color: #ffffff;
   transform: translateY(-3px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -197,7 +197,7 @@
   }
   
   .logo-icon {
-    height: 26px;
+    height: 20px;
     width: auto;
   }
   
@@ -241,7 +241,7 @@
   }
   
   .logo-icon {
-    height: 22px;
+    height: 18px;
     width: auto;
   }
   

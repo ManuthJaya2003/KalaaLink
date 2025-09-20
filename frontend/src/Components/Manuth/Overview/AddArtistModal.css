@@ -1,0 +1,444 @@
+/* Add Artist Modal Styles */
+
+.add-artist-modal {
+  max-width: 800px;
+  max-height: 95vh;
+  overflow-y: auto;
+}
+
+.add-artist-modal .modal-form {
+  padding: 0 24px 24px 24px;
+}
+
+.add-artist-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.add-artist-form .form-group {
+  margin-bottom: 20px;
+}
+
+.add-artist-form .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.add-artist-form .form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.add-artist-form .form-input,
+.add-artist-form .form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #374151;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.add-artist-form .form-input:focus,
+.add-artist-form .form-textarea:focus {
+  outline: none;
+  border-color: #C1A37F;
+  box-shadow: 0 0 0 3px rgba(193, 163, 127, 0.1);
+}
+
+.add-artist-form .form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Price Input Container */
+.price-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 12px;
+  color: #6b7280;
+  font-weight: 500;
+  z-index: 1;
+}
+
+.price-input {
+  padding-left: 40px !important;
+}
+
+/* Image Upload Styles */
+.image-upload-container {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.image-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.image-upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #f8f9fa;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.image-upload-label:hover {
+  background: #f3f4f6;
+  border-color: #C1A37F;
+  color: #C1A37F;
+}
+
+.upload-icon {
+  font-size: 1.2rem;
+}
+
+.image-preview-container {
+  position: relative;
+  display: inline-block;
+  margin-top: 16px;
+}
+
+.image-preview {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ef4444;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.remove-image-btn:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+/* Message Styles */
+.message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.message.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.message.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+/* BULLETPROOF BUTTON ALIGNMENT */
+.add-artist-modal .modal-actions {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 20px !important;
+  margin-top: 32px !important;
+  padding: 24px 0 !important;
+  border-top: 1px solid #e5e7eb !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.add-artist-modal .modal-actions .btn {
+  display: inline-block !important;
+  width: 120px !important;
+  height: 44px !important;
+  padding: 12px 24px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  text-align: center !important;
+  line-height: 20px !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+}
+
+.add-artist-modal .modal-actions .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* High specificity button overrides for Add Artist Modal */
+.add-artist-modal .modal-overlay .modal-content .modal-actions .btn-secondary,
+.add-artist-modal .modal-overlay .modal-content .modal-actions button.btn-secondary,
+.modal-overlay .add-artist-modal .modal-content .modal-actions .btn-secondary,
+.modal-overlay .add-artist-modal .modal-content .modal-actions button.btn-secondary {
+  background: #000000 !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  min-width: 120px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+.add-artist-modal .modal-overlay .modal-content .modal-actions .btn-secondary:hover:not(:disabled),
+.add-artist-modal .modal-overlay .modal-content .modal-actions button.btn-secondary:hover:not(:disabled),
+.modal-overlay .add-artist-modal .modal-content .modal-actions .btn-secondary:hover:not(:disabled),
+.modal-overlay .add-artist-modal .modal-content .modal-actions button.btn-secondary:hover:not(:disabled) {
+  background: #333333 !important;
+  transform: translateY(-1px);
+}
+
+.add-artist-modal .modal-overlay .modal-content .modal-actions .btn-primary,
+.add-artist-modal .modal-overlay .modal-content .modal-actions button.btn-primary,
+.modal-overlay .add-artist-modal .modal-content .modal-actions .btn-primary,
+.modal-overlay .add-artist-modal .modal-content .modal-actions button.btn-primary {
+  background: #000000 !important; /* Black for Add Artist */
+  color: #ffffff !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  min-width: 120px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+.add-artist-modal .modal-overlay .modal-content .modal-actions .btn-primary:hover:not(:disabled),
+.add-artist-modal .modal-overlay .modal-content .modal-actions button.btn-primary:hover:not(:disabled),
+.modal-overlay .add-artist-modal .modal-content .modal-actions .btn-primary:hover:not(:disabled),
+.modal-overlay .add-artist-modal .modal-content .modal-actions button.btn-primary:hover:not(:disabled) {
+  background: #333333 !important; /* Dark gray on hover */
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .add-artist-modal {
+    max-width: 95vw;
+    max-height: 98vh;
+  }
+  
+  .add-artist-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .add-artist-modal .modal-actions {
+    flex-direction: column;
+  }
+  
+  .add-artist-modal .modal-actions .btn {
+    width: 100%;
+  }
+  
+  .image-preview {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-artist-modal .modal-header {
+    padding: 16px 16px 0 16px;
+  }
+  
+  .add-artist-modal .modal-form {
+    padding: 0 16px 16px 16px;
+  }
+  
+  .add-artist-form .form-input,
+  .add-artist-form .form-textarea {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .image-upload-label {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Form validation styles */
+.add-artist-form .form-input:invalid,
+.add-artist-form .form-textarea:invalid {
+  border-color: #ef4444;
+}
+
+.add-artist-form .form-input:valid,
+.add-artist-form .form-textarea:valid {
+  border-color: #10b981;
+}
+
+/* Loading state */
+.add-artist-modal .btn:disabled {
+  position: relative;
+}
+
+.add-artist-modal .btn:disabled::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  border: 2px solid transparent;
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Additional high specificity overrides to ensure button styling */
+div.modal-overlay div.add-artist-modal div.modal-content div.modal-actions button.btn-secondary {
+  background: #000000 !important;
+  color: white !important;
+  border: none !important;
+}
+
+div.modal-overlay div.add-artist-modal div.modal-content div.modal-actions button.btn-primary {
+  background: #000000 !important; /* Black for Add Artist */
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* Maximum specificity overrides */
+.modal-overlay .add-artist-modal .modal-content .modal-actions button[type="button"].btn-secondary {
+  background: #000000 !important;
+  color: white !important;
+  border: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 120px !important;
+  height: 44px !important;
+}
+
+.modal-overlay .add-artist-modal .modal-content .modal-actions button[type="submit"].btn-primary {
+  background: #000000 !important; /* Black for Add Artist */
+  color: #ffffff !important;
+  border: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 120px !important;
+  height: 44px !important;
+}
+
+/* NUCLEAR OPTION - FORCE PERFECT ALIGNMENT */
+.add-artist-modal .modal-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 20px !important;
+  width: 100% !important;
+  margin: 32px auto 0 auto !important;
+  padding: 24px 0 !important;
+  text-align: center !important;
+}
+
+.add-artist-modal .modal-actions .btn {
+  display: inline-block !important;
+  width: 120px !important;
+  height: 44px !important;
+  margin: 0 !important;
+  padding: 12px 24px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  text-align: center !important;
+  line-height: 20px !important;
+  vertical-align: top !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+}
+
+/* OVERRIDE EVERYTHING */
+div.modal-overlay div.add-artist-modal div.modal-actions {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 20px !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+div.modal-overlay div.add-artist-modal div.modal-actions button {
+  display: inline-block !important;
+  width: 120px !important;
+  height: 44px !important;
+  margin: 0 !important;
+  padding: 12px 24px !important;
+  text-align: center !important;
+  line-height: 20px !important;
+  vertical-align: top !important;
+}
+
+/* Force Add Artist button to be black */
+div.modal-overlay div.add-artist-modal div.modal-actions button[type="submit"],
+div.modal-overlay div.add-artist-modal div.modal-actions button.btn-primary {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: none !important;
+}

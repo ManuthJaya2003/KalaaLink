@@ -19,6 +19,45 @@
   padding-bottom: 8px;
 }
 
+/* Clear Button Base Styles - High Specificity */
+.bookings-section .clear-button,
+.bookings-section button.clear-button,
+.bookings-section .clear-button[type="button"],
+.dashboard-content .clear-button,
+.dashboard-content button.clear-button {
+  background-color: #000000 !important;
+  background: #000000 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  outline: none !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  min-width: 60px !important;
+  text-align: center !important;
+}
+
+/* Clear Button Hover Effects - High Specificity */
+.bookings-section .clear-button:hover,
+.bookings-section button.clear-button:hover,
+.bookings-section .clear-button[type="button"]:hover,
+.dashboard-content .clear-button:hover,
+.dashboard-content button.clear-button:hover {
+  background-color: #C1A37F !important;
+  background: #C1A37F !important;
+  color: #000000 !important;
+  outline: none !important;
+}
+
+/* ClearButton Column Styling */
+.bookings-section td:last-child {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
 /* Responsive design improvements */
 @media (max-width: 768px) {
   .event-filter select {

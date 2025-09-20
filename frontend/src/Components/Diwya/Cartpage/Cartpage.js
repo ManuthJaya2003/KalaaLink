@@ -176,305 +176,205 @@ const CartPage = () => {
 
           {/* Checkout Form Modal */}
           {showCheckoutForm && (
-            <div style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              backgroundColor: 'rgba(0, 0, 0, 0.6)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 1000
-            }}>
-              <div style={{
-                backgroundColor: '#fff',
-                padding: '30px',
-                borderRadius: '12px',
-                maxWidth: '500px',
-                width: '90%',
-                maxHeight: '90vh',
-                overflowY: 'auto',
-                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '20px'
-                }}>
-                  <h2 style={{ margin: 0, color: '#1f2937' }}>Checkout Information</h2>
+            <div className="checkout-modal-overlay">
+              <div className={`checkout-modal-content ${checkoutData.useDelivery ? 'expanded' : ''}`}>
+                <div className="checkout-modal-header">
+                  <h2>Checkout Information</h2>
                   <button
+                    className="checkout-modal-close"
                     onClick={() => setShowCheckoutForm(false)}
-                    style={{
-                      background: 'transparent',
-                      border: 'none',
-                      fontSize: '24px',
-                      cursor: 'pointer',
-                      color: '#6b7280'
-                    }}
                   >
                     ×
                   </button>
                 </div>
 
-                <form onSubmit={handleCheckoutSubmit}>
-                  <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px' }}>
-                      Customer Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={checkoutData.customerName}
-                      onChange={(e) => setCheckoutData({...checkoutData, customerName: e.target.value})}
-                      required
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '6px',
-                        fontSize: '14px'
-                      }}
-                    />
-                  </div>
+                <div className="checkout-modal-body">
+                  <form onSubmit={handleCheckoutSubmit} className="checkout-form">
+                    <div className={`form-columns ${checkoutData.useDelivery ? 'expanded' : ''}`}>
+                      <div className={`form-column customer-info ${checkoutData.useDelivery ? 'expanded' : ''}`}>
+                        <h3>Customer Information</h3>
+                        <div className="form-group">
+                          <label htmlFor="customerName">Customer Name *</label>
+                          <input
+                            type="text"
+                            id="customerName"
+                            value={checkoutData.customerName}
+                            onChange={(e) => setCheckoutData({...checkoutData, customerName: e.target.value})}
+                            required
+                            placeholder="Enter your name"
+                          />
+                        </div>
 
-                  <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px' }}>
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      value={checkoutData.customerEmail}
-                      onChange={(e) => setCheckoutData({...checkoutData, customerEmail: e.target.value})}
-                      required
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '6px',
-                        fontSize: '14px'
-                      }}
-                    />
-                  </div>
+                        <div className="form-group">
+                          <label htmlFor="customerEmail">Email Address *</label>
+                          <input
+                            type="email"
+                            id="customerEmail"
+                            value={checkoutData.customerEmail}
+                            onChange={(e) => setCheckoutData({...checkoutData, customerEmail: e.target.value})}
+                            required
+                            placeholder="Enter your email"
+                          />
+                        </div>
 
-                  <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px' }}>
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      value={checkoutData.customerPhone}
-                      onChange={(e) => setCheckoutData({...checkoutData, customerPhone: e.target.value})}
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '6px',
-                        fontSize: '14px'
-                      }}
-                    />
-                  </div>
+                        <div className="form-group">
+                          <label htmlFor="customerPhone">Phone Number</label>
+                          <input
+                            type="tel"
+                            id="customerPhone"
+                            value={checkoutData.customerPhone}
+                            onChange={(e) => setCheckoutData({...checkoutData, customerPhone: e.target.value})}
+                            placeholder="Enter your phone number"
+                          />
+                        </div>
 
-                  <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <input
-                        type="checkbox"
-                        checked={checkoutData.useDelivery}
-                        onChange={(e) => setCheckoutData({...checkoutData, useDelivery: e.target.checked})}
-                      />
-                      <span style={{ fontWeight: 'bold' }}>Request Delivery</span>
-                    </label>
-                  </div>
-
-                  {checkoutData.useDelivery && (
-                    <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f9fafb', borderRadius: '6px' }}>
-                      <h3 style={{ marginBottom: '15px', color: '#1f2937' }}>Delivery Address</h3>
-                      
-                      <div style={{ marginBottom: '15px' }}>
-                        <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px' }}>
-                          Address *
-                        </label>
-                        <input
-                          type="text"
-                          value={checkoutData.deliveryAddress.address}
-                          onChange={(e) => setCheckoutData({
-                            ...checkoutData,
-                            deliveryAddress: {...checkoutData.deliveryAddress, address: e.target.value}
-                          })}
-                          required={checkoutData.useDelivery}
-                          style={{
-                            width: '100%',
-                            padding: '10px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '6px',
-                            fontSize: '14px'
-                          }}
-                        />
+                        <div className="form-group">
+                          <label className="checkbox-label">
+                            <input
+                              type="checkbox"
+                              checked={checkoutData.useDelivery}
+                              onChange={(e) => setCheckoutData({...checkoutData, useDelivery: e.target.checked})}
+                            />
+                            <span className="checkbox-text">Request Delivery</span>
+                          </label>
+                        </div>
                       </div>
 
-                      <div style={{ marginBottom: '15px' }}>
-                        <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px' }}>
-                          City *
-                        </label>
-                        <input
-                          type="text"
-                          value={checkoutData.deliveryAddress.city}
-                          onChange={(e) => setCheckoutData({
-                            ...checkoutData,
-                            deliveryAddress: {...checkoutData.deliveryAddress, city: e.target.value}
-                          })}
-                          required={checkoutData.useDelivery}
-                          style={{
-                            width: '100%',
-                            padding: '10px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '6px',
-                            fontSize: '14px'
-                          }}
-                        />
-                      </div>
+                      {checkoutData.useDelivery && (
+                        <>
+                          <div className="form-column delivery-form expanded">
+                            <h3>Delivery Details</h3>
+                        
+                            <div className="form-group">
+                              <label htmlFor="deliveryAddress">Address *</label>
+                              <input
+                                type="text"
+                                id="deliveryAddress"
+                                value={checkoutData.deliveryAddress.address}
+                                onChange={(e) => setCheckoutData({
+                                  ...checkoutData,
+                                  deliveryAddress: {...checkoutData.deliveryAddress, address: e.target.value}
+                                })}
+                                required={checkoutData.useDelivery}
+                                placeholder="Enter delivery address"
+                              />
+                            </div>
 
-                      <div style={{ marginBottom: '15px' }}>
-                        <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px' }}>
-                          District *
-                        </label>
-                        <input
-                          type="text"
-                          value={checkoutData.deliveryAddress.district}
-                          onChange={(e) => setCheckoutData({
-                            ...checkoutData,
-                            deliveryAddress: {...checkoutData.deliveryAddress, district: e.target.value}
-                          })}
-                          required={checkoutData.useDelivery}
-                          style={{
-                            width: '100%',
-                            padding: '10px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '6px',
-                            fontSize: '14px'
-                          }}
-                        />
-                      </div>
+                            <div className="form-group">
+                              <label htmlFor="deliveryCity">City *</label>
+                              <input
+                                type="text"
+                                id="deliveryCity"
+                                value={checkoutData.deliveryAddress.city}
+                                onChange={(e) => setCheckoutData({
+                                  ...checkoutData,
+                                  deliveryAddress: {...checkoutData.deliveryAddress, city: e.target.value}
+                                })}
+                                required={checkoutData.useDelivery}
+                                placeholder="Enter city"
+                              />
+                            </div>
 
-                      <div style={{ marginBottom: '15px' }}>
-                        <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px' }}>
-                          Postal Code *
-                        </label>
-                        <input
-                          type="text"
-                          value={checkoutData.deliveryAddress.postalCode}
-                          onChange={(e) => setCheckoutData({
-                            ...checkoutData,
-                            deliveryAddress: {...checkoutData.deliveryAddress, postalCode: e.target.value}
-                          })}
-                          required={checkoutData.useDelivery}
-                          style={{
-                            width: '100%',
-                            padding: '10px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '6px',
-                            fontSize: '14px'
-                          }}
-                        />
-                      </div>
+                            <div className="form-group">
+                              <label htmlFor="deliveryDistrict">District *</label>
+                              <input
+                                type="text"
+                                id="deliveryDistrict"
+                                value={checkoutData.deliveryAddress.district}
+                                onChange={(e) => setCheckoutData({
+                                  ...checkoutData,
+                                  deliveryAddress: {...checkoutData.deliveryAddress, district: e.target.value}
+                                })}
+                                required={checkoutData.useDelivery}
+                                placeholder="Enter district"
+                              />
+                            </div>
 
-                      <div style={{ marginBottom: '15px' }}>
-                        <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px' }}>
-                          Contact Number *
-                        </label>
-                        <input
-                          type="tel"
-                          value={checkoutData.deliveryAddress.contactNumber}
-                          onChange={(e) => setCheckoutData({
-                            ...checkoutData,
-                            deliveryAddress: {...checkoutData.deliveryAddress, contactNumber: e.target.value}
-                          })}
-                          required={checkoutData.useDelivery}
-                          style={{
-                            width: '100%',
-                            padding: '10px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '6px',
-                            fontSize: '14px'
-                          }}
-                        />
-                      </div>
+                            <div className="form-group">
+                              <label htmlFor="deliveryPostalCode">Postal Code *</label>
+                              <input
+                                type="text"
+                                id="deliveryPostalCode"
+                                value={checkoutData.deliveryAddress.postalCode}
+                                onChange={(e) => setCheckoutData({
+                                  ...checkoutData,
+                                  deliveryAddress: {...checkoutData.deliveryAddress, postalCode: e.target.value}
+                                })}
+                                required={checkoutData.useDelivery}
+                                placeholder="Enter postal code"
+                              />
+                            </div>
 
-                      {/* Map Picker for Delivery Location */}
-                      <div style={{ marginBottom: '15px' }}>
-                        <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '10px' }}>
-                          📍 Delivery Location (Optional)
-                        </label>
-                        <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '10px' }}>
-                          Click on the map to set the exact delivery location for better navigation
-                        </p>
-                        <MapPicker
-                          selectedLocation={deliveryCoordinates}
-                          onLocationSelect={setDeliveryCoordinates}
-                          onAddressChange={(address) => {
-                            // Auto-fill address fields if possible
-                            if (address && !checkoutData.deliveryAddress.address) {
-                              setCheckoutData({
-                                ...checkoutData,
-                                deliveryAddress: {
-                                  ...checkoutData.deliveryAddress,
-                                  address: address
-                                }
-                              });
-                            }
-                          }}
-                        />
-                      </div>
+                            <div className="form-group">
+                              <label htmlFor="deliveryContactNumber">Contact Number *</label>
+                              <input
+                                type="tel"
+                                id="deliveryContactNumber"
+                                value={checkoutData.deliveryAddress.contactNumber}
+                                onChange={(e) => setCheckoutData({
+                                  ...checkoutData,
+                                  deliveryAddress: {...checkoutData.deliveryAddress, contactNumber: e.target.value}
+                                })}
+                                required={checkoutData.useDelivery}
+                                placeholder="Enter contact number"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="form-column delivery-location expanded">
+                            <h3>Delivery Location</h3>
+                            <div className="form-group">
+                              <label>📍 Delivery Location (Optional)</label>
+                              <p className="map-description">
+                                Click on the map to set the exact delivery location for better navigation
+                              </p>
+                              <MapPicker
+                                selectedLocation={deliveryCoordinates}
+                                onLocationSelect={setDeliveryCoordinates}
+                                onAddressChange={(address) => {
+                                  // Auto-fill address fields if possible
+                                  if (address && !checkoutData.deliveryAddress.address) {
+                                    setCheckoutData({
+                                      ...checkoutData,
+                                      deliveryAddress: {
+                                        ...checkoutData.deliveryAddress,
+                                        address: address
+                                      }
+                                    });
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
-                  )}
 
-                  {error && (
-                    <div style={{
-                      padding: '12px',
-                      backgroundColor: '#fef2f2',
-                      border: '1px solid #fecaca',
-                      borderRadius: '6px',
-                      color: '#dc2626',
-                      marginBottom: '20px'
-                    }}>
-                      {error}
+                    {error && (
+                      <div className="error-message">
+                        {error}
+                      </div>
+                    )}
+
+                    <div className="form-actions">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => setShowCheckoutForm(false)}
+                        disabled={isProcessing}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={isProcessing}
+                      >
+                        {isProcessing ? 'Processing...' : `Pay LKR ${totalPrice.toFixed(2)}`}
+                      </button>
                     </div>
-                  )}
-
-                  <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                    <button
-                      type="button"
-                      onClick={() => setShowCheckoutForm(false)}
-                      style={{
-                        padding: '12px 24px',
-                        backgroundColor: '#6b7280',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontWeight: '600'
-                      }}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isProcessing}
-                      style={{
-                        padding: '12px 24px',
-                        backgroundColor: isProcessing ? '#9ca3af' : '#3b82f6',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: isProcessing ? 'not-allowed' : 'pointer',
-                        fontWeight: '600'
-                      }}
-                    >
-                      {isProcessing ? 'Processing...' : `Pay LKR ${totalPrice.toFixed(2)}`}
-                    </button>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
             </div>
           )}

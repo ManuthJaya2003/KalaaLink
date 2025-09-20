@@ -589,36 +589,176 @@
   flex-wrap: wrap;
 }
 
-.view-details-btn {
+/* Button Styles */
+.btn {
   padding: 8px 16px;
-  background: #10b981;
-  color: white;
   border: none;
   border-radius: 6px;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
-.view-details-btn:hover {
-  background: #059669;
+.btn-refresh {
+  background: #C1A37F;
+  color: #000000;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  min-width: auto;
 }
 
-.update-status-btn {
-  padding: 8px 16px;
+.btn-refresh:hover {
+  background: #a68b5f;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(193, 163, 127, 0.3);
+}
+
+.btn-clear {
+  background: #dc3545;
+  color: white;
+  border: none;
+}
+
+.btn-clear:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-clear:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-clear-black {
+  background: #000000;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+.btn-clear-black:hover {
+  background: #333333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-clear-black:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-update {
+  background: #C1A37F;
+  color: #000000;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.btn-update:hover {
+  background: #a68b5f;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(193, 163, 127, 0.3);
+}
+
+.btn-secondary {
   background: #6b7280;
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease;
 }
 
-.update-status-btn:hover {
+.btn-secondary:hover {
   background: #4b5563;
+  transform: translateY(-1px);
+}
+
+.btn-status {
+  background: white;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+  padding: 12px 16px;
+  text-align: center;
+}
+
+.btn-status:hover:not(:disabled) {
+  border-color: #C1A37F;
+  background: #f8f9fa;
+}
+
+.btn-status.current {
+  border-color: #C1A37F;
+  background: #f8f9fa;
+}
+
+.btn-status:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cancel-black {
+  background: #000000;
+  color: white;
+  border: none;
+}
+
+.btn-cancel-black:hover {
+  background: #333333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Status Button Colors - All Black */
+.btn-status-paid,
+.btn-status-pending,
+.btn-status-failed,
+.btn-status-cancelled,
+.btn-status-refunded {
+  background: #000000;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-status-paid:hover:not(:disabled),
+.btn-status-pending:hover:not(:disabled),
+.btn-status-failed:hover:not(:disabled),
+.btn-status-cancelled:hover:not(:disabled),
+.btn-status-refunded:hover:not(:disabled) {
+  background: #333333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-status-paid.current,
+.btn-status-pending.current,
+.btn-status-failed.current,
+.btn-status-cancelled.current,
+.btn-status-refunded.current {
+  background: #333333;
+  opacity: 0.8;
+  cursor: not-allowed;
 }
 
 /* No Orders State */
@@ -717,7 +857,7 @@
   color: #1f2937;
 }
 
-.modal-close-btn {
+.modal-close {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -729,9 +869,11 @@
   cursor: pointer;
   color: #6b7280;
   transition: all 0.2s ease;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
-.modal-close-btn:hover {
+.modal-close:hover {
   background: #e5e7eb;
   color: #1f2937;
 }
@@ -765,8 +907,9 @@
 
 .status-buttons {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+  margin-top: 1rem;
 }
 
 .status-option-btn {
@@ -822,6 +965,22 @@
   margin: 0;
   color: #6b7280;
   font-size: 0.875rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.loading-text {
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  margin: 16px 0;
 }
 
 /* Responsive Design */

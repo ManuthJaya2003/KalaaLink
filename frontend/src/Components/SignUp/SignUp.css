@@ -235,6 +235,31 @@ form {
   color: #b8a082 !important;
 }
 
+/* Image Container */
+.login-image-container {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 20px !important;
+}
+
+.login-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  border-radius: 20px !important;
+  transition: transform 0.3s ease !important;
+}
+
+.login-image:hover {
+  transform: scale(1.05) !important;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
   .login-card {
@@ -270,10 +295,21 @@ form {
   
   .login-image-section {
     min-height: 150px !important;
-    padding: 15px !important;
+    padding: 0 !important;
     min-width: auto !important;
     flex: 1.2 !important;
     border-radius: 20px !important;
+  }
+  
+  .login-image-container {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  .login-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
   
   .login-options {
@@ -305,8 +341,19 @@ form {
   
   .login-image-section {
     min-height: 100px !important;
-    padding: 10px !important;
+    padding: 0 !important;
     border-radius: 20px !important;
+  }
+  
+  .login-image-container {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  .login-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
   
   .form-input {

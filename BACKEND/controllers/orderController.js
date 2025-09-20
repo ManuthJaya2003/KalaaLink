@@ -854,3 +854,43 @@ exports.manualUpdatePaymentStatus = async (req, res) => {
     });
   }
 };
+
+// Delete order
+exports.deleteOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    
+    if (!orderId) {
+      return res.status(400).json({ message: 'Order ID is required' });
+    }
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Delete associated delivery records
+    try {
+      await Delivery.deleteMany({ orderId: orderId });
+      console.log('✅ Associated delivery records deleted for order:', orderId);
+    } catch (deliveryError) {
+      console.error('❌ Error deleting delivery records:', deliveryError);
+      // Continue with order deletion even if delivery deletion fails
+    }
+
+    // Delete the order
+    await Order.findByIdAndDelete(orderId);
+
+    console.log('✅ Order deleted successfully:', orderId);
+    res.status(200).json({ 
+      message: 'Order deleted successfully',
+      orderId: orderId
+    });
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    res.status(500).json({ 
+      message: 'Failed to delete order', 
+      error: error.message 
+    });
+  }
+};

@@ -87,7 +87,10 @@ function BookingSuccessPage() {
     try {
       setDownloadingInvoice(true);
       
-      // Generate and download invoice
+      // Show invoice preview first
+      generateInvoicePreview();
+      
+      // Then generate and download invoice
       const response = await axios.post(`${BACKEND_URL}/bookings/generate-invoice`, {
         bookingId: booking.bookingId || booking.id
       }, {
@@ -113,12 +116,232 @@ function BookingSuccessPage() {
     }
   };
 
-  const handleGoToDashboard = () => {
-    navigate('/artist-dashboard');
+  const generateInvoicePreview = () => {
+    // Create a new window with the invoice preview
+    const invoiceWindow = window.open('', '_blank', 'width=800,height=600');
+    
+    const invoiceHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Booking Invoice - ${booking.bookingId || booking.id}</title>
+        <style>
+          body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          .invoice {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+          }
+          .invoice::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+          }
+          .invoice-header {
+            margin-bottom: 30px;
+          }
+          .invoice-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+          }
+          .invoice-subtitle {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+          }
+          .invoice-logo {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          .invoice-logo img {
+            height: 60px;
+            width: auto;
+            max-width: 200px;
+            object-fit: contain;
+          }
+          .invoice-details {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: left;
+          }
+          .invoice-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+          }
+          .invoice-detail-row:last-child {
+            border-bottom: none;
+          }
+          .invoice-detail-label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 120px;
+          }
+          .invoice-detail-value {
+            color: #2c3e50;
+            text-align: right;
+            flex: 1;
+          }
+          .invoice-status {
+            background: #28a745;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 20px 0;
+          }
+          .invoice-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #e9ecef;
+            color: #6c757d;
+            font-size: 14px;
+          }
+          .booking-items {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+          }
+          .booking-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+          }
+          .booking-item:last-child {
+            border-bottom: none;
+          }
+          .item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-right: 15px;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 24px;
+          }
+          .item-details {
+            flex: 1;
+          }
+          .item-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+          }
+          .item-price {
+            color: #28a745;
+            font-weight: 600;
+          }
+          @media print {
+            body { background: white; }
+            .invoice { box-shadow: none; border: 2px solid #333; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="invoice">
+          <div class="invoice-header">
+            <div class="invoice-logo">
+              <img src="/logo.png" alt="KalaaLink Logo" />
+            </div>
+            <div class="invoice-title">BOOKING INVOICE</div>
+            <div class="invoice-subtitle">KalaaLink - Your Gateway to Art & Culture</div>
+          </div>
+          
+          <div class="invoice-details">
+            <div class="invoice-detail-row">
+              <span class="invoice-detail-label">Booking ID:</span>
+              <span class="invoice-detail-value">${booking.bookingId || booking.id}</span>
+            </div>
+            <div class="invoice-detail-row">
+              <span class="invoice-detail-label">Customer:</span>
+              <span class="invoice-detail-value">${booking.customerName || 'Customer'}</span>
+            </div>
+            <div class="invoice-detail-row">
+              <span class="invoice-detail-label">Email:</span>
+              <span class="invoice-detail-value">${booking.customerEmail || 'N/A'}</span>
+            </div>
+            <div class="invoice-detail-row">
+              <span class="invoice-detail-label">Booking Date:</span>
+              <span class="invoice-detail-value">${new Date(booking.createdAt || new Date()).toLocaleDateString()}</span>
+            </div>
+            <div class="invoice-detail-row">
+              <span class="invoice-detail-label">Event Date:</span>
+              <span class="invoice-detail-value">${booking.eventDate ? new Date(booking.eventDate).toLocaleDateString() : 'TBD'}</span>
+            </div>
+            <div class="invoice-detail-row">
+              <span class="invoice-detail-label">Payment Status:</span>
+              <span class="invoice-detail-value">Paid & Confirmed</span>
+            </div>
+            <div class="invoice-detail-row">
+              <span class="invoice-detail-label">Total Amount:</span>
+              <span class="invoice-detail-value">LKR ${booking.totalAmount || '0.00'}</span>
+            </div>
+          </div>
+
+          <div class="booking-items">
+            <h3 style="margin: 0 0 15px 0; color: #2c3e50;">Booking Items</h3>
+            <div class="booking-item">
+              <div class="item-image">🎨</div>
+              <div class="item-details">
+                <div class="item-name">${booking.artistName || 'Artist'} - ${booking.eventType || 'Event'}</div>
+                <div class="item-price">LKR ${booking.totalAmount || '0.00'}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="invoice-status">Booking Confirmed</div>
+          
+          <div class="invoice-footer">
+            <p>Thank you for your booking!</p>
+            <p>For support, contact us at support@kalaalink.com</p>
+            <p>Generated on ${new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    invoiceWindow.document.write(invoiceHTML);
+    invoiceWindow.document.close();
   };
 
-  const handleGoHome = () => {
-    navigate('/');
+  const handleBrowseArtists = () => {
+    navigate('/artists');
   };
 
 
@@ -132,8 +355,8 @@ function BookingSuccessPage() {
             <h2>Payment Verification Failed</h2>
             <p>{error}</p>
             <div className="success-actions">
-              <button className="btn btn-primary" onClick={handleGoHome}>
-                Go Home
+              <button className="btn btn-primary" onClick={handleBrowseArtists}>
+                Browse Artists
               </button>
               <button className="btn btn-secondary" onClick={() => window.location.reload()}>
                 Try Again
@@ -210,10 +433,7 @@ function BookingSuccessPage() {
             <button onClick={handleDownloadInvoice} className="btn btn-success" disabled={downloadingInvoice}>
               {downloadingInvoice ? 'Generating...' : 'Download Invoice'}
             </button>
-            <button onClick={handleGoToDashboard} className="btn btn-secondary">
-              View Dashboard
-            </button>
-            <button onClick={handleGoHome} className="btn btn-secondary">
+            <button onClick={handleBrowseArtists} className="btn btn-secondary">
               Browse More Artists
             </button>
           </div>

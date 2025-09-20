@@ -9,7 +9,6 @@ function SuccessPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [booking, setBooking] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const bookingId = searchParams.get("bookingId");
@@ -28,7 +27,6 @@ function SuccessPage() {
           // If already paid, show success
           if (data.booking.status === "paid") {
             setBooking(data.booking);
-            setLoading(false);
             return;
           }
           
@@ -42,11 +40,9 @@ function SuccessPage() {
       }
       
       setError("Unable to verify payment. Please contact support.");
-      setLoading(false);
     } catch (err) {
       console.error("Payment verification error:", err);
       setError("Network error. Please try again.");
-      setLoading(false);
     }
   }, [bookingId]);
 
@@ -64,15 +60,12 @@ function SuccessPage() {
         const data = await response.json();
         console.log("Booking marked as paid:", data);
         setBooking(data.booking);
-        setLoading(false);
       } else {
         setError("Failed to update payment status. Please contact support.");
-        setLoading(false);
       }
     } catch (err) {
       console.error("Error marking booking as paid:", err);
       setError("Failed to update payment status. Please contact support.");
-      setLoading(false);
     }
   };
 
@@ -81,12 +74,11 @@ function SuccessPage() {
       verifyPayment();
     } else {
       setError("Invalid payment confirmation");
-      setLoading(false);
     }
   }, [bookingId, verifyPayment]);
 
   const handleViewEvents = () => {
-    navigate("/lihini/events");
+    navigate("/events");
   };
 
   const handleDownloadTicket = () => {
@@ -327,20 +319,6 @@ function SuccessPage() {
   };
 
 
-  if (loading) {
-    return (
-      <div>
-        <MainNav />
-        <div className="success-container">
-          <div className="success-card">
-            <h1 className="success-title">Payment Successful!</h1>
-            <p className="success-subtitle">Loading...</p>
-          </div>
-        </div>
-        <AuthFooter />
-      </div>
-    );
-  }
 
   if (error) {
     return (

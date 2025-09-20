@@ -152,228 +152,111 @@ function Product(props) {
   };
 
   if (props.product && !isEditing) {
-    const { size, artistName, frameSize, colorPalette, artType, price, image, createdAt } = props.product;
-    return (
-      <div style={{ marginBottom: '20px', border: '1px solid #ccc', padding: '10px' }}>
-        <h1>Product Details</h1>
-        <h2>Size: {size}</h2>
-        <h2>Artist Name: {artistName}</h2>
-        <h2>Frame Size: {frameSize}</h2>
-        <h2>Color Palette: {Array.isArray(colorPalette) ? colorPalette.join(', ') : colorPalette}</h2>
-        <h2>Art Type: {artType}</h2>
-        <h2>Price: LKR {price}</h2>
-        <h2>Image: <img src={image} alt={artType} style={{ maxWidth: '200px' }} /></h2>
-        <h2>
-          Created At:{' '}
-          {new Date(createdAt).toLocaleString('en-US', {
-            timeZone: 'Asia/Kolkata',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-          })}
-        </h2>
-        <button
-          onClick={() => props.setEditing(props.product)}
-          style={{
-            marginRight: '10px',
-            padding: '8px 16px',
-            backgroundColor: '#3b82f6',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Edit
-        </button>
-        <button
-          onClick={handleDelete}
-          style={{
-            marginRight: '10px',
-            padding: '8px 16px',
-            backgroundColor: '#ef4444',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Delete
-        </button>
-        <button
-          onClick={() => setIsPopupOpen(true)}
-          style={{
-            marginRight: '10px',
-            padding: '8px 16px',
-            backgroundColor: '#10b981',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          View Details
-        </button>
-        {isPopupOpen && (
-          <ProductPopup
-            product={props.product}
-            onClose={() => setIsPopupOpen(false)}
-            onAddToCart={handleAddToCart}
-          />
-        )}
-        <div style={{ marginTop: '20px', borderTop: '1px solid #ccc', paddingTop: '20px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '10px' }}>Customer Reviews</h2>
-          {reviewError && (
-            <p style={{ color: '#ef4444', marginBottom: '10px' }}>{reviewError}</p>
-          )}
-          {reviews.length > 0 ? (
-            reviews.map((review) => (
-              <div
-                key={review._id}
-                style={{
-                  border: '1px solid #e5e7eb',
-                  padding: '10px',
-                  borderRadius: '4px',
-                  marginBottom: '10px'
-                }}
-              >
-                <p style={{ fontWeight: 'bold' }}>
-                  {review.customerName} ({review.rating} Stars)
-                </p>
-                <p>{review.comment}</p>
-                <p style={{ color: '#6b7280', fontSize: '14px', marginTop: '5px' }}>
-                  {new Date(review.createdAt).toLocaleString('en-US', {
-                    timeZone: 'Asia/Kolkata',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </p>
-                <button
-                  onClick={() => handleDeleteReview(review._id)}
-                  style={{
-                    marginTop: '10px',
-                    padding: '5px 10px',
-                    backgroundColor: '#ef4444',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Delete Review
-                </button>
-              </div>
-            ))
-          ) : (
-            <p>No reviews yet</p>
-          )}
-        </div>
-      </div>
-    );
+    // This component is now only used for the edit modal
+    // The product display is handled by the ProductDetails component
+    return null;
   }
 
   return (
-    <div>
-      <h1>{isEditing ? 'Edit Product' : 'Add Product'}</h1>
+    <div className="product-form-container">
       <form
         onSubmit={handleSubmit}
-        style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
+        className="product-form"
         encType="multipart/form-data"
       >
-        <div>
-          <label>Size: </label>
-          <input
-            type="text"
-            name="size"
-            value={formData.size}
-            onChange={handleInputChange}
-            required
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-          />
+        <div className="form-grid">
+          <div className="form-group">
+            <label className="form-label">Size</label>
+            <input
+              type="text"
+              name="size"
+              value={formData.size}
+              onChange={handleInputChange}
+              className="form-input"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Artist Name</label>
+            <input
+              type="text"
+              name="artistName"
+              value={formData.artistName}
+              onChange={handleInputChange}
+              className="form-input"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Frame Size</label>
+            <input
+              type="text"
+              name="frameSize"
+              value={formData.frameSize}
+              onChange={handleInputChange}
+              className="form-input"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Color Palette</label>
+            <input
+              type="text"
+              name="colorPalette"
+              value={formData.colorPalette}
+              onChange={handleInputChange}
+              placeholder="e.g., Red, Blue, Green"
+              className="form-input"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Art Type</label>
+            <input
+              type="text"
+              name="artType"
+              value={formData.artType}
+              onChange={handleInputChange}
+              className="form-input"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Price (LKR)</label>
+            <input
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleInputChange}
+              min="0"
+              className="form-input"
+              required
+            />
+          </div>
+          <div className="form-group full-width">
+            <label className="form-label">Image</label>
+            <div className="file-upload-container">
+              <input
+                id="image-input"
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="file-input"
+              />
+              <label htmlFor="image-input" className="file-upload-label">
+                <span className="upload-text">
+                  {formData.image ? formData.image.name : "Choose an image file..."}
+                </span>
+                <span className="upload-hint">Click to browse</span>
+              </label>
+            </div>
+          </div>
         </div>
-        <div>
-          <label>Artist Name: </label>
-          <input
-            type="text"
-            name="artistName"
-            value={formData.artistName}
-            onChange={handleInputChange}
-            required
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <div>
-          <label>Frame Size: </label>
-          <input
-            type="text"
-            name="frameSize"
-            value={formData.frameSize}
-            onChange={handleInputChange}
-            required
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <div>
-          <label>Color Palette (comma-separated): </label>
-          <input
-            type="text"
-            name="colorPalette"
-            value={formData.colorPalette}
-            onChange={handleInputChange}
-            placeholder="e.g., Red, Blue, Green"
-            required
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <div>
-          <label>Art Type: </label>
-          <input
-            type="text"
-            name="artType"
-            value={formData.artType}
-            onChange={handleInputChange}
-            required
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <div>
-          <label>Price: </label>
-          <input
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleInputChange}
-            min="0"
-            required
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <div>
-          <label>Image: </label>
-          <input
-            id="image-input"
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleFileChange}
-            style={{ padding: '8px' }}
-          />
-        </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="form-actions">
           <button
             type="submit"
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#10b981',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
+            className="submit-button"
           >
             {isEditing ? 'Update Product' : 'Add Product'}
           </button>
@@ -384,14 +267,7 @@ function Product(props) {
                 setIsEditing(false);
                 props.setEditing(null);
               }}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#6b7280',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
+              className="cancel-button"
             >
               Cancel
             </button>

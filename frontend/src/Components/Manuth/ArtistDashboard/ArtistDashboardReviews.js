@@ -3,11 +3,11 @@ import axios from 'axios';
 import StarRating from '../../Common/StarRating';
 import MainNav from '../../MainNav/MainNav';
 import ArtistNav from '../ArtistNav/ArtistNav';
+import AuthFooter from '../../Common/AuthFooter';
 import './ArtistDashboardReviews.css';
 
 const ArtistDashboardReviews = () => {
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [artist, setArtist] = useState(null);
   const [likedReviews, setLikedReviews] = useState(new Set());
@@ -19,7 +19,6 @@ const ArtistDashboardReviews = () => {
 
   const fetchArtistAndReviews = async () => {
     try {
-      setLoading(true);
       setError('');
 
       // Get the logged-in artist
@@ -43,8 +42,6 @@ const ArtistDashboardReviews = () => {
     } catch (err) {
       console.error('Error fetching artist reviews:', err);
       setError('An error occurred while fetching reviews.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -112,33 +109,15 @@ const ArtistDashboardReviews = () => {
     });
   };
 
-  if (loading) {
-    return (
-      <div>
-        <MainNav />
-        <ArtistNav />
-        <div className="artist-dashboard-reviews">
-          <div className="reviews-header">
-            <h2>My Reviews</h2>
-            <p>Loading your reviews...</p>
-          </div>
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
-      <div>
+      <div className="reviews-page">
         <MainNav />
         <ArtistNav />
         <div className="artist-dashboard-reviews">
-          <div className="reviews-header">
-            <h2>My Reviews</h2>
-          </div>
+          <h1 className="reviews-main-title">My Reviews</h1>
+          <p className="reviews-main-subtitle">Reviews from customers about your performances</p>
           <div className="error-container">
             <p className="error-message">{error}</p>
             <button className="btn btn-primary" onClick={fetchArtistAndReviews}>
@@ -151,28 +130,26 @@ const ArtistDashboardReviews = () => {
   }
 
   return (
-    <div>
+    <div className="reviews-page">
       <MainNav />
       <ArtistNav />
       <div className="artist-dashboard-reviews">
-      <div className="reviews-header">
-        <h2>My Reviews</h2>
-        <p>Reviews from customers about your performances</p>
+        <h1 className="reviews-main-title">My Reviews</h1>
+        <p className="reviews-main-subtitle">Reviews from customers about your performances</p>
         <div className="reviews-stats">
           <span className="total-reviews">{reviews.length} Review{reviews.length !== 1 ? 's' : ''}</span>
           {reviews.length > 0 && (
             <span className="average-rating">
               Average: {(
                 reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
-              ).toFixed(1)} ⭐
+              ).toFixed(1)} stars
             </span>
           )}
         </div>
-      </div>
 
       {reviews.length === 0 ? (
         <div className="no-reviews-container">
-          <div className="no-reviews-icon">⭐</div>
+          <div className="no-reviews-icon">No Reviews</div>
           <h3>No reviews yet</h3>
           <p>Reviews from customers will appear here once they start posting them.</p>
         </div>
@@ -234,6 +211,7 @@ const ArtistDashboardReviews = () => {
         </div>
       )}
       </div>
+      <AuthFooter />
     </div>
   );
 };

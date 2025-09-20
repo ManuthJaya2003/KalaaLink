@@ -237,14 +237,6 @@ function DonorPackageDetails() {
             </button>
             <button type="submit">Confirm Donation</button>
           </div>
-          <div className="secondary-buttons">
-            <button type="button" onClick={handleUpdate}>
-              Update Donor
-            </button>
-            <button type="button" onClick={handleDelete}>
-              Delete Donor
-            </button>
-          </div>
         </div>
       </form>
       </div>

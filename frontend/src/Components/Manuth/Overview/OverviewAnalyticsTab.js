@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import OverviewCard from "./OverviewCard";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import LocationModal from "../../Common/LocationModal";
+import "./AnalyticsTab.css";
+import "./Overview.css";
 
 function OverviewAnalyticsTab() {
   const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({
     totalRevenue: 0,
@@ -19,6 +20,7 @@ function OverviewAnalyticsTab() {
   const [chartData, setChartData] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [clearConfirm, setClearConfirm] = useState(null);
 
   // API endpoints
   const API_BASE = "http://localhost:5000";
@@ -26,7 +28,7 @@ function OverviewAnalyticsTab() {
   // Fetch all artist bookings
   const fetchBookings = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/bookings`);
+      const response = await axios.get(`${API_BASE}/eventBookings`);
       if (response.data && response.data.artistBookings) {
         setBookings(response.data.artistBookings);
       } else {
@@ -131,7 +133,6 @@ function OverviewAnalyticsTab() {
 
   // Fetch all data
   const fetchAllData = async () => {
-    setLoading(true);
     setError(null);
     
     try {
@@ -143,8 +144,6 @@ function OverviewAnalyticsTab() {
     } catch (err) {
       console.error("Error fetching data:", err);
       setError("Failed to fetch dashboard data");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -312,7 +311,7 @@ function OverviewAnalyticsTab() {
     try {
       console.log("🔧 Manually updating payment status for booking:", bookingId);
       
-      const response = await axios.put(`${API_BASE}/bookings/${bookingId}/manual-payment-update`);
+      const response = await axios.put(`${API_BASE}/eventBookings/${bookingId}/manual-payment-update`);
       
       if (response.data) {
         console.log("✅ Payment status updated successfully:", response.data);
@@ -324,7 +323,7 @@ function OverviewAnalyticsTab() {
         alert("Payment status updated to 'paid' successfully!");
       }
     } catch (error) {
-      console.error("❌ Error updating payment status:", error);
+      console.error("Error updating payment status:", error);
       alert("Failed to update payment status. Please try again.");
     }
   };
@@ -334,208 +333,271 @@ function OverviewAnalyticsTab() {
     setSelectedBooking(null);
   };
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <p>Loading analytics...</p>
-      </div>
-    );
-  }
+  // Clear booking functionality
+  const handleClearBooking = async (bookingId) => {
+    try {
+      const response = await axios.delete(`${API_BASE}/eventBookings/${bookingId}`);
+      // Check if the response indicates success (either response.data.success or just a successful HTTP status)
+      if (response.status === 200 || response.data?.success) {
+        // Remove the booking from the local state
+        setBookings(prevBookings => 
+          prevBookings.filter(booking => booking._id !== bookingId)
+        );
+        setClearConfirm(null);
+        alert("Booking cleared successfully!");
+      } else {
+        alert("Failed to clear booking. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error clearing booking:", error);
+      // If it's a 404 or similar, still remove from local state as it might already be deleted
+      if (error.response?.status === 404) {
+        setBookings(prevBookings => 
+          prevBookings.filter(booking => booking._id !== bookingId)
+        );
+        setClearConfirm(null);
+        alert("Booking cleared successfully!");
+      } else {
+        alert("Failed to clear booking. Please try again.");
+      }
+    }
+  };
+
+  // Bulk clear bookings by payment status
+  const handleBulkClearBookings = async (status) => {
+    console.log('handleBulkClearBookings called with status:', status);
+    console.log('API_BASE:', API_BASE);
+    console.log('Full URL:', `${API_BASE}/eventBookings/bulk/status/${status}`);
+    
+    try {
+      const response = await axios.delete(`${API_BASE}/eventBookings/bulk/status/${status}`);
+      console.log('Response received:', response);
+      
+      if (response.status === 200) {
+        const deletedCount = response.data.deletedCount;
+        console.log('Deleted count:', deletedCount);
+        
+        // Remove bookings with the specified status from local state
+        setBookings(prevBookings => 
+          prevBookings.filter(booking => booking.paymentStatus !== status)
+        );
+        
+        setClearConfirm(null);
+        alert(`Successfully cleared ${deletedCount} ${status} bookings!`);
+      } else {
+        console.log('Unexpected response status:', response.status);
+        alert("Failed to clear bookings. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error clearing bookings by status:", error);
+      console.error("Error response:", error.response);
+      console.error("Error message:", error.message);
+      
+      if (error.response?.status === 404) {
+        // No bookings found with that status
+        setClearConfirm(null);
+        alert(`No ${status} bookings found to clear.`);
+      } else {
+        alert(`Failed to clear bookings. Error: ${error.message}`);
+      }
+    }
+  };
 
   if (error) {
     return (
-      <div className="error-banner">
-        <div className="error-container">
-          <span className="error-icon">⚠️</span>
-          <span className="error-message">{error}</span>
-          <button 
-            className="retry-btn"
-            onClick={fetchAllData}
-          >
-            Retry
-          </button>
-        </div>
+      <div className="analytics-error">
+        <p>Error loading analytics: {error}</p>
+        <button onClick={fetchAllData}>Try Again</button>
       </div>
     );
   }
 
   return (
-    <div>
-      {/* Overview Cards */}
-      <div className="overview-cards-section">
-        <div className="overview-cards-container">
-          <OverviewCard
-            title="Total Revenue"
-            value={`LKR ${stats.totalRevenue.toLocaleString()}`}
-            description="From all paid bookings"
-            icon="💰"
-            color="green"
-          />
-          <OverviewCard
-            title="Total Artists"
-            value={stats.totalArtists}
-            description="Registered in the system"
-            icon="🎭"
-            color="blue"
-          />
-          <OverviewCard
-            title="Pending Approvals"
-            value={stats.pendingApprovals}
-            description="Awaiting approval"
-            icon="⏳"
-            color="orange"
-          />
-          <OverviewCard
-            title="Rejected Approvals"
-            value={stats.rejectedApprovals}
-            description="Rejected registrations"
-            icon="❌"
-            color="red"
-          />
+    <div className="analytics-container">
+      {/* Page Header */}
+      <div className="analytics-page-header">
+        <h1 className="analytics-page-title">Artist Analytics</h1>
+        <p className="analytics-page-subtitle">Comprehensive insights and performance metrics for your artists</p>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="summary-cards">
+        <div className="summary-card">
+          <div className="card-content">
+            <h3>Total Revenue</h3>
+            <div className="card-value">{`LKR ${stats.totalRevenue.toLocaleString()}`}</div>
+            <p>From all paid bookings</p>
+          </div>
         </div>
-        
-        {/* Generate PDF Button */}
-        <div className="pdf-button-container">
-          <button 
-            className="generate-pdf-btn"
-            onClick={generatePDFReport}
-            title="Generate comprehensive PDF report"
-          >
-            📄 Generate PDF Report
-          </button>
+
+        <div className="summary-card">
+          <div className="card-content">
+            <h3>Total Artists</h3>
+            <div className="card-value">{stats.totalArtists}</div>
+            <p>Registered in the system</p>
+          </div>
+        </div>
+
+        <div className="summary-card">
+          <div className="card-content">
+            <h3>Pending Approvals</h3>
+            <div className="card-value">{stats.pendingApprovals}</div>
+            <p>Awaiting approval</p>
+          </div>
+        </div>
+
+        <div className="summary-card negative">
+          <div className="card-content">
+            <h3>Rejected Approvals</h3>
+            <div className="card-value">{stats.rejectedApprovals}</div>
+            <p>Rejected registrations</p>
+          </div>
         </div>
       </div>
 
-      {/* Bookings Section */}
-      <div className="bookings-section">
-        <div className="bookings-container">
-          <div className="section-header">
-            <h2 className="section-title">Artist Bookings</h2>
-            <p className="section-subtitle">
-              All bookings for artists in the system
-            </p>
+      {/* Main Content */}
+      <div className="analytics-main">
+        {/* Chart Section */}
+        <div className="chart-section">
+          <h2>Revenue by Artist</h2>
+          <p>A visual breakdown of revenue generated per artist.</p>
+          
+          <div className="chart-container">
+            <ResponsiveContainer width="100%" height={500}>
+              <BarChart data={chartData} margin={{ top: 20, right: 20, left: 20, bottom: 80 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="artistName" 
+                  angle={-30}
+                  textAnchor="end"
+                  height={80}
+                  interval={0}
+                  tick={{ fontSize: 11 }}
+                  tickLine={false}
+                />
+                <YAxis />
+                <Tooltip 
+                  formatter={(value) => [`LKR ${value.toLocaleString()}`, 'Revenue']}
+                  labelStyle={{ color: '#333' }}
+                />
+                <Bar dataKey="revenue" fill="#C1A37F" radius={[4, 4, 0, 0]} maxBarSize={60} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
+        </div>
 
-          {bookings.length === 0 ? (
-            <div className="no-bookings">
-              <p>No bookings found</p>
+        {/* Bookings Table Section */}
+        <div className="table-section">
+          <div className="table-header">
+            <div className="table-title">
+              <h2>Artist Bookings</h2>
+              <p>All bookings for artists in the system.</p>
             </div>
-          ) : (
-            <div className="bookings-table-container">
-              <table className="bookings-table">
-                <thead>
+            <div className="bulk-actions">
+              <button
+                className="btn btn-warning"
+                onClick={() => {
+                  console.log('Clear All Paid clicked');
+                  console.log('Bookings with paid status:', bookings.filter(b => b.paymentStatus === 'paid').length);
+                  setClearConfirm({ type: 'bulk', status: 'paid' });
+                }}
+                disabled={!bookings.some(b => b.paymentStatus === 'paid')}
+                title="Clear all paid bookings"
+              >
+                Clear All Paid ({bookings.filter(b => b.paymentStatus === 'paid').length})
+              </button>
+              <button
+                className="btn btn-warning"
+                onClick={() => {
+                  console.log('Clear All Pending clicked');
+                  console.log('Bookings with pending status:', bookings.filter(b => b.paymentStatus === 'pending').length);
+                  setClearConfirm({ type: 'bulk', status: 'pending' });
+                }}
+                disabled={!bookings.some(b => b.paymentStatus === 'pending')}
+                title="Clear all pending bookings"
+              >
+                Clear All Pending ({bookings.filter(b => b.paymentStatus === 'pending').length})
+              </button>
+            </div>
+          </div>
+          
+          <div className="table-container">
+            <table className="analytics-table">
+              <thead>
+                <tr>
+                  <th>Customer Name</th>
+                  <th>Artist Booked</th>
+                  <th>Event Date</th>
+                  <th>Event Type</th>
+                  <th>Payment Status</th>
+                  <th>Venue</th>
+                  <th>Actions</th>
+                  <th>Clear</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bookings.length === 0 ? (
                   <tr>
-                    <th>Customer Name</th>
-                    <th>Artist Booked</th>
-                    <th>Event Date</th>
-                    <th>Event Type</th>
-                    <th>Payment Status</th>
-                    <th>Venue</th>
-                    <th>Actions</th>
+                    <td colSpan="8" style={{ textAlign: 'center', padding: '40px' }}>
+                      No bookings found
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {bookings.map((booking, index) => (
-                    <tr key={booking._id || index} className="booking-row">
-                      <td className="customer-name">{booking.customerName}</td>
-                      <td className="artist-name">{getArtistName(booking)}</td>
-                      <td className="event-date">{formatDate(booking.eventDate)}</td>
-                      <td className="event-type">{booking.eventType}</td>
-                      <td className="payment-status">
+                ) : (
+                  bookings.map((booking, index) => (
+                    <tr key={booking._id || index}>
+                      <td>{booking.customerName}</td>
+                      <td>{getArtistName(booking)}</td>
+                      <td>{formatDate(booking.eventDate)}</td>
+                      <td>{booking.eventType}</td>
+                      <td>
                         <span className={`status-badge status-${booking.paymentStatus}`}>
                           {booking.paymentStatus}
                         </span>
-                        </td>
-                      <td className="event-venue">{booking.eventVenue}</td>
-                      <td className="actions">
-                        <button
-                          className="view-location-btn"
-                          onClick={() => handleViewLocation(booking)}
-                          title="View venue location"
-                        >
-                          🗺️ View Location
-                        </button>
-                        {booking.paymentStatus === "pending" && (
+                      </td>
+                      <td>{booking.eventVenue}</td>
+                      <td>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                           <button
-                            className="manual-payment-btn"
-                            onClick={() => handleManualPaymentUpdate(booking._id)}
-                            title="Manually mark as paid (for testing)"
+                            className="btn btn-secondary"
+                            onClick={() => handleViewLocation(booking)}
+                            title="View venue location"
                           >
-                            💳 Mark Paid
+                            View Location
                           </button>
-                        )}
+                          {booking.paymentStatus === "pending" && (
+                            <button
+                              className="btn btn-success"
+                              onClick={() => handleManualPaymentUpdate(booking._id)}
+                              title="Manually mark as paid (for testing)"
+                            >
+                              Mark Paid
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <button
+                          className="clear-button"
+                          onClick={() => setClearConfirm(booking)}
+                          title="Clear this booking"
+                        >
+                          Clear
+                        </button>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      {/* Revenue Chart Section */}
-      <div className="revenue-chart-section">
-        <div className="revenue-chart-container">
-          <div className="section-header">
-            <h2 className="section-title">Revenue by Artist</h2>
-            <p className="section-subtitle">
-              Total revenue generated by each artist from paid bookings
-            </p>
-          </div>
-
-          {chartData.length === 0 ? (
-            <div className="no-chart-data">
-              <p>No revenue data available</p>
-            </div>
-          ) : (
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart
-                  data={chartData}
-                  margin={{
-                    top: 20,
-                    right: 30,
-                    left: 20,
-                    bottom: 60
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="artistName" 
-                    angle={-45}
-                    textAnchor="end"
-                    height={80}
-                    interval={0}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <YAxis 
-                    tickFormatter={(value) => `LKR ${value.toLocaleString()}`}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <Tooltip 
-                    formatter={(value, name) => [`LKR ${value.toLocaleString()}`, 'Revenue']}
-                    labelFormatter={(label) => `Artist: ${label}`}
-                    contentStyle={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-                    }}
-                  />
-                  <Legend />
-                  <Bar 
-                    dataKey="revenue" 
-                    fill="#667eea" 
-                    radius={[4, 4, 0, 0]}
-                    name="Revenue"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-        </div>
+      {/* Generate Report Button at Bottom */}
+      <div className="analytics-bottom-section">
+        <button className="generate-report-btn-bottom" onClick={generatePDFReport}>
+          Generate Report
+        </button>
       </div>
 
       {/* Location Modal */}
@@ -545,6 +607,74 @@ function OverviewAnalyticsTab() {
         booking={selectedBooking}
         title="Venue Location"
       />
+
+      {/* Clear Confirmation Modal */}
+      {clearConfirm && (
+        <div className="delete-modal-overlay" onClick={() => setClearConfirm(null)}>
+          <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="delete-modal-header">
+              <h3>
+                {clearConfirm.type === 'bulk' 
+                  ? `Clear All ${clearConfirm.status.charAt(0).toUpperCase() + clearConfirm.status.slice(1)} Bookings`
+                  : 'Clear Booking'
+                }
+              </h3>
+              <button 
+                className="delete-modal-close" 
+                onClick={() => setClearConfirm(null)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="delete-modal-body">
+              {clearConfirm.type === 'bulk' ? (
+                <>
+                  <p>Are you sure you want to clear <strong>ALL</strong> {clearConfirm.status} bookings?</p>
+                  <p><strong>Status:</strong> {clearConfirm.status.charAt(0).toUpperCase() + clearConfirm.status.slice(1)}</p>
+                  <p><strong>Count:</strong> {bookings.filter(b => b.paymentStatus === clearConfirm.status).length} bookings will be deleted</p>
+                  <p className="warning-text">This action cannot be undone and will affect multiple bookings.</p>
+                </>
+              ) : (
+                <>
+                  <p>Are you sure you want to clear this booking?</p>
+                  <p><strong>Customer:</strong> {clearConfirm.customerName}</p>
+                  <p><strong>Artist:</strong> {getArtistName(clearConfirm)}</p>
+                  <p><strong>Event Date:</strong> {formatDate(clearConfirm.eventDate)}</p>
+                  <p><strong>Event Type:</strong> {clearConfirm.eventType}</p>
+                  <p className="warning-text">This action cannot be undone.</p>
+                </>
+              )}
+            </div>
+            <div className="delete-modal-actions">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setClearConfirm(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={() => {
+                  console.log('Confirmation button clicked');
+                  console.log('clearConfirm:', clearConfirm);
+                  if (clearConfirm.type === 'bulk') {
+                    console.log('Calling handleBulkClearBookings');
+                    handleBulkClearBookings(clearConfirm.status);
+                  } else {
+                    console.log('Calling handleClearBooking');
+                    handleClearBooking(clearConfirm._id);
+                  }
+                }}
+              >
+                {clearConfirm.type === 'bulk' 
+                  ? `Clear All ${clearConfirm.status.charAt(0).toUpperCase() + clearConfirm.status.slice(1)}`
+                  : 'Clear Booking'
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

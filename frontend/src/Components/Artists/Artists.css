@@ -169,7 +169,7 @@
   }
   
   .artist-info {
-    padding: 4px;
+    padding: 12px;
   }
   
   .artist-buttons .btn {
@@ -241,7 +241,7 @@
   }
   
   .artist-info {
-    padding: 4px;
+    padding: 12px;
   }
   
   .artist-buttons {
@@ -568,38 +568,41 @@
 }
 
 .artist-info {
-  padding: 2px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .artist-name {
   font-size: var(--text-2xl);
   font-weight: 700;
   color: var(--color-text-dark);
-  margin-bottom: 2px;
-  line-height: 1.1;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
   font-style: normal;
 }
 
 .artist-genre {
   color: rgba(193, 163, 127, 0.9);
   font-weight: 600;
-  margin-bottom: 0px;
-  font-size: 10px;
-  line-height: 1.1;
+  margin: 0 0 2px 0;
+  font-size: 12px;
+  line-height: 1.2;
 }
 
 .artist-category {
   color: var(--color-text-muted);
-  margin-bottom: 0px;
+  margin: 0 0 8px 0;
   font-size: 12px;
-  line-height: 1.1;
+  line-height: 1.2;
 }
 
 .artist-buttons {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  margin-top: 1px;
+  gap: 8px;
+  margin-top: 8px;
   width: 100%;
   padding: 0;
 }
@@ -1115,8 +1118,8 @@
 /* ===== REVIEW SECTION STYLES ===== */
 
 .artist-reviews-section {
-  margin: 1px 0;
-  padding: 1px;
+  margin: 8px 0;
+  padding: 8px;
   background: var(--color-off-white);
   border-radius: var(--radius-organic);
   border: 1px solid var(--color-soft-border);
@@ -1147,8 +1150,8 @@
 .rating-display {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-bottom: 2px;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
 .rating-display .rating-text {
@@ -1158,8 +1161,8 @@
 }
 
 .latest-review {
-  margin-top: 2px;
-  padding: 2px;
+  margin-top: 6px;
+  padding: 6px;
   background: white;
   border-radius: var(--radius-soft);
   border-left: none !important;
@@ -1330,8 +1333,8 @@
 /* Responsive adjustments for review section */
 @media (max-width: 768px) {
   .artist-reviews-section {
-    margin: 1px 0;
-    padding: 1px;
+    margin: 6px 0;
+    padding: 6px;
   }
   
   .rating-display {
@@ -1361,7 +1364,7 @@
 
 @media (max-width: 480px) {
   .artist-reviews-section {
-    padding: 0px;
+    padding: 4px;
   }
   
   .rating-display .rating-text {

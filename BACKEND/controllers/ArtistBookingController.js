@@ -147,18 +147,23 @@ const createStripeCheckoutSession = async (req, res) => {
       return res.status(404).json({ message: "Artist not found" });
     }
 
-    const totalAmount = artist.bookingPrice;
-    if (!totalAmount || isNaN(totalAmount)) {
-      console.error("Invalid booking price for artist:", artist._id, totalAmount);
+    const totalAmountLKR = artist.bookingPrice;
+    if (!totalAmountLKR || isNaN(totalAmountLKR)) {
+      console.error("Invalid booking price for artist:", artist._id, totalAmountLKR);
       return res.status(400).json({ message: "Invalid booking price" });
     }
+
+    // Convert LKR to USD (approximate rate: 1 USD = 300 LKR)
+    const LKR_TO_USD_RATE = 300;
+    const totalAmountUSD = totalAmountLKR / LKR_TO_USD_RATE;
 
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 
     console.log("Creating Stripe session:", {
       bookingId: booking._id,
-      artistName: artist.name,
-      totalAmount,
+      artistName: artist.artistName || artist.name,
+      totalAmountLKR,
+      totalAmountUSD,
       customerEmail,
       frontendUrl,
     });
@@ -169,12 +174,12 @@ const createStripeCheckoutSession = async (req, res) => {
       line_items: [
         {
           price_data: {
-            currency: "lkr",
+            currency: "usd", // Stripe doesn't support LKR, using USD
             product_data: {
-              name: `${artist.name} - ${booking.eventType}`,
+              name: `${artist.artistName || artist.name} - ${booking.eventType}`,
               description: `Event on ${new Date(booking.eventDate).toLocaleDateString()} at ${booking.eventVenue}`,
             },
-            unit_amount: Math.round(totalAmount * 100), // in cents
+            unit_amount: Math.round(totalAmountUSD * 100), // in cents (USD)
           },
           quantity: 1,
         },
@@ -207,7 +212,18 @@ const createStripeCheckoutSession = async (req, res) => {
     res.status(200).json({ sessionId: session.id, url: session.url });
   } catch (error) {
     console.error("Error creating Stripe checkout session:", error);
-    res.status(500).json({ message: "Error creating checkout session", error: error.message });
+    console.error("Error details:", {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+      param: error.param,
+      decline_code: error.decline_code
+    });
+    res.status(500).json({ 
+      message: "Error creating checkout session", 
+      error: error.message,
+      details: process.env.NODE_ENV === 'development' ? error : undefined
+    });
   }
 };
 
@@ -794,7 +810,7 @@ const generateInvoice = async (req, res) => {
     doc.fontSize(14).text('Payment Details:', { underline: true });
     doc.fontSize(12);
     doc.text(`Amount: $${artist.bookingPrice || 0}`);
-    doc.text(`Status: ${booking.paymentStatus.toUpperCase()}`);
+    doc.text(`Status: PAID`);
     doc.text(`Booking Status: ${booking.status.toUpperCase()}`);
     doc.moveDown();
 

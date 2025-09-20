@@ -22,30 +22,6 @@
   width: 100%;
 }
 
-/* Loading Spinner */
-.loading-spinner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  text-align: center;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f4f6;
-  border-top: 4px solid #3b82f6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
 
 /* Error Message */
 .error-message {
@@ -64,20 +40,21 @@
 
 /* Success Title and Subtitle - Matching Event Booking */
 .success-title {
-  font-size: var(--text-3xl);
-  font-weight: 700;
-  color: var(--color-text-dark);
+  font-size: 28px;
+  font-weight: bold;
+  color: #2c3e50;
   text-align: center;
-  margin: 40px 0 var(--space-sm) 0;
+  margin: 40px 0 10px 0;
   line-height: 1.2;
   position: relative;
 }
 
 .success-subtitle {
   font-size: 16px;
-  color: var(--color-text-muted);
+  color: #7f8c8d;
   line-height: 1.6;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 /* Order Details - Matching Event Booking Layout */
@@ -93,9 +70,33 @@
 }
 
 .order-details h2 {
-  color: var(--color-text-dark);
+  color: #2D3748;
   font-size: 18px;
   font-weight: 600;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Customer Information, Order Items, and Order Summary headers - bigger and bolder */
+.customer-info,
+.delivery-info {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+.customer-info h2,
+.delivery-info h2,
+.order-items h2,
+.order-summary h2 {
+  color: #2D3748;
+  font-size: 22px;
+  font-weight: bold;
   margin-bottom: 16px;
   text-align: center;
 }
@@ -133,37 +134,36 @@
   margin-left: 8px;
 }
 
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
 
 .total-amount {
-  font-size: 1.25rem;
+  font-size: 16px;
   font-weight: 700;
   color: #10b981;
 }
 
 /* Delivery Information */
 .delivery-address {
-  background: #f9fafb;
+  background: #ffffff;
   padding: 20px;
   border-radius: 8px;
-  border-left: 4px solid #3b82f6;
+  border: 1px solid #e5e7eb;
 }
 
 .delivery-address p {
   margin-bottom: 8px;
   color: #374151;
+  font-size: 16px;
+  text-align: left;
 }
 
 .delivery-address p:last-child {
   margin-bottom: 0;
+}
+
+.delivery-address strong {
+  color: #C1A37F;
+  font-weight: 600;
+  font-size: 16px;
 }
 
 /* Order Items */
@@ -204,23 +204,25 @@
 }
 
 .item-details h3 {
-  font-size: 1.25rem;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 8px;
-  color: #1f2937;
+  color: #2D3748;
 }
 
 .item-quantity,
 .item-price,
 .item-total {
   margin-bottom: 4px;
-  color: #6b7280;
+  color: #2D3748;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .item-total {
   font-weight: 600;
-  color: #1f2937;
-  font-size: 1.1rem;
+  color: #2D3748;
+  font-size: 16px;
 }
 
 /* Order Summary */
@@ -234,6 +236,8 @@
   align-items: center;
   padding: 12px 0;
   border-bottom: 1px solid #e5e7eb;
+  font-size: 16px;
+  color: #2D3748;
 }
 
 .summary-row:last-child {
@@ -241,11 +245,11 @@
 }
 
 .summary-row.total {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1f2937;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2D3748;
   padding-top: 16px;
-  border-top: 2px solid #3b82f6;
+  border-top: 2px solid #C1A37F;
 }
 
 /* Confirmation Actions - Matching Event Booking */
@@ -262,7 +266,7 @@
   border: none;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
@@ -294,6 +298,29 @@
   box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
 }
 
+/* Delivery Status Styling */
+.delivery-status {
+  color: #C1A37F !important;
+  text-decoration: underline;
+  text-decoration-color: #C1A37F !important;
+}
+
+/* Remove green outlines from product images */
+.order-item img,
+.item-image img {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove any green borders from order items */
+.order-item {
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
 /* Footer handled by AuthFooter component */
 
 /* Responsive Design */
@@ -307,7 +334,7 @@
   }
 
   .confirmation-header h1 {
-    font-size: 2rem;
+    font-size: 28px;
   }
 
   .order-details > div {
@@ -342,18 +369,18 @@
 
 @media (max-width: 480px) {
   .confirmation-header h1 {
-    font-size: 1.75rem;
+    font-size: 24px;
   }
 
   .confirmation-message {
-    font-size: 1rem;
+    font-size: 16px;
   }
 
   .order-details h2 {
-    font-size: 1.25rem;
+    font-size: 18px;
   }
 
   .item-details h3 {
-    font-size: 1.1rem;
+    font-size: 16px;
   }
 }

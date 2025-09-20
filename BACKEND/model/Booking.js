@@ -12,6 +12,11 @@ const bookingSchema = new Schema({
     enum: ["pending", "paid", "cancelled"],
     default: "pending"   // default is pending until Stripe confirms
   },
+  paymentStatus: {
+    type: String,
+    enum: ["pending", "paid", "failed"],
+    default: "pending"
+  },
   paymentIntentId: { type: String }, // Stripe payment intent ID
   sessionId: { type: String }, // Stripe session ID
   originalStatus: { type: String }, // Track original status before cancellation for refund tracking

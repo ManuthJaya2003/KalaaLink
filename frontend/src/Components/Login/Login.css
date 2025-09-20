@@ -72,40 +72,28 @@
   border-radius: 20px !important;
 }
 
-.login-image-placeholder {
-  text-align: center !important;
-  color: white !important;
-  padding: 40px !important;
-  z-index: 2 !important;
+.login-image-container {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   position: relative !important;
-  border-radius: 20px !important;
   overflow: hidden !important;
-}
-
-.placeholder-content {
-  max-width: 300px !important;
   border-radius: 20px !important;
-  overflow: hidden !important;
 }
 
-.placeholder-icon {
-  font-size: 4rem;
-  margin-bottom: 20px;
-  display: block;
+.login-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  border-radius: 20px !important;
+  transition: transform 0.3s ease !important;
 }
 
-.placeholder-content h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 15px;
-  color: white;
-}
-
-.placeholder-content p {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
+.login-image:hover {
+  transform: scale(1.05) !important;
 }
 
 /* Form Header */
@@ -389,22 +377,15 @@ form {
     border-radius: 20px !important;
   }
   
-  .placeholder-content {
-    max-width: 100% !important;
+  .login-image-container {
+    width: 100% !important;
+    height: 100% !important;
   }
   
-  .placeholder-icon {
-    font-size: 1.5rem !important;
-    margin-bottom: 6px !important;
-  }
-  
-  .placeholder-content h3 {
-    font-size: 1rem !important;
-    margin-bottom: 3px !important;
-  }
-  
-  .placeholder-content p {
-    font-size: 0.7rem !important;
+  .login-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
   
   .login-title {
@@ -463,8 +444,19 @@ form {
   
   .login-image-section {
     min-height: 100px !important;
-    padding: 10px !important;
+    padding: 0 !important;
     border-radius: 20px !important;
+  }
+  
+  .login-image-container {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  .login-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
   
   .login-title {

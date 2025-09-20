@@ -131,12 +131,12 @@ function Login() {
           </div>
           
           <div className="login-image-section">
-            <div className="login-image-placeholder">
-              <div className="placeholder-content">
-                <div className="placeholder-icon">🎨</div>
-                <h3>Join Our Creative Community</h3>
-                <p>Connect with artists, showcase your talent, and discover amazing events.</p>
-              </div>
+            <div className="login-image-container">
+              <img 
+                src="/customerLogin.jpg" 
+                alt="Customer Login" 
+                className="login-image"
+              />
             </div>
           </div>
         </div>

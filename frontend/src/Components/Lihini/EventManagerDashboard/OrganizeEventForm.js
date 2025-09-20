@@ -128,7 +128,7 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
 
       document.querySelector('input[name="image"]').value = "";
       
-      setSubmitMessage("Event created successfully! 🎉");
+      setSubmitMessage("Event created successfully!");
       setTimeout(() => setSubmitMessage(""), 3000);
     } catch (err) {
       console.error("Error creating event:", err.response?.data || err.message);
@@ -141,17 +141,14 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
 
   return (
     <div className="organize-event-container">
-      <div className="form-header">
-        <h2 className="form-title">🎭 Organize New Event</h2>
-        <p className="form-subtitle">Create an amazing event that artists and customers will love</p>
-      </div>
+      <h1 className="organize-event-title">Organize New Event</h1>
+      <p className="organize-event-subtitle">Create an amazing event that artists and customers will love</p>
 
       <form onSubmit={handleSubmit} className="event-form">
         <div className="form-grid">
           {/* Event Title */}
           <div className="form-group full-width">
             <label className="form-label">
-              <span className="label-icon">📝</span>
               Event Title
             </label>
             <input
@@ -168,7 +165,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
           {/* Date and Time */}
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">📅</span>
               Event Date
             </label>
             <input
@@ -183,7 +179,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
 
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">⏰</span>
               Event Time
             </label>
             <input
@@ -199,7 +194,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
           {/* Venue Location */}
           <div className="form-group full-width">
             <label className="form-label">
-              <span className="label-icon">📍</span>
               Event Venue Location
             </label>
             <MapPicker
@@ -216,7 +210,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
           {/* Description */}
           <div className="form-group full-width">
             <label className="form-label">
-              <span className="label-icon">📖</span>
               Event Description
             </label>
             <textarea
@@ -232,7 +225,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
           {/* Capacity Fields */}
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">🎨</span>
               Max Artists
             </label>
             <input
@@ -249,7 +241,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
 
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">👥</span>
               Max Customers
             </label>
             <input
@@ -267,7 +258,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
           {/* Pricing Fields */}
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">💰</span>
               Customer Price (Rs.)
             </label>
             <input
@@ -284,7 +274,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
 
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">🎭</span>
               Artist Fee (Rs.)
             </label>
             <input
@@ -301,7 +290,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
           {/* Image Upload */}
           <div className="form-group full-width">
             <label className="form-label">
-              <span className="label-icon">🖼️</span>
               Event Image
             </label>
             <div className="file-upload-container">
@@ -314,7 +302,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
                 id="image-upload"
               />
               <label htmlFor="image-upload" className="file-upload-label">
-                <span className="upload-icon">📁</span>
                 <span className="upload-text">
                   {form.image ? form.image.name : "Choose an image file..."}
                 </span>
@@ -336,7 +323,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
                 />
                 <span className="checkbox-custom"></span>
                 <span className="checkbox-text">
-                  <span className="label-icon">👷</span>
                   Request Crew Support
                 </span>
               </label>
@@ -347,16 +333,13 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
           {/* Crew Request Fields - Only show when checkbox is checked */}
           {form.requestCrew && (
             <div className="crew-request-section">
-              <div className="section-header">
-                <h3>👷 Crew Request Details</h3>
-                <p>Provide details about the crew support you need</p>
-              </div>
+              <h3 className="crew-request-title">Crew Request Details</h3>
+              <p className="crew-request-subtitle">Provide details about the crew support you need</p>
 
               <div className="form-grid">
                 {/* Crew Type */}
                 <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">🔧</span>
                     Crew Type
                   </label>
                   <select
@@ -381,7 +364,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
                 {/* Required Date */}
                 <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">📅</span>
                     Required Date
                   </label>
                   <input
@@ -397,7 +379,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
                 {/* Required Time */}
                 <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">⏰</span>
                     Required Time
                   </label>
                   <input
@@ -413,7 +394,6 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
                 {/* Estimated Duration */}
                 <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">⏱️</span>
                     Estimated Duration
                   </label>
                   <select
@@ -435,9 +415,8 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
                 </div>
 
                 {/* Crew Details */}
-                <div className="form-group full-width">
+                <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">📝</span>
                     Crew Details
                   </label>
                   <textarea
@@ -446,15 +425,14 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
                     value={form.crewDetails}
                     onChange={handleChange}
                     className="form-textarea"
-                    rows="4"
+                    rows="3"
                     required={form.requestCrew}
                   />
                 </div>
 
                 {/* Special Requirements */}
-                <div className="form-group full-width">
+                <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">⭐</span>
                     Special Requirements
                   </label>
                   <textarea
@@ -478,17 +456,7 @@ function OrganizeEventForm({ events, setEvents, eventManagerId }) {
             className={`submit-button ${isSubmitting ? 'submitting' : ''}`}
             disabled={isSubmitting}
           >
-            {isSubmitting ? (
-              <>
-                <span className="spinner"></span>
-                Creating Event...
-              </>
-            ) : (
-              <>
-                <span className="button-icon">✨</span>
-                Create Event
-              </>
-            )}
+            {isSubmitting ? "Creating Event..." : "Create Event"}
           </button>
         </div>
 

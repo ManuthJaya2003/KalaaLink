@@ -4,6 +4,7 @@ import StarRating from '../../Common/StarRating';
 import MainNav from '../../MainNav/MainNav';
 import ArtistManagerNav from '../ArtistManagerNav/ArtistManagerNav';
 import './ArtistReviews.css';
+import '../Overview/AnalyticsTab.css';
 
 const ArtistReviews = ({ showNavigation = true }) => {
   const [reviews, setReviews] = useState([]);
@@ -167,11 +168,10 @@ const ArtistReviews = ({ showNavigation = true }) => {
       {showNavigation && <MainNav />}
       {showNavigation && <ArtistManagerNav />}
       <div className="artist-reviews-container">
-      <div className="reviews-header">
-        <div className="reviews-header-content">
-          <div className="reviews-header-text">
-            <h2>Artist Reviews Management</h2>
-            <p>Manage all artist reviews and ratings</p>
+        <div className="analytics-page-header">
+          <div>
+            <h1 className="analytics-page-title">Artist Reviews Management</h1>
+            <p className="analytics-page-subtitle">Manage all artist reviews and ratings</p>
           </div>
           <div className="reviews-header-actions">
             <button 
@@ -193,7 +193,6 @@ const ArtistReviews = ({ showNavigation = true }) => {
             </button>
           </div>
         </div>
-      </div>
 
       {reviews.length === 0 ? (
         <div className="no-reviews-container">
@@ -224,11 +223,9 @@ const ArtistReviews = ({ showNavigation = true }) => {
                     {review.customerName || 'Unknown Customer'}
                   </td>
                   <td className="artist-name">
-                    <div className="artist-info">
-                      <strong>{review.artist?.artistName || 'Unknown Artist'}</strong>
-                      <span className="artist-details">
-                        {review.artist?.genre || 'N/A'} • {review.artist?.category || 'N/A'}
-                      </span>
+                    {review.artist?.artistName || 'Unknown Artist'}
+                    <div className="artist-details">
+                      {review.artist?.genre || 'N/A'} • {review.artist?.category || 'N/A'}
                     </div>
                   </td>
                   <td className="rating-cell">
@@ -244,7 +241,7 @@ const ArtistReviews = ({ showNavigation = true }) => {
                   </td>
                   <td className="actions-cell">
                     <button
-                      className="btn btn-delete"
+                      className="btn btn-danger"
                       onClick={() => setDeleteConfirm(review)}
                       disabled={isDeleting}
                     >

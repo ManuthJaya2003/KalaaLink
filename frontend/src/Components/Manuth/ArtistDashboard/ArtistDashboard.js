@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MainNav from "../../MainNav/MainNav";
 import ArtistNav from "../ArtistNav/ArtistNav.js";
+import AuthFooter from "../../Common/AuthFooter";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
@@ -155,7 +156,7 @@ function ArtistDashboard() {
       // Header with logo placeholder
       doc.setFontSize(28);
       doc.setTextColor(30, 58, 138); // Blue color
-      doc.text("🎵 KalaaLink", 105, 25, { align: "center" });
+      doc.text("KalaaLink", 105, 25, { align: "center" });
       
       doc.setFontSize(20);
       doc.text("Artist Performance Report", 105, 40, { align: "center" });
@@ -173,7 +174,7 @@ function ArtistDashboard() {
       // Artist Information Section
       doc.setFontSize(16);
       doc.setTextColor(17, 24, 39);
-      doc.text("👤 Artist Profile", 20, 95);
+      doc.text("Artist Profile", 20, 95);
       
       doc.setFontSize(11);
       doc.setTextColor(55, 65, 81);
@@ -191,7 +192,7 @@ function ArtistDashboard() {
       // Revenue Statistics
       doc.setFontSize(16);
       doc.setTextColor(17, 24, 39);
-      doc.text("💰 Revenue Overview", 20, 210);
+      doc.text("Revenue Overview", 20, 210);
       
       doc.setFontSize(14);
       doc.setTextColor(16, 185, 129); // Green color for revenue
@@ -211,7 +212,7 @@ function ArtistDashboard() {
       // Booking Statistics
       doc.setFontSize(16);
       doc.setTextColor(17, 24, 39);
-      doc.text("📊 Booking Statistics", 20, 290);
+      doc.text("Booking Statistics", 20, 290);
       
       doc.setFontSize(11);
       doc.setTextColor(55, 65, 81);
@@ -232,7 +233,7 @@ function ArtistDashboard() {
         
         doc.setFontSize(16);
         doc.setTextColor(17, 24, 39);
-        doc.text("📅 Recent Bookings", 20, 25);
+        doc.text("Recent Bookings", 20, 25);
         
         const tableData = bookings.slice(0, 15).map(booking => [
           booking.customerName || "N/A",
@@ -276,7 +277,7 @@ function ArtistDashboard() {
       
       // Calculate the Y position for insights - use table position if available, otherwise use a default
       const insightsStartY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : 380;
-      doc.text("💡 Key Insights", 20, insightsStartY);
+      doc.text("Key Insights", 20, insightsStartY);
       
       doc.setFontSize(11);
       doc.setTextColor(55, 65, 81);
@@ -580,7 +581,7 @@ function ArtistDashboard() {
           });
           
           if (verifyResponse.data.success) {
-            console.log('✅ Payment verified successfully');
+            console.log('Payment verified successfully');
             setNotification({
               type: 'success',
               message: 'Payment confirmed! Booking status updated.'
@@ -615,53 +616,12 @@ function ArtistDashboard() {
     return () => clearInterval(refreshInterval);
   }, [artist, notification]);
 
-  if (loading) {
-    return (
-      <div className="dashboard-page">
-        <MainNav />
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!artist) return <p>Loading...</p>;
+  if (!artist) return null;
 
   return (
     <div className="dashboard-page">
       <MainNav />
 
-      {/* Dashboard Header */}
-      <header className="dashboard-header">
-        <div className="dashboard-header-container">
-          <div className="dashboard-header-left">
-            <h1 className="dashboard-header-title">
-              <span className="dashboard-icon">👤</span>
-              Artist Dashboard
-            </h1>
-          </div>
-          <button className="dashboard-signout-btn" onClick={handleSignOut}>
-            <svg
-              className="signout-icon"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16,17 21,12 16,7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-            <span>Sign Out</span>
-          </button>
-        </div>
-      </header>
 
       {/* Artist Navigation */}
       <ArtistNav />
@@ -671,7 +631,7 @@ function ArtistDashboard() {
         <div className={`notification ${notification.type}`}>
           <div className="notification-content">
             <span className="notification-icon">
-              {notification.type === 'success' ? '✅' : '❌'}
+              {notification.type === 'success' ? 'Success' : 'Error'}
             </span>
             <span className="notification-message">{notification.message}</span>
             <button 
@@ -685,6 +645,7 @@ function ArtistDashboard() {
       )}
 
       <main className="dashboard-main">
+        {/* Dashboard Container - Positioned directly under ArtistNavbar */}
         <div className="dashboard-container">
           {/* Left Column - Artist Profile Card */}
           <div className="profile-card">
@@ -698,7 +659,6 @@ function ArtistDashboard() {
             
             <div className="profile-actions">
               <button className="edit-profile-btn" onClick={handleEditProfile}>
-                <span className="btn-icon">✏️</span>
                 Edit Profile
               </button>
               <button 
@@ -706,9 +666,6 @@ function ArtistDashboard() {
                 onClick={generatePDFReport}
                 disabled={generatingReport}
               >
-                <span className="btn-icon">
-                  {generatingReport ? '⏳' : '📄'}
-                </span>
                 {generatingReport ? 'Generating...' : 'Generate Report'}
               </button>
               <button 
@@ -716,8 +673,10 @@ function ArtistDashboard() {
                 onClick={() => setShowDeleteConfirm(true)}
                 disabled={isDeleting}
               >
-                <span className="btn-icon">🗑️</span>
                 Delete Profile
+              </button>
+              <button className="signout-btn" onClick={handleSignOut}>
+                Sign Out
               </button>
             </div>
           </div>
@@ -742,10 +701,9 @@ function ArtistDashboard() {
                   className="bookings-header"
                   onClick={() => setShowUpcoming(!showUpcoming)}
                 >
-                  <span className="header-icon">📅</span>
                   <span className="header-text">Upcoming Bookings {upcomingBookings.length}</span>
                   <span className={`header-chevron ${showUpcoming ? 'up' : 'down'}`}>
-                    {showUpcoming ? '▲' : '▼'}
+                    {showUpcoming ? '^' : 'v'}
                   </span>
                 </div>
                 
@@ -762,7 +720,7 @@ function ArtistDashboard() {
                             </div>
                             <div className="booking-details">
                               <span className="booking-location">
-                                📍 {booking.eventVenue || 'Venue TBD'}
+                                {booking.eventVenue || 'Venue TBD'}
                               </span>
                               <span className="booking-date">
                                 ({new Date(booking.eventDate).toLocaleDateString()})
@@ -786,28 +744,24 @@ function ArtistDashboard() {
                                     className="action-option"
                                     onClick={() => handleGetDirections(booking)}
                                   >
-                                    <span className="action-icon">🗺️</span>
                                     Get Directions
                                   </button>
                                   <button 
                                     className="action-option"
                                     onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'completed')}
                                   >
-                                    <span className="action-icon">✅</span>
                                     Mark as Completed
                                   </button>
                                   <button 
                                     className="action-option"
                                     onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'postponed')}
                                   >
-                                    <span className="action-icon">⏰</span>
                                     Mark as Postponed
                                   </button>
                                   <button 
                                     className="action-option delete"
                                     onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'cancelled')}
                                   >
-                                    <span className="action-icon">❌</span>
                                     Cancel Booking
                                   </button>
                                 </div>
@@ -827,7 +781,6 @@ function ArtistDashboard() {
                   className="bookings-header"
                   onClick={() => setShowCompleted(!showCompleted)}
                 >
-                  <span className="header-icon">✅</span>
                   <span className="header-text">Completed Bookings {completedBookings.length}</span>
                   <div className="header-actions">
                     {completedBookings.length > 0 && (
@@ -839,11 +792,11 @@ function ArtistDashboard() {
                         }}
                         title="Clear all completed bookings"
                       >
-                        🗑️ Clear All
+                        Clear All
                       </button>
                     )}
                     <span className={`header-chevron ${showCompleted ? 'up' : 'down'}`}>
-                      {showCompleted ? '▲' : '▼'}
+                      {showCompleted ? '^' : 'v'}
                     </span>
                   </div>
                 </div>
@@ -861,7 +814,7 @@ function ArtistDashboard() {
                              </div>
                              <div className="booking-details">
                                <span className="booking-location">
-                                 📍 {booking.eventVenue || 'Venue TBD'}
+                                 {booking.eventVenue || 'Venue TBD'}
                                </span>
                                <span className="booking-date">
                                  ({new Date(booking.eventDate).toLocaleDateString()})
@@ -885,21 +838,18 @@ function ArtistDashboard() {
                                      className="action-option"
                                      onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'completed')}
                                    >
-                                     <span className="action-icon">✅</span>
                                      Mark as Completed
                                    </button>
                                    <button 
                                      className="action-option"
                                      onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'postponed')}
                                    >
-                                     <span className="action-icon">⏰</span>
                                      Mark as Postponed
                                    </button>
                                    <button 
                                      className="action-option delete"
                                      onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'cancelled')}
                                    >
-                                     <span className="action-icon">❌</span>
                                      Cancel Booking
                                    </button>
                                  </div>
@@ -919,10 +869,9 @@ function ArtistDashboard() {
                   className="bookings-header"
                   onClick={() => setShowPostponed(!showPostponed)}
                 >
-                  <span className="header-icon">⏰</span>
                   <span className="header-text">Postponed Bookings {postponedBookings.length}</span>
                   <span className={`header-chevron ${showPostponed ? 'up' : 'down'}`}>
-                    {showPostponed ? '▲' : '▼'}
+                    {showPostponed ? '^' : 'v'}
                   </span>
                 </div>
                 
@@ -939,7 +888,7 @@ function ArtistDashboard() {
                              </div>
                              <div className="booking-details">
                                <span className="booking-location">
-                                 📍 {booking.eventVenue || 'Venue TBD'}
+                                 {booking.eventVenue || 'Venue TBD'}
                                </span>
                                <span className="booking-date">
                                  ({new Date(booking.eventDate).toLocaleDateString()})
@@ -963,21 +912,18 @@ function ArtistDashboard() {
                                      className="action-option"
                                      onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'completed')}
                                    >
-                                     <span className="action-icon">✅</span>
                                      Mark as Completed
                                    </button>
                                    <button 
                                      className="action-option"
                                      onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'upcoming')}
                                    >
-                                     <span className="action-icon">📅</span>
                                      Mark as Upcoming
                                    </button>
                                    <button 
                                      className="action-option delete"
                                      onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'cancelled')}
                                    >
-                                     <span className="action-icon">❌</span>
                                      Cancel Booking
                                    </button>
                                  </div>
@@ -997,7 +943,6 @@ function ArtistDashboard() {
                   className="bookings-header"
                   onClick={() => setShowCancelled(!showCancelled)}
                 >
-                  <span className="header-icon">❌</span>
                   <span className="header-text">Cancelled Bookings {cancelledBookings.length}</span>
                   <div className="header-actions">
                     {cancelledBookings.length > 0 && (
@@ -1009,11 +954,11 @@ function ArtistDashboard() {
                         }}
                         title="Clear all cancelled bookings"
                       >
-                        🗑️ Clear All
+                        Clear All
                       </button>
                     )}
                     <span className={`header-chevron ${showCancelled ? 'up' : 'down'}`}>
-                      {showCancelled ? '▲' : '▼'}
+                      {showCancelled ? '^' : 'v'}
                     </span>
                   </div>
                 </div>
@@ -1031,7 +976,7 @@ function ArtistDashboard() {
                              </div>
                              <div className="booking-details">
                                <span className="booking-location">
-                                 📍 {booking.eventVenue || 'Venue TBD'}
+                                 {booking.eventVenue || 'Venue TBD'}
                                </span>
                                <span className="booking-date">
                                  ({new Date(booking.eventDate).toLocaleDateString()})
@@ -1055,21 +1000,18 @@ function ArtistDashboard() {
                                      className="action-option"
                                      onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'upcoming')}
                                    >
-                                     <span className="action-icon">📅</span>
                                      Mark as Upcoming
                                    </button>
                                    <button 
                                      className="action-option"
                                      onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'postponed')}
                                    >
-                                     <span className="action-icon">⏰</span>
                                      Mark as Postponed
                                    </button>
                                    <button 
                                      className="action-option"
                                      onClick={() => handleBookingStatusUpdate(booking._id || booking.id, 'completed')}
                                    >
-                                     <span className="action-icon">✅</span>
                                      Mark as Completed
                                    </button>
                                  </div>
@@ -1103,100 +1045,106 @@ function ArtistDashboard() {
             )}
 
             <form onSubmit={handleUpdateProfile} className="edit-form">
-              <div className="form-group">
-                <label htmlFor="firstName">First Name:</label>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={editForm.firstName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
+              <div className="form-grid">
+                {/* Row 1 */}
+                <div className="form-group">
+                  <label htmlFor="firstName">First Name:</label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={editForm.firstName}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="lastName">Last Name:</label>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={editForm.lastName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
+                <div className="form-group">
+                  <label htmlFor="lastName">Last Name:</label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={editForm.lastName}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="stageName">Stage Name:</label>
-                <input
-                  type="text"
-                  id="stageName"
-                  name="stageName"
-                  value={editForm.stageName}
-                  onChange={handleInputChange}
-                />
-              </div>
+                {/* Row 2 */}
+                <div className="form-group">
+                  <label htmlFor="stageName">Stage Name:</label>
+                  <input
+                    type="text"
+                    id="stageName"
+                    name="stageName"
+                    value={editForm.stageName}
+                    onChange={handleInputChange}
+                  />
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="bookingPrice">Booking Price (LKR):</label>
-                <input
-                  type="number"
-                  id="bookingPrice"
-                  name="bookingPrice"
-                  value={editForm.bookingPrice}
-                  onChange={handleInputChange}
-                  min="0"
-                  step="0.01"
-                />
-              </div>
+                <div className="form-group">
+                  <label htmlFor="bookingPrice">Booking Price (LKR):</label>
+                  <input
+                    type="number"
+                    id="bookingPrice"
+                    name="bookingPrice"
+                    value={editForm.bookingPrice}
+                    onChange={handleInputChange}
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="bio">Bio:</label>
-                <textarea
-                  id="bio"
-                  name="bio"
-                  rows="4"
-                  value={editForm.bio}
-                  onChange={handleInputChange}
-                  placeholder="Tell us about yourself..."
-                ></textarea>
-              </div>
+                {/* Row 3 */}
+                <div className="form-group">
+                  <label htmlFor="genre">Genre:</label>
+                  <input
+                    type="text"
+                    id="genre"
+                    name="genre"
+                    value={editForm.genre}
+                    onChange={handleInputChange}
+                    placeholder="e.g., Pop, Rock, Classical, Jazz, etc."
+                  />
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="genre">Genre:</label>
-                <input
-                  type="text"
-                  id="genre"
-                  name="genre"
-                  value={editForm.genre}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Pop, Rock, Classical, Jazz, etc."
-                />
-              </div>
+                <div className="form-group">
+                  <label htmlFor="category">Category:</label>
+                  <input
+                    type="text"
+                    id="category"
+                    name="category"
+                    value={editForm.category}
+                    onChange={handleInputChange}
+                    placeholder="e.g., Singer, Musician, Band, DJ, etc."
+                  />
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="category">Category:</label>
-                <input
-                  type="text"
-                  id="category"
-                  name="category"
-                  value={editForm.category}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Singer, Musician, Band, DJ, etc."
-                />
-              </div>
+                {/* Row 4 - Full width textareas */}
+                <div className="form-group form-group-wide">
+                  <label htmlFor="bio">Bio:</label>
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    rows="3"
+                    value={editForm.bio}
+                    onChange={handleInputChange}
+                    placeholder="Tell us about yourself..."
+                  ></textarea>
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="summary">Summary:</label>
-                <textarea
-                  id="summary"
-                  name="summary"
-                  rows="3"
-                  value={editForm.summary}
-                  onChange={handleInputChange}
-                  placeholder="Brief summary of your artistic style and what makes you unique"
-                ></textarea>
+                <div className="form-group form-group-wide">
+                  <label htmlFor="summary">Summary:</label>
+                  <textarea
+                    id="summary"
+                    name="summary"
+                    rows="3"
+                    value={editForm.summary}
+                    onChange={handleInputChange}
+                    placeholder="Brief summary of your artistic style and what makes you unique"
+                  ></textarea>
+                </div>
               </div>
 
               <div className="form-actions">
@@ -1229,7 +1177,7 @@ function ArtistDashboard() {
             </div>
             <div className="modal-body">
               <p>Are you sure you want to delete your profile? This action cannot be undone.</p>
-              <p className="warning-text">⚠️ This will permanently remove all your data, bookings, and profile information.</p>
+              <p className="warning-text">This will permanently remove all your data, bookings, and profile information.</p>
             </div>
             <div className="modal-actions">
               <button 
@@ -1260,7 +1208,7 @@ function ArtistDashboard() {
             </div>
             <div className="modal-body">
               <p>Are you sure you want to delete all {clearType} bookings? This action cannot be undone.</p>
-              <p className="warning-text">⚠️ This will permanently remove all your {clearType} bookings from the dashboard.</p>
+              <p className="warning-text">This will permanently remove all your {clearType} bookings from the dashboard.</p>
             </div>
             <div className="modal-actions">
               <button 
@@ -1287,8 +1235,8 @@ function ArtistDashboard() {
         <div className={`notification-toast ${notification.type}`}>
           <div className="notification-content">
             <span className="notification-icon">
-              {notification.type === 'success' ? '✅' : 
-               notification.type === 'error' ? '❌' : 'ℹ️'}
+              {notification.type === 'success' ? 'Success' : 
+               notification.type === 'error' ? 'Error' : 'Info'}
             </span>
             <span className="notification-message">{notification.message}</span>
             <button 
@@ -1300,6 +1248,7 @@ function ArtistDashboard() {
           </div>
         </div>
       )}
+      <AuthFooter />
     </div>
   );
 }

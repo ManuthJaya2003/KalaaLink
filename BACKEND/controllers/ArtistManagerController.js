@@ -102,7 +102,7 @@ const updateArtist = async (req, res) => {
     );
 
     if (!artist) return res.status(404).json({ message: "Unable to update artist details" });
-    return res.status(200).json(artist);
+    return res.status(200).json({ success: true, artist: artist });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server error" });

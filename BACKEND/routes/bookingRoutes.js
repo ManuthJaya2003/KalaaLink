@@ -20,6 +20,9 @@ router.put("/:id/status", bookingController.updateBookingStatus);
 // Delete a booking
 router.delete("/:id", bookingController.deleteBooking);
 
+// Bulk delete bookings by payment status
+router.delete("/bulk/status/:status", bookingController.deleteBookingsByStatus);
+
 // Analytics route
 router.get("/analytics", bookingController.getBookingAnalytics);
 

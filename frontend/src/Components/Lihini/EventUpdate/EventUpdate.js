@@ -187,17 +187,14 @@ function EventUpdate() {
 
   return (
     <div className="event-update-container">
-      <div className="form-header">
-        <h1 className="form-title">✏️ Update Event</h1>
-        <p className="form-subtitle">Modify your event details and crew requirements</p>
-      </div>
+      <h1 className="event-update-title">Update Event</h1>
+      <p className="event-update-subtitle">Modify your event details and crew requirements</p>
 
       <form onSubmit={handleSubmit} className="event-update-form" encType="multipart/form-data">
         <div className="form-grid">
           {/* Event Title */}
           <div className="form-group full-width">
             <label className="form-label">
-              <span className="label-icon">📝</span>
               Event Title
             </label>
             <input
@@ -214,7 +211,6 @@ function EventUpdate() {
           {/* Date and Time */}
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">📅</span>
               Event Date
             </label>
             <input
@@ -229,7 +225,6 @@ function EventUpdate() {
 
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">⏰</span>
               Event Time
             </label>
             <input
@@ -245,7 +240,6 @@ function EventUpdate() {
           {/* Venue Location */}
           <div className="form-group full-width">
             <label className="form-label">
-              <span className="label-icon">📍</span>
               Event Venue Location
             </label>
             <MapPicker
@@ -262,7 +256,6 @@ function EventUpdate() {
           {/* Description */}
           <div className="form-group full-width">
             <label className="form-label">
-              <span className="label-icon">📖</span>
               Event Description
             </label>
             <textarea
@@ -278,7 +271,6 @@ function EventUpdate() {
           {/* Capacity Fields */}
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">🎨</span>
               Max Artists
             </label>
             <input
@@ -295,7 +287,6 @@ function EventUpdate() {
 
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">👥</span>
               Max Customers
             </label>
             <input
@@ -313,7 +304,6 @@ function EventUpdate() {
           {/* Pricing Fields */}
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">💰</span>
               Customer Price (Rs.)
             </label>
             <input
@@ -330,7 +320,6 @@ function EventUpdate() {
 
           <div className="form-group">
             <label className="form-label">
-              <span className="label-icon">🎭</span>
               Artist Fee (Rs.)
             </label>
             <input
@@ -347,7 +336,6 @@ function EventUpdate() {
           {/* Image Upload */}
           <div className="form-group full-width">
             <label className="form-label">
-              <span className="label-icon">🖼️</span>
               Event Image
             </label>
             <div className="file-upload-container">
@@ -360,7 +348,6 @@ function EventUpdate() {
                 id="image-upload"
               />
               <label htmlFor="image-upload" className="file-upload-label">
-                <span className="upload-icon">📁</span>
                 <span className="upload-text">
                   {imageFile ? imageFile.name : "Choose a new image file..."}
                 </span>
@@ -381,7 +368,6 @@ function EventUpdate() {
                 />
                 <span className="checkbox-custom"></span>
                 <span className="checkbox-text">
-                  <span className="label-icon">👷</span>
                   Request Crew Support
                 </span>
               </label>
@@ -392,16 +378,13 @@ function EventUpdate() {
           {/* Crew Request Fields - Only show when checkbox is checked */}
           {requestCrew && (
             <div className="crew-request-section">
-              <div className="section-header">
-                <h3>👷 Crew Request Details</h3>
-                <p>Provide details about the crew support you need</p>
-              </div>
+              <h3 className="crew-request-title">Crew Request Details</h3>
+              <p className="crew-request-subtitle">Provide details about the crew support you need</p>
 
               <div className="form-grid">
                 {/* Crew Type */}
                 <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">🔧</span>
                     Crew Type
                   </label>
                   <select
@@ -426,7 +409,6 @@ function EventUpdate() {
                 {/* Required Date */}
                 <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">📅</span>
                     Required Date
                   </label>
                   <input
@@ -442,7 +424,6 @@ function EventUpdate() {
                 {/* Required Time */}
                 <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">⏰</span>
                     Required Time
                   </label>
                   <input
@@ -458,7 +439,6 @@ function EventUpdate() {
                 {/* Estimated Duration */}
                 <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">⏱️</span>
                     Estimated Duration
                   </label>
                   <select
@@ -480,9 +460,8 @@ function EventUpdate() {
                 </div>
 
                 {/* Crew Details */}
-                <div className="form-group full-width">
+                <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">📝</span>
                     Crew Details
                   </label>
                   <textarea
@@ -497,9 +476,8 @@ function EventUpdate() {
                 </div>
 
                 {/* Special Requirements */}
-                <div className="form-group full-width">
+                <div className="form-group">
                   <label className="form-label">
-                    <span className="label-icon">⭐</span>
                     Special Requirements
                   </label>
                   <textarea
@@ -530,17 +508,7 @@ function EventUpdate() {
             className={`submit-button ${isSubmitting ? 'submitting' : ''}`}
             disabled={isSubmitting}
           >
-            {isSubmitting ? (
-              <>
-                <span className="spinner"></span>
-                Updating Event...
-              </>
-            ) : (
-              <>
-                <span className="button-icon">💾</span>
-                Update Event
-              </>
-            )}
+            {isSubmitting ? "Updating Event..." : "Update Event"}
           </button>
         </div>
 
