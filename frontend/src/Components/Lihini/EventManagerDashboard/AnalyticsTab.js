@@ -528,14 +528,21 @@ function AnalyticsTab() {
               </tr>
             </thead>
             <tbody>
-              ${analyticsData.topPerformingEvents.map((event, index) => `
+              ${analyticsData.topPerformingEvents.map((event, index) => {
+                // Ensure revenue is properly formatted as a number
+                const revenueValue = typeof event.revenue === 'number' ? event.revenue : 
+                                   typeof event.revenue === 'string' ? parseFloat(event.revenue.replace(/[^0-9.-]/g, '')) || 0 : 0;
+                const formattedRevenue = `LKR ${revenueValue.toLocaleString()}`;
+                
+                return `
                 <tr>
                   <td>${event.event}</td>
-                  <td class="revenue-cell">LKR {event.revenue}</td>
+                  <td class="revenue-cell">${formattedRevenue}</td>
                   <td>${event.ticketsSold}</td>
                   <td>${index === 0 ? '🥇 Top Performer' : index === 1 ? '🥈 Runner Up' : index === 2 ? '🥉 Third Place' : '⭐ Good'}</td>
                 </tr>
-              `).join('')}
+              `;
+              }).join('')}
             </tbody>
           </table>
         </div>
@@ -556,12 +563,16 @@ function AnalyticsTab() {
             </thead>
             <tbody>
               ${analyticsData.refundsByEvent.map(event => {
-                const refundAmount = parseFloat(event.refundAmount.replace('$', '').replace(',', ''));
-                const impactLevel = refundAmount > 1000 ? '🔴 High Impact' : refundAmount > 500 ? '🟡 Medium Impact' : '🟢 Low Impact';
+                // Ensure refund amount is properly formatted as a number
+                const refundValue = typeof event.refundAmount === 'number' ? event.refundAmount : 
+                                   typeof event.refundAmount === 'string' ? parseFloat(event.refundAmount.replace(/[^0-9.-]/g, '')) || 0 : 0;
+                const formattedRefund = `LKR ${refundValue.toLocaleString()}`;
+                const impactLevel = refundValue > 1000 ? '🔴 High Impact' : refundValue > 500 ? '🟡 Medium Impact' : '🟢 Low Impact';
+                
                 return `
                   <tr>
                     <td>${event.event}</td>
-                    <td class="refund-cell">LKR {event.refundAmount}</td>
+                    <td class="refund-cell">${formattedRefund}</td>
                     <td class="refund-cell">${event.ticketsRefunded}</td>
                     <td>${impactLevel}</td>
                   </tr>
@@ -705,13 +716,20 @@ function AnalyticsTab() {
                 </tr>
               </thead>
               <tbody>
-                {analyticsData.topPerformingEvents.map((event, index) => (
-                  <tr key={index}>
-                    <td>{event.event}</td>
-                    <td className="revenue-cell">{event.revenue}</td>
-                    <td>{event.ticketsSold}</td>
-                  </tr>
-                ))}
+                {analyticsData.topPerformingEvents.map((event, index) => {
+                  // Ensure revenue is properly formatted as a number
+                  const revenueValue = typeof event.revenue === 'number' ? event.revenue : 
+                                     typeof event.revenue === 'string' ? parseFloat(event.revenue.replace(/[^0-9.-]/g, '')) || 0 : 0;
+                  const formattedRevenue = `LKR ${revenueValue.toLocaleString()}`;
+                  
+                  return (
+                    <tr key={index}>
+                      <td>{event.event}</td>
+                      <td className="revenue-cell">{formattedRevenue}</td>
+                      <td>{event.ticketsSold}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -734,13 +752,20 @@ function AnalyticsTab() {
                 </tr>
               </thead>
               <tbody>
-                {analyticsData.refundsByEvent.map((event, index) => (
-                  <tr key={index}>
-                    <td>{event.event}</td>
-                    <td className="refund-amount">{event.refundAmount}</td>
-                    <td className="refunded-tickets">{event.ticketsRefunded}</td>
-                  </tr>
-                ))}
+                {analyticsData.refundsByEvent.map((event, index) => {
+                  // Ensure refund amount is properly formatted as a number
+                  const refundValue = typeof event.refundAmount === 'number' ? event.refundAmount : 
+                                     typeof event.refundAmount === 'string' ? parseFloat(event.refundAmount.replace(/[^0-9.-]/g, '')) || 0 : 0;
+                  const formattedRefund = `LKR ${refundValue.toLocaleString()}`;
+                  
+                  return (
+                    <tr key={index}>
+                      <td>{event.event}</td>
+                      <td className="refund-amount">{formattedRefund}</td>
+                      <td className="refunded-tickets">{event.ticketsRefunded}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

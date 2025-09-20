@@ -768,12 +768,24 @@ function Profile() {
 
     if (!eventLocation) return <p>Location not available</p>;
 
+    // Check if event location is valid
+    if (typeof eventLocation.lat !== 'number' || typeof eventLocation.lng !== 'number') {
+      return <p>Event location coordinates not available</p>;
+    }
+
+    // Ensure coordinates are valid numbers
+    const center = [Number(eventLocation.lat), Number(eventLocation.lng)];
+    if (isNaN(center[0]) || isNaN(center[1])) {
+      return <p>Invalid location coordinates</p>;
+    }
+
     return (
       <div className="booking-map">
         <MapContainer
-          center={[eventLocation.lat, eventLocation.lng]}
+          center={center}
           zoom={13}
           style={{ height: '300px', width: '100%' }}
+          key={`artist-map-${booking._id}`}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -781,7 +793,7 @@ function Profile() {
           />
           
           {/* Event location marker */}
-          <Marker position={[eventLocation.lat, eventLocation.lng]}>
+          <Marker position={center}>
             <Popup>
               <div>
                 <strong>Event Location</strong><br />
@@ -792,8 +804,8 @@ function Profile() {
           </Marker>
 
           {/* Artist location marker (if available) */}
-          {artistLocation && (
-            <Marker position={[artistLocation.lat, artistLocation.lng]}>
+          {artistLocation && typeof artistLocation.lat === 'number' && typeof artistLocation.lng === 'number' && (
+            <Marker position={[Number(artistLocation.lat), Number(artistLocation.lng)]}>
               <Popup>
                 <div>
                   <strong>Artist Location</strong><br />
@@ -824,28 +836,75 @@ function Profile() {
   const EventBookingMap = ({ booking }) => {
     if (!booking.event) return <p>Event information not available</p>;
 
-    const venueLocation = booking.event.venueCoordinates ? 
-      { lat: booking.event.venueCoordinates.latitude, lng: booking.event.venueCoordinates.longitude } :
-      booking.event.venue?.location || { lat: 0, lng: 0 };
+    // Try to get venue coordinates from multiple sources
+    let venueLocation = null;
+    
+    // First try: venueCoordinates from event
+    if (booking.event.venueCoordinates?.latitude && booking.event.venueCoordinates?.longitude) {
+      venueLocation = { 
+        lat: booking.event.venueCoordinates.latitude, 
+        lng: booking.event.venueCoordinates.longitude 
+      };
+    }
+    // Second try: venue.location
+    else if (booking.event.venue?.location?.lat && booking.event.venue?.location?.lng) {
+      venueLocation = booking.event.venue.location;
+    }
+    // Third try: eventLocation from booking
+    else if (booking.eventLocation?.lat && booking.eventLocation?.lng) {
+      venueLocation = booking.eventLocation;
+    }
+    // Fallback: Default to Colombo, Sri Lanka
+    else {
+      venueLocation = { lat: 6.9271, lng: 79.8612 };
+    }
+
+    // Check if venue location is valid
+    if (!venueLocation || typeof venueLocation.lat !== 'number' || typeof venueLocation.lng !== 'number') {
+      return (
+        <div className="venue-location-fallback">
+          <p>📍 <strong>Venue:</strong> {booking.event.eventVenue || booking.event.venue?.name || 'Venue not specified'}</p>
+          <p>🗺️ <strong>Note:</strong> Map coordinates not available for this venue</p>
+          <p>📍 <strong>Address:</strong> Please check the event details for the exact location</p>
+        </div>
+      );
+    }
+
+    // Ensure coordinates are valid numbers
+    const center = [Number(venueLocation.lat), Number(venueLocation.lng)];
+    if (isNaN(center[0]) || isNaN(center[1])) {
+      return (
+        <div className="venue-location-fallback">
+          <p>📍 <strong>Venue:</strong> {booking.event.eventVenue || booking.event.venue?.name || 'Venue not specified'}</p>
+          <p>🗺️ <strong>Note:</strong> Map coordinates not available for this venue</p>
+          <p>📍 <strong>Address:</strong> Please check the event details for the exact location</p>
+        </div>
+      );
+    }
 
     return (
       <div className="booking-map">
         <MapContainer
-          center={[venueLocation.lat, venueLocation.lng]}
+          center={center}
           zoom={13}
           style={{ height: '300px', width: '100%' }}
+          key={`event-map-${booking._id}`}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
           
-          <Marker position={[venueLocation.lat, venueLocation.lng]}>
+          <Marker position={center}>
             <Popup>
-              <div>
-                <strong>{booking.event.eventTitle || booking.event.name}</strong><br />
-                {booking.event.eventVenue || booking.event.venue?.name}<br />
-                <small>Event Date: {formatDate(booking.event.eventDate || booking.event.date)}</small>
+              <div className="venue-popup">
+                <h4>🎯 {booking.event.eventTitle || booking.event.name}</h4>
+                <p><strong>📍 Venue:</strong> {booking.event.eventVenue || booking.event.venue?.name}</p>
+                <p><strong>📅 Date:</strong> {formatDate(booking.event.eventDate || booking.event.date)}</p>
+                {booking.event.eventTime && (
+                  <p><strong>🕐 Time:</strong> {booking.event.eventTime}</p>
+                )}
+                <p><strong>🎫 Tickets:</strong> {booking.ticketsBooked} ticket(s)</p>
               </div>
             </Popup>
           </Marker>
@@ -875,18 +934,25 @@ function Profile() {
       lng: 79.8612
     };
 
+    // Ensure coordinates are valid numbers
+    const center = [Number(deliveryLocation.lat), Number(deliveryLocation.lng)];
+    if (isNaN(center[0]) || isNaN(center[1])) {
+      return <p>Invalid delivery coordinates</p>;
+    }
+
     return (
       <div className="booking-map">
         <MapContainer
-          center={[deliveryLocation.lat, deliveryLocation.lng]}
+          center={center}
           zoom={13}
           style={{ height: '300px', width: '100%' }}
+          key={`order-map-${order._id}`}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-          <Marker position={[deliveryLocation.lat, deliveryLocation.lng]}>
+          <Marker position={center}>
             <Popup>
               <div>
                 <h4>Order #{order._id?.slice(-8)}</h4>
