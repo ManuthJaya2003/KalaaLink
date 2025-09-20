@@ -18,6 +18,8 @@ function Orders() {
   const [updateLoading, setUpdateLoading] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState(null);
   const [clearLoading, setClearLoading] = useState(false);
+  const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
+  const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
 
   const fetchOrders = async () => {
     try {
@@ -128,6 +130,34 @@ function Orders() {
         setClearLoading(false);
       }
     }
+  };
+
+  const handleBulkDeleteOrders = async () => {
+    try {
+      setBulkDeleteLoading(true);
+      const response = await axios.delete(`${ORDER_URL}/bulk/${filterBy}`);
+      await fetchOrders();
+      alert(`Successfully deleted ${response.data.deletedCount} ${filterBy} orders!`);
+      setShowBulkDeleteConfirm(false);
+    } catch (error) {
+      console.error(`Error bulk deleting ${filterBy} orders:`, error);
+      if (error.response?.status === 404) {
+        alert(`No ${filterBy} orders found to delete.`);
+      } else {
+        alert(`Failed to delete ${filterBy} orders. Please try again.`);
+      }
+    } finally {
+      setBulkDeleteLoading(false);
+    }
+  };
+
+  const openBulkDeleteConfirm = () => {
+    const ordersCount = filteredOrders.filter(order => order.paymentStatus === filterBy).length;
+    if (ordersCount === 0) {
+      alert(`No ${filterBy} orders found to delete.`);
+      return;
+    }
+    setShowBulkDeleteConfirm(true);
   };
 
   const getPaymentStatusClass = (status) => {
@@ -330,6 +360,24 @@ function Orders() {
         </select>
         <button onClick={() => setViewMode('table')}>Table</button>
         <button onClick={() => setViewMode('cards')}>Cards</button>
+        {(filterBy === 'paid' || filterBy === 'pending') && (
+          <button 
+            className="btn btn-danger"
+            onClick={openBulkDeleteConfirm}
+            disabled={bulkDeleteLoading}
+            style={{ 
+              backgroundColor: '#dc3545', 
+              color: 'white', 
+              border: 'none', 
+              padding: '8px 16px', 
+              borderRadius: '4px',
+              cursor: bulkDeleteLoading ? 'not-allowed' : 'pointer',
+              opacity: bulkDeleteLoading ? 0.6 : 1
+            }}
+          >
+            {bulkDeleteLoading ? 'Clearing...' : `Clear All ${filterBy.charAt(0).toUpperCase() + filterBy.slice(1)} Orders`}
+          </button>
+        )}
       </div>
 
       {/* Orders List */}
@@ -373,6 +421,60 @@ function Orders() {
             
             <div className="modal-footer">
               <button className="btn btn-cancel-black" onClick={() => setShowUpdateModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirmation Modal */}
+      {showBulkDeleteConfirm && (
+        <div className="modal-overlay" onClick={() => setShowBulkDeleteConfirm(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 style={{ color: '#000000' }}>Confirm Bulk Delete</h3>
+              <button className="modal-close" onClick={() => setShowBulkDeleteConfirm(false)}>×</button>
+            </div>
+            
+            <div className="modal-body">
+              <div className="bulk-delete-warning">
+                <p style={{ color: '#dc3545', fontWeight: 'bold', marginBottom: '16px' }}>
+                  ⚠️ WARNING: This action cannot be undone!
+                </p>
+                <p>
+                  Are you sure you want to delete <strong>ALL</strong> {filterBy} orders? 
+                  This will permanently remove {filteredOrders.filter(order => order.paymentStatus === filterBy).length} {filterBy} orders from the database.
+                </p>
+                <p style={{ color: '#6c757d', fontSize: '14px', marginTop: '12px' }}>
+                  This action will also delete any associated delivery records.
+                </p>
+              </div>
+
+              {bulkDeleteLoading && <p className="loading-text">Deleting {filterBy} orders...</p>}
+            </div>
+            
+            <div className="modal-footer">
+              <button 
+                className="btn btn-cancel-black" 
+                onClick={() => setShowBulkDeleteConfirm(false)}
+                disabled={bulkDeleteLoading}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-danger"
+                onClick={handleBulkDeleteOrders}
+                disabled={bulkDeleteLoading}
+                style={{ 
+                  backgroundColor: '#dc3545', 
+                  color: 'white', 
+                  border: 'none', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px',
+                  marginLeft: '8px'
+                }}
+              >
+                {bulkDeleteLoading ? 'Deleting...' : `Yes, Delete All ${filterBy.charAt(0).toUpperCase() + filterBy.slice(1)} Orders`}
+              </button>
             </div>
           </div>
         </div>

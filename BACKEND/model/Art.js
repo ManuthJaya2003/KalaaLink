@@ -7,6 +7,9 @@ const artSchema = new mongoose.Schema({
   colorPalette: { type: [String], required: true },
   artType: { type: String, required: true },
   price: { type: Number, required: true },
+  material: { type: String, required: true },
+  style: { type: String, required: true },
+  frameOption: { type: String, required: true },
   image: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });

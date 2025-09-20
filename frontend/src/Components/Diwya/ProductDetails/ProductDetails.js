@@ -288,13 +288,13 @@ function ProductDetails({ activeTab, onTabChange }) {
                 <h3 className="reviews-title">Customer Reviews</h3>
                 {Object.keys(productReviews).length > 0 && Object.values(productReviews).some(reviews => reviews.length > 0) ? (
                   <div className="reviews-table-container">
-                    <table className="reviews-table">
+                    <table className="reviews-table" style={{ tableLayout: 'fixed', width: '100%' }}>
                       <thead>
                         <tr>
-                          <th>Product Name</th>
-                          <th>Rate</th>
-                          <th>Comment</th>
-                          <th>Action</th>
+                          <th style={{ width: '30%', textAlign: 'left' }}>Product Name</th>
+                          <th style={{ width: '20%', textAlign: 'center' }}>Rate</th>
+                          <th style={{ width: '35%', textAlign: 'left' }}>Comment</th>
+                          <th style={{ width: '15%', textAlign: 'center' }}>Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -303,8 +303,8 @@ function ProductDetails({ activeTab, onTabChange }) {
                             const product = products.find(p => p._id === productId);
                             return (
                               <tr key={review._id}>
-                                <td className="product-name">{product?.artType || 'Unknown Product'}</td>
-                                <td className="review-rating">
+                                <td className="product-name" style={{ width: '30%', textAlign: 'left', verticalAlign: 'middle' }}>{product?.artType || 'Unknown Product'}</td>
+                                <td className="review-rating" style={{ width: '20%', textAlign: 'center', verticalAlign: 'middle' }}>
                                   <div className="rating-stars">
                                     {Array.from({ length: 5 }, (_, i) => (
                                       <span 
@@ -316,8 +316,8 @@ function ProductDetails({ activeTab, onTabChange }) {
                                     ))}
                                   </div>
                                 </td>
-                                <td className="review-comment">{review.comment}</td>
-                                <td className="review-actions">
+                                <td className="review-comment" style={{ width: '35%', textAlign: 'left', verticalAlign: 'middle' }}>{review.comment}</td>
+                                <td className="review-actions" style={{ width: '15%', textAlign: 'center', verticalAlign: 'middle' }}>
                                   <button
                                     onClick={() => handleDeleteReview(review._id, productId)}
                                     className="btn btn-secondary review-delete-btn"

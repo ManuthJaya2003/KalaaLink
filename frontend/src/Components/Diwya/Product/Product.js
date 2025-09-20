@@ -14,6 +14,9 @@ function Product(props) {
     colorPalette: '',
     artType: '',
     price: '',
+    material: '',
+    style: '',
+    frameOption: '',
     image: null,
   });
   const [isEditing, setIsEditing] = useState(false);
@@ -32,6 +35,9 @@ function Product(props) {
         colorPalette: Array.isArray(props.product.colorPalette) ? props.product.colorPalette.join(', ') : '',
         artType: props.product.artType || '',
         price: props.product.price || '',
+        material: props.product.material || '',
+        style: props.product.style || '',
+        frameOption: props.product.frameOption || '',
         image: null,
       });
     } else if (!props.isEditing && !props.product) {
@@ -43,6 +49,9 @@ function Product(props) {
         colorPalette: '',
         artType: '',
         price: '',
+        material: '',
+        style: '',
+        frameOption: '',
         image: null,
       });
     }
@@ -95,6 +104,9 @@ function Product(props) {
     formDataToSend.append('colorPalette', JSON.stringify(colorPaletteArray));
     formDataToSend.append('artType', formData.artType);
     formDataToSend.append('price', Number(formData.price));
+    formDataToSend.append('material', formData.material);
+    formDataToSend.append('style', formData.style);
+    formDataToSend.append('frameOption', formData.frameOption);
     if (formData.image) {
       formDataToSend.append('image', formData.image);
     }
@@ -117,6 +129,9 @@ function Product(props) {
         colorPalette: '',
         artType: '',
         price: '',
+        material: '',
+        style: '',
+        frameOption: '',
         image: null,
       });
       document.getElementById('image-input').value = '';
@@ -232,6 +247,58 @@ function Product(props) {
               className="form-input"
               required
             />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Material/Medium</label>
+            <select
+              name="material"
+              value={formData.material}
+              onChange={handleInputChange}
+              className="form-input"
+              required
+            >
+              <option value="">Select Material</option>
+              <option value="photography">Photography</option>
+              <option value="painting">Painting</option>
+              <option value="drawing">Drawing</option>
+              <option value="mixed media">Mixed Media</option>
+              <option value="digital">Digital Art</option>
+              <option value="sculpture">Sculpture</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Style/Genre</label>
+            <select
+              name="style"
+              value={formData.style}
+              onChange={handleInputChange}
+              className="form-input"
+              required
+            >
+              <option value="">Select Style</option>
+              <option value="abstract">Abstract</option>
+              <option value="realism">Realism</option>
+              <option value="modern">Modern</option>
+              <option value="traditional">Traditional</option>
+              <option value="contemporary">Contemporary</option>
+              <option value="minimalist">Minimalist</option>
+              <option value="impressionist">Impressionist</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Frame Option</label>
+            <select
+              name="frameOption"
+              value={formData.frameOption}
+              onChange={handleInputChange}
+              className="form-input"
+              required
+            >
+              <option value="">Select Frame Option</option>
+              <option value="framed">Framed</option>
+              <option value="unframed">Unframed</option>
+              <option value="ready-to-hang">Ready to Hang</option>
+            </select>
           </div>
           <div className="form-group full-width">
             <label className="form-label">Image</label>
