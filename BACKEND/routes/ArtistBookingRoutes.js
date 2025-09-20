@@ -16,6 +16,7 @@ const {
   verifyPaymentManually,
   autoVerifyAllPendingBookings,
   generateInvoice,
+  deleteBookingsByStatus,
 } = require("../controllers/ArtistBookingController");
 
 // ✅ Get all bookings (Admin / Manager)
@@ -62,5 +63,8 @@ router.post("/auto-verify-all", autoVerifyAllPendingBookings);
 
 // ✅ Generate invoice for booking
 router.post("/generate-invoice", generateInvoice);
+
+// ✅ Bulk delete bookings by payment status
+router.delete("/bulk/status/:status", deleteBookingsByStatus);
 
 module.exports = router;
