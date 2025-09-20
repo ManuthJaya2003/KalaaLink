@@ -124,11 +124,116 @@ function BookingsTab({ events = [] }) {
 
   const stats = getStats();
 
+  // Export bookings to CSV
+  const exportToCSV = async () => {
+    try {
+      // Prepare bookings data
+      const bookingsData = filteredBookings.map(booking => ({
+        'Type': 'Customer Booking',
+        'Customer Name': booking.customerName || '',
+        'Email': booking.customerEmail || '',
+        'Event Title': booking.event?.eventTitle || 'Deleted Event',
+        'Event Date': booking.event?.eventDate ? new Date(booking.event.eventDate).toLocaleDateString() : '',
+        'Event Venue': booking.event?.eventVenue || '',
+        'Tickets Booked': booking.ticketsBooked || 0,
+        'Registration Date': booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString() : '',
+        'Status': booking.status || '',
+        'Payment Intent ID': booking.paymentIntentId || '',
+        'Total Amount': booking.event?.priceCustomer ? (booking.event.priceCustomer * booking.ticketsBooked) : 0,
+        'Artist Name': '',
+        'Artist Email': '',
+        'Registration Fee': ''
+      }));
+
+      // Prepare artists data if an event is selected
+      let artistsData = [];
+      if (selectedEvent && artists.length > 0) {
+        artistsData = artists.map(artist => ({
+          'Type': 'Artist Registration',
+          'Customer Name': '',
+          'Email': '',
+          'Event Title': events.find(e => e._id === selectedEvent)?.eventTitle || 'Selected Event',
+          'Event Date': events.find(e => e._id === selectedEvent)?.eventDate ? 
+            new Date(events.find(e => e._id === selectedEvent).eventDate).toLocaleDateString() : '',
+          'Event Venue': events.find(e => e._id === selectedEvent)?.eventVenue || '',
+          'Tickets Booked': '',
+          'Registration Date': artist.registrationDate ? new Date(artist.registrationDate).toLocaleDateString() : '',
+          'Status': 'Registered',
+          'Payment Intent ID': '',
+          'Total Amount': artist.registrationFee || 0,
+          'Artist Name': artist.artistName || '',
+          'Artist Email': artist.artistEmail || '',
+          'Registration Fee': artist.registrationFee || 0
+        }));
+      }
+
+      // Combine bookings and artists data
+      const allData = [...bookingsData, ...artistsData];
+
+      // If no data to export
+      if (allData.length === 0) {
+        alert('No data to export');
+        return;
+      }
+
+      // Convert to CSV format
+      const headers = Object.keys(allData[0] || {});
+      const csvContent = [
+        headers.join(','),
+        ...allData.map(row => 
+          headers.map(header => {
+            const value = row[header];
+            // Escape commas and quotes in CSV
+            if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
+              return `"${value.replace(/"/g, '""')}"`;
+            }
+            return value;
+          }).join(',')
+        )
+      ].join('\n');
+
+      // Create and download file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      
+      // Generate filename with current date and selected event
+      const currentDate = new Date().toISOString().split('T')[0];
+      const eventTitle = selectedEvent ? 
+        events.find(e => e._id === selectedEvent)?.eventTitle?.replace(/[^a-zA-Z0-9]/g, '_') || 'All_Events' : 
+        'All_Events';
+      const filename = `bookings_and_artists_${eventTitle}_${currentDate}.csv`;
+      
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      alert('Error exporting data. Please try again.');
+    }
+  };
 
   return (
     <div style={{ padding: "20px" }}>
       <div style={{ marginBottom: "30px" }}>
-        <h2 style={{ marginBottom: "20px", color: "#1f2937" }}>Event Bookings Management</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "20px" }}>
+          <h2 style={{ margin: 0, color: "#1f2937" }}>Event Bookings Management</h2>
+          <button
+            onClick={exportToCSV}
+            disabled={filteredBookings.length === 0 && (!selectedEvent || artists.length === 0)}
+            className="export-button"
+            title={
+              filteredBookings.length === 0 && (!selectedEvent || artists.length === 0) 
+                ? "No data to export" 
+                : `Export ${filteredBookings.length} bookings${selectedEvent && artists.length > 0 ? ` and ${artists.length} artists` : ''} to CSV`
+            }
+          >
+            📊 Export Data ({filteredBookings.length + (selectedEvent ? artists.length : 0)})
+          </button>
+        </div>
         
         {/* Event Selection Dropdown */}
         <div className="event-filter" style={{ marginBottom: "20px" }}>
