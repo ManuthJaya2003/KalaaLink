@@ -35,7 +35,7 @@ function AdminDashboard() {
       {/* Fixed Sidebar */}
       <div className="dashboard-sidebar">
         <div className="sidebar-header">
-          <h2 className="sidebar-title">Dashboard</h2>
+          <h2 className="sidebar-title">Admin Dashboard</h2>
           <div className="sidebar-logo">
             <img src="/logo.png" alt="KalaaLink Logo" className="logo-icon" />
           </div>

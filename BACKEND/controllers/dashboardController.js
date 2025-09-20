@@ -5,6 +5,7 @@ const User = require("../model/UserModel");
 const Art = require("../model/Art");
 const Order = require("../model/Order");
 const Event = require("../model/eventModel");
+const Donor = require("../model/DonorModel");
 
 // Get dashboard overview data
 const getDashboardOverview = async (req, res) => {
@@ -153,7 +154,25 @@ const getSystemOverview = async (req, res) => {
     // Get total revenue from all paid bookings
     const revenueResult = await Booking.aggregate([
       { $match: { status: "paid" } },
-      { $group: { _id: null, totalRevenue: { $sum: "$ticketsBooked" } } }
+      {
+        $lookup: {
+          from: "eventmodels",
+          localField: "event",
+          foreignField: "_id",
+          as: "eventDetails"
+        }
+      },
+      {
+        $unwind: "$eventDetails"
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: {
+            $sum: { $multiply: ["$ticketsBooked", "$eventDetails.priceCustomer"] }
+          }
+        }
+      }
     ]);
     const totalRevenue = revenueResult[0]?.totalRevenue || 0;
 
@@ -191,21 +210,21 @@ const getSystemOverview = async (req, res) => {
 // Get chart data for system overview
 const getChartData = async (req, res) => {
   try {
-    // Get event registrations over time (last 12 months)
+    // Get booking trends over time (last 12 months)
     const twelveMonthsAgo = new Date();
     twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
     
-    const eventRegistrations = await Event.aggregate([
+    const bookingTrends = await Booking.aggregate([
       {
         $match: {
-          createdAt: { $gte: twelveMonthsAgo }
+          bookingDate: { $gte: twelveMonthsAgo }
         }
       },
       {
         $group: {
           _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" }
+            year: { $year: "$bookingDate" },
+            month: { $month: "$bookingDate" }
           },
           count: { $sum: 1 }
         }
@@ -215,16 +234,49 @@ const getChartData = async (req, res) => {
       }
     ]);
 
-    // Format event registrations data for line chart
-    const lineChartData = eventRegistrations.map(item => ({
-      month: `${item._id.year}-${item._id.month.toString().padStart(2, '0')}`,
-      registrations: item.count
-    }));
+    // Generate data for the last 12 months, filling in missing months with 0
+    const lineChartData = [];
+    const currentDate = new Date();
+    
+    for (let i = 11; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const monthKey = `${year}-${month.toString().padStart(2, '0')}`;
+      
+      const existingData = bookingTrends.find(item => 
+        item._id.year === year && item._id.month === month
+      );
+      
+      lineChartData.push({
+        month: monthKey,
+        registrations: existingData ? existingData.count : 0
+      });
+    }
 
     // Get revenue distribution data
     const bookingRevenue = await Booking.aggregate([
       { $match: { status: "paid" } },
-      { $group: { _id: null, total: { $sum: "$ticketsBooked" } } }
+      {
+        $lookup: {
+          from: "eventmodels",
+          localField: "event",
+          foreignField: "_id",
+          as: "eventDetails"
+        }
+      },
+      {
+        $unwind: "$eventDetails"
+      },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: { $multiply: ["$ticketsBooked", "$eventDetails.priceCustomer"] }
+          }
+        }
+      }
     ]);
 
     const artRevenue = await Art.aggregate([
@@ -234,6 +286,12 @@ const getChartData = async (req, res) => {
     const orderRevenue = await Order.aggregate([
       { $group: { _id: null, total: { $sum: "$totalAmount" } } }
     ]);
+
+    // Get additional revenue data
+    const donationRevenue = await Donor.aggregate([
+      { $match: { paymentStatus: "paid" } },
+      { $group: { _id: null, total: { $sum: "$Amount" } } }
+    ]).catch(() => [{ total: 0 }]); // Handle case where Donor doesn't exist
 
     // Format revenue distribution data for pie chart
     const pieChartData = [
@@ -251,26 +309,17 @@ const getChartData = async (req, res) => {
         name: "Custom Orders",
         value: orderRevenue[0]?.total || 0,
         color: "#FF9800"
+      },
+      {
+        name: "Donations",
+        value: donationRevenue[0]?.total || 0,
+        color: "#9C27B0"
       }
-    ];
-
-    // Get key metrics for bar chart
-    const totalUsers = await User.countDocuments();
-    const totalBookings = await Booking.countDocuments();
-    const totalArtists = await ArtistRegistration.countDocuments({ status: "approved" });
-    const totalRevenue = (bookingRevenue[0]?.total || 0) + (artRevenue[0]?.total || 0) + (orderRevenue[0]?.total || 0);
-
-    const barChartData = [
-      { name: "Revenue", value: totalRevenue, color: "#4CAF50" },
-      { name: "Users", value: totalUsers, color: "#2196F3" },
-      { name: "Bookings", value: totalBookings, color: "#FF9800" },
-      { name: "Artists", value: totalArtists, color: "#9C27B0" }
-    ];
+    ].filter(item => item.value > 0); // Only show revenue sources with actual value
 
     const chartData = {
       lineChart: lineChartData,
-      pieChart: pieChartData,
-      barChart: barChartData
+      pieChart: pieChartData
     };
 
     res.status(200).json(chartData);

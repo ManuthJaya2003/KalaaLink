@@ -102,8 +102,8 @@ const bulkClearComplaints = async (req, res, next) => {
     const { status } = req.body;
 
     try {
-        if (!status || !['Accepted', 'Rejected'].includes(status)) {
-            return res.status(400).json({ message: "Invalid status. Must be 'Accepted' or 'Rejected'" });
+        if (!status || !['Pending', 'Accepted', 'Rejected'].includes(status)) {
+            return res.status(400).json({ message: "Invalid status. Must be 'Pending', 'Accepted', or 'Rejected'" });
         }
 
         const result = await Complaints.deleteMany({ status: status });
