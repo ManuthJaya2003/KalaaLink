@@ -136,8 +136,17 @@
 /* Complaints Filters */
 .complaints-filters {
   display: flex;
-  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .filter-btn {
@@ -591,4 +600,80 @@
   .modal-actions {
     padding: 15px;
   }
+}
+
+/* Clear Button Styles */
+.clear-section {
+  display: flex;
+  align-items: center;
+}
+
+.clear-btn {
+  padding: 0.8rem 1.5rem;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.clear-btn:hover:not(:disabled) {
+  background: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.clear-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Confirmation Modal Styles */
+.confirmation-message {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.confirmation-message p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+.warning-text {
+  color: #dc3545 !important;
+  font-weight: 600;
+  font-size: 0.9rem !important;
+}
+
+.clear-confirm-btn {
+  background: #dc3545 !important;
+  color: white !important;
+  border: 2px solid #dc3545 !important;
+}
+
+.clear-confirm-btn:hover:not(:disabled) {
+  background: #c82333 !important;
+  border-color: #c82333 !important;
+  transform: translateY(-1px);
+}
+
+.cancel-btn {
+  background: #6c757d !important;
+  color: white !important;
+  border: 2px solid #6c757d !important;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #5a6268 !important;
+  border-color: #5a6268 !important;
+  transform: translateY(-1px);
 }

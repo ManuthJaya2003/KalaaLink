@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
-import OverviewBarChart from './OverviewBarChart';
 import OverviewLineChart from './OverviewLineChart';
 import RevenuePieChart from './RevenuePieChart';
 import './SystemOverview.css';
@@ -24,6 +23,7 @@ function SystemOverview() {
   const [loading, setLoading] = useState(true);
   const [chartLoading, setChartLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   // Fetch system overview data
   const fetchSystemData = async () => {
@@ -31,6 +31,7 @@ function SystemOverview() {
       setLoading(true);
       const response = await axios.get('http://localhost:5000/api/dashboard/system-overview');
       setSystemData(response.data);
+      setLastUpdated(new Date());
       setError(null);
     } catch (err) {
       console.error('Error fetching system data:', err);
@@ -53,15 +54,39 @@ function SystemOverview() {
     }
   };
 
+  // Manual refresh function
+  const handleManualRefresh = () => {
+    fetchSystemData();
+    fetchChartData();
+  };
+
   useEffect(() => {
     fetchSystemData();
     fetchChartData();
+    
     // Refresh data every 30 seconds
     const interval = setInterval(() => {
-      fetchSystemData();
-      fetchChartData();
+      // Only refresh if the component is visible (document is not hidden)
+      if (!document.hidden) {
+        fetchSystemData();
+        fetchChartData();
+      }
     }, 30000);
-    return () => clearInterval(interval);
+
+    // Refresh data when user returns to the tab
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchSystemData();
+        fetchChartData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   // Generate PDF report
@@ -161,8 +186,26 @@ function SystemOverview() {
   return (
     <div className="system-overview" id="system-overview-content">
       <div className="section-header">
-        <h1>Analytics</h1>
-        <p className="section-subtitle">Monitor system performance and track key metrics across all departments</p>
+        <div className="header-content">
+          <div>
+            <h1>Analytics</h1>
+            <p className="section-subtitle">Monitor system performance and track key metrics across all departments</p>
+          </div>
+          <div className="header-actions">
+            <button 
+              onClick={handleManualRefresh} 
+              className="refresh-btn"
+              disabled={loading || chartLoading}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="23 4 23 10 17 10"/>
+                <polyline points="1 20 1 14 7 14"/>
+                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+              </svg>
+              Refresh
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="stats-cards">
@@ -246,7 +289,7 @@ function SystemOverview() {
       </div>
 
       <div className="last-updated">
-        <p>Last updated: {new Date().toLocaleString()}</p>
+        <p>Last updated: {lastUpdated ? lastUpdated.toLocaleString() : 'Never'}</p>
       </div>
 
       {/* Charts Section */}
@@ -254,7 +297,6 @@ function SystemOverview() {
         <h2 className="charts-title">System Analytics</h2>
         
         <div className="charts-grid">
-          <OverviewBarChart data={chartData.barChart} />
           <OverviewLineChart data={chartData.lineChart} />
           <RevenuePieChart data={chartData.pieChart} />
         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import './ChartStyles.css';
 
 function OverviewBarChart({ data }) {
@@ -56,9 +56,12 @@ function OverviewBarChart({ data }) {
             <Tooltip content={<CustomTooltip />} />
             <Bar 
               dataKey="value" 
-              fill="#667eea"
               radius={[0, 4, 4, 0]}
-            />
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>

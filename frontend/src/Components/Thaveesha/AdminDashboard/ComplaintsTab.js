@@ -11,6 +11,8 @@ function ComplaintsTab() {
   const [filter, setFilter] = useState('all');
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [clearing, setClearing] = useState(false);
 
   // Fetch complaints from backend
   useEffect(() => {
@@ -64,6 +66,42 @@ function ComplaintsTab() {
     } catch (err) {
       console.error('Error updating complaint status:', err);
       alert('Failed to update complaint status');
+    }
+  };
+
+  // Handle bulk clear complaints
+  const handleBulkClear = async () => {
+    try {
+      setClearing(true);
+      const statusMap = {
+        'pending': 'Pending',
+        'accepted': 'Accepted',
+        'rejected': 'Rejected'
+      };
+      
+      const status = statusMap[filter];
+      const response = await axios.post(`${API_URL}/bulk-clear`, { status });
+      
+      // Refresh complaints list
+      await fetchComplaints();
+      
+      alert(response.data.message);
+      setShowClearConfirm(false);
+    } catch (err) {
+      console.error('Error clearing complaints:', err);
+      alert('Failed to clear complaints');
+    } finally {
+      setClearing(false);
+    }
+  };
+
+  // Get filter display name
+  const getFilterDisplayName = () => {
+    switch (filter) {
+      case 'pending': return 'Pending';
+      case 'accepted': return 'Accepted';
+      case 'rejected': return 'Rejected';
+      default: return '';
     }
   };
 
@@ -137,30 +175,45 @@ function ComplaintsTab() {
         </div>
 
         <div className="complaints-filters">
-          <button 
-            className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
-            onClick={() => setFilter('all')}
-          >
-            All ({totalComplaints})
-          </button>
-          <button 
-            className={`filter-btn ${filter === 'pending' ? 'active' : ''}`}
-            onClick={() => setFilter('pending')}
-          >
-            Pending ({pendingComplaints})
-          </button>
-          <button 
-            className={`filter-btn ${filter === 'accepted' ? 'active' : ''}`}
-            onClick={() => setFilter('accepted')}
-          >
-            Accepted ({resolvedComplaints})
-          </button>
-          <button 
-            className={`filter-btn ${filter === 'rejected' ? 'active' : ''}`}
-            onClick={() => setFilter('rejected')}
-          >
-            Rejected ({complaints.filter(c => c.status === 'Rejected').length})
-          </button>
+          <div className="filter-buttons">
+            <button 
+              className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
+              onClick={() => setFilter('all')}
+            >
+              All ({totalComplaints})
+            </button>
+            <button 
+              className={`filter-btn ${filter === 'pending' ? 'active' : ''}`}
+              onClick={() => setFilter('pending')}
+            >
+              Pending ({pendingComplaints})
+            </button>
+            <button 
+              className={`filter-btn ${filter === 'accepted' ? 'active' : ''}`}
+              onClick={() => setFilter('accepted')}
+            >
+              Accepted ({resolvedComplaints})
+            </button>
+            <button 
+              className={`filter-btn ${filter === 'rejected' ? 'active' : ''}`}
+              onClick={() => setFilter('rejected')}
+            >
+              Rejected ({complaints.filter(c => c.status === 'Rejected').length})
+            </button>
+          </div>
+          
+          {/* Clear Button - Only show when a specific filter is active */}
+          {filter !== 'all' && filteredComplaints.length > 0 && (
+            <div className="clear-section">
+              <button 
+                className="clear-btn"
+                onClick={() => setShowClearConfirm(true)}
+                disabled={clearing}
+              >
+                {clearing ? 'Clearing...' : 'Clear All'}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="complaints-list">
@@ -315,6 +368,46 @@ function ComplaintsTab() {
                 onClick={() => setShowModal(false)}
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clear Confirmation Modal */}
+      {showClearConfirm && (
+        <div className="complaint-modal">
+          <div className="complaint-modal-content">
+            <div className="modal-header">
+              <h3>Confirm Clear Action</h3>
+              <button className="close-button" onClick={() => setShowClearConfirm(false)}>×</button>
+            </div>
+            
+            <div className="modal-body">
+              <div className="confirmation-message">
+                <p>
+                  Are you sure you want to clear all <strong>{getFilterDisplayName().toLowerCase()}</strong> complaints?
+                </p>
+                <p className="warning-text">
+                  This action will permanently delete <strong>{filteredComplaints.length}</strong> complaint(s) from the database and cannot be undone.
+                </p>
+              </div>
+            </div>
+            
+            <div className="modal-actions">
+              <button 
+                className="action-btn clear-confirm-btn"
+                onClick={handleBulkClear}
+                disabled={clearing}
+              >
+                {clearing ? 'Clearing...' : 'Yes, Clear All'}
+              </button>
+              <button 
+                className="action-btn cancel-btn"
+                onClick={() => setShowClearConfirm(false)}
+                disabled={clearing}
+              >
+                Cancel
               </button>
             </div>
           </div>

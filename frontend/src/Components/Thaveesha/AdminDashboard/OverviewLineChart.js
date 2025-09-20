@@ -6,7 +6,7 @@ function OverviewLineChart({ data }) {
   if (!data || data.length === 0) {
     return (
       <div className="chart-container">
-        <h3>Event Registrations Over Time</h3>
+        <h3>Booking Trends Over Time</h3>
         <div className="no-data">No data available</div>
       </div>
     );
@@ -18,7 +18,7 @@ function OverviewLineChart({ data }) {
         <div className="custom-tooltip">
           <p className="tooltip-label">{label}</p>
           <p className="tooltip-value">
-            {payload[0].value} registrations
+            {payload[0].value} bookings
           </p>
         </div>
       );
@@ -28,7 +28,7 @@ function OverviewLineChart({ data }) {
 
   return (
     <div className="chart-container">
-      <h3>Event Registrations Over Time</h3>
+      <h3>Booking Trends Over Time</h3>
       <div className="chart-wrapper">
         <ResponsiveContainer width="100%" height={300}>
           <LineChart

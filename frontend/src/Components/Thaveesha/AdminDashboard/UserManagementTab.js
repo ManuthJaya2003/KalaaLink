@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import './UserManagementTab.css';
@@ -286,63 +286,48 @@ const UserManagementTab = () => {
         <p className="section-subtitle">Manage user accounts and view signup statistics</p>
       </div>
 
-      {/* User Status Charts */}
+      {/* User Status Chart */}
       <div className="charts-section">
         <h3>User Status Overview</h3>
         
-        {/* Active Users Chart */}
         <div className="chart-section">
-          <h4>Active Users ({activeUsers.length})</h4>
           <div className="chart-container">
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={signupStats}>
-                <CartesianGrid strokeDasharray="3 3" />
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={[
+                { status: 'Active Users', count: activeUsers.length, color: '#28a745' },
+                { status: 'Inactive Users', count: inactiveUsers.length, color: '#dc3545' }
+              ]}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                 <XAxis 
-                  dataKey="monthName" 
-                  tick={{ fontSize: 12 }}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
+                  dataKey="status" 
+                  tick={{ fontSize: 14, fontWeight: 'bold' }}
+                  stroke="#666"
                 />
-                <YAxis tick={{ fontSize: 12 }} />
+                <YAxis 
+                  tick={{ fontSize: 12 }}
+                  stroke="#666"
+                />
                 <Tooltip 
-                  formatter={(value) => [value, 'Active Signups']}
-                  labelFormatter={(label) => `Month: ${label}`}
+                  formatter={(value) => [value, 'Users']}
+                  labelFormatter={(label) => `Status: ${label}`}
+                  contentStyle={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: '1px solid #ccc',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                  }}
                 />
                 <Bar 
-                  dataKey="signups" 
-                  fill="#28a745" 
+                  dataKey="count" 
                   radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Inactive Users Chart */}
-        <div className="chart-section">
-          <h4>Inactive Users ({inactiveUsers.length})</h4>
-          <div className="chart-container">
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={signupStats}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="monthName" 
-                  tick={{ fontSize: 12 }}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip 
-                  formatter={(value) => [value, 'Inactive Signups']}
-                  labelFormatter={(label) => `Month: ${label}`}
-                />
-                <Bar 
-                  dataKey="signups" 
-                  fill="#dc3545" 
-                  radius={[4, 4, 0, 0]}
-                />
+                >
+                  {[
+                    { status: 'Active Users', count: activeUsers.length, color: '#28a745' },
+                    { status: 'Inactive Users', count: inactiveUsers.length, color: '#dc3545' }
+                  ].map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
