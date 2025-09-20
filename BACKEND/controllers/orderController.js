@@ -894,3 +894,174 @@ exports.deleteOrder = async (req, res) => {
     });
   }
 };
+
+// Bulk delete orders by status
+exports.bulkDeleteOrdersByStatus = async (req, res) => {
+  try {
+    const { status } = req.params;
+    
+    // Validate status parameter
+    const validStatuses = ['paid', 'pending'];
+    if (!validStatuses.includes(status.toLowerCase())) {
+      return res.status(400).json({ 
+        message: "Invalid status. Must be 'paid' or 'pending'"
+      });
+    }
+
+    console.log(`🗑️ Bulk delete ${status} orders requested`);
+    
+    // Find all orders with the specified status
+    const ordersToDelete = await Order.find({ paymentStatus: status.toLowerCase() });
+    
+    if (ordersToDelete.length === 0) {
+      return res.status(404).json({ 
+        message: `No ${status} orders found to delete`,
+        deletedCount: 0
+      });
+    }
+
+    console.log(`📊 Found ${ordersToDelete.length} ${status} orders to delete`);
+
+    // Get all order IDs for delivery deletion
+    const orderIds = ordersToDelete.map(order => order._id);
+
+    // Delete associated delivery records for all orders
+    try {
+      const deliveryResult = await Delivery.deleteMany({ orderId: { $in: orderIds } });
+      console.log(`✅ Deleted ${deliveryResult.deletedCount} associated delivery records`);
+    } catch (deliveryError) {
+      console.error('❌ Error deleting delivery records:', deliveryError);
+      // Continue with order deletion even if delivery deletion fails
+    }
+
+    // Delete all orders with the specified status
+    const result = await Order.deleteMany({ paymentStatus: status.toLowerCase() });
+
+    console.log(`✅ Successfully deleted ${result.deletedCount} ${status} orders`);
+    
+    res.status(200).json({ 
+      message: `Successfully deleted ${result.deletedCount} ${status} orders`,
+      deletedCount: result.deletedCount,
+      status: status.toLowerCase()
+    });
+  } catch (error) {
+    console.error(`❌ Error in bulk delete ${req.params.status} orders:`, error);
+    res.status(500).json({ 
+      message: `Failed to bulk delete ${req.params.status} orders`, 
+      error: error.message 
+    });
+  }
+};
+
+// Get marketplace analytics data
+exports.getMarketplaceAnalytics = async (req, res) => {
+  try {
+    console.log('📊 Fetching marketplace analytics data...');
+    
+    // Get all orders with paid status
+    const paidOrders = await Order.find({ paymentStatus: 'paid' })
+      .populate('items.productId', 'artType price')
+      .populate('productId', 'artType price');
+    
+    // Get all products
+    const allProducts = await Art.find();
+    
+    // Get all deliveries
+    const allDeliveries = await Delivery.find();
+    
+    // Get pending orders
+    const pendingOrders = await Order.find({ paymentStatus: 'pending' });
+    
+    // Calculate total revenue from paid orders
+    let totalRevenue = 0;
+    paidOrders.forEach(order => {
+      if (order.totalAmount) {
+        totalRevenue += order.totalAmount;
+      } else if (order.amount) {
+        totalRevenue += order.amount;
+      } else if (order.items && order.items.length > 0) {
+        order.items.forEach(item => {
+          if (item.productId && item.productId.price) {
+            totalRevenue += item.productId.price * item.quantity;
+          }
+        });
+      }
+    });
+    
+    // Calculate orders by category
+    const categoryOrders = {};
+    paidOrders.forEach(order => {
+      if (order.items && order.items.length > 0) {
+        order.items.forEach(item => {
+          if (item.productId && item.productId.artType) {
+            const category = item.productId.artType;
+            categoryOrders[category] = (categoryOrders[category] || 0) + item.quantity;
+          }
+        });
+      } else if (order.productId && order.productId.artType) {
+        const category = order.productId.artType;
+        categoryOrders[category] = (categoryOrders[category] || 0) + (order.quantity || 1);
+      }
+    });
+    
+    // Convert to chart data format
+    const chartData = Object.entries(categoryOrders).map(([name, orders]) => ({
+      name,
+      orders
+    }));
+    
+    // Calculate top performing products
+    const productPerformance = {};
+    paidOrders.forEach(order => {
+      if (order.items && order.items.length > 0) {
+        order.items.forEach(item => {
+          if (item.productId) {
+            const productName = item.productId.artType;
+            const revenue = item.productId.price * item.quantity;
+            if (!productPerformance[productName]) {
+              productPerformance[productName] = { revenue: 0, orders: 0 };
+            }
+            productPerformance[productName].revenue += revenue;
+            productPerformance[productName].orders += item.quantity;
+          }
+        });
+      }
+    });
+    
+    // Convert to array and sort by revenue
+    const topPerformingProducts = Object.entries(productPerformance)
+      .map(([product, data]) => ({
+        product,
+        revenue: `LKR ${data.revenue.toLocaleString()}`,
+        orders: data.orders
+      }))
+      .sort((a, b) => {
+        const aRevenue = parseInt(a.revenue.replace(/[^\d]/g, ''));
+        const bRevenue = parseInt(b.revenue.replace(/[^\d]/g, ''));
+        return bRevenue - aRevenue;
+      })
+      .slice(0, 10); // Top 10 products
+    
+    const analyticsData = {
+      summary: {
+        totalRevenue: `LKR ${totalRevenue.toLocaleString()}`,
+        totalOrders: paidOrders.length,
+        activeProducts: allProducts.length,
+        totalDeliveries: allDeliveries.length,
+        pendingOrders: pendingOrders.length
+      },
+      chartData,
+      topPerformingProducts
+    };
+    
+    console.log(`✅ Analytics data fetched: ${paidOrders.length} orders, ${allProducts.length} products, LKR ${totalRevenue.toLocaleString()} revenue`);
+    
+    res.status(200).json(analyticsData);
+  } catch (error) {
+    console.error('❌ Error fetching marketplace analytics:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch analytics data', 
+      error: error.message 
+    });
+  }
+};

@@ -29,6 +29,9 @@ router.put('/:orderId/payment-status', orderController.manualUpdatePaymentStatus
 // Delete order
 router.delete('/:orderId', orderController.deleteOrder);
 
+// Bulk delete orders by status (paid or pending)
+router.delete('/bulk/:status', orderController.bulkDeleteOrdersByStatus);
+
 // Stripe webhook for marketplace orders
 router.post('/webhook', express.raw({ type: 'application/json' }), orderController.handleStripeWebhook);
 
@@ -37,5 +40,8 @@ router.get('/confirm-payment/test', orderController.testPaymentConfirmation);
 
 // Test webhook endpoint (for debugging)
 router.get('/webhook/test', orderController.testWebhook);
+
+// Get marketplace analytics data
+router.get('/analytics/marketplace', orderController.getMarketplaceAnalytics);
 
 module.exports = router;

@@ -14,40 +14,53 @@ import "./AnalyticsTab.css";
 function AnalyticsTab() {
   const [analyticsData, setAnalyticsData] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
+
+  const API_BASE_URL = 'http://localhost:5000/api/orders';
+
+  const fetchAnalytics = async () => {
+    try {
+      setLoading(true);
+      console.log('📊 Fetching real-time analytics data...');
+      
+      const response = await axios.get(`${API_BASE_URL}/analytics/marketplace`);
+      setAnalyticsData(response.data);
+      setLastUpdated(new Date());
+      setError(null);
+      
+      console.log('✅ Analytics data updated successfully');
+    } catch (err) {
+      console.error("❌ Error fetching analytics:", err);
+      setError(err.response?.data?.message || err.message);
+      
+      // Fallback to mock data if API fails
+      const mockData = {
+        summary: {
+          totalRevenue: "LKR 0",
+          totalOrders: 0,
+          activeProducts: 0,
+          totalDeliveries: 0,
+          pendingOrders: 0
+        },
+        chartData: [],
+        topPerformingProducts: []
+      };
+      setAnalyticsData(mockData);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        // Mock analytics data for marketplace
-        const mockData = {
-          summary: {
-            totalRevenue: "LKR 45,000",
-            totalOrders: 127,
-            activeProducts: 23,
-            totalDeliveries: 89,
-            pendingOrders: 12
-          },
-          chartData: [
-            { name: "Art Supplies", orders: 45 },
-            { name: "Custom Art", orders: 32 },
-            { name: "Digital Art", orders: 28 },
-            { name: "Art Tools", orders: 22 }
-          ],
-          topPerformingProducts: [
-            { product: "Premium Canvas Set", revenue: "LKR 8,500", orders: 15 },
-            { product: "Digital Drawing Tablet", revenue: "LKR 7,200", orders: 12 },
-            { product: "Watercolor Paint Kit", revenue: "LKR 6,800", orders: 18 },
-            { product: "Sketching Pencils", revenue: "LKR 5,400", orders: 25 }
-          ]
-        };
-        setAnalyticsData(mockData);
-      } catch (err) {
-        console.error("Error fetching analytics:", err);
-        setError(err.response?.data?.message || err.message);
-      }
-    };
-
+    // Initial fetch
     fetchAnalytics();
+    
+    // Set up polling every 30 seconds for real-time updates
+    const interval = setInterval(fetchAnalytics, 30000);
+    
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   const handleGenerateReport = async () => {
@@ -222,25 +235,49 @@ function AnalyticsTab() {
     reportWindow.document.close();
   };
 
-  if (error) {
+  if (error && !analyticsData) {
     return (
       <div className="analytics-error">
         <p>Error loading analytics: {error}</p>
-        <button onClick={() => window.location.reload()}>Try Again</button>
+        <button onClick={fetchAnalytics}>Try Again</button>
       </div>
     );
   }
 
-  if (!analyticsData) {
-    return <p>Loading analytics data...</p>;
+  if (loading && !analyticsData) {
+    return (
+      <div className="analytics-loading">
+        <div className="loading-spinner"></div>
+        <p>Loading real-time analytics data...</p>
+      </div>
+    );
   }
 
   return (
     <div className="analytics-container">
       {/* Page Header */}
       <div className="analytics-page-header">
-        <h1 className="analytics-page-title">Marketplace Analytics</h1>
-        <p className="analytics-page-subtitle">Comprehensive insights and performance metrics for your marketplace</p>
+        <div className="header-content">
+          <div className="header-text">
+            <h1 className="analytics-page-title">Marketplace Analytics</h1>
+            <p className="analytics-page-subtitle">Comprehensive insights and performance metrics for your marketplace</p>
+            {lastUpdated && (
+              <p className="last-updated">
+                Last updated: {lastUpdated.toLocaleTimeString()}
+                {loading && <span className="updating-indicator"> (Updating...)</span>}
+              </p>
+            )}
+          </div>
+          <div className="header-actions">
+            <button 
+              className="refresh-btn" 
+              onClick={fetchAnalytics}
+              disabled={loading}
+            >
+              {loading ? '🔄' : '↻'} Refresh
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Summary Cards */}
