@@ -21,6 +21,7 @@ function OverviewAnalyticsTab() {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [clearConfirm, setClearConfirm] = useState(null);
+  const [bulkClearLoading, setBulkClearLoading] = useState(false);
 
   // API endpoints
   const API_BASE = "http://localhost:5000";
@@ -28,7 +29,7 @@ function OverviewAnalyticsTab() {
   // Fetch all artist bookings
   const fetchBookings = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/eventBookings`);
+      const response = await axios.get(`${API_BASE}/bookings`);
       if (response.data && response.data.artistBookings) {
         setBookings(response.data.artistBookings);
       } else {
@@ -311,7 +312,7 @@ function OverviewAnalyticsTab() {
     try {
       console.log("🔧 Manually updating payment status for booking:", bookingId);
       
-      const response = await axios.put(`${API_BASE}/eventBookings/${bookingId}/manual-payment-update`);
+      const response = await axios.put(`${API_BASE}/bookings/${bookingId}/manual-payment-update`);
       
       if (response.data) {
         console.log("✅ Payment status updated successfully:", response.data);
@@ -336,7 +337,7 @@ function OverviewAnalyticsTab() {
   // Clear booking functionality
   const handleClearBooking = async (bookingId) => {
     try {
-      const response = await axios.delete(`${API_BASE}/eventBookings/${bookingId}`);
+      const response = await axios.delete(`${API_BASE}/bookings/${bookingId}`);
       // Check if the response indicates success (either response.data.success or just a successful HTTP status)
       if (response.status === 200 || response.data?.success) {
         // Remove the booking from the local state
@@ -367,10 +368,12 @@ function OverviewAnalyticsTab() {
   const handleBulkClearBookings = async (status) => {
     console.log('handleBulkClearBookings called with status:', status);
     console.log('API_BASE:', API_BASE);
-    console.log('Full URL:', `${API_BASE}/eventBookings/bulk/status/${status}`);
+    console.log('Full URL:', `${API_BASE}/bookings/bulk/status/${status}`);
+    
+    setBulkClearLoading(true);
     
     try {
-      const response = await axios.delete(`${API_BASE}/eventBookings/bulk/status/${status}`);
+      const response = await axios.delete(`${API_BASE}/bookings/bulk/status/${status}`);
       console.log('Response received:', response);
       
       if (response.status === 200) {
@@ -400,6 +403,8 @@ function OverviewAnalyticsTab() {
       } else {
         alert(`Failed to clear bookings. Error: ${error.message}`);
       }
+    } finally {
+      setBulkClearLoading(false);
     }
   };
 
@@ -501,10 +506,10 @@ function OverviewAnalyticsTab() {
                   console.log('Bookings with paid status:', bookings.filter(b => b.paymentStatus === 'paid').length);
                   setClearConfirm({ type: 'bulk', status: 'paid' });
                 }}
-                disabled={!bookings.some(b => b.paymentStatus === 'paid')}
+                disabled={!bookings.some(b => b.paymentStatus === 'paid') || bulkClearLoading}
                 title="Clear all paid bookings"
               >
-                Clear All Paid ({bookings.filter(b => b.paymentStatus === 'paid').length})
+                {bulkClearLoading ? 'Clearing...' : `Clear All Paid (${bookings.filter(b => b.paymentStatus === 'paid').length})`}
               </button>
               <button
                 className="btn btn-warning"
@@ -513,10 +518,10 @@ function OverviewAnalyticsTab() {
                   console.log('Bookings with pending status:', bookings.filter(b => b.paymentStatus === 'pending').length);
                   setClearConfirm({ type: 'bulk', status: 'pending' });
                 }}
-                disabled={!bookings.some(b => b.paymentStatus === 'pending')}
+                disabled={!bookings.some(b => b.paymentStatus === 'pending') || bulkClearLoading}
                 title="Clear all pending bookings"
               >
-                Clear All Pending ({bookings.filter(b => b.paymentStatus === 'pending').length})
+                {bulkClearLoading ? 'Clearing...' : `Clear All Pending (${bookings.filter(b => b.paymentStatus === 'pending').length})`}
               </button>
             </div>
           </div>
@@ -665,10 +670,13 @@ function OverviewAnalyticsTab() {
                     handleClearBooking(clearConfirm._id);
                   }
                 }}
+                disabled={bulkClearLoading}
               >
-                {clearConfirm.type === 'bulk' 
-                  ? `Clear All ${clearConfirm.status.charAt(0).toUpperCase() + clearConfirm.status.slice(1)}`
-                  : 'Clear Booking'
+                {bulkClearLoading 
+                  ? 'Clearing...' 
+                  : clearConfirm.type === 'bulk' 
+                    ? `Clear All ${clearConfirm.status.charAt(0).toUpperCase() + clearConfirm.status.slice(1)}`
+                    : 'Clear Booking'
                 }
               </button>
             </div>
