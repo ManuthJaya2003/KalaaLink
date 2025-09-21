@@ -527,12 +527,19 @@ exports.testWebhook = async (req, res) => {
     console.log('📋 Request headers:', req.headers);
     console.log('📋 Request body length:', req.body ? req.body.length : 0);
     
+    const hasWebhookSecret = !!process.env.STRIPE_WEBHOOK_SECRET;
+    
     res.status(200).json({
       success: true,
-      message: 'Webhook endpoint is working',
+      message: hasWebhookSecret ? 'Webhook endpoint is working' : 'Webhook not configured - using alternative payment confirmation',
       timestamp: new Date().toISOString(),
-      hasWebhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET,
-      webhookSecretLength: process.env.STRIPE_WEBHOOK_SECRET ? process.env.STRIPE_WEBHOOK_SECRET.length : 0
+      hasWebhookSecret: hasWebhookSecret,
+      webhookSecretLength: process.env.STRIPE_WEBHOOK_SECRET ? process.env.STRIPE_WEBHOOK_SECRET.length : 0,
+      alternativeMethods: {
+        sessionVerification: 'Payment confirmation via Stripe session verification',
+        orderConfirmation: 'Automatic confirmation on order confirmation page',
+        backgroundChecking: 'Periodic background checking for pending orders'
+      }
     });
   } catch (error) {
     console.error('❌ Error in webhook test:', error);
@@ -960,8 +967,8 @@ exports.getMarketplaceAnalytics = async (req, res) => {
     
     // Get all orders with paid status
     const paidOrders = await Order.find({ paymentStatus: 'paid' })
-      .populate('items.productId', 'artType price')
-      .populate('productId', 'artType price');
+      .populate('items.productId', 'artType price material')
+      .populate('productId', 'artType price material');
     
     // Get all products
     const allProducts = await Art.find();
@@ -988,18 +995,18 @@ exports.getMarketplaceAnalytics = async (req, res) => {
       }
     });
     
-    // Calculate orders by category
+    // Calculate orders by material/medium category
     const categoryOrders = {};
     paidOrders.forEach(order => {
       if (order.items && order.items.length > 0) {
         order.items.forEach(item => {
-          if (item.productId && item.productId.artType) {
-            const category = item.productId.artType;
+          if (item.productId && item.productId.material) {
+            const category = item.productId.material;
             categoryOrders[category] = (categoryOrders[category] || 0) + item.quantity;
           }
         });
-      } else if (order.productId && order.productId.artType) {
-        const category = order.productId.artType;
+      } else if (order.productId && order.productId.material) {
+        const category = order.productId.material;
         categoryOrders[category] = (categoryOrders[category] || 0) + (order.quantity || 1);
       }
     });

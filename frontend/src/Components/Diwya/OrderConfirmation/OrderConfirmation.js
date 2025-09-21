@@ -30,8 +30,38 @@ const OrderConfirmation = () => {
       }
     };
 
-    fetchOrder();
-  }, [orderId]);
+    const confirmPayment = async () => {
+      if (orderId && sessionId) {
+        try {
+          console.log('🎉 Payment success detected, confirming payment...');
+          const confirmResponse = await axios.post('http://localhost:5000/api/orders/confirm-payment', {
+            orderId: orderId,
+            sessionId: sessionId
+          });
+          
+          if (confirmResponse.data.success) {
+            console.log('✅ Payment confirmed successfully');
+            // Refresh order data after confirmation
+            await fetchOrder();
+          } else {
+            console.log('❌ Payment confirmation failed:', confirmResponse.data.message);
+          }
+        } catch (error) {
+          console.error('❌ Error confirming payment:', error);
+          // Don't show error to user, just log it
+        }
+      }
+    };
+
+    // First confirm payment if we have session_id, then fetch order
+    if (sessionId) {
+      confirmPayment().then(() => {
+        fetchOrder();
+      });
+    } else {
+      fetchOrder();
+    }
+  }, [orderId, sessionId]);
 
   const handleContinueShopping = () => {
     navigate('/marketplace');
