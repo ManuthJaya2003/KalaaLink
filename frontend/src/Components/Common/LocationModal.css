@@ -29,16 +29,22 @@
     0 0 0 1px rgba(255, 255, 255, 0.05);
   max-width: 800px;
   width: 100%;
-  max-height: 75vh;
-  overflow-y: auto;
+  max-height: 80vh;
+  overflow-y: scroll;
   position: relative;
   animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   /* Custom scrollbar styling */
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f8fafc;
+  scrollbar-width: auto;
+  scrollbar-color: #C1A37F #e2e8f0;
   display: flex;
   flex-direction: column;
+  /* Ensure content is visible and scrollable */
+  min-height: 0;
+  /* Force scrollbar to always show */
+  overflow-x: hidden;
+  /* Force scrollbar visibility */
+  scrollbar-gutter: stable;
 }
 
 @keyframes slideUp {
@@ -54,55 +60,111 @@
 
 /* Custom scrollbar for webkit browsers */
 .modal-content::-webkit-scrollbar {
-  width: 8px;
+  width: 20px;
 }
 
 .modal-content::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 4px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  margin: 4px;
 }
 
 .modal-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
-  border-radius: 4px;
+  background: #C1A37F;
+  border-radius: 10px;
   transition: all 0.3s ease;
-  border: 2px solid transparent;
-  background-clip: content-box;
+  border: 3px solid #f1f5f9;
+  min-height: 50px;
 }
 
 .modal-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
-  background-clip: content-box;
+  background: #a68b5f;
+  border-color: #e2e8f0;
 }
 
 .modal-content::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(180deg, #64748b 0%, #475569 100%);
-  background-clip: content-box;
+  background: #8b6f47;
+}
+
+/* Force scrollbar to always be visible */
+.modal-content::-webkit-scrollbar-corner {
+  background: #f1f5f9;
+}
+
+/* Force scrollbar to always be visible */
+.modal-content {
+  scrollbar-width: auto;
+  scrollbar-color: #C1A37F #e2e8f0;
+}
+
+/* Add a subtle gradient to indicate scrollable content */
+.modal-content::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 20px; /* Leave space for scrollbar */
+  height: 30px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.2));
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Force content to overflow to ensure scrollbar appears */
+.modal-body {
+  min-height: 600px;
+}
+
+/* Hide the location status section that appears after Time field */
+.location-status-card {
+  display: none !important;
+}
+
+/* Ensure action buttons remain visible and properly styled */
+.action-buttons {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 16px !important;
+  margin: 20px 0 !important;
+  padding: 16px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Hide the map container */
+.map-container {
+  display: none !important;
 }
 
 /* Custom scrollbar for modal body */
 .modal-body::-webkit-scrollbar {
-  width: 6px;
+  width: 12px;
 }
 
 .modal-body::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 3px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
 }
 
 .modal-body::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
-  border-radius: 3px;
+  background: #C1A37F;
+  border-radius: 6px;
   transition: all 0.3s ease;
+  border: 2px solid #f1f5f9;
+  min-height: 30px;
 }
 
 .modal-body::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+  background: #a68b5f;
+  border-color: #e2e8f0;
 }
 
 .modal-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 32px 32px 24px 32px;
   border-bottom: 1px solid #f1f5f9;
@@ -111,6 +173,9 @@
   position: relative;
   flex-shrink: 0;
   z-index: 10;
+  /* Keep header fixed at top */
+  position: sticky;
+  top: 0;
 }
 
 .modal-header::after {
@@ -127,27 +192,28 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 1;
+  justify-content: center;
+  position: relative;
 }
 
 .header-icon {
   font-size: 28px;
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #C1A37F 0%, #a68b5f 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.2));
+  filter: drop-shadow(0 2px 4px rgba(193, 163, 127, 0.2));
 }
 
 .modal-header h3 {
   margin: 0;
-  color: #1e293b;
+  color: #2c3e50;
   font-size: 1.875rem;
   font-weight: 700;
   letter-spacing: -0.025em;
-  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  text-align: center;
+  flex: 1;
 }
 
 .modal-close {
@@ -163,6 +229,10 @@
   justify-content: center;
   width: 44px;
   height: 44px;
+  position: absolute;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .modal-close:hover {
@@ -180,11 +250,19 @@
 .modal-body {
   padding: 32px;
   scroll-behavior: smooth;
-  flex: 1;
   overflow-y: auto;
   min-height: 0;
   /* Ensure smooth scrolling and proper spacing */
   padding-bottom: 40px;
+  max-height: none;
+  /* Ensure all content is visible and scrollable */
+  display: block;
+  position: relative;
+  /* Allow flex to work properly */
+  flex: 1;
+  overflow-y: auto;
+  /* Ensure scrolling works */
+  height: auto;
 }
 
 /* Event Details Card */
@@ -200,13 +278,7 @@
 }
 
 .event-details-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
+  display: none;
 }
 
 .event-header h4 {
@@ -227,7 +299,6 @@
 .info-item {
   display: flex;
   align-items: center;
-  gap: 16px;
   padding: 16px 20px;
   background: #ffffff;
   border-radius: 16px;
@@ -238,15 +309,7 @@
 }
 
 .info-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(180deg, #3b82f6 0%, #8b5cf6 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  display: none;
 }
 
 .info-item:hover {
@@ -256,7 +319,7 @@
 }
 
 .info-item:hover::before {
-  opacity: 1;
+  display: none;
 }
 
 .info-icon {
@@ -278,6 +341,7 @@
   gap: 4px;
   flex: 1;
   min-width: 0;
+  width: 100%;
 }
 
 .info-label {
@@ -305,6 +369,9 @@
   margin-bottom: 24px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
   position: relative;
+  /* Ensure content is visible */
+  overflow: visible;
+  min-height: auto;
 }
 
 /* Loading State */
@@ -464,12 +531,15 @@
   margin: 24px 0;
   justify-content: center;
   flex-wrap: wrap;
-  position: sticky;
-  bottom: 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.95) 20%, #ffffff 100%);
+  position: relative;
+  background: transparent;
   padding: 16px 0 8px 0;
   margin-top: 32px;
   z-index: 5;
+  /* Ensure buttons are visible */
+  visibility: visible;
+  opacity: 1;
+  min-height: auto;
 }
 
 .btn {
@@ -511,33 +581,66 @@
   flex-shrink: 0;
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  color: #ffffff;
-  box-shadow: 0 8px 25px rgba(30, 41, 59, 0.3);
+/* Specific styling for Get Directions button */
+.get-directions-btn,
+.modal-content .get-directions-btn,
+.modal-overlay .get-directions-btn,
+.action-buttons .get-directions-btn,
+button.get-directions-btn {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+  border: none !important;
 }
 
-.btn-primary:hover {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+.get-directions-btn:hover,
+.modal-content .get-directions-btn:hover,
+.modal-overlay .get-directions-btn:hover,
+.action-buttons .get-directions-btn:hover,
+button.get-directions-btn:hover {
+  background: #333333 !important;
+  background-color: #333333 !important;
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(30, 41, 59, 0.4);
-  color: #ffffff;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
+  color: #ffffff !important;
+  text-decoration: none;
+}
+
+/* General btn-primary styling as fallback */
+.modal-content .btn-primary,
+.modal-overlay .btn-primary,
+.LocationModal .btn-primary,
+button.btn-primary {
+  background: #000000 !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+.modal-content .btn-primary:hover,
+.modal-overlay .btn-primary:hover,
+.LocationModal .btn-primary:hover,
+button.btn-primary:hover {
+  background: #333333 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
+  color: #ffffff !important;
   text-decoration: none;
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  color: #475569;
-  border: 2px solid #cbd5e1;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: #ffffff;
+  border: 2px solid #2c3e50;
+  box-shadow: 0 4px 15px rgba(44, 62, 80, 0.2);
 }
 
 .btn-secondary:hover {
-  background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+  background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  color: #334155;
-  border-color: #94a3b8;
+  box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3);
+  color: #ffffff;
+  border-color: #1a252f;
 }
 
 .btn-outline {
@@ -565,8 +668,15 @@
   background: #f8fafc;
   margin-bottom: 24px;
   /* Ensure map doesn't break layout when scrolling */
-  min-height: 400px;
-  max-height: 500px;
+  min-height: 200px;
+  max-height: 300px;
+  height: 250px;
+  /* Ensure map is visible */
+  visibility: visible;
+  opacity: 1;
+  display: block;
+  /* Ensure it doesn't get cut off */
+  flex-shrink: 0;
 }
 
 .map-container::before {
@@ -576,7 +686,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(139, 92, 246, 0.03) 100%);
+  background: linear-gradient(135deg, rgba(193, 163, 127, 0.03) 0%, rgba(44, 62, 80, 0.03) 100%);
   pointer-events: none;
   z-index: 1;
 }
@@ -593,7 +703,7 @@
 .venue-popup h4,
 .user-popup h4 {
   margin: 0 0 8px 0;
-  color: #1e293b;
+  color: #2c3e50;
   font-size: 16px;
   font-weight: 600;
 }
@@ -601,7 +711,7 @@
 .venue-popup p,
 .user-popup p {
   margin: 0;
-  color: #64748b;
+  color: #6c757d;
   font-size: 14px;
   line-height: 1.4;
 }
@@ -613,7 +723,7 @@
   }
 
   .modal-content {
-    max-height: 80vh;
+    max-height: 90vh;
     max-width: 100%;
     border-radius: 20px;
   }
@@ -662,9 +772,8 @@
     flex-direction: column;
     gap: 12px;
     margin: 20px 0;
-    position: sticky;
-    bottom: 0;
-    background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.95) 20%, #ffffff 100%);
+    position: relative;
+    background: transparent;
     padding: 12px 0 8px 0;
     margin-top: 24px;
   }
@@ -688,7 +797,7 @@
 
   .modal-content {
     border-radius: 16px;
-    max-height: 85vh;
+    max-height: 95vh;
   }
 
   .modal-header {
@@ -771,9 +880,8 @@
   .action-buttons {
     gap: 10px;
     margin: 16px 0;
-    position: sticky;
-    bottom: 0;
-    background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.95) 20%, #ffffff 100%);
+    position: relative;
+    background: transparent;
     padding: 12px 0 8px 0;
     margin-top: 20px;
   }
@@ -787,4 +895,56 @@
     min-height: 300px;
     max-height: 350px;
   }
+}
+
+/* Force black button styling - highest specificity */
+.modal-overlay .modal-content .action-buttons .btn.btn-primary.get-directions-btn,
+.modal-overlay .modal-content .action-buttons button.btn.btn-primary.get-directions-btn,
+.modal-overlay .modal-content .action-buttons .get-directions-btn,
+.modal-overlay .modal-content .action-buttons button[class*="primary"],
+.action-buttons .btn.btn-primary,
+.action-buttons button.btn-primary {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+  /* Override any gradient backgrounds */
+  background-image: none !important;
+}
+
+.modal-overlay .modal-content .action-buttons .btn.btn-primary.get-directions-btn:hover,
+.modal-overlay .modal-content .action-buttons button.btn.btn-primary.get-directions-btn:hover,
+.modal-overlay .modal-content .action-buttons .get-directions-btn:hover,
+.modal-overlay .modal-content .action-buttons button[class*="primary"]:hover,
+.action-buttons .btn.btn-primary:hover,
+.action-buttons button.btn-primary:hover {
+  background: #333333 !important;
+  background-color: #333333 !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
+  background-image: none !important;
+}
+
+/* Additional specificity for any remaining cases */
+button.get-directions-btn,
+button[class*="get-directions"],
+.action-buttons button[class*="primary"],
+.action-buttons button {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: none !important;
+  background-image: none !important;
+}
+
+button.get-directions-btn:hover,
+button[class*="get-directions"]:hover,
+.action-buttons button[class*="primary"]:hover,
+.action-buttons button:hover {
+  background: #333333 !important;
+  background-color: #333333 !important;
+  color: #ffffff !important;
+  background-image: none !important;
 }

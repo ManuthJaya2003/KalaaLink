@@ -1018,27 +1018,33 @@ img {
 
 /* ===== VIRTUAL GALLERY SECTION ===== */
 .gallery-section {
-  margin: 10px 0 20px 0;
+  margin: 0;
   background: transparent;
   padding: 0;
-  width: 100%;
+  width: 100vw;
   max-width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow-x: hidden;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  border: none;
+  outline: none;
 }
 
 .gallery-section > div {
-  width: 85%;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 20px;
+  padding: 0;
 }
 
 .gallery-header {
@@ -1068,7 +1074,7 @@ img {
 /* Responsive gallery styles */
 @media (max-width: 768px) {
   .gallery-section {
-    margin: 15px 0 30px 0;
+    margin: 0;
     width: 100vw;
     position: relative;
     left: 50%;
@@ -1079,10 +1085,12 @@ img {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border: none;
+    outline: none;
   }
   
   .gallery-section > div {
-    width: 90%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1104,7 +1112,7 @@ img {
 
 @media (max-width: 480px) {
   .gallery-section {
-    margin: 10px 0 20px 0;
+    margin: 0;
     width: 100vw;
     position: relative;
     left: 50%;
@@ -1115,10 +1123,12 @@ img {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border: none;
+    outline: none;
   }
   
   .gallery-section > div {
-    width: 95%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;

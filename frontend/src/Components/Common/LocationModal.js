@@ -15,14 +15,14 @@ L.Icon.Default.mergeOptions({
 // Custom icons
 const venueIcon = L.divIcon({
   className: 'custom-venue-marker',
-  html: '<div style="background-color: #dc3545; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🎯</div>',
+  html: '<div style="background-color: #C1A37F; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">V</div>',
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 });
 
 const userIcon = L.divIcon({
   className: 'custom-user-marker',
-  html: '<div style="background-color: #28a745; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">📍</div>',
+  html: '<div style="background-color: #2c3e50; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">U</div>',
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 });
@@ -249,7 +249,7 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
         {/* Modern Header with Icon */}
         <div className="modal-header">
           <div className="header-content">
-            <div className="header-icon">📍</div>
+            <div className="header-icon"></div>
             <h3>{title}</h3>
           </div>
           <button className="modal-close" onClick={onClose}>
@@ -268,21 +268,18 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
             </div>
             <div className="event-info-grid">
               <div className="info-item">
-                <div className="info-icon">🏢</div>
                 <div className="info-content">
                   <span className="info-label">Venue</span>
                   <span className="info-value">{booking?.eventVenue}</span>
                 </div>
               </div>
               <div className="info-item">
-                <div className="info-icon">📅</div>
                 <div className="info-content">
                   <span className="info-label">Date</span>
                   <span className="info-value">{new Date(booking?.eventDate).toLocaleDateString()}</span>
                 </div>
               </div>
               <div className="info-item">
-                <div className="info-icon">🕒</div>
                 <div className="info-content">
                   <span className="info-label">Time</span>
                   <span className="info-value">{booking?.eventTime}</span>
@@ -302,7 +299,7 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
               </div>
             ) : locationError ? (
               <div className="status-error">
-                <div className="status-icon">⚠️</div>
+                <div className="status-icon">!</div>
                 <div className="status-content">
                   <h5>Location Error</h5>
                   <p>{locationError}</p>
@@ -310,26 +307,26 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
                     className="btn btn-outline"
                     onClick={getUserLocation}
                   >
-                    <span className="btn-icon">🔄</span>
+                    <span className="btn-icon">↻</span>
                     Try Again
                   </button>
                 </div>
               </div>
             ) : userLocation ? (
               <div className="status-success">
-                <div className="status-icon">✅</div>
+                <div className="status-icon">✓</div>
                 <div className="status-content">
                   <h5>Location Detected</h5>
                   <div className="location-details">
                     <div className="location-item">
-                      <div className="item-icon">📍</div>
+                      <div className="item-icon">L</div>
                       <div className="item-content">
                         <span className="item-label">Coordinates</span>
                         <span className="item-value">{userLocation.lat.toFixed(6)}, {userLocation.lng.toFixed(6)}</span>
                       </div>
                     </div>
                     <div className="location-item">
-                      <div className="item-icon">🕒</div>
+                      <div className="item-icon">T</div>
                       <div className="item-content">
                         <span className="item-label">Detected</span>
                         <span className="item-value">{locationTimestamp ? locationTimestamp.toLocaleTimeString() : 'Just now'}</span>
@@ -337,7 +334,7 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
                     </div>
                     {userLocation.accuracy && (
                       <div className="location-item">
-                        <div className="item-icon">🎯</div>
+                        <div className="item-icon">A</div>
                         <div className="item-content">
                           <span className="item-label">Accuracy</span>
                           <span className="item-value">±{Math.round(userLocation.accuracy)}m</span>
@@ -351,24 +348,21 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
           </div>
 
           {/* Action Buttons */}
-          {userLocation && (
-            <div className="action-buttons">
+          <div className="action-buttons">
               <button
                 onClick={handleGetDirections}
-                className="btn btn-primary"
+                className="btn btn-primary get-directions-btn"
               >
-                <span className="btn-icon">🗺️</span>
                 Get Directions
               </button>
-              <button 
-                className="btn btn-secondary"
-                onClick={getUserLocation}
-              >
-                <span className="btn-icon">🔄</span>
-                Refresh Location
-              </button>
-            </div>
-          )}
+            <button 
+              className="btn btn-secondary"
+              onClick={getUserLocation}
+            >
+              <span className="btn-icon">↻</span>
+              Refresh Location
+            </button>
+          </div>
 
           {/* Map Container */}
           <div className="map-container">
@@ -387,7 +381,7 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
               <Marker position={venueCoords} icon={venueIcon}>
                 <Popup>
                   <div className="venue-popup">
-                    <h4>🎯 Event Venue</h4>
+                    <h4>Event Venue</h4>
                     <p>{booking?.eventVenue}</p>
                   </div>
                 </Popup>
@@ -398,7 +392,7 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
                 <Marker position={userLocation} icon={userIcon}>
                   <Popup>
                     <div className="user-popup">
-                      <h4>📍 Your Location</h4>
+                      <h4>Your Location</h4>
                       <p>You are here</p>
                     </div>
                   </Popup>

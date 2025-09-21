@@ -13,16 +13,29 @@
   flex: 1;
 }
 
+.header-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
 .book-artist-container h2 {
   color: #1f2937;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   font-size: 2rem;
   font-weight: 700;
 }
 
-.book-artist-container > p {
+.fancy-line {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #C1A37F, #D4B996, #C1A37F);
+  margin: 0 auto 20px auto;
+  border-radius: 2px;
+}
+
+.book-artist-container p {
   color: #6b7280;
-  margin-bottom: 32px;
+  margin-bottom: 0;
   font-size: 1.1rem;
 }
 
@@ -32,6 +45,8 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .form-row {
@@ -42,21 +57,28 @@
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.form-group label {
+.form-label {
   display: block;
   margin-bottom: 8px;
   color: #374151;
   font-weight: 600;
   font-size: 14px;
+  text-align: left;
+  width: 100%;
+  max-width: 400px;
 }
 
 .form-group input,
 .form-group select,
 .time-select {
   width: 100%;
+  max-width: 400px;
   padding: 12px 16px;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
@@ -112,8 +134,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   font-size: 14px;
 }
 
-.submit-btn {
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
   width: 100%;
+}
+
+.submit-btn {
+  width: 200px;
+  max-width: 200px;
   padding: 16px 24px !important;
   background: rgba(193, 163, 127, 0.9) !important;
   color: #000000 !important;
@@ -123,7 +153,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   font-weight: 600 !important;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-top: 24px;
+  flex-shrink: 0;
 }
 
 .submit-btn:hover:not(:disabled) {
@@ -264,6 +294,17 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   .book-artist-form {
     padding: 24px;
+    max-width: 100%;
+  }
+
+  .form-group input,
+  .form-group select,
+  .time-select {
+    max-width: 100%;
+  }
+
+  .form-label {
+    max-width: 100%;
   }
 
   .form-row {
@@ -288,6 +329,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     padding: 14px 28px;
     font-size: 15px;
   }
+
+  .submit-btn {
+    width: 180px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -297,20 +342,31 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   .book-artist-form {
     padding: 20px;
+    max-width: 100%;
   }
 
   .book-artist-container h2 {
     font-size: 1.75rem;
   }
 
+  .header-section {
+    margin-bottom: 24px;
+  }
+
   .form-group input,
   .form-group select {
     padding: 14px 16px;
     font-size: 16px;
+    max-width: 100%;
+  }
+
+  .form-label {
+    max-width: 100%;
   }
 
   .submit-btn {
     padding: 14px 20px;
     font-size: 15px;
+    width: 160px;
   }
 }

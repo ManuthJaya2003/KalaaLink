@@ -1,19 +1,25 @@
 import React from "react";
 import "./MainNav.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 function MainNav() {
   const { user, logout, isAuthenticated } = useAuth();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
   };
 
+  // Helper function to check if a route is active
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
   return (
     <nav className="navbar">
       <ul className="navbar-list">
-        <li className="navbar-item navbar-brand">
+        <li className={`navbar-item navbar-brand ${isActive('/') ? 'active' : ''}`}>
           <Link to="/">
             <div className="brand-container">
               <img 
@@ -25,27 +31,27 @@ function MainNav() {
             </div>
           </Link>
         </li>
-        <li className="navbar-item">
+        <li className={`navbar-item ${isActive('/artists') ? 'active' : ''}`}>
           <Link to = "/artists">
           <h1>Artists</h1>
           </Link>
         </li>
-        <li className="navbar-item">
+        <li className={`navbar-item ${isActive('/Events') ? 'active' : ''}`}>
           <Link to="/Events">
             <h1>Events</h1>
           </Link>
         </li>
-        <li className="navbar-item">
+        <li className={`navbar-item ${isActive('/marketplace') ? 'active' : ''}`}>
           <Link to="/marketplace">
             <h1>Marketplace</h1>
           </Link>
         </li>
-        <li className="navbar-item">
+        <li className={`navbar-item ${isActive('/donordashboard') ? 'active' : ''}`}>
           <Link to="/donordashboard">
             <h1>Donations</h1>
           </Link>
         </li>
-        <li className="navbar-item">
+        <li className={`navbar-item ${isActive('/contactus') ? 'active' : ''}`}>
           <Link to="/contactus">
             <h1>Contact Us</h1>
           </Link>

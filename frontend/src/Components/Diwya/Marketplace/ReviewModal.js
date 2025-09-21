@@ -82,48 +82,50 @@ const ReviewModal = ({ product, onClose, onReviewSubmit }) => {
             <p>by {product.artistName}</p>
           </div>
           
-          <form onSubmit={handleSubmit} className="review-form" style={{ width: '100%', maxWidth: '500px' }}>
-            <div className="form-group">
-              <label htmlFor="customerName">Your Name *</label>
-              <input
-                type="text"
-                id="customerName"
-                value={review.customerName}
-                onChange={(e) => setReview({ ...review, customerName: e.target.value })}
-                required
-                placeholder="Enter your name"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label>Rating *</label>
-              <div className="star-rating">
-                {renderStars(review.rating, true)}
-                <span className="rating-text">{review.rating} out of 5 stars</span>
+          <form onSubmit={handleSubmit} className="review-form">
+            <div className="form-fields">
+              <div className="form-group">
+                <label htmlFor="customerName">Your Name *</label>
+                <input
+                  type="text"
+                  id="customerName"
+                  value={review.customerName}
+                  onChange={(e) => setReview({ ...review, customerName: e.target.value })}
+                  required
+                  placeholder="Enter your name"
+                />
               </div>
+              
+              <div className="form-group">
+                <label>Rating *</label>
+                <div className="star-rating">
+                  {renderStars(review.rating, true)}
+                  <span className="rating-text">{review.rating} out of 5 stars</span>
+                </div>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="comment">Your Review *</label>
+                <textarea
+                  id="comment"
+                  value={review.comment}
+                  onChange={(e) => setReview({ ...review, comment: e.target.value })}
+                  required
+                  placeholder="Share your thoughts about this artwork..."
+                  rows="2"
+                  style={{ minHeight: '50px', maxHeight: '70px' }}
+                />
+              </div>
+              
+              {error && <div className="error-message">{error}</div>}
             </div>
             
-            <div className="form-group">
-              <label htmlFor="comment">Your Review *</label>
-              <textarea
-                id="comment"
-                value={review.comment}
-                onChange={(e) => setReview({ ...review, comment: e.target.value })}
-                required
-                placeholder="Share your thoughts about this artwork..."
-                rows="2"
-                style={{ minHeight: '50px', maxHeight: '70px' }}
-              />
-            </div>
-            
-            {error && <div className="error-message">{error}</div>}
-            
-            <div style={{ 
+            <div className="form-actions" style={{ 
               display: 'flex', 
               gap: '12px', 
               justifyContent: 'center', 
               alignItems: 'center',
-              marginTop: '16px', 
+              marginTop: '4px', 
               width: '100%',
               height: '48px'
             }}>

@@ -179,57 +179,83 @@ function BookArtist() {
     <div className="book-artist-page">
       <MainNav />
     <div className="book-artist-container">
-      <h2>Book {artist.name}</h2>
-      <p>Price: LKR {artist.bookingPrice}</p>
+      <div className="header-section">
+        <h2>Book {artist.name}</h2>
+        <div className="fancy-line"></div>
+        <p>Price: LKR {artist.bookingPrice}</p>
+      </div>
 
       {!showPayment ? (
         <form onSubmit={handleBookingSubmit} className="book-artist-form">
-          <input
-            type="text"
-            name="customerName"
-            placeholder="Your Name"
-            value={formData.customerName}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="customerEmail"
-            placeholder="Email"
-            value={formData.customerEmail}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="customerPhoneNumber"
-            placeholder="Phone Number"
-            value={formData.customerPhoneNumber}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="eventType"
-            placeholder="Event Type"
-            value={formData.eventType}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="date"
-            name="eventDate"
-            value={formData.eventDate}
-            onChange={handleChange}
-            required
-          />
-          <select
-            name="eventTime"
-            value={formData.eventTime}
-            onChange={handleChange}
-            required
-            className="time-select"
-          >
+          <div className="form-group">
+            <label htmlFor="customerName" className="form-label">Name</label>
+            <input
+              type="text"
+              id="customerName"
+              name="customerName"
+              placeholder="Your Name"
+              value={formData.customerName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="customerEmail" className="form-label">Email</label>
+            <input
+              type="email"
+              id="customerEmail"
+              name="customerEmail"
+              placeholder="Email"
+              value={formData.customerEmail}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="customerPhoneNumber" className="form-label">Phone Number</label>
+            <input
+              type="text"
+              id="customerPhoneNumber"
+              name="customerPhoneNumber"
+              placeholder="Phone Number"
+              value={formData.customerPhoneNumber}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="eventType" className="form-label">Event Type</label>
+            <input
+              type="text"
+              id="eventType"
+              name="eventType"
+              placeholder="Event Type"
+              value={formData.eventType}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="eventDate" className="form-label">Event Date</label>
+            <input
+              type="date"
+              id="eventDate"
+              name="eventDate"
+              value={formData.eventDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="eventTime" className="form-label">Event Time</label>
+            <select
+              id="eventTime"
+              name="eventTime"
+              value={formData.eventTime}
+              onChange={handleChange}
+              required
+              className="time-select"
+            >
             <option value="">Select Time</option>
             <option value="00:00">12:00 AM</option>
             <option value="00:30">12:30 AM</option>
@@ -279,7 +305,8 @@ function BookArtist() {
             <option value="22:30">10:30 PM</option>
             <option value="23:00">11:00 PM</option>
             <option value="23:30">11:30 PM</option>
-          </select>
+            </select>
+          </div>
 
           <MapPicker
             selectedLocation={
@@ -291,9 +318,11 @@ function BookArtist() {
             onAddressChange={handleAddressChange}
           />
 
-          <button type="submit" className="submit-btn" disabled={isProcessing}>
-            {isProcessing ? "Creating Booking..." : "Create Booking"}
-          </button>
+          <div className="button-container">
+            <button type="submit" className="submit-btn" disabled={isProcessing}>
+              {isProcessing ? "Creating Booking..." : "Create Booking"}
+            </button>
+          </div>
         </form>
       ) : (
         <div className="payment-section">

@@ -122,7 +122,7 @@ const MapPicker = ({ selectedLocation, onLocationSelect, onAddressChange }) => {
             onClick={handleAddressSubmit}
             className="geocode-btn"
           >
-            🔍 Search
+            Search
           </button>
         </div>
         
@@ -131,7 +131,7 @@ const MapPicker = ({ selectedLocation, onLocationSelect, onAddressChange }) => {
           onClick={() => setIsMapVisible(!isMapVisible)}
           className="toggle-map-btn"
         >
-          {isMapVisible ? "🗺️ Hide Map" : "🗺️ Show Map"}
+          {isMapVisible ? "Hide Map" : "Show Map"}
         </button>
       </div>
 

@@ -1514,15 +1514,15 @@ div .clear-btn {
 }
 
 .success-card .success-actions .btn-success {
-  background: #111827;
-  color: white;
+  background: #000000 !important;
+  color: white !important;
   outline: none !important;
   box-shadow: none !important;
 }
 
 .success-card .success-actions .btn-success:hover {
-  background: #000000 !important;
-  color: white !important;
+  background: #ffffff !important;
+  color: #000000 !important;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   outline: none !important;
