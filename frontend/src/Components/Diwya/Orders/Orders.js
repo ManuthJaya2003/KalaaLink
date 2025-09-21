@@ -45,8 +45,8 @@ function Orders() {
       if (response.data.hasWebhookSecret) {
         console.log('✅ Webhook properly configured - automatic payment updates enabled');
       } else {
-        console.log('❌ Webhook secret missing - automatic payment updates disabled');
-        console.log('📝 Please add STRIPE_WEBHOOK_SECRET to your .env file');
+        console.log('ℹ️ Webhook secret not configured - using alternative payment confirmation methods');
+        console.log('📝 Note: Webhook is optional - payment confirmation works via session verification');
       }
     } catch (error) {
       console.error('Error checking webhook status:', error);
@@ -58,6 +58,49 @@ function Orders() {
     fetchOrders();
     checkWebhookStatus();
   }, []);
+
+  // Separate useEffect for payment checking that doesn't depend on orders
+  useEffect(() => {
+    const checkPendingPayments = async () => {
+      try {
+        // Get fresh orders data
+        const response = await axios.get(ORDER_URL);
+        const currentOrders = response.data;
+        const pendingOrders = currentOrders.filter(order => order.paymentStatus === 'pending');
+        
+        if (pendingOrders.length > 0) {
+          console.log(`🔄 Checking ${pendingOrders.length} pending orders for payment updates...`);
+          
+          for (const order of pendingOrders) {
+            if (order.stripeSessionId) {
+              try {
+                const confirmResponse = await axios.post(`${ORDER_URL}/confirm-payment`, {
+                  orderId: order._id,
+                  sessionId: order.stripeSessionId
+                });
+                
+                if (confirmResponse.data.success) {
+                  console.log(`✅ Order ${order._id} payment confirmed automatically`);
+                  // Refresh orders after successful confirmation
+                  await fetchOrders();
+                }
+              } catch (error) {
+                // Silently continue with other orders
+                console.log(`ℹ️ Order ${order._id} still pending`);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error checking pending payments:', error);
+      }
+    };
+
+    // Check pending payments every 30 seconds
+    const paymentCheckInterval = setInterval(checkPendingPayments, 30000);
+    
+    return () => clearInterval(paymentCheckInterval);
+  }, []); // Empty dependency array - only run once on mount
 
   useEffect(() => {
     let filtered = [...orders];

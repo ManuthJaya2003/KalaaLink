@@ -2,7 +2,7 @@ const Art = require('../model/Art');
 
 exports.createArt = async (req, res) => {
   try {
-    let { size, artistName, frameSize, colorPalette, artType, price } = req.body;
+    let { size, artistName, frameSize, colorPalette, artType, price, material, style, frameOption } = req.body;
     const imageUrl = req.body.imageUrl;
 
     // Parse colorPalette correctly
@@ -25,6 +25,9 @@ exports.createArt = async (req, res) => {
       colorPalette,
       artType,
       price: Number(price),
+      material,
+      style,
+      frameOption,
       image: imageUrl,
     });
 
@@ -56,7 +59,7 @@ exports.getArtById = async (req, res) => {
 
 exports.updateArt = async (req, res) => {
   try {
-    let { size, artistName, frameSize, colorPalette, artType, price } = req.body;
+    let { size, artistName, frameSize, colorPalette, artType, price, material, style, frameOption } = req.body;
     const imageUrl = req.body.imageUrl;
 
     if (typeof colorPalette === 'string') {
@@ -69,7 +72,7 @@ exports.updateArt = async (req, res) => {
 
     const art = await Art.findByIdAndUpdate(
       req.params.id,
-      { size, artistName, frameSize, colorPalette, artType, price: Number(price), image: imageUrl },
+      { size, artistName, frameSize, colorPalette, artType, price: Number(price), material, style, frameOption, image: imageUrl },
       { new: true, runValidators: true }
     );
 

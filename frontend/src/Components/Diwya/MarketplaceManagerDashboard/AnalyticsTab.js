@@ -327,8 +327,8 @@ function AnalyticsTab() {
       <div className="analytics-main">
         {/* Chart Section */}
         <div className="chart-section">
-          <h2>Orders by Product Category</h2>
-          <p>A visual breakdown of orders per product category.</p>
+          <h2>Orders by Material/Medium</h2>
+          <p>A visual breakdown of orders per material/medium category.</p>
           
           <div className="chart-container">
             <ResponsiveContainer width="100%" height={500}>
@@ -347,6 +347,7 @@ function AnalyticsTab() {
                 <Tooltip 
                   formatter={(value) => [value, 'Orders']}
                   labelStyle={{ color: '#333' }}
+                  labelFormatter={(label) => `Material/Medium: ${label}`}
                 />
                 <Bar dataKey="orders" fill="#C1A37F" radius={[4, 4, 0, 0]} maxBarSize={60} />
               </BarChart>

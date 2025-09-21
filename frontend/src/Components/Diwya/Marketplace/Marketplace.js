@@ -246,8 +246,8 @@ function Marketplace() {
 
       // Material/Medium filter
       if (filters.material) {
-        const productMaterial = product.material || product.artType || '';
-        if (!productMaterial.toLowerCase().includes(filters.material.toLowerCase())) {
+        const productMaterial = product.material || '';
+        if (productMaterial !== filters.material) {
           console.log('❌ Product filtered out by material:', productMaterial, 'vs', filters.material);
           return false;
         }
@@ -265,25 +265,8 @@ function Marketplace() {
 
       // Frame option filter
       if (filters.frameOption) {
-        const productFrameOption = product.frameOption || product.frameSize || '';
-        const frameSizeLower = productFrameOption.toLowerCase();
-        
-        let matchesFrame = false;
-        switch (filters.frameOption) {
-          case 'framed':
-            matchesFrame = frameSizeLower.includes('frame') || frameSizeLower.includes('framed');
-            break;
-          case 'unframed':
-            matchesFrame = !frameSizeLower.includes('frame') && !frameSizeLower.includes('framed');
-            break;
-          case 'ready-to-hang':
-            matchesFrame = frameSizeLower.includes('ready') || frameSizeLower.includes('hang');
-            break;
-          default:
-            matchesFrame = productFrameOption === filters.frameOption;
-        }
-        
-        if (!matchesFrame) {
+        const productFrameOption = product.frameOption || '';
+        if (productFrameOption !== filters.frameOption) {
           console.log('❌ Product filtered out by frame option:', productFrameOption, 'vs', filters.frameOption);
           return false;
         }
@@ -291,8 +274,8 @@ function Marketplace() {
 
       // Style/Genre filter
       if (filters.style) {
-        const productStyle = product.style || product.artType || '';
-        if (!productStyle.toLowerCase().includes(filters.style.toLowerCase())) {
+        const productStyle = product.style || '';
+        if (productStyle !== filters.style) {
           console.log('❌ Product filtered out by style:', productStyle, 'vs', filters.style);
           return false;
         }
@@ -306,13 +289,7 @@ function Marketplace() {
   // Handle filter changes
   const handleFilterChange = (filterType, value) => {
     console.log('🔄 Filter changed:', filterType, 'to:', value);
-    const newFilters = { ...filters, [filterType]: value };
-    setFilters(newFilters);
-    
-    // Apply filters to current products
-    const filtered = applyFilters(products);
-    console.log('📊 Filtered results:', filtered.length, 'out of', products.length);
-    setFilteredProducts(filtered);
+    setFilters(prev => ({ ...prev, [filterType]: value }));
   };
 
   // Clear all filters
@@ -324,7 +301,6 @@ function Marketplace() {
       frameOption: '',
       style: ''
     });
-    setFilteredProducts(products);
   };
 
   useEffect(() => {
@@ -344,6 +320,16 @@ function Marketplace() {
       window.removeEventListener('refreshProducts', handleRefresh);
     };
   }, []);
+
+  // Re-apply filters when products change
+  useEffect(() => {
+    if (products.length > 0) {
+      console.log('Marketplace: Products changed, re-applying filters...');
+      const filtered = applyFilters(products);
+      console.log(`Marketplace: Filtered ${filtered.length} products from ${products.length} total`);
+      setFilteredProducts(filtered);
+    }
+  }, [products, filters]);
 
   // Fetch reviews for a product
   const fetchProductReviews = async (productId) => {

@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline } from 'react-
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
+import DeliveryLocationModal from './DeliveryLocationModal';
 import './Deliveries.css';
 
 // Fix for default marker icons in react-leaflet
@@ -64,86 +65,6 @@ function MapUpdater({ center, zoom }) {
   return null;
 }
 
-// Separate component for the delivery map to ensure proper initialization
-function DeliveryMap({ delivery, isVisible }) {
-  const [mapKey, setMapKey] = useState(0);
-  const [mapError, setMapError] = useState(false);
-  
-  useEffect(() => {
-    if (isVisible) {
-      // Force re-render of the map when modal becomes visible
-      setMapKey(prev => prev + 1);
-      setMapError(false);
-    }
-  }, [isVisible]);
-  
-  if (!isVisible) return null;
-  
-  const mapCenter = delivery.coordinates || { lat: 6.9271, lng: 79.8612 };
-  
-  if (mapError) {
-    return (
-      <div className="map-container" style={{ 
-        height: '400px', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        backgroundColor: '#f8f9fa',
-        border: '1px solid #e5e7eb',
-        borderRadius: '8px'
-      }}>
-        <div style={{ textAlign: 'center', color: '#6b7280' }}>
-          <p>Map temporarily unavailable</p>
-          <p style={{ fontSize: '14px' }}>Address: {delivery.address}, {delivery.city}</p>
-        </div>
-      </div>
-    );
-  }
-  
-  return (
-    <div className="map-container">
-      <MapContainer
-        key={`delivery-map-${delivery._id}-${mapKey}`}
-        center={mapCenter}
-        zoom={15}
-        style={{ height: '400px', width: '100%' }}
-        whenReady={() => {
-          console.log('Delivery map is ready');
-        }}
-        eventHandlers={{
-          error: () => {
-            console.error('Map error occurred');
-            setMapError(true);
-          }
-        }}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        
-        {delivery.coordinates && (
-          <Marker 
-            position={delivery.coordinates} 
-            icon={deliveryIcons[delivery.deliveryStatus] || deliveryIcons.Pending}
-          >
-            <Popup>
-              <div>
-                <h4>Delivery Location</h4>
-                <p><strong>Customer:</strong> {delivery.customerName}</p>
-                <p><strong>Product:</strong> {delivery.productName || delivery.artId?.artType}</p>
-                <p><strong>Status:</strong> {delivery.deliveryStatus}</p>
-                <p><strong>Address:</strong> {delivery.address}</p>
-              </div>
-            </Popup>
-          </Marker>
-        )}
-        
-        <MapUpdater center={mapCenter} zoom={15} />
-      </MapContainer>
-    </div>
-  );
-}
 
 function Deliveries() {
   const [deliveries, setDeliveries] = useState([]);
@@ -151,7 +72,7 @@ function Deliveries() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedDelivery, setSelectedDelivery] = useState(null);
-  const [showMap, setShowMap] = useState(false);
+  const [showLocationModal, setShowLocationModal] = useState(false);
   const [filter, setFilter] = useState('all');
   const [dispatchModal, setDispatchModal] = useState({ isOpen: false, delivery: null });
   const [statusModal, setStatusModal] = useState({ isOpen: false, delivery: null });
@@ -297,10 +218,8 @@ function Deliveries() {
       }
     }
     
-    // Add a small delay to ensure the modal is rendered before showing the map
-    setTimeout(() => {
-      setShowMap(true);
-    }, 100);
+    // Show the new location modal instead of the old map modal
+    setShowLocationModal(true);
   };
 
 
@@ -518,32 +437,13 @@ function Deliveries() {
         )}
       </div>
 
-      {/* Map Modal */}
-      {showMap && selectedDelivery && (
-        <div className="modal-overlay" onClick={() => setShowMap(false)}>
-          <div className="modal-content map-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Delivery Location - {selectedDelivery.customerName}</h3>
-              <button className="modal-close" onClick={() => setShowMap(false)}>×</button>
-            </div>
-            
-            <div className="modal-body">
-              <div className="delivery-map-info">
-                <p><strong>Address:</strong> {selectedDelivery.address}, {selectedDelivery.city}, {selectedDelivery.district}</p>
-                <p><strong>Contact:</strong> {selectedDelivery.contactNumber}</p>
-                <p><strong>Product:</strong> {selectedDelivery.productName || selectedDelivery.artId?.artType}</p>
-                {!selectedDelivery.coordinates && (
-                  <p style={{ color: '#f59e0b', fontSize: '14px' }}>
-                    Exact coordinates not available - showing approximate location
-                  </p>
-                )}
-              </div>
-              
-              <DeliveryMap delivery={selectedDelivery} isVisible={showMap} />
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Delivery Location Modal */}
+      <DeliveryLocationModal
+        isOpen={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
+        delivery={selectedDelivery}
+        title="Delivery Location"
+      />
 
       {/* Dispatch Modal */}
       {dispatchModal.isOpen && (
