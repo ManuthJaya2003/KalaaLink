@@ -275,14 +275,26 @@ function SystemOverview() {
             <span className="stat-label">Art pieces</span>
           </div>
         </div>
+
+        <div className="stat-card artists-card">
+          <div className="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              <path d="M6 21v-2a4 4 0 0 1 4-4h.5"/>
+            </svg>
+          </div>
+          <div className="card-content">
+            <h3>Approved Artists</h3>
+            <p className="stat-value">{systemData.totalArtists.toLocaleString()}</p>
+            <span className="stat-label">Approved by managers</span>
+          </div>
+        </div>
       </div>
 
       <div className="additional-stats">
         <div className="stat-row">
-          <div className="mini-stat">
-            <h4>Approved Artists</h4>
-            <p>{systemData.totalArtists}</p>
-          </div>
           <div className="mini-stat">
             <h4>Pending Bookings</h4>
             <p>{systemData.pendingBookings}</p>

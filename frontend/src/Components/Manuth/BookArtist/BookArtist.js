@@ -29,6 +29,7 @@ function BookArtist() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
 
   // ✅ Fetch artist info from backend
   useEffect(() => {
@@ -58,6 +59,34 @@ function BookArtist() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
+    // Clear validation error when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors({ ...validationErrors, [name]: "" });
+    }
+    
+    // Real-time validation for name and phone fields (only show errors after user has started typing)
+    if (name === 'customerName' && value.length > 0) {
+      const nameError = validateName(value);
+      if (nameError) {
+        setValidationErrors({ ...validationErrors, customerName: nameError });
+      } else {
+        const newErrors = { ...validationErrors };
+        delete newErrors.customerName;
+        setValidationErrors(newErrors);
+      }
+    }
+    
+    if (name === 'customerPhoneNumber' && value.length > 0) {
+      const phoneError = validatePhoneNumber(value);
+      if (phoneError) {
+        setValidationErrors({ ...validationErrors, customerPhoneNumber: phoneError });
+      } else {
+        const newErrors = { ...validationErrors };
+        delete newErrors.customerPhoneNumber;
+        setValidationErrors(newErrors);
+      }
+    }
   };
 
   const handleLocationSelect = (location) => {
@@ -77,9 +106,45 @@ function BookArtist() {
     }, 5000);
   };
 
+  // Validation functions
+  const validateName = (name) => {
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!name.trim()) {
+      return "Name is required";
+    }
+    if (!nameRegex.test(name)) {
+      return "Name should only contain letters and spaces";
+    }
+    return "";
+  };
+
+  const validatePhoneNumber = (phone) => {
+    const phoneRegex = /^(\+?[0-9]{10,15})$/;
+    if (!phone.trim()) {
+      return "Phone number is required";
+    }
+    if (!phoneRegex.test(phone)) {
+      return "Phone number should only contain digits and optionally a leading + (10-15 digits)";
+    }
+    return "";
+  };
+
   // ✅ Create booking
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate form fields
+    const nameError = validateName(formData.customerName);
+    const phoneError = validatePhoneNumber(formData.customerPhoneNumber);
+    
+    const errors = {};
+    if (nameError) errors.customerName = nameError;
+    if (phoneError) errors.customerPhoneNumber = phoneError;
+    
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
 
     if (!artist) return showMessage("Artist info not loaded yet", "error");
     if (!formData.eventLocation.lat || !formData.eventLocation.lng)
@@ -197,7 +262,11 @@ function BookArtist() {
               value={formData.customerName}
               onChange={handleChange}
               required
+              className={validationErrors.customerName ? "error" : ""}
             />
+            {validationErrors.customerName && (
+              <span className="error-message">{validationErrors.customerName}</span>
+            )}
           </div>
           <div className="form-group">
             <label htmlFor="customerEmail" className="form-label">Email</label>
@@ -221,7 +290,11 @@ function BookArtist() {
               value={formData.customerPhoneNumber}
               onChange={handleChange}
               required
+              className={validationErrors.customerPhoneNumber ? "error" : ""}
             />
+            {validationErrors.customerPhoneNumber && (
+              <span className="error-message">{validationErrors.customerPhoneNumber}</span>
+            )}
           </div>
           <div className="form-group">
             <label htmlFor="eventType" className="form-label">Event Type</label>

@@ -127,6 +127,24 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* Error styles for form validation */
+.form-field input.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+}
+
+.form-field .error-message {
+  color: #ef4444 !important;
+  font-size: 12px;
+  margin-top: 4px;
+  text-align: left;
+  display: block;
+  background: none !important;
+  padding: 0 !important;
+  border: none !important;
+  margin-bottom: 0 !important;
+}
+
 .form-field textarea {
   resize: none;
   min-height: 80px;

@@ -29,6 +29,7 @@ const CartPage = () => {
   const [deliveryCoordinates, setDeliveryCoordinates] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState({});
 
   console.log('CartPage - Current cart state:', cart);
   console.log('CartPage - Cart length:', cart?.length || 0);
@@ -44,17 +45,45 @@ const CartPage = () => {
   const handleCheckoutSubmit = async (e) => {
     e.preventDefault();
     
+    // Clear previous validation errors
+    setValidationErrors({});
+    setError('');
+    
+    // Validate customer information
+    const nameError = validateName(checkoutData.customerName);
+    const phoneError = checkoutData.customerPhone ? validatePhoneNumber(checkoutData.customerPhone) : '';
+    
+    const errors = {};
+    if (nameError) errors.customerName = nameError;
+    if (phoneError) errors.customerPhone = phoneError;
+    
+    // Validate delivery fields if delivery is requested
+    if (checkoutData.useDelivery) {
+      const { address, city, district, postalCode, contactNumber } = checkoutData.deliveryAddress;
+      
+      const addressError = validateAddress(address);
+      const cityError = validateCity(city);
+      const districtError = validateDistrict(district);
+      const postalCodeError = validatePostalCode(postalCode);
+      const contactNumberError = validatePhoneNumber(contactNumber);
+      
+      if (addressError) errors.deliveryAddress = addressError;
+      if (cityError) errors.deliveryCity = cityError;
+      if (districtError) errors.deliveryDistrict = districtError;
+      if (postalCodeError) errors.deliveryPostalCode = postalCodeError;
+      if (contactNumberError) errors.deliveryContactNumber = contactNumberError;
+    }
+    
+    // If there are validation errors, set them and return
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      setError('Please fix the validation errors before proceeding');
+      return;
+    }
+    
     if (!checkoutData.customerName || !checkoutData.customerEmail) {
       setError('Customer name and email are required');
       return;
-    }
-
-    if (checkoutData.useDelivery) {
-      const { address, city, district, contactNumber } = checkoutData.deliveryAddress;
-      if (!address || !city || !district || !contactNumber) {
-        setError('All delivery fields (address, city, district, contact number) are required when delivery is selected');
-        return;
-      }
     }
 
     try {
@@ -103,6 +132,148 @@ const CartPage = () => {
   const handleClearCart = () => {
     if (window.confirm('Are you sure you want to clear all items from your cart?')) {
       clearCart();
+    }
+  };
+
+  // Validation functions
+  const validateName = (name) => {
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!name.trim()) {
+      return "Name is required";
+    }
+    if (!nameRegex.test(name)) {
+      return "Name should only contain letters and spaces";
+    }
+    return "";
+  };
+
+  const validatePhoneNumber = (phone) => {
+    const phoneRegex = /^(\+?[0-9]{10,15})$/;
+    if (!phone.trim()) {
+      return "Phone number is required";
+    }
+    if (!phoneRegex.test(phone)) {
+      return "Phone number should only contain digits and optionally a leading + (10-15 digits)";
+    }
+    return "";
+  };
+
+  const validateAddress = (address) => {
+    if (!address.trim()) {
+      return "Address is required";
+    }
+    return "";
+  };
+
+  const validateCity = (city) => {
+    if (!city.trim()) {
+      return "City is required";
+    }
+    return "";
+  };
+
+  const validateDistrict = (district) => {
+    const validDistricts = [
+      'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Matale', 'Nuwara Eliya',
+      'Galle', 'Matara', 'Hambantota', 'Jaffna', 'Kilinochchi', 'Mannar',
+      'Mullaitivu', 'Vavuniya', 'Batticaloa', 'Ampara', 'Trincomalee',
+      'Kurunegala', 'Puttalam', 'Anuradhapura', 'Polonnaruwa', 'Badulla',
+      'Moneragala', 'Ratnapura', 'Kegalle'
+    ];
+    
+    if (!district.trim()) {
+      return "District is required";
+    }
+    if (!validDistricts.includes(district.trim())) {
+      return "Please select a valid Sri Lankan district";
+    }
+    return "";
+  };
+
+  const validatePostalCode = (postalCode) => {
+    const postalRegex = /^[0-9]{5}$/;
+    if (!postalCode.trim()) {
+      return "Postal code is required";
+    }
+    if (!postalRegex.test(postalCode)) {
+      return "Postal code must be exactly 5 digits";
+    }
+    return "";
+  };
+
+  // Real-time validation handlers
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setCheckoutData({...checkoutData, customerName: value});
+    
+    // Clear error when user starts typing
+    if (validationErrors.customerName) {
+      setValidationErrors({...validationErrors, customerName: ''});
+    }
+    
+    // Real-time validation (only show errors after user has started typing)
+    if (value.length > 0) {
+      const validationError = validateName(value);
+      if (validationError) {
+        setValidationErrors({...validationErrors, customerName: validationError});
+      }
+    }
+  };
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+    setCheckoutData({...checkoutData, customerPhone: value});
+    
+    // Clear error when user starts typing
+    if (validationErrors.customerPhone) {
+      setValidationErrors({...validationErrors, customerPhone: ''});
+    }
+    
+    // Real-time validation (only show errors after user has started typing)
+    if (value.length > 0) {
+      const validationError = validatePhoneNumber(value);
+      if (validationError) {
+        setValidationErrors({...validationErrors, customerPhone: validationError});
+      }
+    }
+  };
+
+  const handleDeliveryFieldChange = (field, value) => {
+    setCheckoutData({
+      ...checkoutData,
+      deliveryAddress: {...checkoutData.deliveryAddress, [field]: value}
+    });
+    
+    // Clear error when user starts typing
+    const errorKey = `delivery${field.charAt(0).toUpperCase() + field.slice(1)}`;
+    if (validationErrors[errorKey]) {
+      setValidationErrors({...validationErrors, [errorKey]: ''});
+    }
+    
+    // Real-time validation for specific fields
+    if (value.length > 0) {
+      let validationError = '';
+      switch (field) {
+        case 'address':
+          validationError = validateAddress(value);
+          break;
+        case 'city':
+          validationError = validateCity(value);
+          break;
+        case 'district':
+          validationError = validateDistrict(value);
+          break;
+        case 'postalCode':
+          validationError = validatePostalCode(value);
+          break;
+        case 'contactNumber':
+          validationError = validatePhoneNumber(value);
+          break;
+      }
+      
+      if (validationError) {
+        setValidationErrors({...validationErrors, [errorKey]: validationError});
+      }
     }
   };
 
@@ -199,10 +370,14 @@ const CartPage = () => {
                             type="text"
                             id="customerName"
                             value={checkoutData.customerName}
-                            onChange={(e) => setCheckoutData({...checkoutData, customerName: e.target.value})}
+                            onChange={handleNameChange}
                             required
                             placeholder="Enter your name"
+                            className={validationErrors.customerName ? 'error' : ''}
                           />
+                          {validationErrors.customerName && (
+                            <span className="error-message">{validationErrors.customerName}</span>
+                          )}
                         </div>
 
                         <div className="form-group">
@@ -223,9 +398,13 @@ const CartPage = () => {
                             type="tel"
                             id="customerPhone"
                             value={checkoutData.customerPhone}
-                            onChange={(e) => setCheckoutData({...checkoutData, customerPhone: e.target.value})}
+                            onChange={handlePhoneChange}
                             placeholder="Enter your phone number"
+                            className={validationErrors.customerPhone ? 'error' : ''}
                           />
+                          {validationErrors.customerPhone && (
+                            <span className="error-message">{validationErrors.customerPhone}</span>
+                          )}
                         </div>
 
                         <div className="form-group">
@@ -251,13 +430,14 @@ const CartPage = () => {
                                 type="text"
                                 id="deliveryAddress"
                                 value={checkoutData.deliveryAddress.address}
-                                onChange={(e) => setCheckoutData({
-                                  ...checkoutData,
-                                  deliveryAddress: {...checkoutData.deliveryAddress, address: e.target.value}
-                                })}
+                                onChange={(e) => handleDeliveryFieldChange('address', e.target.value)}
                                 required={checkoutData.useDelivery}
                                 placeholder="Enter delivery address"
+                                className={validationErrors.deliveryAddress ? 'error' : ''}
                               />
+                              {validationErrors.deliveryAddress && (
+                                <span className="error-message">{validationErrors.deliveryAddress}</span>
+                              )}
                             </div>
 
                             <div className="form-group">
@@ -266,13 +446,14 @@ const CartPage = () => {
                                 type="text"
                                 id="deliveryCity"
                                 value={checkoutData.deliveryAddress.city}
-                                onChange={(e) => setCheckoutData({
-                                  ...checkoutData,
-                                  deliveryAddress: {...checkoutData.deliveryAddress, city: e.target.value}
-                                })}
+                                onChange={(e) => handleDeliveryFieldChange('city', e.target.value)}
                                 required={checkoutData.useDelivery}
                                 placeholder="Enter city"
+                                className={validationErrors.deliveryCity ? 'error' : ''}
                               />
+                              {validationErrors.deliveryCity && (
+                                <span className="error-message">{validationErrors.deliveryCity}</span>
+                              )}
                             </div>
 
                             <div className="form-group">
@@ -281,13 +462,14 @@ const CartPage = () => {
                                 type="text"
                                 id="deliveryDistrict"
                                 value={checkoutData.deliveryAddress.district}
-                                onChange={(e) => setCheckoutData({
-                                  ...checkoutData,
-                                  deliveryAddress: {...checkoutData.deliveryAddress, district: e.target.value}
-                                })}
+                                onChange={(e) => handleDeliveryFieldChange('district', e.target.value)}
                                 required={checkoutData.useDelivery}
                                 placeholder="Enter district"
+                                className={validationErrors.deliveryDistrict ? 'error' : ''}
                               />
+                              {validationErrors.deliveryDistrict && (
+                                <span className="error-message">{validationErrors.deliveryDistrict}</span>
+                              )}
                             </div>
 
                             <div className="form-group">
@@ -296,13 +478,14 @@ const CartPage = () => {
                                 type="text"
                                 id="deliveryPostalCode"
                                 value={checkoutData.deliveryAddress.postalCode}
-                                onChange={(e) => setCheckoutData({
-                                  ...checkoutData,
-                                  deliveryAddress: {...checkoutData.deliveryAddress, postalCode: e.target.value}
-                                })}
+                                onChange={(e) => handleDeliveryFieldChange('postalCode', e.target.value)}
                                 required={checkoutData.useDelivery}
                                 placeholder="Enter postal code"
+                                className={validationErrors.deliveryPostalCode ? 'error' : ''}
                               />
+                              {validationErrors.deliveryPostalCode && (
+                                <span className="error-message">{validationErrors.deliveryPostalCode}</span>
+                              )}
                             </div>
 
                             <div className="form-group">
@@ -311,13 +494,14 @@ const CartPage = () => {
                                 type="tel"
                                 id="deliveryContactNumber"
                                 value={checkoutData.deliveryAddress.contactNumber}
-                                onChange={(e) => setCheckoutData({
-                                  ...checkoutData,
-                                  deliveryAddress: {...checkoutData.deliveryAddress, contactNumber: e.target.value}
-                                })}
+                                onChange={(e) => handleDeliveryFieldChange('contactNumber', e.target.value)}
                                 required={checkoutData.useDelivery}
                                 placeholder="Enter contact number"
+                                className={validationErrors.deliveryContactNumber ? 'error' : ''}
                               />
+                              {validationErrors.deliveryContactNumber && (
+                                <span className="error-message">{validationErrors.deliveryContactNumber}</span>
+                              )}
                             </div>
                           </div>
 

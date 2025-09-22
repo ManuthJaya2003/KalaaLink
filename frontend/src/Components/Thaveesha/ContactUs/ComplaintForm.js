@@ -7,6 +7,7 @@ const API = "http://localhost:5000/complaints";
 function ComplaintForm({ isOpen, onClose, onSubmitSuccess }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
   const [form, setForm] = useState({
     Name: "",
     Gmail: "",
@@ -18,6 +19,16 @@ function ComplaintForm({ isOpen, onClose, onSubmitSuccess }) {
     e.preventDefault();
     setSaving(true);
     setError("");
+    setValidationErrors({});
+
+    // Validate Name field
+    const nameError = validateName(form.Name);
+    if (nameError) {
+      setValidationErrors({ Name: nameError });
+      setError("Please fix the validation errors before proceeding");
+      setSaving(false);
+      return;
+    }
 
     if (!form.Name || !form.Gmail || !form.Message || !form.Complaint_Category) {
       setError("Please fill all fields.");
@@ -43,7 +54,39 @@ function ComplaintForm({ isOpen, onClose, onSubmitSuccess }) {
   const handleClose = () => {
     setForm({ Name: "", Gmail: "", Message: "", Complaint_Category: "General" });
     setError("");
+    setValidationErrors({});
     onClose();
+  };
+
+  // Validation function
+  const validateName = (name) => {
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!name.trim()) {
+      return "Name is required";
+    }
+    if (!nameRegex.test(name)) {
+      return "Name should only contain letters and spaces";
+    }
+    return "";
+  };
+
+  // Real-time validation handler for Name field
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setForm({ ...form, Name: value });
+    
+    // Clear error when user starts typing
+    if (validationErrors.Name) {
+      setValidationErrors({...validationErrors, Name: ''});
+    }
+    
+    // Real-time validation (only show errors after user has started typing)
+    if (value.length > 0) {
+      const validationError = validateName(value);
+      if (validationError) {
+        setValidationErrors({...validationErrors, Name: validationError});
+      }
+    }
   };
 
   if (!isOpen) return null;
@@ -68,10 +111,14 @@ function ComplaintForm({ isOpen, onClose, onSubmitSuccess }) {
             <input
               type="text"
               value={form.Name}
-              onChange={(e) => setForm({ ...form, Name: e.target.value })}
+              onChange={handleNameChange}
               placeholder="Your name"
               required
+              className={validationErrors.Name ? 'error' : ''}
             />
+            {validationErrors.Name && (
+              <span className="error-message">{validationErrors.Name}</span>
+            )}
           </div>
 
           <div className="form-field">

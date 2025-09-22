@@ -531,6 +531,7 @@ function EnhancedBookingForm({ event, onClose }) {
   const [messageType, setMessageType] = useState(""); // "success" or "error"
   const [currentBooking, setCurrentBooking] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [nameError, setNameError] = useState("");
 
   const resetForm = () => {
     setName("");
@@ -539,6 +540,19 @@ function EnhancedBookingForm({ event, onClose }) {
     setMessage("");
     setMessageType("");
     setCurrentBooking(null);
+    setNameError("");
+  };
+
+  // Validation function for name field
+  const validateName = (nameValue) => {
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameValue.trim()) {
+      return "Name is required";
+    }
+    if (!nameRegex.test(nameValue)) {
+      return "Name should only contain letters and spaces";
+    }
+    return "";
   };
 
   const showMessage = (msg, type = "success") => {
@@ -550,8 +564,35 @@ function EnhancedBookingForm({ event, onClose }) {
     }, 5000);
   };
 
+  // Handle name input with real-time validation
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setName(value);
+    
+    // Clear error when user starts typing
+    if (nameError) {
+      setNameError("");
+    }
+    
+    // Real-time validation (only show errors after user has started typing)
+    if (value.length > 0) {
+      const validationError = validateName(value);
+      if (validationError) {
+        setNameError(validationError);
+      }
+    }
+  };
+
   const handleReserve = async (e) => {
     e.preventDefault();
+    
+    // Validate name field
+    const nameValidationError = validateName(name);
+    if (nameValidationError) {
+      setNameError(nameValidationError);
+      showMessage("Please fix the validation errors", "error");
+      return;
+    }
     
     if (!name.trim() || !email.trim()) {
       showMessage("Please fill in all required fields", "error");
@@ -666,11 +707,14 @@ function EnhancedBookingForm({ event, onClose }) {
           <input 
             type="text" 
             value={name} 
-            onChange={(e) => setName(e.target.value)} 
-            className="input-field" 
+            onChange={handleNameChange} 
+            className={`input-field ${nameError ? 'error' : ''}`}
             required
             disabled={isProcessing || currentBooking}
           />
+          {nameError && (
+            <span className="error-message">{nameError}</span>
+          )}
         </div>
         
         <div className="form-group">

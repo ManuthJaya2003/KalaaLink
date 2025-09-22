@@ -1,5 +1,6 @@
 const Booking = require("../model/Booking");
 const Artist = require("../model/ArtistModel");
+const ArtistManager = require("../model/ArtistManagerModel");
 const ArtistRegistration = require("../model/artistRegistration");
 const ArtistBooking = require("../model/ArtistBookingModel");
 const User = require("../model/UserModel");
@@ -255,7 +256,16 @@ const getSystemOverview = async (req, res) => {
     const totalProductsSold = await Art.countDocuments();
 
     // Get additional statistics
-    const totalArtists = await ArtistRegistration.countDocuments({ status: "approved" });
+    // Count approved artists from both self-registered and manager-added artists
+    const approvedSelfArtists = await Artist.countDocuments({ 
+      $or: [
+        { status: "approved" },
+        { isApproved: true }
+      ]
+    });
+    const approvedManagerArtists = await ArtistManager.countDocuments({ approved: true });
+    const totalArtists = approvedSelfArtists + approvedManagerArtists;
+    
     const pendingBookings = await Booking.countDocuments({ status: "pending" });
     const paidBookings = await Booking.countDocuments({ status: "paid" });
 

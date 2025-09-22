@@ -90,6 +90,24 @@
   box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
+/* Error styles for form validation */
+.form-group input.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+}
+
+.form-group .error-message {
+  color: #ef4444 !important;
+  font-size: 12px;
+  margin-top: 4px;
+  text-align: left;
+  display: block;
+  background: none !important;
+  padding: 0 !important;
+  border: none !important;
+  margin-bottom: 0 !important;
+}
+
 .form-group textarea {
   resize: vertical;
   min-height: 80px;

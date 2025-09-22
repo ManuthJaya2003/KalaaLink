@@ -12,6 +12,7 @@ function PartnershipForm({ onClose, onSuccess }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,6 +20,40 @@ function PartnershipForm({ onClose, onSuccess }) {
       ...prev,
       [name]: value
     }));
+  };
+
+  // Real-time validation handlers for name fields
+  const handleNameChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors({...validationErrors, [name]: ''});
+    }
+    
+    // Real-time validation (only show errors after user has started typing)
+    if (value.length > 0) {
+      const validationError = validateName(value);
+      if (validationError) {
+        setValidationErrors({...validationErrors, [name]: validationError});
+      }
+    }
+  };
+
+  // Validation functions
+  const validateName = (name) => {
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!name.trim()) {
+      return "Name is required";
+    }
+    if (!nameRegex.test(name)) {
+      return "Name should only contain letters and spaces";
+    }
+    return "";
   };
 
   const handleFileChange = (e) => {
@@ -84,6 +119,23 @@ function PartnershipForm({ onClose, onSuccess }) {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setValidationErrors({});
+
+    // Validate name fields
+    const organizationNameError = validateName(formData.organizationName);
+    const contactNameError = validateName(formData.contactName);
+    
+    const errors = {};
+    if (organizationNameError) errors.organizationName = organizationNameError;
+    if (contactNameError) errors.contactName = contactNameError;
+    
+    // If there are validation errors, set them and return
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      setError('Please fix the validation errors before proceeding');
+      setLoading(false);
+      return;
+    }
 
     // Validate form data
     if (!formData.organizationName.trim() || !formData.contactName.trim() || 
@@ -146,10 +198,14 @@ function PartnershipForm({ onClose, onSuccess }) {
               id="organizationName"
               name="organizationName"
               value={formData.organizationName}
-              onChange={handleChange}
+              onChange={handleNameChange}
               required
               placeholder="Enter your organization name"
+              className={validationErrors.organizationName ? 'error' : ''}
             />
+            {validationErrors.organizationName && (
+              <span className="error-message">{validationErrors.organizationName}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -159,10 +215,14 @@ function PartnershipForm({ onClose, onSuccess }) {
               id="contactName"
               name="contactName"
               value={formData.contactName}
-              onChange={handleChange}
+              onChange={handleNameChange}
               required
               placeholder="Enter your full name"
+              className={validationErrors.contactName ? 'error' : ''}
             />
+            {validationErrors.contactName && (
+              <span className="error-message">{validationErrors.contactName}</span>
+            )}
           </div>
 
           <div className="form-group">

@@ -46,6 +46,7 @@ function DonorPackageDetails() {
     Amount: state?.amount || 167,
     DonorNote: "",
   });
+  const [validationErrors, setValidationErrors] = useState({});
 
   // ✅ Load data from state if passed
   useEffect(() => {
@@ -61,6 +62,72 @@ function DonorPackageDetails() {
     }));
   };
 
+  // Real-time validation handlers for specific fields
+  const handleNameChange = (e) => {
+    const { name, value } = e.target;
+    setInputs((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    
+    // Clear error when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors({...validationErrors, [name]: ''});
+    }
+    
+    // Real-time validation (only show errors after user has started typing)
+    if (value.length > 0) {
+      const validationError = validateName(value);
+      if (validationError) {
+        setValidationErrors({...validationErrors, [name]: validationError});
+      }
+    }
+  };
+
+  const handlePhoneChange = (e) => {
+    const { name, value } = e.target;
+    setInputs((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    
+    // Clear error when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors({...validationErrors, [name]: ''});
+    }
+    
+    // Real-time validation (only show errors after user has started typing)
+    if (value.length > 0) {
+      const validationError = validatePhoneNumber(value);
+      if (validationError) {
+        setValidationErrors({...validationErrors, [name]: validationError});
+      }
+    }
+  };
+
+  // Validation functions
+  const validateName = (name) => {
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!name.trim()) {
+      return "Name is required";
+    }
+    if (!nameRegex.test(name)) {
+      return "Name should only contain letters and spaces";
+    }
+    return "";
+  };
+
+  const validatePhoneNumber = (phone) => {
+    const phoneRegex = /^(\+?[0-9]{10,15})$/;
+    if (!phone.trim()) {
+      return "Phone number is required";
+    }
+    if (!phoneRegex.test(phone)) {
+      return "Phone number should only contain digits and optionally a leading + (10-15 digits)";
+    }
+    return "";
+  };
+
   const handleCancel = () => {
     history("/donordashboard");
   };
@@ -68,6 +135,26 @@ function DonorPackageDetails() {
   // ✅ Confirm donation and create Stripe payment session
   const handleConfirm = async (e) => {
     e.preventDefault();
+    
+    // Clear previous validation errors
+    setValidationErrors({});
+    
+    // Validate name and phone fields
+    const firstNameError = validateName(inputs.FirstName);
+    const lastNameError = validateName(inputs.LastName);
+    const phoneError = validatePhoneNumber(inputs.PhoneNumber);
+    
+    const errors = {};
+    if (firstNameError) errors.FirstName = firstNameError;
+    if (lastNameError) errors.LastName = lastNameError;
+    if (phoneError) errors.PhoneNumber = phoneError;
+    
+    // If there are validation errors, set them and return
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      alert('Please fix the validation errors before proceeding');
+      return;
+    }
     
     // Validate required fields
     if (!inputs.FirstName || !inputs.LastName || !inputs.Email || !inputs.PhoneNumber || !inputs.Address || !inputs.Amount) {
@@ -172,28 +259,40 @@ function DonorPackageDetails() {
         <input
           type="text"
           name="FirstName"
-          onChange={handleChange}
+          onChange={handleNameChange}
           value={inputs.FirstName}
           required
+          className={validationErrors.FirstName ? 'error' : ''}
         />
+        {validationErrors.FirstName && (
+          <span className="error-message">{validationErrors.FirstName}</span>
+        )}
 
         <label htmlFor="LastName">Last Name</label>
         <input
           type="text"
           name="LastName"
-          onChange={handleChange}
+          onChange={handleNameChange}
           value={inputs.LastName}
           required
+          className={validationErrors.LastName ? 'error' : ''}
         />
+        {validationErrors.LastName && (
+          <span className="error-message">{validationErrors.LastName}</span>
+        )}
 
         <label htmlFor="PhoneNumber">Phone Number</label>
         <input
           type="tel"
           name="PhoneNumber"
-          onChange={handleChange}
+          onChange={handlePhoneChange}
           value={inputs.PhoneNumber}
           required
+          className={validationErrors.PhoneNumber ? 'error' : ''}
         />
+        {validationErrors.PhoneNumber && (
+          <span className="error-message">{validationErrors.PhoneNumber}</span>
+        )}
 
         <label htmlFor="Email">Email</label>
         <input

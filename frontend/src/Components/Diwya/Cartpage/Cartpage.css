@@ -321,6 +321,20 @@
   box-shadow: 0 0 0 2px rgba(193, 163, 127, 0.2) !important;
 }
 
+/* Error styles for form validation */
+.form-group input.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+}
+
+.error-message {
+  color: #ef4444 !important;
+  font-size: 12px;
+  margin-top: 4px;
+  text-align: left;
+  display: block;
+}
+
 /* Remove all shadows from form elements */
 .form-group input,
 .form-group textarea,
