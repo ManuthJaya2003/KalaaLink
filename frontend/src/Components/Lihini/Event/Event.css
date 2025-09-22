@@ -679,6 +679,7 @@ div .clear-btn {
   margin-bottom: var(--space-xs);
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -690,7 +691,7 @@ div .clear-btn {
   display: flex;
   gap: var(--space-sm);
   margin-top: auto;
-  padding-top: var(--space-sm);
+  padding: var(--space-sm) 0 var(--space-md) 0; /* Added bottom padding for spacing under Reserve Now button */
   width: 100%;
   justify-content: space-between;
 }
@@ -767,31 +768,59 @@ div .clear-btn {
 .modal-content {
   background: white;
   border-radius: var(--radius-large);
-  max-width: 900px; /* Increased width for better balance */
-  width: 100%;
-  height: 700px; /* Increased height to accommodate button */
-  overflow: hidden; /* Non-scrollable */
+  max-width: 500px; /* Optimal width for booking form */
+  width: 90%;
+  height: auto; /* Auto height for better responsiveness */
+  max-height: 85vh; /* Reduced height to ensure scrolling works properly */
+  overflow-y: auto; /* MAKE IT SCROLLABLE */
+  overflow-x: hidden; /* Prevent horizontal scroll */
   box-shadow: var(--shadow-large);
   position: relative;
   display: flex;
   flex-direction: column;
+  scrollbar-width: thin; /* Ensure scrollbar is visible */
+  scrollbar-color: #C1A37F #f0f0f0; /* Custom scrollbar colors */
+}
+
+/* Webkit scrollbar styles for better cross-browser compatibility */
+.modal-content::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track,
+.modal-body::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb,
+.modal-body::-webkit-scrollbar-thumb {
+  background: #C1A37F;
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover,
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #a68b5f;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-sm); /* Minimal padding */
+  padding: var(--space-sm);
   border-bottom: 1px solid var(--color-light-gray);
   background: var(--color-light-beige);
   border-radius: var(--radius-large) var(--radius-large) 0 0;
-  flex-shrink: 0; /* Prevent header from shrinking */
+  flex-shrink: 0;
+  margin-bottom: 0; /* Remove unnecessary vertical spacing between header and booking summary */
 }
 
 .modal-title {
   font-size: var(--text-2xl);
   font-weight: 700;
-  color: #000000 !important; /* Black color */
+  color: var(--color-text-dark);
   margin: 0;
   padding: 0;
 }
@@ -819,13 +848,20 @@ div .clear-btn {
 }
 
 .modal-body {
-  padding: var(--space-sm); /* Minimal padding */
-  flex: 1; /* Take remaining space */
-  overflow: visible; /* Allow content to be visible */
+  padding: var(--space-md) var(--space-md) 60px var(--space-md); /* Significantly increased bottom padding for spacing under Reserve Now button */
+  flex: 1;
+  overflow-y: auto; /* SCROLLABLE BODY */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
   display: flex;
   flex-direction: column;
-  min-height: 0; /* Allow flex shrinking */
-  justify-content: flex-start; /* Ensure content starts from top */
+  min-height: 0;
+  justify-content: flex-start;
+  margin: 0; /* ZERO margins on all sides */
+  width: 100%; /* Full width to support full-width content */
+  max-width: 100%; /* Ensure no width restrictions */
+  max-height: calc(85vh - 100px); /* Adjusted height to work with new modal height */
+  scrollbar-width: thin; /* Ensure scrollbar is visible */
+  scrollbar-color: #C1A37F #f0f0f0; /* Custom scrollbar colors */
 }
 
 .modal-image {
@@ -878,31 +914,32 @@ div .clear-btn {
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  padding: 0;
+  padding: 0 0 40px 0; /* Added bottom padding for spacing under Reserve Now button */
   overflow: visible; /* Allow content to be visible */
+  width: 100%; /* Full width to match modal body */
+  max-width: 100%; /* Ensure no width restrictions */
 }
 
-/* Force content to be visible */
-.modal-content * {
-  overflow: visible !important;
-}
-
+/* Ensure proper scrolling for modal content */
 .modal-content .modal-body {
-  overflow: visible !important;
+  overflow-y: auto !important; /* Force vertical scrolling */
+  overflow-x: hidden !important; /* Prevent horizontal scrolling */
 }
 
 .modal-content .enhanced-booking-form {
-  overflow: visible !important;
+  overflow: visible !important; /* Allow form content to be visible */
 }
 
 .booking-summary {
   background: var(--color-light-beige);
   border-radius: var(--radius-medium);
-  padding: var(--space-xs); /* Minimal padding */
-  margin: 0 0 var(--space-xs) 0; /* Minimal gap */
-  text-align: center; /* Center the booking summary */
+  padding: var(--space-md); /* Increased padding to prevent overlaps */
+  margin: 0 0 80px 0; /* Massive bottom margin to create huge separation */
+  text-align: center;
   border: 1px solid var(--color-light-gray);
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
+  width: 100%; /* Full width for consistency */
+  max-width: 100%;
 }
 
 .booking-summary h4 {
@@ -948,49 +985,66 @@ div .clear-btn {
 }
 
 .modal-form {
-  border-top: none; /* Remove top border line */
-  padding: var(--space-xs); /* Minimal padding */
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: visible; /* Allow button to be visible */
-  min-height: 0; /* Allow flex shrinking */
-  justify-content: space-between; /* Distribute space between form fields and button */
-}
-
-.form-group {
-  margin-bottom: var(--space-xs); /* Minimal spacing */
-  flex-shrink: 0; /* Prevent shrinking */
-}
-
-/* Form content area to hold all form fields */
-.form-content {
+  border-top: none;
+  padding: 0; /* ZERO padding */
+  margin: 0; /* ZERO margins */
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: visible;
-  padding-bottom: var(--space-sm);
+  min-height: 0;
+  justify-content: flex-start; /* Start from top */
+  width: 100%; /* Full width to match modal body */
+  max-width: 100%; /* Ensure no width restrictions */
+  align-items: stretch; /* Stretch form content to full width */
+}
+
+.form-group {
+  margin: 0 0 var(--space-sm) 0; /* Small bottom margin for spacing */
+  padding: 0; /* ZERO padding */
+  flex-shrink: 0;
+  width: 100%; /* Full width of modal content */
+  max-width: 100%;
+}
+
+/* Add proper top margin to first form group to separate from booking summary */
+.form-group:first-child {
+  margin-top: 120px; /* Massive margin to completely prevent overlap with booking summary */
+}
+
+/* Form content area to hold all form fields */
+.form-content {
+  flex: 0; /* Don't take extra space */
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  padding: var(--space-sm) 0; /* Added padding for better spacing */
+  width: 100%; /* Full width to match modal body */
+  max-width: 100%; /* Ensure no width restrictions */
 }
 
 .form-label {
   display: block;
-  margin-bottom: 2px; /* Minimal margin */
+  margin: 0 0 var(--space-xs) 0; /* Small bottom margin for spacing */
+  padding: 0; /* ZERO padding */
   font-weight: 600;
   color: var(--color-text-dark);
-  font-size: var(--text-xs); /* Smaller font */
+  font-size: var(--text-sm); /* Increased font size for better readability */
+  line-height: 1.4; /* Better line height */
 }
 
 .input-field {
   width: 100%;
-  padding: var(--space-xs); /* Minimal padding */
+  padding: 8px 12px; /* Increased padding for better usability */
   border: 1px solid var(--color-light-gray);
   border-radius: var(--radius-medium);
-  font-size: var(--text-sm); /* Smaller font */
+  font-size: var(--text-sm);
   transition: all var(--transition-normal);
   background: var(--color-off-white);
   color: var(--color-text-primary);
-  height: 32px; /* Smaller height */
-  margin-bottom: 0; /* No margin - form-group handles spacing */
+  height: 40px; /* Increased height for better usability */
+  margin: 0; /* ZERO margins on all sides */
+  line-height: 1.4; /* Better line height for readability */
 }
 
 .input-field:focus {
@@ -1001,53 +1055,60 @@ div .clear-btn {
 }
 
 .form-actions {
-  margin-top: var(--space-xs); /* Minimal margin */
-  padding: var(--space-xs) 0; /* Minimal padding */
+  margin: var(--space-md) 0 0 0; /* Top margin for spacing from form fields */
+  padding: var(--space-md) 0 40px 0; /* Added significant bottom padding for spacing under Reserve Now button */
   display: flex;
-  flex-direction: row; /* Change to row for better centering */
-  gap: var(--space-xs); /* Minimal gap */
-  flex-shrink: 0; /* Prevent shrinking */
-  width: 100%; /* Ensure full width */
-  align-items: center; /* Center the button */
-  justify-content: center; /* Center horizontally */
-  text-align: center; /* Center text content */
-  border-top: 1px solid var(--color-light-gray); /* Add subtle separator */
-  background: var(--color-off-white); /* Light background for button area */
+  flex-direction: row;
+  gap: var(--space-md); /* Increased gap between buttons */
+  flex-shrink: 0;
+  width: 100%; /* Full width to match form fields */
+  max-width: 100%; /* Ensure no width restrictions */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-top: 1px solid var(--color-light-gray);
+  background: var(--color-off-white);
+  position: relative; /* Remove sticky positioning */
+  bottom: auto; /* Remove bottom positioning */
+  min-height: 100px; /* Increased minimum height to accommodate bottom padding */
 }
 
 .payment-actions {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-md); /* Increased gap to match form-actions */
   flex-wrap: wrap;
+  padding-bottom: 30px; /* Added bottom padding for spacing under Pay Now and New Booking buttons */
 }
 
 .btn {
-  padding: 4px 8px; /* Minimal padding */
-  border-radius: var(--radius-small);
+  padding: 12px 24px; /* Increased padding for better visibility */
+  border-radius: var(--radius-medium);
   font-weight: 600;
-  font-size: var(--text-xs); /* Smaller font */
+  font-size: var(--text-base); /* Increased font size for better readability */
   border: none;
   cursor: pointer;
   transition: all var(--transition-normal);
   text-align: center;
-  min-height: 24px; /* Much smaller height */
+  min-height: 44px; /* Increased height for better visibility */
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px; /* Much smaller width */
-  margin: 0; /* Remove margin - parent handles centering */
-  background: #C1A37F !important; /* Ensure button is visible */
+  width: auto; /* Auto width based on content */
+  min-width: 140px; /* Increased minimum width for better visibility */
+  margin: 0;
+  background: #C1A37F !important;
   color: black !important;
-  box-shadow: var(--shadow-small); /* Add subtle shadow */
+  box-shadow: var(--shadow-small);
 }
 
 .btn-primary {
   background: #C1A37F;
   color: black;
-  padding: 6px 4px !important; /* Reduced horizontal padding, increased vertical */
-  width: 60px !important; /* Reduced width */
-  min-height: 32px !important; /* Increased height */
-  font-size: var(--text-xs) !important; /* Override for Reserve Now button */
+  padding: 12px 24px !important; /* Consistent padding with base btn */
+  width: auto !important; /* Auto width */
+  min-width: 140px !important; /* Increased minimum width for better visibility */
+  min-height: 44px !important; /* Consistent height */
+  font-size: var(--text-base) !important; /* Consistent font size */
 }
 
 /* Override for directions button specifically - higher specificity */
@@ -1091,10 +1152,11 @@ div .clear-btn {
 .btn-success {
   background: #28a745;
   color: white;
-  padding: 6px 4px !important; /* Same as other buttons */
-  width: 60px !important; /* Same as other buttons */
-  min-height: 32px !important; /* Same as other buttons */
-  font-size: var(--text-sm) !important; /* Slightly bigger font size */
+  padding: 12px 24px !important; /* Consistent with other buttons */
+  width: auto !important; /* Auto width for better visibility */
+  min-width: 140px !important; /* Consistent minimum width */
+  min-height: 44px !important; /* Consistent height */
+  font-size: var(--text-base) !important; /* Consistent font size */
 }
 
 .btn-success:hover:not(:disabled) {
@@ -1106,10 +1168,11 @@ div .clear-btn {
 .btn-secondary {
   background: #6c757d;
   color: white;
-  padding: 6px 4px !important; /* Same as Pay Now button */
-  width: 60px !important; /* Same as Pay Now button */
-  min-height: 32px !important; /* Same as Pay Now button */
-  font-size: var(--text-sm) !important; /* Slightly bigger font size */
+  padding: 12px 24px !important; /* Consistent with other buttons */
+  width: auto !important; /* Auto width for better visibility */
+  min-width: 140px !important; /* Consistent minimum width */
+  min-height: 44px !important; /* Consistent height */
+  font-size: var(--text-base) !important; /* Consistent font size */
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -1149,6 +1212,7 @@ div .clear-btn {
   display: flex;
   gap: var(--space-md);
   margin-top: var(--space-lg);
+  padding-bottom: var(--space-md); /* Added bottom padding for spacing under Reserve Now button */
 }
 
 .success-msg {
@@ -1693,30 +1757,44 @@ div .clear-btn {
   width: 90% !important;
   max-height: 90vh !important;
   height: auto !important;
-  overflow: hidden !important;
+  overflow: visible !important; /* Allow content to be visible and scrollable */
 }
 
 .event-details-modal .modal-header {
-  padding: var(--space-md) var(--space-lg) var(--space-sm) var(--space-lg);
-  border-bottom: 1px solid #e9ecef;
-  margin-bottom: var(--space-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px;
+  border-bottom: none;
+  background: var(--color-light-beige);
+  border-radius: var(--radius-large) var(--radius-large) 0 0;
+  margin-bottom: 0;
 }
 
 .event-details-modal .modal-body {
-  padding: var(--space-sm) var(--space-lg) var(--space-lg) var(--space-lg);
-  max-height: calc(90vh - 140px);
-  overflow: hidden;
+  padding: 20px 20px 20px 20px; /* Match Artist modal padding */
+  padding-top: 50px; /* Increased top padding to ensure content is below header */
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  display: flex !important;
+  justify-content: center !important; /* Center the content */
+  align-items: flex-start !important; /* Align to top instead of center */
+  max-height: calc(90vh - 100px); /* Increased height for better scrolling */
+  overflow-y: auto; /* Allow vertical scrolling for long content */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  scrollbar-width: thin; /* Thin scrollbar for better appearance */
 }
 
 .event-details-modal .modal-close {
-  background: none;
-  color: #000000;
+  background: none; /* Remove orange background */
+  color: var(--color-text-dark); /* Dark text color */
   border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 0;
-  font-size: 18px;
-  font-weight: 400;
+  width: 32px;
+  height: 32px;
+  border-radius: 0; /* Remove circular shape */
+  font-size: var(--text-xl);
+  font-weight: 400; /* Lighter font weight */
   cursor: pointer;
   transition: all var(--transition-normal);
   display: flex;
@@ -1728,61 +1806,93 @@ div .clear-btn {
 }
 
 .event-details-modal .modal-close:hover {
-  background: none;
-  color: #666666;
-  transform: none;
+  background: none; /* Keep no background on hover */
+  color: var(--color-accent-orange); /* Orange text on hover */
+  transform: none; /* Remove scale effect */
 }
 
 .event-info-layout {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: var(--space-sm);
-  padding: 0;
+  gap: 16px; /* Match Artist modal gap */
+  margin: 0 auto; /* Center the details */
+  padding: 20px; /* Match Artist modal padding */
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  max-width: 600px; /* Limit width for better readability */
+  text-align: center; /* Center align the content */
+  width: 100%;
+  overflow: visible; /* Allow content to be visible */
 }
 
 /* Removed event-info-section card container styling */
 
 .info-row {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  padding: 4px 0;
-  border-bottom: none;
+  display: flex !important;
+  flex-direction: column !important; /* Changed to column for better centering */
+  align-items: center !important; /* Center align items */
+  justify-content: center !important; /* Center justify */
+  gap: 8px !important;
+  margin: 0 auto !important; /* Center the item */
+  padding: 12px !important; /* Added padding for better spacing */
+  width: 100% !important;
+  max-width: 500px !important; /* Limit width for better readability */
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  text-align: center !important; /* Center align text */
   line-height: 1.4;
 }
 
 /* Special styling for description row to handle long text */
 .event-info-layout .info-row:last-child {
-  align-items: flex-start;
+  align-items: center !important; /* Center align description */
+  margin-top: 0; /* Remove extra margin */
 }
 
 .event-info-layout .info-row:last-child .info-value {
-  max-height: 120px;
+  max-height: 200px; /* Increased height for better visibility */
   overflow-y: auto;
   overflow-x: hidden;
   word-wrap: break-word;
   white-space: pre-wrap;
+  line-height: 1.6; /* Better line spacing for readability */
+  padding: 0; /* Remove padding for cleaner look */
+  background: none; /* Remove background box */
+  border-radius: 0; /* Remove border radius */
+  border: none; /* Remove border */
+  font-size: var(--text-base); /* Standard font size */
+  color: var(--color-text-dark); /* Ensure proper text color */
+  text-align: center; /* Center align description text */
+  width: 100%;
+  max-width: 500px; /* Match other info rows */
 }
 
 /* Removed border-bottom styling */
 
 .info-label {
   font-weight: 600;
-  color: #C1A37F;
+  color: var(--color-text-dark); /* Match Artist modal color */
   font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  min-width: 80px;
-  flex-shrink: 0;
+  margin-bottom: 4px; /* Add bottom margin for spacing */
+  text-align: center; /* Center align */
+}
+
+/* Special styling for description label */
+.event-info-layout .info-row:last-child .info-label {
+  margin-top: 0; /* Remove extra margin */
+  align-self: center; /* Center align description label */
 }
 
 .info-value {
   color: var(--color-text-dark);
   font-weight: 500;
   font-size: var(--text-base);
-  flex: 1;
+  text-align: center; /* Center align */
+  margin: 0; /* Remove margins */
 }
 
 .info-value.price {
@@ -2430,4 +2540,224 @@ div[style*="position: fixed"][style*="zIndex: 9999"] button[type="button"] {
 div[style*="position: fixed"][style*="zIndex: 9999"] button[type="submit"] {
   background: #C1A37F !important;
   background-color: #C1A37F !important;
+}
+
+/* ===== BOOK EVENT MODAL SPECIFIC FIXES ===== */
+/* Target only the Book Event modal to ensure buttons are visible under Number of Tickets field */
+
+/* Override the excessive spacing added by user changes for Book Event modal only */
+.modal-content .modal-body {
+  padding: 8px !important; /* Minimal padding for Book Event modal */
+  max-height: calc(85vh - 100px) !important; /* Ensure content fits */
+}
+
+/* Remove excessive spacing from booking summary in Book Event modal */
+.modal-content .modal-body .booking-summary {
+  margin: 0 0 8px 0 !important; /* Minimal bottom margin */
+  padding: 8px !important; /* Reduced padding */
+}
+
+/* Force enhanced booking form to sit directly under booking summary */
+.modal-content .modal-body .enhanced-booking-form {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Remove excessive spacing from form groups in Book Event modal */
+.modal-content .modal-body .form-group {
+  margin: 0 0 4px 0 !important; /* Minimal spacing between fields */
+  padding: 0 !important;
+}
+
+/* Remove excessive top margin from first form group */
+.modal-content .modal-body .form-group:first-child {
+  margin-top: 0 !important; /* No top margin */
+}
+
+/* Compact labels in Book Event modal */
+.modal-content .modal-body .form-label {
+  margin: 0 0 2px 0 !important; /* Minimal spacing */
+  padding: 0 !important;
+  line-height: 1.2 !important;
+}
+
+/* Compact input fields in Book Event modal */
+.modal-content .modal-body .input-field {
+  padding: 6px 8px !important; /* Reduced padding */
+  height: 32px !important; /* Compact height */
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+/* Position form actions directly under Number of Tickets field */
+.modal-content .modal-body .form-actions {
+  margin: 0 !important; /* No margins */
+  padding: 8px 0 !important; /* Minimal padding */
+  border-top: 1px solid var(--color-light-gray) !important;
+  position: sticky !important; /* Keep buttons visible */
+  bottom: 0 !important;
+  background: var(--color-off-white) !important;
+  z-index: 10 !important;
+}
+
+/* Compact buttons in Book Event modal */
+.modal-content .modal-body .btn {
+  padding: 8px 16px !important; /* Reduced padding */
+  min-height: 36px !important; /* Compact height */
+  min-width: 120px !important; /* Reasonable width */
+  font-size: var(--text-sm) !important;
+}
+
+/* Ensure payment actions are compact */
+.modal-content .modal-body .payment-actions {
+  gap: 8px !important; /* Reduced gap */
+  padding: 0 !important;
+}
+
+/* Remove excessive spacing from enhanced booking form content */
+.modal-content .modal-body .enhanced-booking-form .form-group {
+  margin: 0 0 4px 0 !important;
+}
+
+/* Ensure modal content height allows buttons to be visible */
+.modal-content {
+  max-height: 90vh !important; /* Allow more height */
+  overflow: hidden !important;
+}
+
+/* Force compact layout for all Book Event modal elements */
+.modal-content .modal-body * {
+  box-sizing: border-box !important;
+}
+
+/* Override any large margins that might push buttons down */
+.modal-content .modal-body .form-group:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Ensure buttons are directly under the last input field */
+.modal-content .modal-body .form-group:last-child + .form-actions {
+  margin-top: 0 !important;
+  padding-top: 8px !important;
+}
+
+/* ===== ULTRA-AGGRESSIVE BOOK EVENT MODAL FIXES ===== */
+/* Force buttons to be visible by removing ALL excessive spacing */
+
+/* Override ALL spacing in Book Event modal body */
+.modal-content .modal-body {
+  padding: 4px !important; /* Ultra-minimal padding */
+  margin: 0 !important;
+  max-height: calc(90vh - 80px) !important; /* More height for content */
+  overflow-y: auto !important; /* Allow scrolling if needed */
+}
+
+/* Remove ALL spacing from booking summary */
+.modal-content .modal-body .booking-summary {
+  margin: 0 0 4px 0 !important; /* Minimal bottom margin */
+  padding: 6px !important; /* Minimal padding */
+}
+
+/* Force enhanced booking form to have zero spacing */
+.modal-content .modal-body .enhanced-booking-form {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Ultra-compact form groups */
+.modal-content .modal-body .form-group {
+  margin: 0 0 2px 0 !important; /* Ultra-minimal spacing */
+  padding: 0 !important;
+}
+
+/* Remove ALL top margin from first form group */
+.modal-content .modal-body .form-group:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Ultra-compact labels */
+.modal-content .modal-body .form-label {
+  margin: 0 0 1px 0 !important; /* Ultra-minimal spacing */
+  padding: 0 !important;
+  line-height: 1.1 !important;
+  font-size: var(--text-sm) !important;
+}
+
+/* Ultra-compact input fields */
+.modal-content .modal-body .input-field {
+  padding: 4px 6px !important; /* Ultra-minimal padding */
+  height: 28px !important; /* Ultra-compact height */
+  margin: 0 !important;
+  line-height: 1.1 !important;
+  font-size: var(--text-sm) !important;
+}
+
+/* Force form actions to be visible and positioned correctly */
+.modal-content .modal-body .form-actions {
+  margin: 0 !important; /* Zero margins */
+  padding: 4px 0 !important; /* Minimal padding */
+  border-top: 1px solid var(--color-light-gray) !important;
+  position: relative !important; /* Remove sticky to ensure visibility */
+  bottom: auto !important;
+  background: var(--color-off-white) !important;
+  z-index: 10 !important;
+  min-height: 40px !important; /* Ensure minimum height */
+}
+
+/* Ultra-compact buttons */
+.modal-content .modal-body .btn {
+  padding: 6px 12px !important; /* Ultra-minimal padding */
+  min-height: 32px !important; /* Ultra-compact height */
+  min-width: 100px !important; /* Compact width */
+  font-size: var(--text-sm) !important;
+  margin: 0 2px !important;
+}
+
+/* Ultra-compact payment actions */
+.modal-content .modal-body .payment-actions {
+  gap: 6px !important; /* Minimal gap */
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Override any large margins that push content down */
+.modal-content .modal-body .form-group:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Force immediate positioning after last input */
+.modal-content .modal-body .form-group:last-child + .form-actions {
+  margin-top: 0 !important;
+  padding-top: 4px !important;
+}
+
+/* Ensure modal content allows proper height */
+.modal-content {
+  max-height: 95vh !important; /* More height */
+  overflow: hidden !important;
+}
+
+/* Override any excessive spacing from user changes */
+.modal-content .modal-body .enhanced-booking-form .form-group {
+  margin: 0 0 2px 0 !important;
+}
+
+/* Force all elements to have minimal spacing */
+.modal-content .modal-body * {
+  box-sizing: border-box !important;
+}
+
+/* Remove any potential large margins from CSS variables */
+.modal-content .modal-body .form-group:not(:last-child) {
+  margin-bottom: 2px !important;
+}
+
+/* Ensure buttons are always visible by forcing them into view */
+.modal-content .modal-body .form-actions {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }

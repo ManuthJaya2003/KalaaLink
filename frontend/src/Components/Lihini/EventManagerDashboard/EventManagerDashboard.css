@@ -153,7 +153,11 @@
   flex: 1;
   padding: 2rem;
   background: #f8f9fa;
-  overflow-y: auto;
+  overflow-y: visible;
+  min-height: calc(100vh - 4rem);
+  height: auto;
+  max-height: none;
+  padding-bottom: 4rem;
 }
 
 /* ===== CONTENT STYLING CONSISTENCY ===== */

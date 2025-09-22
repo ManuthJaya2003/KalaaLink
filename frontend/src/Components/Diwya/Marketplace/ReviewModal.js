@@ -77,7 +77,7 @@ const ReviewModal = ({ product, onClose, onReviewSubmit }) => {
         </div>
         
         <div className="modal-body">
-          <div className="product-info" style={{ marginBottom: '2px' }}>
+          <div className="product-info" style={{ marginBottom: '16px' }}>
             <h3>{product.artType}</h3>
             <p>by {product.artistName}</p>
           </div>
@@ -112,8 +112,8 @@ const ReviewModal = ({ product, onClose, onReviewSubmit }) => {
                   onChange={(e) => setReview({ ...review, comment: e.target.value })}
                   required
                   placeholder="Share your thoughts about this artwork..."
-                  rows="2"
-                  style={{ minHeight: '50px', maxHeight: '70px' }}
+                  rows="3"
+                  style={{ minHeight: '80px', maxHeight: '100px', resize: 'vertical' }}
                 />
               </div>
               
@@ -122,40 +122,46 @@ const ReviewModal = ({ product, onClose, onReviewSubmit }) => {
             
             <div className="form-actions" style={{ 
               display: 'flex', 
-              gap: '12px', 
+              gap: '16px', 
               justifyContent: 'center', 
               alignItems: 'center',
-              marginTop: '4px', 
+              marginTop: '16px', 
+              marginBottom: '0px',
               width: '100%',
-              height: '48px'
+              height: '50px'
             }}>
               <button 
                 type="button" 
                 onClick={onClose}
+                className="review-cancel-btn"
                 style={{ 
-                  background: '#374151 !important', 
+                  background: 'black !important', 
                   color: 'white !important', 
                   border: 'none !important',
                   padding: '0 !important',
-                  borderRadius: '6px !important',
+                  borderRadius: '8px !important',
                   cursor: 'pointer !important',
                   fontSize: '14px !important',
                   fontWeight: '600 !important',
-                  width: '120px !important',
-                  height: '48px !important',
+                  width: '140px !important',
+                  height: '50px !important',
                   display: 'flex !important',
                   alignItems: 'center !important',
                   justifyContent: 'center !important',
                   boxSizing: 'border-box !important',
                   lineHeight: '1 !important',
                   margin: '0 !important',
-                  outline: 'none !important'
+                  outline: 'none !important',
+                  transition: 'all 0.2s ease !important',
+                  flex: '0 0 140px !important'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.setProperty('background', '#1f2937', 'important');
+                  e.target.style.setProperty('background', '#333333', 'important');
+                  e.target.style.setProperty('transform', 'translateY(-2px)', 'important');
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.setProperty('background', '#374151', 'important');
+                  e.target.style.setProperty('background', 'black', 'important');
+                  e.target.style.setProperty('transform', 'translateY(0)', 'important');
                 }}
               >
                 Cancel
@@ -163,35 +169,40 @@ const ReviewModal = ({ product, onClose, onReviewSubmit }) => {
               <button 
                 type="submit" 
                 disabled={isLoading}
+                className="review-submit-btn"
                 style={{
                   background: '#C1A37F !important',
                   color: 'black !important',
                   border: 'none !important',
                   padding: '0 !important',
-                  borderRadius: '6px !important',
+                  borderRadius: '8px !important',
                   cursor: 'pointer !important',
                   fontSize: '14px !important',
                   fontWeight: '600 !important',
                   width: '140px !important',
-                  height: '48px !important',
+                  height: '50px !important',
                   display: 'flex !important',
                   alignItems: 'center !important',
                   justifyContent: 'center !important',
                   boxSizing: 'border-box !important',
                   lineHeight: '1 !important',
                   margin: '0 !important',
-                  outline: 'none !important'
+                  outline: 'none !important',
+                  transition: 'all 0.2s ease !important',
+                  flex: '0 0 140px !important'
                 }}
                 onMouseEnter={(e) => {
                   if (!e.target.disabled) {
                     e.target.style.setProperty('background', 'black', 'important');
                     e.target.style.setProperty('color', 'white', 'important');
+                    e.target.style.setProperty('transform', 'translateY(-2px)', 'important');
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!e.target.disabled) {
                     e.target.style.setProperty('background', '#C1A37F', 'important');
                     e.target.style.setProperty('color', 'black', 'important');
+                    e.target.style.setProperty('transform', 'translateY(0)', 'important');
                   }
                 }}
               >

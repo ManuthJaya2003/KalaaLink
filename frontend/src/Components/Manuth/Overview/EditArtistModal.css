@@ -11,27 +11,39 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 80px 20px; /* Much more increased top/bottom padding to create even more space */
 }
 
 .modal-content {
   background: white;
   border-radius: 12px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  max-width: 600px;
+  max-width: 800px; /* Increased width for 3x2 grid */
   width: 100%;
-  max-height: 90vh;
+  max-height: 95vh; /* Increased height to accommodate more content */
   overflow-y: auto;
   position: relative;
 }
+
+/* Ensure edit artist modal is scrollable */
+.edit-artist-modal {
+  max-height: 95vh !important;
+  overflow-y: auto !important;
+}
+
+/* Clean up any spacing issues above buttons */
+.edit-artist-modal .modal-form {
+  padding-bottom: 0 !important; /* Remove bottom padding to prevent extra space */
+}
+
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 24px 0 24px;
+  padding: 30px 20px 25px 20px; /* Even more increased top padding */
   border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 24px;
+  margin-bottom: 40px; /* Much more increased margin to create even more space below header */
 }
 
 .modal-header h2 {
@@ -58,11 +70,94 @@
 }
 
 .modal-form {
-  padding: 0 24px 24px 24px;
+  padding: 50px 20px 20px 20px; /* Much more increased top padding to create even more space */
 }
 
+/* 3x1 Grid Layout for basic fields */
+.edit-artist-form .form-grid-basic {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr !important; /* 3 columns */
+  gap: 16px !important;
+  margin: 60px 0 16px 0 !important; /* Much more increased top margin to create even more space from header */
+  width: 100% !important;
+}
+
+/* Single field layout */
+.edit-artist-form .form-group-single {
+  margin-bottom: 16px !important; /* Reduced margin */
+  width: 100% !important;
+}
+
+/* Narrow fields for Summary, Bio, and Price */
+.edit-artist-form .form-group-narrow {
+  margin: 0 auto 16px auto !important; /* Center horizontally */
+  width: 70% !important; /* 70% width for better readability */
+  max-width: 70% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Ensure proper spacing for all form groups */
+.edit-artist-form .form-group,
+.edit-artist-form .form-group-single,
+.edit-artist-form .form-group-narrow {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.edit-artist-form .form-group label,
+.edit-artist-form .form-group-single label,
+.edit-artist-form .form-group-narrow label {
+  margin-bottom: 6px !important;
+  font-weight: 500 !important;
+  color: #374151 !important;
+  font-size: 0.9rem !important;
+  display: block !important; /* Ensure labels are visible */
+  text-align: left !important;
+}
+
+/* Ensure form groups in grid are properly aligned */
+.edit-artist-form .form-grid-basic .form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  margin-bottom: 0 !important;
+  width: 100% !important;
+}
+
+/* Ensure labels in grid are visible */
+.edit-artist-form .form-grid-basic .form-group label {
+  display: block !important;
+  margin-bottom: 6px !important;
+  font-weight: 500 !important;
+  color: #374151 !important;
+  font-size: 0.9rem !important;
+  text-align: left !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ultra-specific label visibility override */
+.edit-artist-modal .modal-form .edit-artist-form .form-grid-basic .form-group label {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  width: auto !important;
+  position: static !important;
+  clip: auto !important;
+  overflow: visible !important;
+}
+
+
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 0; /* Remove margin in grid layout */
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Override for non-grid form groups */
+.modal-form .form-group:not(.form-grid .form-group) {
+  margin-bottom: 16px; /* Reduced margin for non-grid elements */
 }
 
 .form-group label {
@@ -94,7 +189,12 @@
 
 .form-textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 80px; /* Increased height for better visibility */
+}
+
+/* Specific styling for Summary and Bio fields */
+.edit-artist-form .form-group-full .form-textarea {
+  min-height: 100px; /* Even more height for full-width fields */
 }
 
 /* BULLETPROOF BUTTON ALIGNMENT */
@@ -102,11 +202,12 @@
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  gap: 20px !important;
-  margin-top: 32px !important;
-  padding: 24px 0 !important;
+  gap: 16px !important; /* Reduced gap */
+  margin: 0 auto !important; /* Center horizontally, remove top margin */
+  padding: 20px 0 !important; /* Reduced padding */
   border-top: 1px solid #e5e7eb !important;
-  width: 100% !important;
+  width: 70% !important; /* Match narrow fields width */
+  max-width: 70% !important;
   text-align: center !important;
 }
 
@@ -124,9 +225,9 @@
 
 .modal-actions .btn {
   display: inline-block !important;
-  width: 120px !important;
-  height: 44px !important;
-  padding: 12px 24px !important;
+  width: 100px !important;
+  height: 40px !important;
+  padding: 10px 20px !important;
   border: none !important;
   border-radius: 8px !important;
   font-size: 0.9rem !important;
@@ -137,13 +238,14 @@
   line-height: 20px !important;
   vertical-align: middle !important;
   box-sizing: border-box !important;
+  box-shadow: none !important; /* Remove any shadow */
 }
 
 .edit-artist-modal .modal-actions .btn {
   display: inline-block !important;
-  width: 120px !important;
-  height: 44px !important;
-  padding: 12px 24px !important;
+  width: 100px !important;
+  height: 40px !important;
+  padding: 10px 20px !important;
   border: none !important;
   border-radius: 8px !important;
   font-size: 0.9rem !important;
@@ -154,6 +256,7 @@
   line-height: 20px !important;
   vertical-align: middle !important;
   box-sizing: border-box !important;
+  box-shadow: none !important; /* Remove any shadow */
 }
 
 .modal-actions .btn:disabled {
@@ -169,7 +272,7 @@
   background: #000000 !important;
   color: white !important;
   border: none !important;
-  padding: 12px 24px !important;
+  padding: 10px 20px !important;
   border-radius: 8px !important;
   font-size: 0.9rem !important;
   font-weight: 600 !important;
@@ -181,6 +284,7 @@
   align-items: center !important;
   justify-content: center !important;
   box-sizing: border-box !important;
+  box-shadow: none !important; /* Remove any shadow */
 }
 
 .edit-artist-modal .modal-actions .btn-secondary:hover:not(:disabled),
@@ -188,7 +292,7 @@
 .modal-overlay .edit-artist-modal .modal-actions .btn-secondary:hover:not(:disabled),
 .modal-overlay .edit-artist-modal .modal-actions button.btn-secondary:hover:not(:disabled) {
   background: #333333 !important;
-  transform: translateY(-1px);
+  transform: none !important; /* Remove transform effect */
 }
 
 .edit-artist-modal .modal-actions .btn-primary,
@@ -198,7 +302,7 @@
   background: #C1A37F !important;
   color: #000000 !important;
   border: none !important;
-  padding: 12px 24px !important;
+  padding: 10px 20px !important;
   border-radius: 8px !important;
   font-size: 0.9rem !important;
   font-weight: 600 !important;
@@ -210,6 +314,7 @@
   align-items: center !important;
   justify-content: center !important;
   box-sizing: border-box !important;
+  box-shadow: none !important; /* Remove any shadow */
 }
 
 .edit-artist-modal .modal-actions .btn-primary:hover:not(:disabled),
@@ -217,7 +322,7 @@
 .modal-overlay .edit-artist-modal .modal-actions .btn-primary:hover:not(:disabled),
 .modal-overlay .edit-artist-modal .modal-actions button.btn-primary:hover:not(:disabled) {
   background: #a68b5f !important;
-  transform: translateY(-1px);
+  transform: none !important; /* Remove transform effect */
 }
 
 /* Responsive Design */
@@ -228,6 +333,7 @@
   
   .modal-content {
     max-height: 95vh;
+    max-width: 95vw; /* Full width on mobile */
   }
   
   .modal-header {
@@ -238,12 +344,42 @@
     padding: 0 20px 20px 20px;
   }
   
+  /* 2 columns on tablet */
+  .edit-artist-form .form-grid-basic {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+  
   .modal-actions {
     flex-direction: column;
   }
   
   .modal-actions .btn {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    max-width: 95vw;
+  }
+  
+  /* 1 column on mobile */
+  .edit-artist-form .form-grid-basic {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  
+  /* Make narrow fields full width on mobile */
+  .edit-artist-form .form-group-narrow {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Make buttons full width on mobile */
+  .modal-actions {
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }
 
@@ -285,12 +421,102 @@ div.modal-overlay div.edit-artist-modal div.modal-actions button.btn-secondary {
   background: #000000 !important;
   color: white !important;
   border: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
 }
 
 div.modal-overlay div.edit-artist-modal div.modal-actions button.btn-primary {
   background: #C1A37F !important;
   color: #000000 !important;
   border: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+/* Universal shadow removal for all buttons in edit artist modal */
+.edit-artist-modal button,
+.edit-artist-modal .btn,
+.modal-actions button,
+.modal-actions .btn {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  transform: none !important;
+}
+
+/* NUCLEAR SHADOW REMOVAL - MAXIMUM AGGRESSION */
+* {
+  box-shadow: none !important;
+}
+
+.edit-artist-modal *,
+.edit-artist-modal *::before,
+.edit-artist-modal *::after {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  transform: none !important;
+}
+
+button,
+button:focus,
+button:hover,
+button:active,
+button:visited,
+.btn,
+.btn:focus,
+.btn:hover,
+.btn:active,
+.btn:visited {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  transform: none !important;
+  outline: none !important;
+}
+
+/* Target specific button elements with maximum specificity */
+div.modal-overlay div.edit-artist-modal div.modal-actions button[type="button"],
+div.modal-overlay div.edit-artist-modal div.modal-actions button[type="submit"],
+div.modal-overlay div.edit-artist-modal div.modal-actions .btn-secondary,
+div.modal-overlay div.edit-artist-modal div.modal-actions .btn-primary {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  transform: none !important;
+  outline: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  -o-box-shadow: none !important;
+  -ms-box-shadow: none !important;
+}
+
+/* FINAL NUCLEAR OPTION - OVERRIDE EVERYTHING */
+[style*="box-shadow"],
+[style*="boxShadow"],
+[style*="shadow"] {
+  box-shadow: none !important;
+}
+
+/* Force remove any possible shadow from any element */
+.edit-artist-modal,
+.edit-artist-modal *,
+.edit-artist-modal *::before,
+.edit-artist-modal *::after,
+.modal-overlay,
+.modal-overlay *,
+.modal-overlay *::before,
+.modal-overlay *::after {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  transform: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  -o-box-shadow: none !important;
+  -ms-box-shadow: none !important;
 }
 
 /* Maximum specificity overrides */
@@ -301,8 +527,12 @@ div.modal-overlay div.edit-artist-modal div.modal-actions button.btn-primary {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 120px !important;
-  height: 44px !important;
+  width: 100px !important;
+  height: 40px !important;
+  box-shadow: none !important; /* Remove any shadow */
+  transform: none !important; /* Remove any transform */
+  filter: none !important; /* Remove any filters that might create shadow effects */
+  text-shadow: none !important; /* Remove text shadows */
 }
 
 .modal-overlay .edit-artist-modal .modal-actions button[type="submit"].btn-primary {
@@ -312,8 +542,12 @@ div.modal-overlay div.edit-artist-modal div.modal-actions button.btn-primary {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 120px !important;
-  height: 44px !important;
+  width: 100px !important;
+  height: 40px !important;
+  box-shadow: none !important; /* Remove any shadow */
+  transform: none !important; /* Remove any transform */
+  filter: none !important; /* Remove any filters that might create shadow effects */
+  text-shadow: none !important; /* Remove text shadows */
 }
 
 /* NUCLEAR OPTION - FORCE PERFECT ALIGNMENT */
@@ -331,10 +565,10 @@ div.modal-overlay div.edit-artist-modal div.modal-actions button.btn-primary {
 
 .edit-artist-modal .modal-actions .btn {
   display: inline-block !important;
-  width: 120px !important;
-  height: 44px !important;
+  width: 100px !important;
+  height: 40px !important;
   margin: 0 !important;
-  padding: 12px 24px !important;
+  padding: 10px 20px !important;
   border: none !important;
   border-radius: 8px !important;
   font-size: 0.9rem !important;
@@ -359,10 +593,10 @@ div.modal-overlay div.edit-artist-modal div.modal-actions {
 
 div.modal-overlay div.edit-artist-modal div.modal-actions button {
   display: inline-block !important;
-  width: 120px !important;
-  height: 44px !important;
+  width: 100px !important;
+  height: 40px !important;
   margin: 0 !important;
-  padding: 12px 24px !important;
+  padding: 10px 20px !important;
   text-align: center !important;
   line-height: 20px !important;
   vertical-align: top !important;

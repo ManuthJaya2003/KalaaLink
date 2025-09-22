@@ -80,47 +80,51 @@ const EditArtistModal = ({ isOpen, onClose, artist, onSave }) => {
           </button>
         </div>
         
-        <form onSubmit={handleSubmit} className="modal-form">
-          <div className="form-group">
-            <label htmlFor="artistName">Artist Name *</label>
-            <input
-              type="text"
-              id="artistName"
-              name="artistName"
-              value={formData.artistName}
-              onChange={handleChange}
-              required
-              className="form-input"
-            />
+        <form onSubmit={handleSubmit} className="modal-form edit-artist-form">
+          {/* 3x1 Grid for basic fields */}
+          <div className="form-grid-basic">
+            <div className="form-group">
+              <label htmlFor="artistName">Artist Name *</label>
+              <input
+                type="text"
+                id="artistName"
+                name="artistName"
+                value={formData.artistName}
+                onChange={handleChange}
+                required
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="genre">Genre *</label>
+              <input
+                type="text"
+                id="genre"
+                name="genre"
+                value={formData.genre}
+                onChange={handleChange}
+                required
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="category">Category *</label>
+              <input
+                type="text"
+                id="category"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                required
+                className="form-input"
+              />
+            </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="genre">Genre *</label>
-            <input
-              type="text"
-              id="genre"
-              name="genre"
-              value={formData.genre}
-              onChange={handleChange}
-              required
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="category">Category *</label>
-            <input
-              type="text"
-              id="category"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              required
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
+          {/* Narrow field for booking price */}
+          <div className="form-group-narrow">
             <label htmlFor="bookingPrice">Booking Price (LKR) *</label>
             <input
               type="number"
@@ -135,19 +139,20 @@ const EditArtistModal = ({ isOpen, onClose, artist, onSave }) => {
             />
           </div>
 
-          <div className="form-group">
+          {/* Narrow fields for Summary and Bio */}
+          <div className="form-group-narrow">
             <label htmlFor="summary">Summary</label>
             <textarea
               id="summary"
               name="summary"
               value={formData.summary}
               onChange={handleChange}
-              rows="3"
+              rows="4"
               className="form-textarea"
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group-narrow">
             <label htmlFor="bio">Bio</label>
             <textarea
               id="bio"

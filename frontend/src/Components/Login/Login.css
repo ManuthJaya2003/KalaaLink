@@ -6,7 +6,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 100px var(--space-md) var(--space-md);
+  padding: 120px var(--space-md) var(--space-md);
   position: relative;
   overflow: hidden;
 }
@@ -45,7 +45,7 @@
 .login-form-section {
   flex: 1.2 !important;
   width: 70% !important;
-  padding: 20px !important;
+  padding: 10px !important;
   background: none !important;
   border: none !important;
   box-shadow: none !important;
@@ -99,21 +99,23 @@
 /* Form Header */
 .login-header {
   text-align: center;
-  margin-bottom: 3px;
+  margin-bottom: 0px;
 }
 
 .login-title {
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--color-text-dark);
-  margin-bottom: 1px;
+  margin-bottom: 0px;
+  margin-top: 0px;
   position: relative;
+  line-height: 1.0;
 }
 
 .login-title::after {
   content: '';
   position: absolute;
-  bottom: -12px;
+  bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
   width: 100px;
@@ -125,57 +127,91 @@
 .login-subtitle {
   color: var(--color-text-muted) !important;
   font-size: 0.8rem !important;
-  line-height: 1.2 !important;
-  margin-top: 20px !important;
-  margin-bottom: 10px !important;
+  line-height: 1.0 !important;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
 }
 
 /* Form Container */
 form {
-  width: 85% !important;
+  width: 90% !important;
   margin: 0 auto !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 0 !important;
-  padding: 12px !important;
+  padding: 0px !important;
+  margin-top: 0px !important;
 }
 
 /* Ultra-Compact Form Styles */
 .form-group {
-  margin-bottom: 8px !important;
+  margin-bottom: 2px !important;
+  margin-top: 0px !important;
   padding: 0 !important;
 }
 
-.form-label {
-  display: block;
-  margin-bottom: 1px;
-  font-weight: 600;
-  color: var(--color-text-dark);
-  font-size: 0.6rem;
+/* Ensure password field matches email field width exactly */
+.password-input-container {
+  width: 100% !important;
 }
 
-.form-input {
+.password-input {
   width: 100% !important;
-  padding: 12px 8px !important;
-  border: none !important;
-  border-bottom: 2px solid var(--color-light-gray) !important;
-  border-radius: 0 !important;
+  padding: 8px 8px !important;
+  border: 1px solid var(--color-light-gray) !important;
+  border-radius: 6px !important;
   font-size: 0.8rem !important;
   transition: all 0.3s ease !important;
-  background: transparent !important;
+  background: #fafafa !important;
   color: var(--color-text-primary) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
   outline: none !important;
   margin: 0 !important;
-  min-height: 40px !important;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  min-height: 36px !important;
+}
+
+.password-input:focus {
+  outline: none !important;
+  border: 1px solid var(--color-accent-green) !important;
+  background: white !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  font-size: 0.7rem;
+}
+
+.form-input {
+  width: 100% !important;
+  padding: 8px 8px !important;
+  border: 1px solid var(--color-light-gray) !important;
+  border-radius: 6px !important;
+  font-size: 0.8rem !important;
+  transition: all 0.3s ease !important;
+  background: #fafafa !important;
+  color: var(--color-text-primary) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  outline: none !important;
+  margin: 0 !important;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  min-height: 36px !important;
 }
 
 .form-input:focus {
   outline: none !important;
-  border: none !important;
-  border-bottom: 2px solid var(--color-accent-green) !important;
-  background: transparent !important;
+  border: 1px solid var(--color-accent-green) !important;
+  background: white !important;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-1px) !important;
 }
 
 .form-input::placeholder {
@@ -348,7 +384,7 @@ form {
 
 @media (max-width: 768px) {
   .login-container {
-    padding: 80px 15px 15px !important;
+    padding: 100px 15px 15px !important;
   }
   
   .login-card {
@@ -425,7 +461,7 @@ form {
 
 @media (max-width: 480px) {
   .login-container {
-    padding: 70px 10px 10px !important;
+    padding: 80px 10px 10px !important;
   }
   
   .login-card {

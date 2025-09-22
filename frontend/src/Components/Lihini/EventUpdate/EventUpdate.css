@@ -48,36 +48,59 @@
   max-width: 100%;
 }
 
-/* Form Grid Layout */
+/* Form Layout - Mixed Layouts */
 .form-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  display: block;
   margin-bottom: 2rem;
   width: 100%;
 }
 
 .form-group.full-width {
-  grid-column: 1 / -1;
+  width: 100% !important;
+  display: block !important;
 }
 
-/* Form Labels */
+/* Event Title - 70% width */
+.form-grid .form-group.full-width:has(input[name="eventTitle"]) {
+  width: 70% !important;
+  max-width: 70% !important;
+  display: block !important;
+}
+
+/* Event Description - 70% width */
+.form-grid .form-group.full-width:has(textarea[name="eventDescription"]) {
+  width: 70% !important;
+  max-width: 70% !important;
+  display: block !important;
+}
+
+/* Ensure inputs within title and description fields fill their parent */
+.form-grid .form-group.full-width:has(input[name="eventTitle"]) .form-input,
+.form-grid .form-group.full-width:has(textarea[name="eventDescription"]) .form-textarea {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Form Labels - Above Inputs */
 .form-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  display: block;
+  text-align: left;
   font-weight: 600;
   color: #333;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  margin-top: 0;
   font-size: 0.95rem;
+  width: 100%;
 }
 
-/* Form Inputs */
+/* Form Inputs - Full Width, Minimal Spacing */
 .form-input,
 .form-textarea,
 .form-select {
-  width: 100%;
-  padding: 0.875rem 1rem;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0.75rem 1rem;
   border: 2px solid #e1e8ed;
   border-radius: 12px;
   font-size: 1rem;
@@ -85,6 +108,40 @@
   background: white;
   color: #333;
   font-family: inherit;
+  display: block;
+  box-sizing: border-box;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Date and Time Container - 2-column grid */
+.date-time-container {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+  width: 100% !important;
+}
+
+/* Date and Time Labels - No bottom margin for direct alignment */
+.date-time-container .form-label {
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Date and Time Inputs - Direct alignment under labels */
+.date-time-container .form-input {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Four Fields Container - 4-column grid */
+.four-fields-container {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr 1fr !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+  width: 100% !important;
 }
 
 .form-input:focus,
@@ -367,34 +424,67 @@
   }
 }
 
-/* Crew request form grid adjustments */
+/* Crew request form layout adjustments */
 .crew-request-section .form-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  display: block;
   margin-top: 1rem;
   width: 100%;
   max-width: 100%;
 }
 
+/* Crew Four Fields Container - 4-column grid */
+.crew-four-fields-container {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr 1fr !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+  width: 100% !important;
+}
+
+/* Crew four fields - 4-column grid */
+.crew-four-fields-container .form-group {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+  display: block !important;
+}
+
+/* Crew full-width fields - single column */
+.crew-full-width-fields .form-group {
+  width: 100% !important;
+  margin-bottom: 0.75rem !important;
+  display: block !important;
+}
+
 .crew-request-section .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+  width: 100% !important;
+  display: block !important;
 }
 
 .crew-request-section .form-group label {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  margin-top: 0;
   font-weight: 600;
   color: #374151;
+  text-align: left;
+  display: block;
+  width: 100%;
 }
 
 .crew-request-section .form-group input,
 .crew-request-section .form-group select,
 .crew-request-section .form-group textarea {
+  width: 100% !important;
+  max-width: 100% !important;
   padding: 0.75rem;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 1rem;
   transition: border-color 0.2s ease;
+  display: block !important;
+  box-sizing: border-box !important;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .crew-request-section .form-group input:focus,
@@ -408,13 +498,36 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .form-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+    display: block;
+  }
+  
+  /* Title and Description - 90% width on tablet */
+  .form-grid .form-group.full-width:has(input[name="eventTitle"]),
+  .form-grid .form-group.full-width:has(textarea[name="eventDescription"]) {
+    width: 90% !important;
+    max-width: 90% !important;
+  }
+  
+  /* Date and Time - 2-column on tablet */
+  .date-time-container {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+  }
+  
+  /* Four Fields - 2-column on tablet */
+  .four-fields-container {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+  }
+  
+  /* Crew four fields - 2-column on tablet */
+  .crew-four-fields-container {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
   }
   
   .crew-request-section .form-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+    display: block;
   }
 }
 
@@ -429,13 +542,36 @@
   }
   
   .form-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    display: block;
+  }
+  
+  /* Title and Description - full width on mobile */
+  .form-grid .form-group.full-width:has(input[name="eventTitle"]),
+  .form-grid .form-group.full-width:has(textarea[name="eventDescription"]) {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Date and Time - single column on mobile */
+  .date-time-container {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+  
+  /* Four Fields - single column on mobile */
+  .four-fields-container {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+  
+  /* Crew four fields - single column on mobile */
+  .crew-four-fields-container {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
   }
   
   .crew-request-section .form-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    display: block;
   }
   
   .event-update-title {

@@ -208,33 +208,35 @@ function EventUpdate() {
             />
           </div>
 
-          {/* Date and Time */}
-          <div className="form-group">
-            <label className="form-label">
-              Event Date
-            </label>
-            <input
-              name="eventDate"
-              type="date"
-              value={inputs.eventDate}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
-          </div>
+          {/* Date and Time - 2-column grid */}
+          <div className="date-time-container">
+            <div className="form-group">
+              <label className="form-label">
+                Event Date
+              </label>
+              <input
+                name="eventDate"
+                type="date"
+                value={inputs.eventDate}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+            </div>
 
-          <div className="form-group">
-            <label className="form-label">
-              Event Time
-            </label>
-            <input
-              name="eventTime"
-              type="time"
-              value={inputs.eventTime}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
+            <div className="form-group">
+              <label className="form-label">
+                Event Time
+              </label>
+              <input
+                name="eventTime"
+                type="time"
+                value={inputs.eventTime}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+            </div>
           </div>
 
           {/* Venue Location */}
@@ -268,69 +270,70 @@ function EventUpdate() {
             />
           </div>
 
-          {/* Capacity Fields */}
-          <div className="form-group">
-            <label className="form-label">
-              Max Artists
-            </label>
-            <input
-              name="maxArtists"
-              type="number"
-              placeholder="0"
-              value={inputs.maxArtists}
-              onChange={handleChange}
-              className="form-input"
-              min="0"
-              required
-            />
-          </div>
+          {/* Four Fields - 4-column grid */}
+          <div className="four-fields-container">
+            <div className="form-group">
+              <label className="form-label">
+                Max Artists
+              </label>
+              <input
+                name="maxArtists"
+                type="number"
+                placeholder="0"
+                value={inputs.maxArtists}
+                onChange={handleChange}
+                className="form-input"
+                min="0"
+                required
+              />
+            </div>
 
-          <div className="form-group">
-            <label className="form-label">
-              Max Customers
-            </label>
-            <input
-              name="maxCustomers"
-              type="number"
-              placeholder="0"
-              value={inputs.maxCustomers}
-              onChange={handleChange}
-              className="form-input"
-              min="0"
-              required
-            />
-          </div>
+            <div className="form-group">
+              <label className="form-label">
+                Max Customers
+              </label>
+              <input
+                name="maxCustomers"
+                type="number"
+                placeholder="0"
+                value={inputs.maxCustomers}
+                onChange={handleChange}
+                className="form-input"
+                min="0"
+                required
+              />
+            </div>
 
-          {/* Pricing Fields */}
-          <div className="form-group">
-            <label className="form-label">
-              Customer Price (Rs.)
-            </label>
-            <input
-              name="priceCustomer"
-              type="number"
-              placeholder="0"
-              value={inputs.priceCustomer}
-              onChange={handleChange}
-              className="form-input"
-              min="0"
-              required
-            />
-          </div>
+            <div className="form-group">
+              <label className="form-label">
+                Customer Price (Rs.)
+              </label>
+              <input
+                name="priceCustomer"
+                type="number"
+                placeholder="0"
+                value={inputs.priceCustomer}
+                onChange={handleChange}
+                className="form-input"
+                min="0"
+                required
+              />
+            </div>
 
-          <div className="form-group">
-            <label className="form-label">
-              Artist Fee (Rs.)
-            </label>
-            <input
-              name="registrationFeeArtist"
-              type="number"
-              placeholder="0"
-              value={inputs.registrationFeeArtist}
-              onChange={handleChange}
-              className="form-input"
-              min="0"
-            />
+            <div className="form-group">
+              <label className="form-label">
+                Artist Fee (Rs.)
+              </label>
+              <input
+                name="registrationFeeArtist"
+                type="number"
+                placeholder="0"
+                value={inputs.registrationFeeArtist}
+                onChange={handleChange}
+                className="form-input"
+                min="0"
+              />
+            </div>
           </div>
 
           {/* Image Upload */}
@@ -382,112 +385,118 @@ function EventUpdate() {
               <p className="crew-request-subtitle">Provide details about the crew support you need</p>
 
               <div className="form-grid">
-                {/* Crew Type */}
-                <div className="form-group">
-                  <label className="form-label">
-                    Crew Type
-                  </label>
-                  <select
-                    name="crewType"
-                    value={inputs.crewType}
-                    onChange={handleChange}
-                    className="form-select"
-                    required={requestCrew}
-                  >
-                    <option value="">Select crew type...</option>
-                    <option value="sound">Sound System</option>
-                    <option value="lighting">Lighting</option>
-                    <option value="stage_setup">Stage Setup</option>
-                    <option value="security">Security</option>
-                    <option value="catering">Catering</option>
-                    <option value="photography">Photography</option>
-                    <option value="transportation">Transportation</option>
-                    <option value="other">Other</option>
-                  </select>
+                {/* Crew Four Fields - 4-column grid */}
+                <div className="crew-four-fields-container">
+                  {/* Crew Type */}
+                  <div className="form-group">
+                    <label className="form-label">
+                      Crew Type
+                    </label>
+                    <select
+                      name="crewType"
+                      value={inputs.crewType}
+                      onChange={handleChange}
+                      className="form-select"
+                      required={requestCrew}
+                    >
+                      <option value="">Select crew type...</option>
+                      <option value="sound">Sound System</option>
+                      <option value="lighting">Lighting</option>
+                      <option value="stage_setup">Stage Setup</option>
+                      <option value="security">Security</option>
+                      <option value="catering">Catering</option>
+                      <option value="photography">Photography</option>
+                      <option value="transportation">Transportation</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  {/* Required Date */}
+                  <div className="form-group">
+                    <label className="form-label">
+                      Required Date
+                    </label>
+                    <input
+                      name="crewRequiredDate"
+                      type="date"
+                      value={inputs.crewRequiredDate}
+                      onChange={handleChange}
+                      className="form-input"
+                      required={requestCrew}
+                    />
+                  </div>
+
+                  {/* Required Time */}
+                  <div className="form-group">
+                    <label className="form-label">
+                      Required Time
+                    </label>
+                    <input
+                      name="crewRequiredTime"
+                      type="time"
+                      value={inputs.crewRequiredTime}
+                      onChange={handleChange}
+                      className="form-input"
+                      required={requestCrew}
+                    />
+                  </div>
+
+                  {/* Estimated Duration */}
+                  <div className="form-group">
+                    <label className="form-label">
+                      Estimated Duration
+                    </label>
+                    <select
+                      name="estimatedDuration"
+                      value={inputs.estimatedDuration}
+                      onChange={handleChange}
+                      className="form-select"
+                      required={requestCrew}
+                    >
+                      <option value="">Select duration...</option>
+                      <option value="1 hour">1 Hour</option>
+                      <option value="2 hours">2 Hours</option>
+                      <option value="4 hours">4 Hours</option>
+                      <option value="6 hours">6 Hours</option>
+                      <option value="8 hours">8 Hours</option>
+                      <option value="Full day">Full Day</option>
+                      <option value="Multiple days">Multiple Days</option>
+                    </select>
+                  </div>
                 </div>
 
-                {/* Required Date */}
-                <div className="form-group">
-                  <label className="form-label">
-                    Required Date
-                  </label>
-                  <input
-                    name="crewRequiredDate"
-                    type="date"
-                    value={inputs.crewRequiredDate}
-                    onChange={handleChange}
-                    className="form-input"
-                    required={requestCrew}
-                  />
-                </div>
+                {/* Crew Full-Width Fields */}
+                <div className="crew-full-width-fields">
+                  {/* Crew Details */}
+                  <div className="form-group">
+                    <label className="form-label">
+                      Crew Details
+                    </label>
+                    <textarea
+                      name="crewDetails"
+                      placeholder="Describe the crew requirements in detail..."
+                      value={inputs.crewDetails}
+                      onChange={handleChange}
+                      className="form-textarea"
+                      rows="4"
+                      required={requestCrew}
+                    />
+                  </div>
 
-                {/* Required Time */}
-                <div className="form-group">
-                  <label className="form-label">
-                    Required Time
-                  </label>
-                  <input
-                    name="crewRequiredTime"
-                    type="time"
-                    value={inputs.crewRequiredTime}
-                    onChange={handleChange}
-                    className="form-input"
-                    required={requestCrew}
-                  />
-                </div>
-
-                {/* Estimated Duration */}
-                <div className="form-group">
-                  <label className="form-label">
-                    Estimated Duration
-                  </label>
-                  <select
-                    name="estimatedDuration"
-                    value={inputs.estimatedDuration}
-                    onChange={handleChange}
-                    className="form-select"
-                    required={requestCrew}
-                  >
-                    <option value="">Select duration...</option>
-                    <option value="1 hour">1 Hour</option>
-                    <option value="2 hours">2 Hours</option>
-                    <option value="4 hours">4 Hours</option>
-                    <option value="6 hours">6 Hours</option>
-                    <option value="8 hours">8 Hours</option>
-                    <option value="Full day">Full Day</option>
-                    <option value="Multiple days">Multiple Days</option>
-                  </select>
-                </div>
-
-                {/* Crew Details */}
-                <div className="form-group">
-                  <label className="form-label">
-                    Crew Details
-                  </label>
-                  <textarea
-                    name="crewDetails"
-                    placeholder="Describe the crew requirements in detail..."
-                    value={inputs.crewDetails}
-                    onChange={handleChange}
-                    className="form-textarea"
-                    rows="4"
-                    required={requestCrew}
-                  />
-                </div>
-
-                {/* Special Requirements */}
-                <div className="form-group">
-                  <label className="form-label">
-                    Special Requirements
-                  </label>
-                  <textarea
-                    name="specialRequirements"
-                    placeholder="Any special requirements or notes..."
-                    value={inputs.specialRequirements}
-                    onChange={handleChange}
-                    className="form-textarea"
-                    rows="3"
-                  />
+                  {/* Special Requirements */}
+                  <div className="form-group">
+                    <label className="form-label">
+                      Special Requirements
+                    </label>
+                    <textarea
+                      name="specialRequirements"
+                      placeholder="Any special requirements or notes..."
+                      value={inputs.specialRequirements}
+                      onChange={handleChange}
+                      className="form-textarea"
+                      rows="3"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

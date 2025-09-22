@@ -18,31 +18,31 @@ L.Icon.Default.mergeOptions({
 const deliveryIcons = {
   Pending: L.divIcon({
     className: 'custom-delivery-marker',
-    html: '<div style="background-color: #f59e0b; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">P</div>',
+    html: '<div style="background-color: #f59e0b; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;"></div>',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   }),
   Dispatched: L.divIcon({
     className: 'custom-delivery-marker',
-    html: '<div style="background-color: #3b82f6; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">D</div>',
+    html: '<div style="background-color: #3b82f6; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;"></div>',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   }),
   'In Transit': L.divIcon({
     className: 'custom-delivery-marker',
-    html: '<div style="background-color: #8b5cf6; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">T</div>',
+    html: '<div style="background-color: #8b5cf6; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;"></div>',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   }),
   Delivered: L.divIcon({
     className: 'custom-delivery-marker',
-    html: '<div style="background-color: #10b981; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">✓</div>',
+    html: '<div style="background-color: #10b981; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;"></div>',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   }),
   Failed: L.divIcon({
     className: 'custom-delivery-marker',
-    html: '<div style="background-color: #ef4444; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">X</div>',
+    html: '<div style="background-color: #ef4444; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;"></div>',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   }),

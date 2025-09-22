@@ -594,14 +594,15 @@
 }
 
 .btn-success {
-  background: #28a745 !important;
-  color: #ffffff !important;
+  background: #C1A37F !important; /* Match sidebar beige color */
+  color: #000000 !important;
 }
 
 .btn-success:hover {
-  background: #218838 !important;
+  background: #000000 !important; /* Darker shade (black) on hover */
+  color: #ffffff !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .btn-danger {
@@ -618,8 +619,8 @@
 /* Global Button Overrides */
 button.btn-success,
 a.btn-success {
-  background: #28a745 !important;
-  color: #ffffff !important;
+  background: #C1A37F !important; /* Match sidebar beige color */
+  color: #000000 !important;
   border: none !important;
   padding: 8px 16px !important;
   border-radius: 4px !important;
@@ -633,9 +634,10 @@ a.btn-success {
 
 button.btn-success:hover,
 a.btn-success:hover {
-  background: #218838 !important;
+  background: #000000 !important; /* Darker shade (black) on hover */
+  color: #ffffff !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
   text-decoration: none !important;
 }
 

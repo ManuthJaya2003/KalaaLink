@@ -8,15 +8,21 @@ import AnalyticsTab from "./AnalyticsTab";
 import EventUpdate from "../EventUpdate/EventUpdate";
 import BookingsTab from "./BookingsTab"; // ✅ new import
 import TestimonialsTab from "./TestimonialsTab"; // ✅ new import
+import UpdateEventModal from "./UpdateEventModal"; // ✅ new import
 import { useParams } from "react-router-dom";
 import logoutEmployee from "../../../utils/employeeLogout";
 import "./EventManagerDashboard.css";
+import "./UpdateEventModal.css";
 
 function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
   const [activeTab, setActiveTab] = useState("home");
   const { id } = useParams(); // ✅ check if we are updating a specific event
   const navigate = useNavigate();
   const [managerName, setManagerName] = useState("Manager");
+  
+  // Modal state
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   // Sign out function
   const handleSignOut = () => {
@@ -45,6 +51,21 @@ function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
     } catch (err) {
       console.error("Failed to fetch events:", err);
     }
+  };
+
+  // Modal functions
+  const handleOpenUpdateModal = (event) => {
+    setSelectedEvent(event);
+    setIsUpdateModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setIsUpdateModalOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const handleEventUpdated = () => {
+    fetchEvents(); // Refresh events list
   };
 
   useEffect(() => {
@@ -122,12 +143,20 @@ function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
         <div className="dashboard-content">
           {activeTab === "home" && <HomeTab />}
           {activeTab === "organize" && <OrganizeEventForm events={events} setEvents={setEvents} />}
-          {activeTab === "ongoing" && <OngoingEventsTable events={events} setEvents={setEvents} />}
+          {activeTab === "ongoing" && <OngoingEventsTable events={events} setEvents={setEvents} onUpdateEvent={handleOpenUpdateModal} />}
           {activeTab === "analytics" && <AnalyticsTab />}
           {activeTab === "bookings" && <BookingsTab events={events} />}
           {activeTab === "testimonials" && <TestimonialsTab />}
         </div>
       </div>
+
+      {/* Update Event Modal */}
+      <UpdateEventModal
+        isOpen={isUpdateModalOpen}
+        onClose={handleCloseUpdateModal}
+        eventData={selectedEvent}
+        onEventUpdated={handleEventUpdated}
+      />
     </div>
   );
 }

@@ -2,6 +2,18 @@
 
 /* Inherits base styles from Login.css and adds professional login-specific overrides */
 
+/* Container Positioning */
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--color-light-beige) 0%, var(--color-warm-peach) 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 120px var(--space-md) var(--space-md);
+  position: relative;
+  overflow: hidden;
+}
+
 /* Professional Login Card Layout - Horizontal Rectangle */
 .login-card {
   background: white !important;
@@ -25,7 +37,7 @@
 .login-form-section {
   flex: 1.2 !important;
   width: 70% !important;
-  padding: 20px !important;
+  padding: 15px !important;
   background: none !important;
   border: none !important;
   box-shadow: none !important;
@@ -68,17 +80,58 @@
 /* Form Input Styling */
 .form-input {
   width: 100% !important;
-  padding: 10px 8px !important;
+  padding: 8px 8px !important;
   border: 1px solid var(--color-light-gray) !important;
   border-radius: 6px !important;
-  font-size: 0.75rem !important;
+  font-size: 0.8rem !important;
   transition: all 0.3s ease !important;
   background: #fafafa !important;
   color: var(--color-text-primary) !important;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
   outline: none !important;
   margin: 0 !important;
-  min-height: 38px !important;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  min-height: 36px !important;
+}
+
+.form-input:focus {
+  outline: none !important;
+  border: 1px solid var(--color-accent-green) !important;
+  background: white !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Form Container */
+form {
+  width: 90% !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  padding: 0px !important;
+  margin-top: 0px !important;
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 2px !important;
+  margin-top: 0px !important;
+  padding: 0 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 100px 15px 15px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 80px 10px 10px !important;
+  }
 }
 
 .form-input:focus {

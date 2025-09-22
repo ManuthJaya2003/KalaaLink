@@ -249,11 +249,11 @@ function ArtistRegistration() {
 
           <div className="login-image-section">
             <div className="login-image-placeholder">
-              <div className="placeholder-content">
-                <div className="placeholder-icon">🎭</div>
-                <h3>Join the Creative Community</h3>
-                <p>Connect with fellow artists, showcase your talent, and discover amazing opportunities in the world of arts and entertainment.</p>
-              </div>
+              <img 
+                src="/ArtistR.jpg" 
+                alt="Artist Registration" 
+                className="artist-registration-image"
+              />
             </div>
           </div>
         </div>

@@ -579,11 +579,18 @@
   padding: var(--space-lg, 1.5rem) 0;
 }
 
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+/* Force 3x3 grid layout for marketplace products */
+.marketplace-products .products-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
   gap: var(--space-xl, 2rem);
   padding: var(--space-md, 1rem) 0;
+}
+
+/* Additional specificity to override any conflicting styles */
+div.marketplace-products div.products-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
 }
 
 .product-card {
@@ -1208,11 +1215,13 @@
 
 /* Review Modal Styles */
 .review-modal .modal-body {
-  padding: 8px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   min-height: 0;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .review-modal .review-form {
@@ -1220,6 +1229,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 12px;
+  min-height: 300px;
 }
 
 .product-info {
@@ -1319,10 +1330,15 @@
 
 .form-actions {
   display: flex;
-  gap: var(--space-sm, 0.5rem);
+  gap: 16px;
   justify-content: center;
-  margin-top: 4px;
-  padding-top: 4px;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 0px;
+  padding: 0;
+  width: 100%;
+  height: 50px;
+  flex-shrink: 0;
 }
 
 .btn {
@@ -1360,30 +1376,95 @@
 
 /* Review Modal specific button styles */
 .review-modal .btn-primary {
-  background: black !important;
-  color: white !important;
+  background: #C1A37F !important;
+  color: black !important;
   border: none !important;
+  width: 140px !important;
+  height: 50px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
 }
 
 .review-modal .btn-primary:hover {
   background: black !important;
   color: white !important;
-  transform: translateY(-1px) !important;
+  transform: translateY(-2px) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
 .review-modal .btn-secondary {
-  background: white !important;
-  color: black !important;
-  border: 2px solid rgba(193, 163, 127, 0.9) !important;
+  background: black !important;
+  color: white !important;
+  border: none !important;
+  width: 140px !important;
+  height: 50px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
 }
 
 .review-modal .btn-secondary:hover {
-  background: white !important;
-  color: black !important;
-  border: 2px solid rgba(193, 163, 127, 0.9) !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  background: #333333 !important;
+  color: white !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Ensure buttons are positioned close to form fields */
+.review-modal .form-actions {
+  margin-top: 12px !important;
+  margin-bottom: 0px !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.review-modal .form-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Force both review buttons to be exactly the same size */
+.review-cancel-btn,
+.review-submit-btn {
+  width: 140px !important;
+  height: 50px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  min-height: 50px !important;
+  max-height: 50px !important;
+  flex: 0 0 140px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  outline: none !important;
+  line-height: 1 !important;
+}
+
+/* Specific styling for cancel button */
+.review-cancel-btn {
+  background: black !important;
+  color: white !important;
+}
+
+.review-cancel-btn:hover {
+  background: #333333 !important;
+  color: white !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
 .btn:disabled {
@@ -1481,8 +1562,8 @@
     max-width: 140px;
   }
   
-  .products-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .marketplace-products .products-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
     gap: var(--space-lg, 1.5rem);
   }
 }
@@ -1635,9 +1716,9 @@
     font-size: var(--text-sm, 0.875rem);
   }
 
-  .products-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-lg, 1.5rem);
+  .marketplace-products .products-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: var(--space-md, 1rem);
   }
 
   .product-card {
@@ -1814,6 +1895,11 @@
   .review-author {
     font-size: 10px;
   }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm, 0.5rem);
+  }
 }
 
 /* Ensure video maintains aspect ratio on all devices */
@@ -1828,4 +1914,11 @@
     height: 100%;
     object-fit: cover;
   }
+}
+
+/* Final override to ensure 3x3 grid is always applied */
+.marketplace-products .products-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  grid-auto-rows: auto !important;
 }

@@ -238,9 +238,22 @@ form {
 .login-image-placeholder {
   text-align: center !important;
   color: white !important;
-  padding: 30px !important;
+  padding: 0 !important;
   border-radius: 20px !important;
   overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.artist-registration-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 20px !important;
+  display: block !important;
 }
 
 .placeholder-content {
@@ -302,9 +315,16 @@ form {
   
   .login-image-section {
     min-height: 150px !important;
-    padding: 15px !important;
+    padding: 0 !important;
     min-width: auto !important;
     flex: 1.2 !important;
+    border-radius: 20px !important;
+  }
+  
+  .artist-registration-image {
+    width: 100% !important;
+    height: 150px !important;
+    object-fit: cover !important;
     border-radius: 20px !important;
   }
   
@@ -366,7 +386,14 @@ form {
   
   .login-image-section {
     min-height: 100px !important;
-    padding: 10px !important;
+    padding: 0 !important;
+    border-radius: 20px !important;
+  }
+  
+  .artist-registration-image {
+    width: 100% !important;
+    height: 100px !important;
+    object-fit: cover !important;
     border-radius: 20px !important;
   }
   

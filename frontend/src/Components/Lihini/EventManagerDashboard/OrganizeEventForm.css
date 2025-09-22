@@ -11,15 +11,25 @@
 }
 
 /* Page Header Styles - Match Analytics Tab */
+.organize-event-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .organize-event-title {
   font-size: 1.875rem;
   font-weight: 700;
   color: #2c3e50;
-  margin: 0 0 12px 0;
+  margin: 0;
   line-height: 1.2;
   position: relative;
   text-align: left;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   font-family: 'Georgia', serif;
 }
 
@@ -37,6 +47,49 @@
   font-weight: 400;
 }
 
+/* Header Button Styles */
+.header-button {
+  background: #C1A37F;
+  color: #000000;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  flex-shrink: 0;
+  height: auto;
+  margin: 0;
+}
+
+.header-button:hover:not(:disabled) {
+  background: #a68b5f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(193, 163, 127, 0.3);
+}
+
+.header-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.header-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Hidden form actions */
+.hidden-actions {
+  display: none !important;
+}
+
 /* Form Container */
 .event-form {
   background: white;
@@ -46,38 +99,324 @@
   border-left: 4px solid #C1A37F;
   width: 100%;
   max-width: 100%;
+  position: relative;
+  overflow: visible; /* Allow map to be visible */
+  z-index: 1;
+  min-height: 1200px;
+  height: auto;
+  display: block;
+  visibility: visible;
 }
 
-/* Form Grid Layout */
+/* Form Layout - Mixed Layouts */
 .form-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  width: 100%;
+  display: block !important;
+  margin-bottom: 2rem !important;
+  width: 100% !important;
+  min-height: 1000px;
+  height: auto;
+  overflow: visible;
+  position: relative;
 }
 
+/* Form Groups - Minimal spacing */
+.form-group {
+  margin-bottom: 1rem; /* Minimal vertical spacing */
+  width: 100%; /* Ensure full width */
+  max-width: 100%; /* No width restrictions */
+  display: block; /* Ensure block display */
+}
+
+/* Event Title - 70% width */
+.form-grid .form-group.title-field {
+  width: 70% !important;
+  max-width: 70% !important;
+  margin-bottom: 1rem !important;
+  display: block !important;
+}
+
+/* Event Description - 70% width */
+.form-grid .form-group.description-field {
+  width: 70% !important;
+  max-width: 70% !important;
+  margin-bottom: 1rem !important;
+  display: block !important;
+}
+
+/* Ensure inputs within title and description fields fill their parent */
+.form-grid .form-group.title-field .form-input,
+.form-grid .form-group.title-field .form-textarea,
+.form-grid .form-group.description-field .form-input,
+.form-grid .form-group.description-field .form-textarea {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Date and Time Container - 2-column grid */
+.date-time-container {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+  width: 100% !important;
+}
+
+/* Event Date - 2-column grid */
+.form-grid .form-group:has(input[name="eventDate"]) {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+  display: block !important;
+}
+
+/* Event Time - 2-column grid */
+.form-grid .form-group:has(input[name="eventTime"]) {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+  display: block !important;
+}
+
+/* Date and Time Labels - No bottom margin for direct alignment */
+.date-time-container .form-label {
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Date and Time Inputs - Direct alignment under labels */
+.date-time-container .form-input {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Event Venue Location - full width */
+.form-grid .form-group.venue-field {
+  width: 100% !important;
+  margin-bottom: 1rem !important;
+  display: block !important;
+}
+
+/* Four Fields Container - 4-column grid */
+.four-fields-container {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr 1fr !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+  width: 100% !important;
+}
+
+/* Max Artists - 4-column grid */
+.form-grid .form-group:has(input[name="maxArtists"]) {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+  display: block !important;
+}
+
+/* Max Customers - 4-column grid */
+.form-grid .form-group:has(input[name="maxCustomers"]) {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+  display: block !important;
+}
+
+/* Customer Price - 4-column grid */
+.form-grid .form-group:has(input[name="priceCustomer"]) {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+  display: block !important;
+}
+
+/* Artist Fee - 4-column grid */
+.form-grid .form-group:has(input[name="registrationFeeArtist"]) {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+  display: block !important;
+}
+
+/* Event Image - full width */
+.form-grid .form-group.full-width:has(input[name="image"]) {
+  width: 100% !important;
+  margin-bottom: 1rem !important;
+  display: block !important;
+}
+
+/* Crew Request Checkbox - full width */
+.form-grid .form-group.full-width:has(input[name="requestCrew"]) {
+  width: 100% !important;
+  margin-bottom: 1rem !important;
+  display: block !important;
+}
+
+/* Crew Details Section - full width */
+.form-grid .crew-request-section {
+  width: 100% !important;
+  margin-bottom: 1rem !important;
+  display: block !important;
+}
+
+/* Crew Details Layout - mixed layout */
+.crew-request-section .form-grid {
+  display: block !important;
+  margin-bottom: 0 !important;
+}
+
+/* Crew Four Fields Container - 4-column grid */
+.crew-four-fields-container {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr 1fr !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+  width: 100% !important;
+}
+
+/* Crew fields - mixed layout */
+.crew-request-section .form-group {
+  width: 100% !important;
+  margin-bottom: 0.75rem !important;
+  display: block !important;
+}
+
+/* Crew four fields - 4-column grid */
+.crew-four-fields-container .form-group {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+  display: block !important;
+}
+
+/* Crew full-width fields - single column */
+.crew-full-width-fields .form-group {
+  width: 100% !important;
+  margin-bottom: 0.5rem !important;
+  display: block !important;
+}
+
+/* Crew Type - 4-column grid */
+.crew-four-fields-container .form-group:has(select[name="crewType"]) {
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Required Date - 4-column grid */
+.crew-four-fields-container .form-group:has(input[name="crewRequiredDate"]) {
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Required Time - 4-column grid */
+.crew-four-fields-container .form-group:has(input[name="crewRequiredTime"]) {
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Estimated Duration - 4-column grid */
+.crew-four-fields-container .form-group:has(select[name="estimatedDuration"]) {
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Crew Details - full width */
+.crew-full-width-fields .form-group:has(textarea[name="crewDetails"]) {
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Special Requirements - full width */
+.crew-full-width-fields .form-group:has(textarea[name="specialRequirements"]) {
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Other full-width fields */
 .form-group.full-width {
-  grid-column: 1 / -1;
+  width: 100% !important; /* Full width for other fields */
+  display: block !important;
 }
 
-/* Form Labels */
-.form-label {
+/* Map Picker Integration */
+.form-group.full-width .map-picker-container {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.form-group.full-width .map-picker-container .location-input-section {
+  margin-bottom: 15px;
+  width: 100%; /* Ensure full width */
+}
+
+.form-group.full-width .map-picker-container .input-group {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  gap: 12px;
+  width: 100%; /* Ensure input group takes full width */
+}
+
+.form-group.full-width .map-picker-container .venue-address-input {
+  flex: 1; /* Take remaining space after buttons */
+  width: 100%; /* Full width of available space */
+}
+
+.form-group.full-width .map-picker-container .map-container {
+  width: 100%;
+  height: 500px; /* Increased height for better visibility */
+  margin: 0 0 20px 0; /* Add bottom margin to prevent overlap */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 2px solid #e1e8ed;
+  position: relative;
+  z-index: 10;
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
+.form-group.full-width .map-picker-container .venue-map {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 500px !important;
+  position: relative;
+  z-index: 11;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.form-group.full-width .map-picker-container .leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 500px !important;
+  position: relative;
+  z-index: 12;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Form Labels - Above Inputs */
+.form-label {
+  display: block;
+  text-align: left;
   font-weight: 600;
   color: #333;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem; /* Minimal space between label and input */
+  margin-top: 0; /* No top margin */
   font-size: 0.95rem;
+  width: 100%; /* Ensure labels take full width */
 }
 
 
-/* Form Inputs */
+/* Form Inputs - Full Width, Minimal Spacing */
 .form-input,
-.form-textarea {
-  width: 100%;
-  padding: 0.875rem 1rem;
+.form-textarea,
+.form-select {
+  width: 100% !important;
+  max-width: 100% !important; /* Ensure no width restrictions */
+  padding: 0.75rem 1rem; /* Slightly reduced padding */
   border: 2px solid #e1e8ed;
   border-radius: 12px;
   font-size: 1rem;
@@ -85,10 +424,15 @@
   background: white;
   color: #333;
   font-family: inherit;
+  box-sizing: border-box; /* Include padding in width calculation */
+  display: block; /* Ensure block display */
+  margin-top: 0; /* No top margin */
+  margin-bottom: 0; /* No bottom margin within form-group */
 }
 
 .form-input:focus,
-.form-textarea:focus {
+.form-textarea:focus,
+.form-select:focus {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -96,7 +440,8 @@
 }
 
 .form-input:hover,
-.form-textarea:hover {
+.form-textarea:hover,
+.form-select:hover {
   border-color: #b8c5f3;
 }
 
@@ -219,6 +564,18 @@
 .form-actions {
   text-align: center;
   margin-top: 2rem;
+  margin-bottom: 2rem;
+  padding: 2rem 0;
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  width: 100%;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible;
+  height: auto;
+  min-height: auto;
 }
 
 .submit-button {
@@ -231,12 +588,19 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   gap: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   min-width: 200px;
   justify-content: center;
+  position: relative;
+  z-index: 11;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: auto;
+  height: auto;
+  margin: 0;
 }
 
 .submit-button:hover:not(:disabled) {
@@ -298,8 +662,46 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .form-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+    display: block !important;
+  }
+  
+  /* Title and Description - 90% width on tablet */
+  .form-grid .form-group.title-field,
+  .form-grid .form-group.description-field {
+    width: 90% !important;
+    max-width: 90% !important;
+  }
+  
+  /* Date and Time - 2-column on tablet */
+  .date-time-container {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+  }
+  
+  /* Four Fields - 2-column on tablet */
+  .four-fields-container {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+  }
+  
+  /* All other fields full width on tablet */
+  .form-grid .form-group {
+    width: 100% !important;
+  }
+  
+  /* Crew four fields - 2-column on tablet */
+  .crew-four-fields-container {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+  }
+  
+  /* Crew details single column on tablet */
+  .crew-request-section .form-grid {
+    display: block !important;
+  }
+  
+  .crew-request-section .form-group {
+    width: 100% !important;
   }
 }
 
@@ -309,13 +711,67 @@
     margin: 1rem;
   }
   
+  .organize-event-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .organize-event-title {
+    font-size: 1.5rem;
+  }
+  
+  .header-button {
+    width: 100%;
+    min-width: auto;
+  }
+  
   .event-form {
     padding: 1.5rem;
   }
   
   .form-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    display: block !important;
+  }
+  
+  /* Title and Description - full width on mobile */
+  .form-grid .form-group.title-field,
+  .form-grid .form-group.description-field {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Date and Time - single column on mobile */
+  .date-time-container {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+  
+  /* Four Fields - single column on mobile */
+  .four-fields-container {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+  
+  /* All fields full width on mobile */
+  .form-grid .form-group {
+    width: 100% !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Crew four fields - single column on mobile */
+  .crew-four-fields-container {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+  
+  /* Crew details single column on mobile */
+  .crew-request-section .form-grid {
+    display: block !important;
+  }
+  
+  .crew-request-section .form-group {
+    width: 100% !important;
   }
   
   .form-title {
@@ -326,12 +782,39 @@
     width: 100%;
     padding: 1rem 1.5rem;
   }
+
+  /* Map responsive adjustments */
+  .form-group.full-width .map-picker-container .map-container {
+    height: 450px; /* Slightly smaller but still clickable */
+    margin-bottom: 25px; /* Extra margin to prevent overlap */
+  }
+
+  .form-group.full-width .map-picker-container .venue-map {
+    min-height: 450px !important;
+  }
+
+  .form-group.full-width .map-picker-container .leaflet-container {
+    min-height: 450px !important;
+  }
 }
 
 @media (max-width: 480px) {
   .organize-event-container {
     padding: 0.5rem;
     margin: 0.5rem;
+  }
+  
+  .organize-event-header {
+    gap: 0.75rem;
+  }
+  
+  .organize-event-title {
+    font-size: 1.25rem;
+  }
+  
+  .header-button {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.85rem;
   }
   
   .event-form {
@@ -350,6 +833,20 @@
   .form-textarea {
     padding: 0.75rem;
     font-size: 0.95rem;
+  }
+
+  /* Map mobile adjustments */
+  .form-group.full-width .map-picker-container .map-container {
+    height: 400px; /* Maintain clickability on mobile */
+    margin-bottom: 30px; /* Extra margin for mobile */
+  }
+
+  .form-group.full-width .map-picker-container .venue-map {
+    min-height: 400px !important;
+  }
+
+  .form-group.full-width .map-picker-container .leaflet-container {
+    min-height: 400px !important;
   }
 }
 
@@ -397,7 +894,7 @@
   border: none !important;
   border-radius: 0 !important;
   padding: 0 !important;
-  margin-top: 2rem;
+  margin-top: 1rem;
   width: 100%;
   max-width: 100%;
   animation: slideDown 0.3s ease-out;
@@ -409,7 +906,7 @@
   font-size: 1.5rem;
   font-weight: 700;
   color: #2c3e50;
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
   line-height: 1.2;
   text-align: left;
   width: 100%;
@@ -438,23 +935,21 @@
 }
 
 
-/* Crew request form grid adjustments */
+/* Crew request form layout adjustments */
 .crew-request-section .form-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  margin-top: 1rem;
+  display: block;
+  margin-top: 0.5rem;
   width: 100%;
   max-width: 100%;
 }
 
 
 .crew-request-section .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .crew-request-section .form-group label {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   font-weight: 600;
   color: #374151;
 }
@@ -481,14 +976,26 @@
 .crew-request-section .form-label {
   color: #495057;
   font-weight: 600;
+  text-align: left;
+  display: block;
+  width: 100%;
+  margin-bottom: 0.25rem;
+  margin-top: 0;
 }
 
 .crew-request-section .form-input,
 .crew-request-section .form-select,
 .crew-request-section .form-textarea {
+  width: 100% !important;
+  max-width: 100% !important;
   background: white;
   border: 2px solid #e9ecef;
   transition: all 0.3s ease;
+  display: block !important;
+  box-sizing: border-box !important;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0.75rem 1rem;
 }
 
 .crew-request-section .form-input:focus,
@@ -502,15 +1009,14 @@
 /* Responsive adjustments for crew section */
 @media (max-width: 1024px) {
   .crew-request-section .form-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+    display: block;
   }
 }
 
 @media (max-width: 768px) {
   .crew-request-section {
-    padding: 20px;
-    margin-top: 15px;
+    padding: 10px;
+    margin-top: 10px;
   }
   
   .section-header h3 {
@@ -518,14 +1024,13 @@
   }
   
   .crew-request-section .form-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    display: block;
   }
 }
 
 @media (max-width: 480px) {
   .crew-request-section {
-    padding: 15px;
+    padding: 8px;
   }
   
   .section-header {

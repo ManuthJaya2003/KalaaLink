@@ -131,7 +131,9 @@ const AddArtistModal = ({ isOpen, onClose, onSave }) => {
         )}
 
         <form onSubmit={handleSubmit} className="modal-form add-artist-form">
-          <div className="form-row">
+          {/* 3x3 Grid Layout */}
+          <div className="form-grid">
+            {/* Row 1 */}
             <div className="form-group">
               <label htmlFor="artistName" className="form-label">Artist Name *</label>
               <input
@@ -163,25 +165,7 @@ const AddArtistModal = ({ isOpen, onClose, onSave }) => {
                 <option value="Other">Other</option>
               </select>
             </div>
-          </div>
 
-          {inputs.genre === "Other" && (
-            <div className="form-group">
-              <label htmlFor="otherGenre" className="form-label">Specify Genre *</label>
-              <input
-                type="text"
-                id="otherGenre"
-                name="otherGenre"
-                className="form-input"
-                placeholder="Please specify the genre"
-                value={inputs.otherGenre}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          )}
-
-          <div className="form-row">
             <div className="form-group">
               <label htmlFor="category" className="form-label">Category *</label>
               <input
@@ -196,6 +180,7 @@ const AddArtistModal = ({ isOpen, onClose, onSave }) => {
               />
             </div>
 
+            {/* Row 2 */}
             <div className="form-group">
               <label htmlFor="bookingPrice" className="form-label">Booking Price *</label>
               <div className="price-input-container">
@@ -214,71 +199,92 @@ const AddArtistModal = ({ isOpen, onClose, onSave }) => {
                 />
               </div>
             </div>
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="summary" className="form-label">Summary *</label>
-            <textarea
-              id="summary"
-              name="summary"
-              className="form-input"
-              placeholder="Brief description of the artist's style and expertise"
-              rows="3"
-              value={inputs.summary}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="bio" className="form-label">Bio *</label>
-            <textarea
-              id="bio"
-              name="bio"
-              className="form-input"
-              placeholder="Detailed biography and background information"
-              rows="5"
-              value={inputs.bio}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="image" className="form-label">Artist Image</label>
-            <div className="image-upload-container">
-              <input
-                type="file"
-                id="image"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="image-input"
+            <div className="form-group-narrow">
+              <label htmlFor="summary" className="form-label">Summary *</label>
+              <textarea
+                id="summary"
+                name="summary"
+                className="form-input"
+                placeholder="Brief description of the artist's style and expertise"
+                rows="3"
+                value={inputs.summary}
+                onChange={handleChange}
+                required
               />
-              <label htmlFor="image" className="image-upload-label">
-                <span className="upload-icon">📷</span>
-                <span>Choose Image</span>
-              </label>
             </div>
-            
-            {preview && (
-              <div className="image-preview-container">
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="image-preview"
+
+            <div className="form-group-narrow">
+              <label htmlFor="bio" className="form-label">Bio *</label>
+              <textarea
+                id="bio"
+                name="bio"
+                className="form-input"
+                placeholder="Detailed biography and background information"
+                rows="3"
+                value={inputs.bio}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            {/* Row 3 */}
+            <div className="form-group">
+              <label htmlFor="image" className="form-label">Artist Image</label>
+              <div className="image-upload-container">
+                <input
+                  type="file"
+                  id="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="image-input"
                 />
-                <button
-                  type="button"
-                  className="remove-image-btn"
-                  onClick={() => {
-                    setPreview("");
-                    setInputs(prev => ({ ...prev, image: null }));
-                  }}
-                >
-                  ✕
-                </button>
+                <label htmlFor="image" className="image-upload-label">
+                  <span className="upload-icon">📷</span>
+                  <span>Choose Image</span>
+                </label>
               </div>
-            )}
+            </div>
+
+            <div className="form-group">
+              {preview && (
+                <div className="image-preview-container">
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="image-preview"
+                  />
+                  <button
+                    type="button"
+                    className="remove-image-btn"
+                    onClick={() => {
+                      setPreview("");
+                      setInputs(prev => ({ ...prev, image: null }));
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="form-group">
+              {inputs.genre === "Other" && (
+                <div>
+                  <label htmlFor="otherGenre" className="form-label">Specify Genre *</label>
+                  <input
+                    type="text"
+                    id="otherGenre"
+                    name="otherGenre"
+                    className="form-input"
+                    placeholder="Please specify the genre"
+                    value={inputs.otherGenre}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="modal-actions">

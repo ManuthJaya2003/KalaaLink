@@ -552,12 +552,13 @@
 .marketplace-modal-content {
   background: #ffffff;
   border-radius: 8px;
-  max-width: 800px;
-  width: 90%;
+  max-width: 900px;
+  width: 95%;
   max-height: 90vh;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.3s ease-out;
+  position: relative;
 }
 
 @keyframes modalSlideIn {
@@ -578,6 +579,7 @@
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #e5e7eb;
   background: #f8f9fa;
+  margin-bottom: 0;
 }
 
 .modal-header h2 {
@@ -608,9 +610,17 @@
 }
 
 .modal-body {
-  max-height: calc(90vh - 80px);
+  max-height: calc(90vh - 100px);
   overflow-y: auto;
-  padding: 0;
+  padding: 2rem;
+  padding-top: 12rem;
+  margin-top: 0;
+  min-height: 500px;
+  position: relative;
+  z-index: 1;
+  height: auto !important;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ===== PRODUCTS GRID STYLING (Matching Ongoing Events) ===== */
@@ -1122,6 +1132,14 @@
   color: inherit;
 }
 
+/* Product form when used in modal */
+.marketplace-modal-content .product-form-container {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  margin-top: 0;
+}
+
 .product-form {
   background: white;
   border-radius: 8px;
@@ -1132,26 +1150,165 @@
   max-width: 100%;
 }
 
+/* Product form when used in modal - adjust styling */
+.marketplace-modal-content .product-form {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  padding-top: 1rem;
+  box-shadow: none;
+  border-left: none;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 0;
+}
+
 .form-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  display: block;
+  gap: 0;
   margin-bottom: 2rem;
   width: 100%;
 }
 
-.form-group.full-width {
+/* Form grid when used in modal - 3x3 grid layout */
+.marketplace-modal-content .form-grid {
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  margin-top: 8rem;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  width: 100%;
+  padding-top: 4rem;
+  position: relative;
+  z-index: 1;
+  height: auto !important;
+  min-height: 200px !important;
+  overflow: visible !important;
+  flex: 1;
+}
+
+/* Form groups when used in modal - Grid layout */
+.marketplace-modal-content .form-group {
+  margin-bottom: 1rem;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  float: none !important;
+  clear: none !important;
+  position: relative;
+  z-index: 1;
+  overflow: visible !important;
+}
+
+/* Full width form group for image upload */
+.marketplace-modal-content .form-group.full-width {
   grid-column: 1 / -1;
+  width: 100% !important;
+}
+
+/* First form group - ensure visibility */
+.marketplace-modal-content .form-group:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  position: relative;
+  z-index: 1;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  min-height: 60px !important;
+  overflow: visible !important;
+}
+
+/* Second form group - ensure visibility */
+.marketplace-modal-content .form-group:nth-child(2) {
+  margin-top: 0;
+  padding-top: 0;
+  position: relative;
+  z-index: 1;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  min-height: 60px !important;
+  overflow: visible !important;
+}
+
+/* Form labels when used in modal - Stacked layout */
+.marketplace-modal-content .form-label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  display: block !important;
+  width: 100% !important;
+  float: none !important;
+}
+
+/* Form inputs when used in modal - Stacked layout */
+.marketplace-modal-content .form-input {
+  width: 100% !important;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e1e8ed;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background: white;
+  color: #333;
+  font-family: inherit;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  box-sizing: border-box;
+  float: none !important;
+  clear: both !important;
+  position: relative;
+  z-index: 1;
+  overflow: visible !important;
+}
+
+.marketplace-modal-content .form-input:focus {
+  outline: none;
+  border-color: #C1A37F;
+  box-shadow: 0 0 0 3px rgba(193, 163, 127, 0.1);
+  transform: translateY(-1px);
+}
+
+.marketplace-modal-content .form-input:hover {
+  border-color: #a68b5f;
+}
+
+/* File upload when used in modal - Stacked layout */
+.marketplace-modal-content .file-upload-label {
+  padding: 1.5rem;
+  border: 2px dashed #C1A37F;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(193, 163, 127, 0.05), rgba(166, 139, 95, 0.05));
+  transition: all 0.3s ease;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.marketplace-modal-content .file-upload-label:hover {
+  border-color: #a68b5f;
+  background: linear-gradient(135deg, rgba(193, 163, 127, 0.1), rgba(166, 139, 95, 0.1));
+  transform: translateY(-1px);
+}
+
+.form-group.full-width {
+  width: 100%;
+  display: block;
 }
 
 .form-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  display: block;
   font-weight: 600;
   color: #333;
   margin-bottom: 0.5rem;
   font-size: 0.95rem;
+  width: 100%;
 }
 
 .form-input {
@@ -1164,6 +1321,8 @@
   background: white;
   color: #333;
   font-family: inherit;
+  display: block;
+  box-sizing: border-box;
 }
 
 .form-input:focus {
@@ -1190,10 +1349,7 @@
 }
 
 .file-upload-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: block;
   padding: 2rem;
   border: 2px dashed #C1A37F;
   border-radius: 12px;
@@ -1202,6 +1358,8 @@
   transition: all 0.3s ease;
   text-align: center;
   color: #C1A37F;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .file-upload-label:hover {
@@ -1225,6 +1383,21 @@
 .form-actions {
   text-align: center;
   margin-top: 2rem;
+}
+
+/* Form actions when used in modal - Fixed at bottom */
+.marketplace-modal-content .form-actions {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+  width: 100%;
+  clear: both;
+  position: sticky;
+  bottom: 0;
+  background: white;
+  z-index: 10;
+  flex-shrink: 0;
 }
 
 .submit-button {
@@ -1578,8 +1751,8 @@
   }
   
   .form-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+    display: block;
+    gap: 0;
   }
   
   .add-product-section {
@@ -1605,6 +1778,18 @@
   
   .modal-header h2 {
     font-size: 1.25rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+    padding-top: 8rem;
+    margin-top: 0;
+  }
+  
+  .marketplace-modal-content .form-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem;
   }
 }
 
@@ -1659,12 +1844,24 @@
   }
   
   .form-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    display: block;
+    gap: 0;
   }
   
   .product-form {
     padding: 1.5rem;
+  }
+  
+  .marketplace-modal-content .form-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+  
+  .modal-body {
+    padding: 0.75rem;
+    padding-top: 6rem;
+    margin-top: 0;
   }
   
   .submit-button {

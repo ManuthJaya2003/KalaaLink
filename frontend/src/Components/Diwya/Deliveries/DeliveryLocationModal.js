@@ -15,14 +15,14 @@ L.Icon.Default.mergeOptions({
 // Custom icons
 const deliveryIcon = L.divIcon({
   className: 'custom-delivery-marker',
-  html: '<div style="background-color: #dc3545; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">📦</div>',
+  html: '<div style="background-color: #dc3545; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;"></div>',
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 });
 
 const userIcon = L.divIcon({
   className: 'custom-user-marker',
-  html: '<div style="background-color: #28a745; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">📍</div>',
+  html: '<div style="background-color: #28a745; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;"></div>',
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 });
@@ -162,7 +162,7 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
         {/* Modern Header with Icon */}
         <div className="modal-header">
           <div className="header-content">
-            <div className="header-icon">📦</div>
+            <div className="header-icon"></div>
             <h3>{title}</h3>
           </div>
           <button className="modal-close" onClick={onClose}>
@@ -181,7 +181,7 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
             </div>
             <div className="event-info-grid">
               <div className="info-item">
-                <div className="info-icon">🏠</div>
+                <div className="info-icon"></div>
                 <div className="info-content">
                   <span className="info-label">Address</span>
                   <span className="info-value">{delivery?.address}, {delivery?.city}, {delivery?.district}</span>
@@ -215,7 +215,7 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
               </div>
             ) : locationError ? (
               <div className="status-error">
-                <div className="status-icon">⚠️</div>
+                <div className="status-icon"></div>
                 <div className="status-content">
                   <h5>Location Error</h5>
                   <p>{locationError}</p>
@@ -223,26 +223,26 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
                     className="btn btn-outline"
                     onClick={getUserLocation}
                   >
-                    <span className="btn-icon">🔄</span>
+                    <span className="btn-icon"></span>
                     Try Again
                   </button>
                 </div>
               </div>
             ) : userLocation ? (
               <div className="status-success">
-                <div className="status-icon">✅</div>
+                <div className="status-icon"></div>
                 <div className="status-content">
                   <h5>Location Detected</h5>
                   <div className="location-details">
                     <div className="location-item">
-                      <div className="item-icon">📍</div>
+                      <div className="item-icon"></div>
                       <div className="item-content">
                         <span className="item-label">Coordinates</span>
                         <span className="item-value">{userLocation.lat.toFixed(6)}, {userLocation.lng.toFixed(6)}</span>
                       </div>
                     </div>
                     <div className="location-item">
-                      <div className="item-icon">🕒</div>
+                      <div className="item-icon"></div>
                       <div className="item-content">
                         <span className="item-label">Detected</span>
                         <span className="item-value">{locationTimestamp ? locationTimestamp.toLocaleTimeString() : 'Just now'}</span>
@@ -250,7 +250,7 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
                     </div>
                     {userLocation.accuracy && (
                       <div className="location-item">
-                        <div className="item-icon">🎯</div>
+                        <div className="item-icon"></div>
                         <div className="item-content">
                           <span className="item-label">Accuracy</span>
                           <span className="item-value">±{Math.round(userLocation.accuracy)}m</span>
@@ -270,14 +270,12 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
                 onClick={handleGetDirections}
                 className="btn btn-primary"
               >
-                <span className="btn-icon">🗺️</span>
                 Get Directions
               </button>
               <button 
                 className="btn btn-secondary"
                 onClick={getUserLocation}
               >
-                <span className="btn-icon">🔄</span>
                 Refresh Location
               </button>
             </div>
@@ -300,7 +298,7 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
               <Marker position={deliveryCoords} icon={deliveryIcon}>
                 <Popup>
                   <div className="venue-popup">
-                    <h4>📦 Delivery Location</h4>
+                    <h4>Delivery Location</h4>
                     <p>{delivery?.address}, {delivery?.city}</p>
                     <p><strong>Customer:</strong> {delivery?.customerName}</p>
                     <p><strong>Product:</strong> {delivery?.productName || delivery?.artId?.artType}</p>
@@ -313,7 +311,7 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
                 <Marker position={userLocation} icon={userIcon}>
                   <Popup>
                     <div className="user-popup">
-                      <h4>📍 Your Location</h4>
+                      <h4>Your Location</h4>
                       <p>You are here</p>
                     </div>
                   </Popup>

@@ -1,10 +1,9 @@
 import React from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 
 const URL = "http://localhost:5000/events";
 
-function OngoingEventsGrid({ events, setEvents }) {
+function OngoingEventsGrid({ events, setEvents, onUpdateEvent }) {
   const deleteEvent = async (id) => {
     try {
       await axios.delete(`${URL}/${id}`);
@@ -84,12 +83,12 @@ function OngoingEventsGrid({ events, setEvents }) {
 
                 <div className="event-actions">
                   <div className="action-buttons">
-                    <Link
-                      to={`/EventManagerDash/${ev._id}`}
+                    <button
+                      onClick={() => onUpdateEvent(ev)}
                       className="btn btn-primary action-btn"
                     >
                       Update
-                    </Link>
+                    </button>
                     <button
                       onClick={() => deleteEvent(ev._id)}
                       className="btn btn-secondary action-btn delete-btn"

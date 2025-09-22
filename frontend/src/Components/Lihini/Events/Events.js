@@ -446,13 +446,6 @@ function Events({ events: propEvents }) {
                 <button className="modal-close" onClick={closeModals}>×</button>
               </div>
               <div className="modal-body">
-                {selectedEvent.image && (
-                  <img 
-                    src={`http://localhost:5000${selectedEvent.image.startsWith("/uploads") ? selectedEvent.image : `/uploads/${selectedEvent.image}`}`} 
-                    alt={selectedEvent.eventTitle} 
-                    className="modal-image" 
-                  />
-                )}
                 <div className="event-info-layout">
                   <div className="info-row">
                     <span className="info-label">Date</span>
@@ -472,7 +465,7 @@ function Events({ events: propEvents }) {
                   </div>
                   <div className="info-row">
                     <span className="info-label">Description</span>
-                    <span className="info-value">{selectedEvent.description || "No description available"}</span>
+                    <span className="info-value">{selectedEvent.eventDescription || "No description available"}</span>
                   </div>
                 </div>
               </div>
