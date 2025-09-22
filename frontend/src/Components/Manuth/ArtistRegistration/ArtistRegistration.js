@@ -22,15 +22,102 @@ function ArtistRegistration() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [passwordError, setPasswordError] = useState('');
+  const [nameErrors, setNameErrors] = useState({ firstName: '', lastName: '' });
+
+  // Name validation function
+  const validateName = (name, fieldName) => {
+    const trimmedName = name.trim();
+    
+    if (trimmedName.length < 2) {
+      return `${fieldName} must be at least 2 characters long`;
+    }
+    
+    if (!/^[A-Za-z]+$/.test(trimmedName)) {
+      return `${fieldName} can only contain letters (A-Z, a-z)`;
+    }
+    
+    if (name !== trimmedName) {
+      return `${fieldName} cannot have leading or trailing spaces`;
+    }
+    
+    return '';
+  };
+
+  // Password validation function
+  const validatePassword = (password) => {
+    const errors = [];
+    
+    if (password.length < 8) {
+      errors.push('Password must be at least 8 characters long');
+    }
+    
+    if (!/[A-Z]/.test(password)) {
+      errors.push('Password must contain at least one uppercase letter');
+    }
+    
+    if (!/[a-z]/.test(password)) {
+      errors.push('Password must contain at least one lowercase letter');
+    }
+    
+    if (!/[*$#@!%^&()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      errors.push('Password must contain at least one special character (*, $, #, @, etc.)');
+    }
+    
+    return errors;
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    
+    // Validate names in real-time
+    if (e.target.name === 'firstName' || e.target.name === 'lastName') {
+      const fieldName = e.target.name === 'firstName' ? 'First Name' : 'Last Name';
+      const nameError = validateName(e.target.value, fieldName);
+      setNameErrors(prev => ({
+        ...prev,
+        [e.target.name]: nameError
+      }));
+    }
+    
+    // Validate password in real-time
+    if (e.target.name === 'password') {
+      const passwordErrors = validatePassword(e.target.value);
+      if (passwordErrors.length > 0) {
+        setPasswordError(passwordErrors[0]); // Show first error
+      } else {
+        setPasswordError('');
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage({ type: '', text: '' });
+    setPasswordError('');
+    setNameErrors({ firstName: '', lastName: '' });
+
+    // Validate names before submission
+    const firstNameError = validateName(form.firstName, 'First Name');
+    const lastNameError = validateName(form.lastName, 'Last Name');
+    
+    if (firstNameError || lastNameError) {
+      setNameErrors({
+        firstName: firstNameError,
+        lastName: lastNameError
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // Validate password before submission
+    const passwordErrors = validatePassword(form.password);
+    if (passwordErrors.length > 0) {
+      setPasswordError(passwordErrors[0]);
+      setIsLoading(false);
+      return;
+    }
 
     // Debug: Log the form data being sent
     console.log("Form data being sent:", form);
@@ -102,6 +189,16 @@ function ArtistRegistration() {
                   onChange={handleChange}
                   required
                 />
+                {nameErrors.firstName && (
+                  <div className="name-error-message" style={{ 
+                    color: 'red', 
+                    marginTop: '0.5rem', 
+                    fontSize: '0.85rem',
+                    textAlign: 'left'
+                  }}>
+                    {nameErrors.firstName}
+                  </div>
+                )}
               </div>
 
               <div className="form-group">
@@ -116,6 +213,16 @@ function ArtistRegistration() {
                   onChange={handleChange}
                   required
                 />
+                {nameErrors.lastName && (
+                  <div className="name-error-message" style={{ 
+                    color: 'red', 
+                    marginTop: '0.5rem', 
+                    fontSize: '0.85rem',
+                    textAlign: 'left'
+                  }}>
+                    {nameErrors.lastName}
+                  </div>
+                )}
               </div>
 
               <div className="form-group">
@@ -218,6 +325,18 @@ function ArtistRegistration() {
                 label="Password"
                 required
               />
+
+              {passwordError && (
+                <div className="password-error-message" style={{ 
+                  color: 'red', 
+                  marginTop: '0.5rem', 
+                  marginBottom: '1rem', 
+                  fontSize: '0.85rem',
+                  textAlign: 'left'
+                }}>
+                  {passwordError}
+                </div>
+              )}
 
               <button 
                 type="submit" 

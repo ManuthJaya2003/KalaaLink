@@ -17,14 +17,78 @@ function SignUp() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [nameErrors, setNameErrors] = useState({ firstName: '', lastName: '' });
   
   const { signup } = useAuth();
   const navigate = useNavigate();
+
+  // Name validation function
+  const validateName = (name, fieldName) => {
+    const trimmedName = name.trim();
+    
+    if (trimmedName.length < 2) {
+      return `${fieldName} must be at least 2 characters long`;
+    }
+    
+    if (!/^[A-Za-z]+$/.test(trimmedName)) {
+      return `${fieldName} can only contain letters (A-Z, a-z)`;
+    }
+    
+    if (name !== trimmedName) {
+      return `${fieldName} cannot have leading or trailing spaces`;
+    }
+    
+    return '';
+  };
+
+  // Password validation function
+  const validatePassword = (password) => {
+    const errors = [];
+    
+    if (password.length < 8) {
+      errors.push('Password must be at least 8 characters long');
+    }
+    
+    if (!/[A-Z]/.test(password)) {
+      errors.push('Password must contain at least one uppercase letter');
+    }
+    
+    if (!/[a-z]/.test(password)) {
+      errors.push('Password must contain at least one lowercase letter');
+    }
+    
+    if (!/[*$#@!%^&()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      errors.push('Password must contain at least one special character (*, $, #, @, etc.)');
+    }
+    
+    return errors;
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     // Clear error when user starts typing
     if (error) setError('');
+    
+    // Validate names in real-time
+    if (e.target.name === 'firstName' || e.target.name === 'lastName') {
+      const fieldName = e.target.name === 'firstName' ? 'First Name' : 'Last Name';
+      const nameError = validateName(e.target.value, fieldName);
+      setNameErrors(prev => ({
+        ...prev,
+        [e.target.name]: nameError
+      }));
+    }
+    
+    // Validate password in real-time
+    if (e.target.name === 'password') {
+      const passwordErrors = validatePassword(e.target.value);
+      if (passwordErrors.length > 0) {
+        setPasswordError(passwordErrors[0]); // Show first error
+      } else {
+        setPasswordError('');
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -32,6 +96,29 @@ function SignUp() {
     setLoading(true);
     setError('');
     setSuccess('');
+    setPasswordError('');
+    setNameErrors({ firstName: '', lastName: '' });
+
+    // Validate names before submission
+    const firstNameError = validateName(formData.firstName, 'First Name');
+    const lastNameError = validateName(formData.lastName, 'Last Name');
+    
+    if (firstNameError || lastNameError) {
+      setNameErrors({
+        firstName: firstNameError,
+        lastName: lastNameError
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Validate password before submission
+    const passwordErrors = validatePassword(formData.password);
+    if (passwordErrors.length > 0) {
+      setPasswordError(passwordErrors[0]);
+      setLoading(false);
+      return;
+    }
 
     try {
       const result = await signup(
@@ -106,6 +193,16 @@ function SignUp() {
                 required
                 disabled={loading}
               />
+              {nameErrors.firstName && (
+                <div className="name-error-message" style={{ 
+                  color: 'red', 
+                  marginTop: '0.5rem', 
+                  fontSize: '0.85rem',
+                  textAlign: 'left'
+                }}>
+                  {nameErrors.firstName}
+                </div>
+              )}
             </div>
 
             <div className="form-group">
@@ -121,6 +218,16 @@ function SignUp() {
                 required
                 disabled={loading}
               />
+              {nameErrors.lastName && (
+                <div className="name-error-message" style={{ 
+                  color: 'red', 
+                  marginTop: '0.5rem', 
+                  fontSize: '0.85rem',
+                  textAlign: 'left'
+                }}>
+                  {nameErrors.lastName}
+                </div>
+              )}
             </div>
 
             <div className="form-group">
@@ -148,6 +255,18 @@ function SignUp() {
               required
               disabled={loading}
             />
+
+            {passwordError && (
+              <div className="password-error-message" style={{ 
+                color: 'red', 
+                marginTop: '0.5rem', 
+                marginBottom: '1rem', 
+                fontSize: '0.85rem',
+                textAlign: 'left'
+              }}>
+                {passwordError}
+              </div>
+            )}
 
             <button 
               type="submit" 
