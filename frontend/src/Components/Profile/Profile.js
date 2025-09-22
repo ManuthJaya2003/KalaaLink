@@ -52,6 +52,7 @@ function Profile() {
   const [userLocation, setUserLocation] = useState(null);
   const [showArtistMap, setShowArtistMap] = useState(false);
   const [showEventMap, setShowEventMap] = useState(false);
+  const [mapInstances, setMapInstances] = useState(new Set());
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -67,6 +68,59 @@ function Profile() {
       getUserLocation();
     }
   }, [isAuthenticated]);
+
+  // Watch position for live location updates (same as contact us page)
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      console.log('Geolocation is not supported by this browser.');
+      return;
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setUserLocation({
+          lat: latitude,
+          lng: longitude
+        });
+      },
+      (err) => {
+        console.error('Geolocation error:', err);
+        // Keep existing location if watch fails
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
+      }
+    );
+
+    // Cleanup function
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, []); // Empty dependency array to run only once
+
+  // Cleanup maps when component unmounts
+  useEffect(() => {
+    return () => {
+      // Clean up any existing map instances
+      const mapContainers = document.querySelectorAll('.leaflet-container');
+      mapContainers.forEach(container => {
+        if (container._leaflet_id) {
+          container._leaflet_id = null;
+        }
+      });
+    };
+  }, []);
+
+  // Cleanup function for map containers
+  const cleanupMapContainer = (containerId) => {
+    const container = document.getElementById(containerId);
+    if (container && container._leaflet_id) {
+      container._leaflet_id = null;
+    }
+  };
 
   // Real-time updates for bookings
   useEffect(() => {
@@ -119,7 +173,7 @@ function Profile() {
     };
   }, []);
 
-  // Get user's current location
+  // Get user's current location with live updates (same as contact us page)
   const getUserLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -131,8 +185,24 @@ function Profile() {
         },
         (error) => {
           console.log('Error getting user location:', error);
+          // Set default location if geolocation fails
+          setUserLocation({
+            lat: 7.2906, // Default to Kandy, Sri Lanka
+            lng: 80.6337
+          });
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
         }
       );
+    } else {
+      // Set default location if geolocation is not supported
+      setUserLocation({
+        lat: 7.2906, // Default to Kandy, Sri Lanka
+        lng: 80.6337
+      });
     }
   };
 
@@ -644,6 +714,9 @@ function Profile() {
 
   // Map utility functions
   const toggleMap = (bookingId) => {
+    // Clean up the map container before toggling
+    cleanupMapContainer(bookingId);
+    
     setExpandedMaps(prev => ({
       ...prev,
       [bookingId]: !prev[bookingId]
@@ -742,8 +815,43 @@ function Profile() {
   };
 
   const getDirectionsUrl = (destination) => {
-    if (!userLocation) return null;
-    return `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${destination.lat},${destination.lng}`;
+    if (!userLocation) {
+      // If no user location available, prompt user to enable location
+      return `https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}`;
+    }
+    return `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${destination.lat},${destination.lng}`;
+  };
+
+  // Helper function to get venue location for event bookings (same logic as EventBookingMap)
+  const getEventVenueLocation = (booking) => {
+    if (!booking.event) {
+      console.log('No event data for booking:', booking._id);
+      return { lat: 6.9271, lng: 79.8612 };
+    }
+
+    // First try: venueCoordinates from event
+    if (booking.event.venueCoordinates?.latitude && booking.event.venueCoordinates?.longitude) {
+      console.log('Using venueCoordinates:', booking.event.venueCoordinates);
+      return { 
+        lat: booking.event.venueCoordinates.latitude, 
+        lng: booking.event.venueCoordinates.longitude 
+      };
+    }
+    // Second try: venue.location
+    else if (booking.event.venue?.location?.lat && booking.event.venue?.location?.lng) {
+      console.log('Using venue.location:', booking.event.venue.location);
+      return booking.event.venue.location;
+    }
+    // Third try: eventLocation from booking
+    else if (booking.eventLocation?.lat && booking.eventLocation?.lng) {
+      console.log('Using eventLocation:', booking.eventLocation);
+      return booking.eventLocation;
+    }
+    // Fallback: Default to Colombo, Sri Lanka
+    else {
+      console.log('Using fallback location for booking:', booking._id);
+      return { lat: 6.9271, lng: 79.8612 };
+    }
   };
 
   const getProfilePictureUrl = (profilePicture) => {
@@ -784,8 +892,9 @@ function Profile() {
         <MapContainer
           center={center}
           zoom={13}
-          style={{ height: '300px', width: '100%' }}
+          style={{ height: '250px', width: '100%', maxHeight: '250px', minHeight: '250px' }}
           key={`artist-map-${booking._id}`}
+          id={`artist-map-${booking._id}`}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -815,19 +924,6 @@ function Profile() {
             </Marker>
           )}
         </MapContainer>
-        
-        {userLocation && (
-          <div className="map-actions">
-            <a
-              href={getDirectionsUrl(eventLocation)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="directions-btn"
-            >
-              Get Directions
-            </a>
-          </div>
-        )}
       </div>
     );
   };
@@ -887,8 +983,9 @@ function Profile() {
         <MapContainer
           center={center}
           zoom={13}
-          style={{ height: '300px', width: '100%' }}
+          style={{ height: '250px', width: '100%', maxHeight: '250px', minHeight: '250px' }}
           key={`event-map-${booking._id}`}
+          id={`event-map-${booking._id}`}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -909,19 +1006,6 @@ function Profile() {
             </Popup>
           </Marker>
         </MapContainer>
-        
-        {userLocation && (
-          <div className="map-actions">
-            <a
-              href={getDirectionsUrl(venueLocation)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="directions-btn"
-            >
-              Get Directions
-            </a>
-          </div>
-        )}
       </div>
     );
   };
@@ -945,8 +1029,9 @@ function Profile() {
         <MapContainer
           center={center}
           zoom={13}
-          style={{ height: '300px', width: '100%' }}
+          style={{ height: '250px', width: '100%', maxHeight: '250px', minHeight: '250px' }}
           key={`order-map-${order._id}`}
+          id={`order-map-${order._id}`}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -968,19 +1053,6 @@ function Profile() {
             </Popup>
           </Marker>
         </MapContainer>
-        
-        {userLocation && (
-          <div className="map-actions">
-            <a
-              href={getDirectionsUrl(deliveryLocation)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="directions-btn"
-            >
-              Get Directions
-            </a>
-          </div>
-        )}
       </div>
     );
   };
@@ -1155,11 +1227,11 @@ function Profile() {
                             <div className="widget-content">
                               <div className="info-stack">
                                 <div className="info-line">
-                                  <span className="info-label">Event Type:</span>
+                                  <span className="info-label">Event Name:</span>
                                   <span className="info-value">{booking.eventType}</span>
                                 </div>
                                 <div className="info-line">
-                                  <span className="info-label">Event Name:</span>
+                                  <span className="info-label">Artist Name:</span>
                                   <span className="info-value">{booking.artist?.stageName || booking.artist?.artistName || (booking.artist?.firstName && booking.artist?.lastName ? `${booking.artist.firstName} ${booking.artist.lastName}` : booking.artist?.firstName || booking.artist?.lastName || 'Artist Booking')}</span>
                                 </div>
                                 <div className="info-line">
@@ -1180,9 +1252,21 @@ function Profile() {
                             </div>
                             
                             {expandedMaps[`artist-${booking._id}`] && (
-                              <div className="map-container">
-                                <ArtistBookingMap booking={booking} />
-                              </div>
+                              <>
+                                <div className="map-container">
+                                  <ArtistBookingMap booking={booking} />
+                                </div>
+                                <div className="map-actions">
+                                  <a
+                                    href={getDirectionsUrl(booking.eventLocation)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="directions-btn"
+                                  >
+                                    Get Directions
+                                  </a>
+                                </div>
+                              </>
                             )}
                           </div>
                         ))}
@@ -1250,9 +1334,21 @@ function Profile() {
                             </div>
                             
                             {expandedMaps[`event-${booking._id}`] && (
-                              <div className="map-container">
-                                <EventBookingMap booking={booking} />
-                              </div>
+                              <>
+                                <div className="map-container">
+                                  <EventBookingMap booking={booking} />
+                                </div>
+                                <div className="map-actions">
+                                  <a
+                                    href={getDirectionsUrl(getEventVenueLocation(booking))}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="directions-btn"
+                                  >
+                                    Get Directions
+                                  </a>
+                                </div>
+                              </>
                             )}
                           </div>
                         ))}
@@ -1325,9 +1421,21 @@ function Profile() {
                           </div>
                           
                           {expandedMaps[`order-${order._id}`] && (
-                            <div className="map-container">
-                              <OrderMap order={order} />
-                            </div>
+                            <>
+                              <div className="map-container">
+                                <OrderMap order={order} />
+                              </div>
+                              <div className="map-actions">
+                                <a
+                                  href={getDirectionsUrl(order.deliveryAddress?.coordinates || {lat: 6.9271, lng: 79.8612})}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="directions-btn"
+                                >
+                                  Get Directions
+                                </a>
+                              </div>
+                            </>
                           )}
                         </div>
                       ))}

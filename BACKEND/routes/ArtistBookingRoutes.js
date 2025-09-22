@@ -16,6 +16,7 @@ const {
   verifyPaymentManually,
   autoVerifyAllPendingBookings,
   generateInvoice,
+  deleteBooking,
   deleteBookingsByStatus,
 } = require("../controllers/ArtistBookingController");
 
@@ -45,6 +46,9 @@ router.post("/confirm", confirmBooking);
 
 // ✅ Update booking status
 router.put("/:id/status", updateBookingStatus);
+
+// ✅ Delete individual booking
+router.delete("/:id", deleteBooking);
 
 // ✅ Clear completed and cancelled bookings for an artist
 router.delete("/clear/:artistId", clearCompletedAndCancelledBookings);

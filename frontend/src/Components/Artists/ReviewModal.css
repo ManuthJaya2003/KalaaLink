@@ -18,10 +18,13 @@
   width: 100%;
   max-width: 700px;
   height: auto;
-  max-height: 95vh;
-  overflow: visible;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes modalSlideIn {
@@ -39,8 +42,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
+  padding: 16px 20px;
   border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 12px 12px 0 0;
 }
 
 .review-modal-header h2 {
@@ -72,8 +78,12 @@
 }
 
 .review-modal-body {
-  padding: 6px 12px 8px 12px;
+  padding: 20px;
   min-height: 400px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
 .artist-info {
@@ -124,15 +134,16 @@
 .review-form {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 16px;
   margin: 0;
   padding: 0;
+  flex: 1;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 8px;
   margin: 0;
   padding: 0;
 }
@@ -193,26 +204,30 @@
 
 .form-actions {
   display: flex;
-  gap: 6px;
+  gap: 12px;
   justify-content: center;
   align-items: center;
-  margin: 0;
-  padding: 4px 0 0 0;
+  margin: 16px 0 0 0;
+  padding: 16px 0 0 0;
   border-top: 1px solid #e5e7eb;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  background: white;
 }
 
 .review-modal-content .btn,
 .review-modal-body .btn,
 .review-form .btn {
-  padding: 6px 12px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  width: 90px;
-  height: 32px;
+  min-width: 100px;
+  height: 40px;
   text-align: center;
   flex-shrink: 0;
   margin: 0;
@@ -341,6 +356,21 @@ button[type="submit"].btn.btn-primary,
   box-shadow: none !important;
 }
 
+/* Override any conflicting styles from other CSS files */
+.review-modal-overlay .review-modal-content .form-actions {
+  margin: 16px 0 0 0 !important;
+  padding: 16px 0 0 0 !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+  z-index: 10 !important;
+  background: white !important;
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  border-top: 1px solid #e5e7eb !important;
+}
+
 button[type="submit"].btn.btn-primary:hover,
 .review-modal button[type="submit"]:hover,
 .review-modal .btn-primary[type="submit"]:hover {
@@ -358,9 +388,14 @@ button[type="submit"].btn.btn-primary:hover,
   
   .review-modal-content {
     max-height: 95vh;
+    width: 100%;
+    margin: 0;
   }
   
-  .review-modal-header,
+  .review-modal-header {
+    padding: 16px;
+  }
+  
   .review-modal-body {
     padding: 16px;
   }
@@ -373,9 +408,13 @@ button[type="submit"].btn.btn-primary:hover,
   
   .form-actions {
     flex-direction: column;
+    gap: 8px;
   }
   
-  .btn {
+  .review-modal-content .btn,
+  .review-modal-body .btn,
+  .review-form .btn {
     width: 100%;
+    min-width: auto;
   }
 }

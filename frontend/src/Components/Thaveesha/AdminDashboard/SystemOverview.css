@@ -536,6 +536,97 @@
   }
 }
 
+/* ===== REVENUE BREAKDOWN SECTION ===== */
+.revenue-breakdown {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #C1A37F;
+}
+
+.breakdown-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.breakdown-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #C1A37F;
+}
+
+.breakdown-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.breakdown-icon.event-icon {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+}
+
+.breakdown-icon.marketplace-icon {
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  color: white;
+}
+
+.breakdown-icon.artist-icon {
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  color: white;
+}
+
+.breakdown-icon.donation-icon {
+  background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+  color: white;
+}
+
+.breakdown-content {
+  flex: 1;
+}
+
+.breakdown-content h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin: 0 0 0.25rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.breakdown-amount {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
 @media (max-width: 480px) {
   .charts-title {
     font-size: 1.3rem;
@@ -543,5 +634,27 @@
   
   .charts-grid {
     gap: 12px;
+  }
+  
+  .breakdown-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .breakdown-item {
+    padding: 0.75rem;
+  }
+  
+  .breakdown-icon {
+    width: 35px;
+    height: 35px;
+    margin-right: 0.75rem;
+  }
+  
+  .breakdown-content h4 {
+    font-size: 0.8rem;
+  }
+  
+  .breakdown-amount {
+    font-size: 1.1rem;
   }
 }

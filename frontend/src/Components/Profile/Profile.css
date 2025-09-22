@@ -546,12 +546,15 @@ div.donation-item,
 .map-container {
   margin-top: 1rem;
   border-radius: 8px;
-  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .booking-map {
   position: relative;
+  height: 350px;
+  max-height: 350px;
+  overflow: visible;
 }
 
 .map-actions {
@@ -560,6 +563,10 @@ div.donation-item,
   border-top: 1px solid #e9ecef;
   display: flex;
   justify-content: center;
+  position: relative;
+  z-index: 10;
+  margin-top: 0;
+  width: 100%;
 }
 
 .directions-btn {
@@ -775,7 +782,8 @@ div.donation-item,
   }
 
   .booking-map {
-    height: 250px;
+    height: 300px;
+    max-height: 300px;
   }
 
   .directions-btn {

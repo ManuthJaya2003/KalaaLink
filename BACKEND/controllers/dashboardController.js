@@ -1,6 +1,7 @@
 const Booking = require("../model/Booking");
 const Artist = require("../model/ArtistModel");
 const ArtistRegistration = require("../model/artistRegistration");
+const ArtistBooking = require("../model/ArtistBookingModel");
 const User = require("../model/UserModel");
 const Art = require("../model/Art");
 const Order = require("../model/Order");
@@ -151,8 +152,10 @@ const deleteRecentBooking = async (req, res) => {
 // Get system overview data for admin dashboard
 const getSystemOverview = async (req, res) => {
   try {
-    // Get total revenue from all paid bookings
-    const revenueResult = await Booking.aggregate([
+    // Calculate total revenue from all sources
+    
+    // 1. Event bookings revenue (existing logic)
+    const eventBookingsRevenue = await Booking.aggregate([
       { $match: { status: "paid" } },
       {
         $lookup: {
@@ -174,7 +177,73 @@ const getSystemOverview = async (req, res) => {
         }
       }
     ]);
-    const totalRevenue = revenueResult[0]?.totalRevenue || 0;
+    const eventRevenue = eventBookingsRevenue[0]?.totalRevenue || 0;
+
+    // 2. Marketplace product sales revenue
+    const marketplaceRevenue = await Order.aggregate([
+      { $match: { paymentStatus: "paid" } },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$totalAmount" }
+        }
+      }
+    ]);
+    const marketplaceRev = marketplaceRevenue[0]?.totalRevenue || 0;
+
+    // 3. Artist bookings revenue
+    const artistBookingsRevenue = await ArtistBooking.aggregate([
+      { $match: { paymentStatus: "paid" } },
+      {
+        $lookup: {
+          from: "artists",
+          localField: "artist",
+          foreignField: "_id",
+          as: "artistDetails"
+        }
+      },
+      {
+        $lookup: {
+          from: "artistmanagermodels",
+          localField: "artist",
+          foreignField: "_id",
+          as: "artistManagerDetails"
+        }
+      },
+      {
+        $addFields: {
+          artistInfo: {
+            $cond: {
+              if: { $gt: [{ $size: "$artistDetails" }, 0] },
+              then: { $arrayElemAt: ["$artistDetails", 0] },
+              else: { $arrayElemAt: ["$artistManagerDetails", 0] }
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$artistInfo.bookingPrice" }
+        }
+      }
+    ]);
+    const artistRevenue = artistBookingsRevenue[0]?.totalRevenue || 0;
+
+    // 4. Donations revenue
+    const donationsRevenue = await Donor.aggregate([
+      { $match: { paymentStatus: "paid" } },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$Amount" }
+        }
+      }
+    ]);
+    const donationsRev = donationsRevenue[0]?.totalRevenue || 0;
+
+    // Calculate total revenue from all sources
+    const totalRevenue = eventRevenue + marketplaceRev + artistRevenue + donationsRev;
 
     // Get total active users
     const totalUsers = await User.countDocuments();
@@ -192,6 +261,12 @@ const getSystemOverview = async (req, res) => {
 
     const systemOverview = {
       totalRevenue,
+      revenueBreakdown: {
+        eventBookings: eventRevenue,
+        marketplaceSales: marketplaceRev,
+        artistBookings: artistRevenue,
+        donations: donationsRev
+      },
       totalUsers,
       totalBookings,
       totalProductsSold,

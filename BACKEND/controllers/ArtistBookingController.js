@@ -832,6 +832,34 @@ const generateInvoice = async (req, res) => {
   }
 };
 
+// Delete individual booking
+const deleteBooking = async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid booking ID" });
+    }
+
+    const booking = await ArtistBooking.findByIdAndDelete(id);
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    console.log(`Deleted artist booking: ${id}`);
+    return res.status(200).json({ 
+      message: "Booking deleted successfully",
+      booking: booking
+    });
+  } catch (err) {
+    console.error("Error deleting booking:", err);
+    return res.status(500).json({ 
+      message: "Error deleting booking",
+      error: err.message 
+    });
+  }
+};
+
 // Bulk delete bookings by payment status
 const deleteBookingsByStatus = async (req, res) => {
   const { status } = req.params;
@@ -888,5 +916,6 @@ module.exports = {
   verifyPaymentManually,
   autoVerifyAllPendingBookings,
   generateInvoice,
+  deleteBooking,
   deleteBookingsByStatus
 };
