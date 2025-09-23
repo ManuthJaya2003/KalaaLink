@@ -54,6 +54,25 @@ const MapPicker = ({ selectedLocation, onLocationSelect, onAddressChange }) => {
   const defaultCenter = { lat: 6.9271, lng: 79.8612 };
   const mapCenter = selectedLocation || defaultCenter;
 
+  // Initialize address from selectedLocation
+  useEffect(() => {
+    if (selectedLocation && selectedLocation.address) {
+      setAddress(selectedLocation.address);
+    }
+  }, [selectedLocation]);
+
+  // Initialize address when component first loads with existing data
+  useEffect(() => {
+    if (selectedLocation && selectedLocation.address && !address) {
+      setAddress(selectedLocation.address);
+    }
+  }, [selectedLocation, address]);
+
+  // Show map by default when component mounts
+  useEffect(() => {
+    setIsMapVisible(true);
+  }, []);
+
   const handleLocationSelect = (location) => {
     onLocationSelect(location);
     // Always try to reverse geocode the location to get an address
@@ -140,8 +159,9 @@ const MapPicker = ({ selectedLocation, onLocationSelect, onAddressChange }) => {
           <MapContainer
             center={mapCenter}
             zoom={13}
-            style={{ height: "300px", width: "100%" }}
+            style={{ height: "400px", width: "100%" }}
             className="venue-map"
+            key={`map-${isMapVisible}`}
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

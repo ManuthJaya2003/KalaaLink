@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MapPicker from "../../Manuth/BookArtist/MapPicker";
+import "./UpdateEventModal.css";
 
 function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
   const [inputs, setInputs] = useState({
@@ -29,15 +30,25 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
   // Pre-fill form when eventData changes
   useEffect(() => {
     if (eventData && isOpen) {
-      setInputs({
+      console.log("Event data received:", eventData);
+      console.log("Crew request data:", eventData.crewRequest);
+      
+      // Format date for input field (YYYY-MM-DD format)
+      const formatDateForInput = (dateString) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0];
+      };
+
+      const mappedInputs = {
         eventTitle: eventData.eventTitle || "",
         eventDescription: eventData.eventDescription || "",
-        eventDate: eventData.eventDate || "",
+        eventDate: formatDateForInput(eventData.eventDate),
         eventTime: eventData.eventTime || "",
         eventLocation: {
-          lat: eventData.eventLocation?.lat || null,
-          lng: eventData.eventLocation?.lng || null,
-          address: eventData.eventLocation?.address || ""
+          lat: eventData.venueCoordinates?.latitude || eventData.eventLocation?.lat || null,
+          lng: eventData.venueCoordinates?.longitude || eventData.eventLocation?.lng || null,
+          address: eventData.eventVenue || eventData.eventLocation?.address || ""
         },
         maxArtists: eventData.maxArtists || "",
         maxCustomers: eventData.maxCustomers || "",
@@ -45,11 +56,15 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
         registrationFeeArtist: eventData.registrationFeeArtist || "",
         crewType: eventData.crewRequest?.crewType || "",
         crewDetails: eventData.crewRequest?.crewDetails || "",
-        crewRequiredDate: eventData.crewRequest?.requiredDate || "",
+        crewRequiredDate: formatDateForInput(eventData.crewRequest?.requiredDate) || "",
         crewRequiredTime: eventData.crewRequest?.requiredTime || "",
         estimatedDuration: eventData.crewRequest?.estimatedDuration || "",
         specialRequirements: eventData.crewRequest?.specialRequirements || ""
-      });
+      };
+      
+      console.log("Mapped form inputs:", mappedInputs);
+      console.log("Crew request checkbox will be set to:", eventData.crewRequest ? true : false);
+      setInputs(mappedInputs);
       
       setRequestCrew(eventData.crewRequest ? true : false);
       setImageFile(null);
@@ -111,8 +126,16 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
         }
       });
       
-      // Add location data
-      formData.append('eventLocation', JSON.stringify(inputs.eventLocation));
+      // Add location data - map to backend structure
+      const locationData = {
+        eventVenue: inputs.eventLocation.address,
+        venueCoordinates: {
+          latitude: inputs.eventLocation.lat,
+          longitude: inputs.eventLocation.lng
+        }
+      };
+      formData.append('eventVenue', inputs.eventLocation.address);
+      formData.append('venueCoordinates', JSON.stringify(locationData.venueCoordinates));
       
       // Add image if selected
       if (imageFile) {

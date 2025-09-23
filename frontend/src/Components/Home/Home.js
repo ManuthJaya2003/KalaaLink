@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import MainNav from '../MainNav/MainNav';
 import './Home.css';
 import MainFooter from '../MainFooter/MainFooter';
@@ -12,6 +13,26 @@ function Home() {
   const partnersTrackRef = useRef(null);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [animatedLogos, setAnimatedLogos] = useState(new Set());
+  const [partners, setPartners] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch approved partners from database
+  useEffect(() => {
+    fetchApprovedPartners();
+  }, []);
+
+  const fetchApprovedPartners = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/partnerships/approved');
+      setPartners(response.data.partnershipRequests || []);
+    } catch (error) {
+      console.error('Error fetching approved partners:', error);
+      // Keep empty array if fetch fails
+      setPartners([]);
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const scrollTestimonials = (direction) => {
     const slider = testimonialsRef.current;
@@ -320,40 +341,53 @@ function Home() {
       <section className="partners-section">
         <div className="partners-container">
           <h2 className="partners-title">Our Partners</h2>
-          <div className="partners-slider">
-            <div className="partners-track" ref={partnersTrackRef}>
-              <div className="partner-logo">
-                <img src="/1.jpg" alt="Partner 1" />
-              </div>
-              <div className="partner-logo">
-                <img src="/2.jpg" alt="Partner 2" />
-              </div>
-              <div className="partner-logo">
-                <img src="/3.jpg" alt="Partner 3" />
-              </div>
-              <div className="partner-logo">
-                <img src="/4.jpg" alt="Partner 4" />
-              </div>
-              <div className="partner-logo">
-                <img src="/5.jpg" alt="Partner 5" />
-              </div>
-              <div className="partner-logo">
-                <img src="/6.jpg" alt="Partner 6" />
-              </div>
-              <div className="partner-logo">
-                <img src="/7.jpg" alt="Partner 7" />
-              </div>
-              <div className="partner-logo">
-                <img src="/1.jpg" alt="Partner 1" />
-              </div>
-              <div className="partner-logo">
-                <img src="/2.jpg" alt="Partner 2" />
-              </div>
-              <div className="partner-logo">
-                <img src="/3.jpg" alt="Partner 3" />
+          {loading ? (
+            <div className="partners-loading">Loading partners...</div>
+          ) : partners.length === 0 ? (
+            <div className="partners-empty">
+              <p>We're working on building partnerships. Check back soon!</p>
+            </div>
+          ) : (
+            <div className="partners-slider">
+              <div className="partners-track" ref={partnersTrackRef}>
+                {partners.map((partner) => (
+                  <div key={partner._id} className="partner-logo">
+                    {partner.logo ? (
+                      <img 
+                        src={partner.logo} 
+                        alt={`${partner.organizationName} logo`}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div className="logo-placeholder" style={{ display: partner.logo ? 'none' : 'flex' }}>
+                      <span>{partner.organizationName.charAt(0).toUpperCase()}</span>
+                    </div>
+                  </div>
+                ))}
+                {/* Duplicate logos for seamless loop */}
+                {partners.map((partner) => (
+                  <div key={`duplicate-${partner._id}`} className="partner-logo">
+                    {partner.logo ? (
+                      <img 
+                        src={partner.logo} 
+                        alt={`${partner.organizationName} logo`}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div className="logo-placeholder" style={{ display: partner.logo ? 'none' : 'flex' }}>
+                      <span>{partner.organizationName.charAt(0).toUpperCase()}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
