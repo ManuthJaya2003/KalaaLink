@@ -118,6 +118,13 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
       // Always get fresh location when modal opens
       console.log('Modal opened, getting user location...');
       getUserLocation();
+      
+      // Force map to re-render after a short delay to ensure proper initialization
+      setTimeout(() => {
+        if (mapRef.current) {
+          mapRef.current.invalidateSize();
+        }
+      }, 100);
     }
   }, [isOpen]);
 
@@ -129,6 +136,39 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
       setIsGettingLocation(false);
       setLocationTimestamp(null);
     }
+  }, [isOpen]);
+
+  // Handle map initialization when modal opens
+  useEffect(() => {
+    if (isOpen && mapRef.current) {
+      // Small delay to ensure the modal is fully rendered
+      const timer = setTimeout(() => {
+        if (mapRef.current) {
+          console.log('Map container found, invalidating size...');
+          mapRef.current.invalidateSize();
+        } else {
+          console.log('Map container not found');
+        }
+      }, 200);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Restore body scroll
+      document.body.style.overflow = 'unset';
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [isOpen]);
 
   const calculateDistance = (start, end) => {
@@ -366,16 +406,22 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
 
           {/* Map Container */}
           <div className="map-container">
-            <MapContainer
-              center={venueCoords}
-              zoom={15}
-              style={{ height: '450px', width: '100%' }}
-              ref={mapRef}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
+            {isOpen && (
+              <MapContainer
+                center={venueCoords}
+                zoom={15}
+                style={{ height: '400px', width: '100%' }}
+                ref={mapRef}
+                key={`map-${isOpen}-${booking?._id || 'default'}`}
+                whenCreated={(mapInstance) => {
+                  console.log('Map created successfully:', mapInstance);
+                  mapRef.current = mapInstance;
+                }}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
               
               {/* Venue marker */}
               <Marker position={venueCoords} icon={venueIcon}>
@@ -400,7 +446,8 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
               )}
 
               <MapUpdater center={venueCoords} zoom={15} />
-            </MapContainer>
+              </MapContainer>
+            )}
           </div>
         </div>
       </div>
