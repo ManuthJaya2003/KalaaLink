@@ -2380,6 +2380,180 @@ div .clear-btn {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+/* ===== GALLERY SECTION STYLES ===== */
+.gallery-section {
+  padding: 60px 0;
+  background: rgba(193, 163, 127, 0.05);
+  margin: 40px 0;
+  overflow: hidden;
+  position: relative;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+.gallery-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.gallery-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 15px;
+  font-family: 'Georgia', serif;
+}
+
+.gallery-subtitle {
+  font-size: 1.2rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.gallery-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.gallery-slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: hidden;
+  padding: 20px 0;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  animation: scrollGallery 30s linear infinite;
+  width: 100%;
+  position: relative;
+  transform: translateX(0);
+  margin-left: 0;
+}
+
+.gallery-slider::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes scrollGallery {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.gallery-item {
+  flex: 0 0 300px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin-right: 20px;
+  margin-left: 0;
+}
+
+.gallery-item:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.gallery-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover .gallery-image {
+  transform: scale(1.1);
+}
+
+.gallery-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 20px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover .gallery-overlay {
+  transform: translateY(0);
+}
+
+.gallery-info {
+  color: white;
+}
+
+.gallery-item-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: white;
+}
+
+.gallery-item-description {
+  font-size: 0.9rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
+}
+
+/* Responsive Gallery */
+@media (max-width: 768px) {
+  .gallery-section {
+    padding: 40px 15px;
+  }
+  
+  .gallery-title {
+    font-size: 2rem;
+  }
+  
+  .gallery-subtitle {
+    font-size: 1rem;
+  }
+  
+  .gallery-item {
+    flex: 0 0 250px;
+  }
+  
+  .gallery-image {
+    height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-item {
+    flex: 0 0 200px;
+  }
+  
+  .gallery-image {
+    height: 120px;
+  }
+  
+  .gallery-overlay {
+    padding: 15px;
+  }
+  
+  .gallery-item-title {
+    font-size: 1rem;
+  }
+  
+  .gallery-item-description {
+    font-size: 0.8rem;
+  }
+}
+
 /* ULTIMATE OVERRIDE - Force Clear Filters button color */
 .clear-btn,
 button.clear-btn,

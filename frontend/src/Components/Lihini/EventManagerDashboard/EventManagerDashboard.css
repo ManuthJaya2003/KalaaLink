@@ -78,10 +78,34 @@
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 0 0 0;
+  padding: 1.5rem 0 1rem 0;
   gap: 0;
   flex: 1;
   height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #C1A37F #f1f1f1;
+}
+
+/* Custom scrollbar for webkit browsers */
+.sidebar-nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: #C1A37F;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: #a68b5f;
 }
 
 .sidebar-btn {
@@ -135,6 +159,7 @@
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1);
   background: #C1A37F;
   color: #000000;
+  flex-shrink: 0;
 }
 
 /* ===== MAIN CONTENT AREA ===== */
@@ -778,6 +803,86 @@
   font-size: 1.1rem;
   margin-bottom: 1rem;
   font-weight: 500;
+}
+
+/* ===== GALLERY MANAGEMENT STYLES ===== */
+.gallery-tab {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.gallery-actions {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.gallery-table-container {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.gallery-table th,
+.gallery-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.gallery-table th {
+  background: #f8f9fa;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gallery-table tr:hover {
+  background: #f8f9fa;
+}
+
+.image-preview {
+  width: 80px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 2px solid #e5e7eb;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-images {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.gallery-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */

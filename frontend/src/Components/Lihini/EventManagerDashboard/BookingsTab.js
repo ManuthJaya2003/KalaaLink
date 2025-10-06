@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./BookingsTab.css";
+import { sendRefundEmail } from "../../../utils/sendRefundEmail";
 
 function BookingsTab({ events = [] }) {
   const [bookings, setBookings] = useState([]);
@@ -61,13 +62,45 @@ function BookingsTab({ events = [] }) {
     if (!window.confirm("Are you sure you want to refund this booking? This will cancel the booking and process a refund.")) return;
 
     try {
+      // Find the booking to get customer details
+      const booking = bookings.find(b => b._id === id);
+      if (!booking) {
+        alert("Booking not found");
+        return;
+      }
+
       await axios.put(`http://localhost:5000/eventBookings/${id}/status`, {
         status: "cancelled"
       });
-      // Update local state
+      
+      // Update local state to cancelled first
       setBookings(bookings.map(b => 
         b._id === id ? { ...b, status: "cancelled" } : b
       ));
+
+      // Send refund email notification
+      const eventName = booking.event?.eventTitle || "Event";
+      const refundAmount = booking.event?.priceCustomer ? 
+        (booking.event.priceCustomer * booking.ticketsBooked) : "N/A";
+      
+      sendRefundEmail(
+        booking.customerEmail,
+        booking.customerName,
+        eventName,
+        refundAmount
+      )
+      .then(() => {
+        console.log("Refund email sent successfully");
+        // Update status to "Cancelled & Notified" after successful email
+        setBookings(bookings.map(b => 
+          b._id === id ? { ...b, status: "cancelled_notified" } : b
+        ));
+      })
+      .catch(err => {
+        console.warn("Refund email failed", err);
+        // Keep status as "cancelled" if email fails
+      });
+
     } catch (err) {
       console.error("Failed to refund booking:", err);
       alert("Failed to refund booking");
@@ -78,7 +111,8 @@ function BookingsTab({ events = [] }) {
     const statusConfig = {
       pending: { color: "#f59e0b", bgColor: "#fef3c7", text: "Pending Payment" },
       paid: { color: "#059669", bgColor: "#d1fae5", text: "Paid & Confirmed" },
-      cancelled: { color: "#dc2626", bgColor: "#fee2e2", text: "Cancelled" }
+      cancelled: { color: "#dc2626", bgColor: "#fee2e2", text: "Cancelled" },
+      cancelled_notified: { color: "#7c3aed", bgColor: "#ede9fe", text: "Cancelled & Notified" }
     };
 
     const config = statusConfig[status] || statusConfig.pending;
@@ -108,6 +142,9 @@ function BookingsTab({ events = [] }) {
     }
     // Filter by status
     if (filter === "all") return true;
+    if (filter === "cancelled") {
+      return booking.status === "cancelled" || booking.status === "cancelled_notified";
+    }
     return booking.status === filter;
   });
 
@@ -117,7 +154,7 @@ function BookingsTab({ events = [] }) {
     const total = bookingsToUse.length;
     const pending = bookingsToUse.filter(b => b.status === "pending").length;
     const paid = bookingsToUse.filter(b => b.status === "paid").length;
-    const cancelled = bookingsToUse.filter(b => b.status === "cancelled").length;
+    const cancelled = bookingsToUse.filter(b => b.status === "cancelled" || b.status === "cancelled_notified").length;
 
     return { total, pending, paid, cancelled };
   };
@@ -389,6 +426,11 @@ function BookingsTab({ events = [] }) {
                         {b.status === "cancelled" && (
                           <span style={{ color: "#dc2626", fontSize: "12px" }}>
                             ✗ Cancelled
+                          </span>
+                        )}
+                        {b.status === "cancelled_notified" && (
+                          <span style={{ color: "#7c3aed", fontSize: "12px" }}>
+                            ✗ Cancelled & Notified
                           </span>
                         )}
                       </div>
