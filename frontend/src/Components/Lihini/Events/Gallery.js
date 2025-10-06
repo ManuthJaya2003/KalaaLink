@@ -24,28 +24,7 @@ function Gallery() {
     fetchGalleryImages();
   }, []);
 
-  // Auto-scroll functionality
-  useEffect(() => {
-    const gallery = galleryRef.current;
-    if (!gallery || galleryImages.length === 0) return;
-
-    // Reset position to start from center
-    gallery.style.transform = 'translateX(0)';
-    gallery.style.marginLeft = '0';
-
-    const scrollGallery = () => {
-      if (gallery) {
-        gallery.scrollBy({
-          left: 1,
-          behavior: 'auto'
-        });
-      }
-    };
-
-    const interval = setInterval(scrollGallery, 30); // Smooth continuous scroll
-
-    return () => clearInterval(interval);
-  }, [galleryImages]);
+  // CSS handles seamless animation; no JS interval scrolling needed
 
   if (loading) {
     return (
@@ -70,23 +49,42 @@ function Gallery() {
       </div>
       <div className="gallery-wrapper">
         <div className="gallery-slider" ref={galleryRef}>
-          {galleryImages.map((image, index) => (
-            <div key={`${image._id}-${index}`} className="gallery-item">
-              <img 
-                src={`http://localhost:5000${image.imageUrl}`}
-                alt={image.altText}
-                className="gallery-image"
-              />
-              <div className="gallery-overlay">
-                <div className="gallery-info">
-                  <h4 className="gallery-item-title">
-                    {image.associatedEventId ? image.associatedEventId.eventTitle : "Gallery Image"}
-                  </h4>
-                  <p className="gallery-item-description">{image.altText}</p>
+          <div className="gallery-track">
+            {galleryImages.map((image, index) => (
+              <div key={`${image._id}-${index}`} className="gallery-item">
+                <img 
+                  src={`http://localhost:5000${image.imageUrl}`}
+                  alt={image.altText}
+                  className="gallery-image"
+                />
+                <div className="gallery-overlay">
+                  <div className="gallery-info">
+                    <h4 className="gallery-item-title">
+                      {image.associatedEventId ? image.associatedEventId.eventTitle : "Gallery Image"}
+                    </h4>
+                    <p className="gallery-item-description">{image.altText}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+            {galleryImages.map((image, index) => (
+              <div key={`${image._id}-dup-${index}`} className="gallery-item" aria-hidden="true">
+                <img 
+                  src={`http://localhost:5000${image.imageUrl}`}
+                  alt=""
+                  className="gallery-image"
+                />
+                <div className="gallery-overlay">
+                  <div className="gallery-info">
+                    <h4 className="gallery-item-title">
+                      {image.associatedEventId ? image.associatedEventId.eventTitle : "Gallery Image"}
+                    </h4>
+                    <p className="gallery-item-description">{image.altText}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
