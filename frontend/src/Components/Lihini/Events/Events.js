@@ -7,6 +7,7 @@ import MainFooter from "../../MainFooter/MainFooter";
 import Event from "../Event/Event";
 import TestimonialModal from "./TestimonialModal";
 import EventTestimonials from "./EventTestimonials";
+import Gallery from "./Gallery";
 import "../Event/Event.css";
 
 // Load Stripe
@@ -472,6 +473,9 @@ function Events({ events: propEvents }) {
             </div>
           </div>
         )}
+
+        {/* Gallery Section */}
+        <Gallery />
 
         {/* Global Testimonials Section */}
         <div className="testimonials-section">

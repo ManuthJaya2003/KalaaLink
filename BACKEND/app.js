@@ -87,6 +87,9 @@ const artistReviewRoutes = require("./routes/ArtistReviewRoutes");
 // ✅ Partnership Routes
 const partnershipRoutes = require("./routes/PartnershipRoutes");
 
+// ✅ Gallery Routes
+const galleryRoutes = require("./routes/galleryRoutes");
+
 
 // Mount routes
 app.use("/artists", artistManagerRoute);
@@ -133,6 +136,9 @@ app.use("/api/artist-reviews", artistReviewRoutes);
 
 // ✅ Partnership routes
 app.use("/api/partnerships", partnershipRoutes);
+
+// ✅ Gallery routes
+app.use("/api/gallery", galleryRoutes);
 
 
 // ================== PDF Generation Route ==================
@@ -236,6 +242,7 @@ mongoose
     require("./model/crewrequest");
     require("./model/ArtistReview");
     require("./Model/PartnershipRequest");
+    require("./model/GalleryImage");
 
     console.log("✅ All models loaded successfully");
 
