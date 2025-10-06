@@ -216,6 +216,45 @@ const getCrewRequestsByStatus = async (req, res) => {
   }
 };
 
+// Get crew requests by manager
+const getCrewRequestsByManager = async (req, res) => {
+  try {
+    const { managerId } = req.query;
+    
+    if (!managerId) {
+      return res.status(400).json({ message: "Manager ID is required" });
+    }
+
+    const crewRequests = await CrewRequest.find({ requestedBy: managerId })
+      .populate('eventId', 'eventTitle eventDate eventTime eventVenue')
+      .sort({ requestedAt: -1 });
+
+    // Format the response to match the required structure
+    const formattedRequests = crewRequests.map(request => ({
+      _id: request._id,
+      eventName: request.eventId?.eventTitle || 'Event not found',
+      requestDetails: request.crewDetails,
+      status: request.status.charAt(0).toUpperCase() + request.status.slice(1),
+      adminNotes: request.adminNotes || '',
+      crewType: request.crewType,
+      requiredDate: request.requiredDate,
+      requiredTime: request.requiredTime,
+      estimatedDuration: request.estimatedDuration,
+      specialRequirements: request.specialRequirements,
+      requestedAt: request.requestedAt,
+      reviewedAt: request.reviewedAt,
+      reviewedBy: request.reviewedBy
+    }));
+
+    // Return empty array if no requests found instead of error
+    return res.status(200).json(formattedRequests);
+  } catch (err) {
+    console.error("Error in getCrewRequestsByManager:", err);
+    // Return empty array instead of error for better UX
+    return res.status(200).json([]);
+  }
+};
+
 module.exports = {
   getAllCrewRequests,
   getCrewRequestById,
@@ -224,5 +263,6 @@ module.exports = {
   updateCrewRequestStatus,
   updateCrewRequest,
   deleteCrewRequest,
-  getCrewRequestsByStatus
+  getCrewRequestsByStatus,
+  getCrewRequestsByManager
 };

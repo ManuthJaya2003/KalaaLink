@@ -8,6 +8,7 @@ import AnalyticsTab from "./AnalyticsTab";
 import EventUpdate from "../EventUpdate/EventUpdate";
 import BookingsTab from "./BookingsTab"; // ✅ new import
 import TestimonialsTab from "./TestimonialsTab"; // ✅ new import
+import CrewRequestsTab from "./CrewRequestsTab"; // ✅ new import
 import UpdateEventModal from "./UpdateEventModal"; // ✅ new import
 import { useParams } from "react-router-dom";
 import logoutEmployee from "../../../utils/employeeLogout";
@@ -129,6 +130,12 @@ function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
             Testimonials
           </button>
           <button 
+            onClick={() => setActiveTab("crew-requests")} 
+            className={`sidebar-btn ${activeTab === "crew-requests" ? "active" : ""}`}
+          >
+            Crew Requests
+          </button>
+          <button 
             onClick={handleSignOut} 
             className="sidebar-btn signout-btn"
           >
@@ -147,6 +154,7 @@ function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
           {activeTab === "analytics" && <AnalyticsTab />}
           {activeTab === "bookings" && <BookingsTab events={events} />}
           {activeTab === "testimonials" && <TestimonialsTab />}
+          {activeTab === "crew-requests" && <CrewRequestsTab />}
         </div>
       </div>
 
@@ -157,6 +165,7 @@ function EventManagerDashboard({ events, setEvents }) { // ✅ accept props
         eventData={selectedEvent}
         onEventUpdated={handleEventUpdated}
       />
+
     </div>
   );
 }

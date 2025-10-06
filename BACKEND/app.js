@@ -87,6 +87,7 @@ const artistReviewRoutes = require("./routes/ArtistReviewRoutes");
 // ✅ Partnership Routes
 const partnershipRoutes = require("./routes/PartnershipRoutes");
 
+
 // Mount routes
 app.use("/artists", artistManagerRoute);
 app.use("/registeredArtists", registeredArtistRoute);
@@ -132,6 +133,7 @@ app.use("/api/artist-reviews", artistReviewRoutes);
 
 // ✅ Partnership routes
 app.use("/api/partnerships", partnershipRoutes);
+
 
 // ================== PDF Generation Route ==================
 app.get("/api/art/:id/report", async (req, res) => {
