@@ -506,6 +506,7 @@ function Events({ events: propEvents }) {
 
       </div>
       
+      
       <MainFooter />
       
       {/* Render TestimonialModal using portal to ensure it's at root level */}
