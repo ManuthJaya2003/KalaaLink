@@ -21,6 +21,7 @@ import ArtistRegistration from "./Components/Manuth/ArtistRegistration/ArtistReg
 import Login from "./Components/Login/Login.js";
 import ProfessionalLogin from "./Components/Manuth/ProfessionalLogin/ProfessionalLogin.js";
 import AdminDashboard from "./Components/Thaveesha/AdminDashboard/AdminDashboard.js";
+import PayrollManagement from "./Components/Thaveesha/AdminDashboard/Payroll/PayrollManagement";
 import EventManagerDashboard from "./Components/Lihini/EventManagerDashboard/EventManagerDashboard.js";
 import ArtistLogin from "./Components/Manuth/ArtistLogin/ArtistLogin.js";
 import ArtistPortfolio from "./Components/Manuth/ArtistPortfolio/ArtistPortfolio.js";
@@ -152,6 +153,7 @@ function App() {
 
           {/* ---------- Admin ---------- */}
           <Route path="/admindashboard" element={<AdminDashboard />} />
+          <Route path="/admindashboard/payroll" element={<AdminDashboard />} />
 
           {/* ---------- Event Manager (Subsystem) ---------- */}
           <Route path="/events" element={<Events events={events} />} />
