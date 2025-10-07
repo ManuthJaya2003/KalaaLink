@@ -23,6 +23,7 @@ app.use("/bookings/webhook", express.raw({ type: "application/json" }));
 app.use("/api/orders/webhook", express.raw({ type: "application/json" }));
 app.use("/events/webhook", express.raw({ type: "application/json" }));
 app.use("/api/donations/webhook", express.raw({ type: "application/json" }));
+app.use("/api/payroll/webhook", express.raw({ type: "application/json" }));
 
 // JSON body for other routes with increased size limit for image uploads
 app.use(express.json({ limit: '10mb' }));
@@ -68,6 +69,8 @@ const campaignRouter = require("./routes/CampaignRoutes");
 const testimonialsRouter = require("./routes/TestimonialsRoutes");
 const donationPaymentRouter = require("./routes/DonationPaymentRoutes");
 const impactStoryRouter = require("./routes/ImpactStoryRoutes");
+// ✅ Payroll Routes
+const payrollRoutes = require("./routes/PayrollRoutes");
 
 // ✅ Authentication Routes
 const authRoutes = require("./routes/authRoutes");
@@ -110,6 +113,7 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/review", reviewRoutes);
 app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/payroll", payrollRoutes);
 
 // ✅ Donation Management routes
 app.use("/donor", donorRouter);
@@ -243,6 +247,7 @@ mongoose
     require("./model/ArtistReview");
     require("./Model/PartnershipRequest");
     require("./model/GalleryImage");
+    require("./model/Payroll");
 
     console.log("✅ All models loaded successfully");
 

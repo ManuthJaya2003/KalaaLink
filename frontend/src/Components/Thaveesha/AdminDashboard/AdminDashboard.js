@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import EmployeeManagement from '../EmployeeManagement/EmployeeManagement';
 import SystemOverview from './SystemOverview';
 import CrewRequestsTab from './CrewRequestsTab';
 import UserManagementTab from './UserManagementTab';
 import AdminHomeTab from './AdminHomeTab';
 import ComplaintsTab from './ComplaintsTab';
+import PayrollManagement from './Payroll/PayrollManagement';
 import './AdminDashboard.css';
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('home');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname && location.pathname.toLowerCase().includes('/admindashboard/payroll')) {
+      setActiveTab('payroll');
+    }
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     try {
@@ -78,6 +86,12 @@ function AdminDashboard() {
             Complaints
           </button>
           <button 
+            className={`sidebar-btn ${activeTab === 'payroll' ? 'active' : ''}`}
+            onClick={() => setActiveTab('payroll')}
+          >
+            Payroll Management
+          </button>
+          <button 
             className="sidebar-btn signout-btn"
             onClick={handleLogout}
           >
@@ -96,6 +110,7 @@ function AdminDashboard() {
           {activeTab === 'crew-requests' && <CrewRequestsTab />}
           {activeTab === 'user-management' && <UserManagementTab />}
           {activeTab === 'complaints' && <ComplaintsTab />}
+          {activeTab === 'payroll' && <PayrollManagement />}
         </div>
       </div>
     </div>
