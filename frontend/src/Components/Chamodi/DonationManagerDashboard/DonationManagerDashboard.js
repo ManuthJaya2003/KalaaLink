@@ -7,6 +7,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recha
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import ImpactStoriesManagement from '../ImpactStoriesManagement/ImpactStoriesManagement';
+import emailjs from 'emailjs-com';
 import './DonationManagerDashboard.css';
 
 function DonationManagerDashboard() {
@@ -250,8 +251,35 @@ function DonationManagerDashboard() {
   // ✅ Handle partnership request approval
   const handleApprovePartnership = async (requestId) => {
     try {
+      // First, get the partnership request details to send email
+      const partnershipRequest = partnershipRequests.find(req => req._id === requestId);
+      
+      // Update the partnership status in the database
       await axios.patch(`http://localhost:5000/api/partnerships/${requestId}/approve`);
       console.log(`✅ Partnership request ${requestId} approved successfully`);
+      
+      // Send approval email if partnership request details are available
+      if (partnershipRequest && partnershipRequest.contactEmail) {
+        try {
+          const templateParams = {
+            organization_name: partnershipRequest.organizationName,
+            organization_email: partnershipRequest.contactEmail
+          };
+          
+          await emailjs.send(
+            'service_rviawof',
+            'template_ej9904h',
+            templateParams,
+            'h2n-xFzmqTDKbxQT4'
+          );
+          
+          console.log('✅ Approval email sent successfully to:', partnershipRequest.contactEmail);
+        } catch (emailError) {
+          console.error('❌ Error sending approval email:', emailError);
+          // Don't fail the entire operation if email fails
+        }
+      }
+      
       await fetchData(); // Refresh data
       alert('Partnership request approved successfully!');
     } catch (error) {
@@ -263,8 +291,50 @@ function DonationManagerDashboard() {
   // ✅ Handle partnership request rejection
   const handleRejectPartnership = async (requestId) => {
     try {
+      // First, get the partnership request details to send email
+      const partnershipRequest = partnershipRequests.find(req => req._id === requestId);
+      console.log('🔍 Partnership request found for rejection:', partnershipRequest);
+      
+      // Update the partnership status in the database
       await axios.patch(`http://localhost:5000/api/partnerships/${requestId}/reject`);
       console.log(`✅ Partnership request ${requestId} rejected successfully`);
+      
+      // Send rejection email if partnership request details are available
+      if (partnershipRequest && partnershipRequest.contactEmail) {
+        console.log('📧 Attempting to send rejection email to:', partnershipRequest.contactEmail);
+        try {
+          const templateParams = {
+            organization_name: partnershipRequest.organizationName,
+            organization_email: partnershipRequest.contactEmail
+          };
+          
+          console.log('📧 EmailJS template parameters:', templateParams);
+          
+          const emailResult = await emailjs.send(
+            'service_rviawof',
+            'template_d0o1h6n',
+            templateParams,
+            'h2n-xFzmqTDKbxQT4'
+          );
+          
+          console.log('✅ Rejection email sent successfully! EmailJS response:', emailResult);
+          console.log('✅ Rejection email sent successfully to:', partnershipRequest.contactEmail);
+        } catch (emailError) {
+          console.error('❌ Error sending rejection email:', emailError);
+          console.error('❌ EmailJS error details:', {
+            status: emailError.status,
+            text: emailError.text,
+            message: emailError.message
+          });
+          // Don't fail the entire operation if email fails
+        }
+      } else {
+        console.warn('⚠️ Cannot send rejection email - missing partnership request or email:', {
+          partnershipRequest: !!partnershipRequest,
+          hasEmail: partnershipRequest?.contactEmail
+        });
+      }
+      
       await fetchData(); // Refresh data
       alert('Partnership request rejected successfully!');
     } catch (error) {
