@@ -8,6 +8,7 @@ import ImpactStories from '../ImpactStories/ImpactStories';
 import PartnershipForm from '../PartnershipForm/PartnershipForm';
 import PartnersDisplay from '../PartnersDisplay/PartnersDisplay';
 import './DonorDashboard.css';
+import Chatbot from "../../Chatbot/Chatbot";
 
 function DonorDashboard() {
   const navigate = useNavigate();
@@ -198,6 +199,8 @@ function DonorDashboard() {
       
       {/* ✅ Footer - matching exactly with artist/home/events pages */}
       <MainFooter />
+
+      <Chatbot />
     </div>
   );
 }

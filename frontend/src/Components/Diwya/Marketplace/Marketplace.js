@@ -9,6 +9,7 @@ import CustomizationForm from '../CustomizationForm/CustomizationForm';
 import ReviewModal from './ReviewModal';
 import ReviewsModal from './ReviewsModal';
 import './Marketplace.css';
+import Chatbot from "../../Chatbot/Chatbot";
 
 const BASE_URL = 'http://localhost:5000/api/art';
 
@@ -623,6 +624,8 @@ function Marketplace() {
       
       <MainFooter />
       
+      <Chatbot />
+
       {/* Modals */}
       {isPopupOpen && selectedProduct && (
         <ProductPopup 

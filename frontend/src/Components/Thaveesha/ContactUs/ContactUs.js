@@ -4,6 +4,7 @@ import MainNav from "../../MainNav/MainNav";
 import MainFooter from "../../MainFooter/MainFooter";
 import ComplaintForm from "./ComplaintForm";
 import LiveLocationMap from "./LiveLocationMap";
+import Chatbot from "../../Chatbot/Chatbot";
 
 function ContactUs() {
   const [isComplaintFormOpen, setIsComplaintFormOpen] = useState(false);
@@ -121,6 +122,7 @@ function ContactUs() {
         />
       </div>
       <MainFooter />
+      <Chatbot />
     </div>
   );
 }
