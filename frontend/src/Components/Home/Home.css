@@ -1065,6 +1065,11 @@ img {
   font-weight: 500;
   font-family: 'Arial', sans-serif;
   opacity: 1;
+  /* Center-align and constrain width similar to intro subtext */
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 /* Responsive gallery styles */

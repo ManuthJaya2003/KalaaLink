@@ -1394,3 +1394,57 @@
   padding: 0 !important;
   margin-bottom: 8px !important;
 }
+
+/* ===== Compact Latest Review inside Artist Card (scoped) ===== */
+.artist-card .artist-reviews-section {
+  margin: 6px 0 !important; /* reduce vertical spacing around reviews block */
+  padding: 6px !important; /* tighter container padding */
+}
+
+.artist-card .artist-reviews-section .latest-review {
+  margin-top: 4px !important; /* smaller top margin */
+  padding: 4px 6px !important; /* compact inner padding */
+  width: 100% !important; /* fit card width */
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  border-radius: var(--radius-soft);
+}
+
+.artist-card .artist-reviews-section .review-navigation {
+  gap: 4px !important; /* tighter controls */
+}
+
+.artist-card .artist-reviews-section .review-content {
+  flex: 1 1 auto !important;
+  min-width: 0 !important; /* prevent overflow */
+}
+
+.artist-card .artist-reviews-section .review-snippet {
+  margin: 0 0 2px 0 !important;
+  line-height: 1.3 !important; /* denser text */
+  display: -webkit-box !important; /* clamp to two lines */
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+}
+
+.artist-card .artist-reviews-section .review-author {
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Small screens: keep it compact and full-width */
+@media (max-width: 768px) {
+  .artist-card .artist-reviews-section {
+    margin: 4px 0 !important;
+    padding: 4px !important;
+  }
+  .artist-card .artist-reviews-section .latest-review {
+    padding: 4px !important;
+  }
+}

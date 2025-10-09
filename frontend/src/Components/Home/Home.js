@@ -148,14 +148,14 @@ function Home() {
           {/* Artists Service */}
           <div className="service-block service-left">
             <div className="service-content">
-              <h3 className="service-headline">Discover Artists and Book Anywhere, Anytime</h3>
+              <h3 className="service-headline">Discover Artists and Connect Anytime, Anywhere</h3>
               <p className="service-description">
-                Connect with talented artists and book their services instantly through our comprehensive platform. Our diverse community of verified artists offers professional services tailored to your needs. Browse portfolios, read reviews, and book with confidence.
+                Engage with talented artists and collaborate effortlessly through our vibrant platform. Our community of verified creatives offers personalized experiences tailored to your vision. Explore portfolios, appreciate their artistry, and connect with confidence.
               </p>
               <ul className="service-features">
-                <li>Book artists instantly</li>
-                <li>Browse artist portfolios</li>
-                <li>Ratings and reviews for quality assurance</li>
+                <li>Connect with artists instantly</li>
+                <li>Explore inspiring portfolios</li>
+                <li>Verified reviews for trusted collaborations</li>
               </ul>
               <button className="service-cta" onClick={() => navigate('/artists')}>
                 Explore Artists
