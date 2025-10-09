@@ -7,6 +7,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import ReviewModal from "./ReviewModal";
 import ViewReviewsModal from "./ViewReviewsModal";
 import StarRating from "../Common/StarRating";
+import Chatbot from "../Chatbot/Chatbot";
 
 const URL = "http://localhost:5000/artists";
 
@@ -612,6 +613,8 @@ function Artists() {
       </div>
 
       <MainFooter />
+
+      <Chatbot />
 
       {/* Modal */}
       {isModalOpen && selectedArtist && (

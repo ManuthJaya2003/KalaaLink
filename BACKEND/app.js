@@ -93,6 +93,9 @@ const partnershipRoutes = require("./routes/PartnershipRoutes");
 // ✅ Gallery Routes
 const galleryRoutes = require("./routes/galleryRoutes");
 
+// ✅ Chatbot Route (modular, non-intrusive)
+const chatbotRoute = require("./routes/chatbotRoute");
+
 
 // Mount routes
 app.use("/artists", artistManagerRoute);
@@ -143,6 +146,9 @@ app.use("/api/partnerships", partnershipRoutes);
 
 // ✅ Gallery routes
 app.use("/api/gallery", galleryRoutes);
+
+// ✅ Chatbot endpoint
+app.use("/api/chatbot", chatbotRoute);
 
 
 // ================== PDF Generation Route ==================

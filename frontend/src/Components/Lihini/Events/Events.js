@@ -9,6 +9,7 @@ import TestimonialModal from "./TestimonialModal";
 import EventTestimonials from "./EventTestimonials";
 import Gallery from "./Gallery";
 import "../Event/Event.css";
+import Chatbot from "../../Chatbot/Chatbot";
 
 // Load Stripe
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || "pk_test_your_publishable_key");
@@ -512,6 +513,8 @@ function Events({ events: propEvents }) {
       
       
       <MainFooter />
+
+      <Chatbot />
       
       {/* Render TestimonialModal using portal to ensure it's at root level */}
       {showTestimonialModal && createPortal(
