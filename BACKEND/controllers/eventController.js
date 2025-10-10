@@ -289,6 +289,77 @@ const registerArtistForEvent = async (req, res) => {
 
     console.log(`✅ Artist ${artistId} registered for event ${eventId}. Total artists: ${event.registeredArtists.length}`);
 
+    // Create ArtistRegistration record and generate PDF pass
+    try {
+      const ArtistRegistration = require("../model/artistRegistration");
+      
+      // Get artist details from session metadata if available
+      let artistName = "Unknown Artist";
+      let artistEmail = "unknown@example.com";
+      
+      if (sessionId) {
+        try {
+          const session = await stripe.checkout.sessions.retrieve(sessionId);
+          if (session.metadata) {
+            artistName = session.metadata.artistName || artistName;
+            artistEmail = session.metadata.artistEmail || artistEmail;
+          }
+        } catch (sessionErr) {
+          console.log("Could not retrieve session metadata:", sessionErr.message);
+        }
+      }
+
+      const existingRegistration = await ArtistRegistration.findOne({ 
+        event: eventId, 
+        artistEmail: artistEmail 
+      });
+      
+      if (!existingRegistration) {
+        const artistRegistration = new ArtistRegistration({
+          event: eventId,
+          artistName: artistName,
+          artistEmail: artistEmail,
+          registrationFee: event.registrationFeeArtist
+        });
+        
+        await artistRegistration.save();
+        console.log(`✅ ArtistRegistration record created for ${artistName}`);
+        
+        // Generate event pass PDF
+        try {
+          const { generateEventPassPDF } = require('../utils/pdfPassGenerator');
+          
+          const passData = {
+            eventTitle: event.eventTitle,
+            artistName: artistName,
+            artistEmail: artistEmail,
+            eventDate: event.eventDate,
+            eventVenue: event.eventVenue,
+            registrationId: artistRegistration.registrationId,
+            eventId: eventId,
+            artistId: artistId
+          };
+          
+          const passFilePath = await generateEventPassPDF(passData);
+          
+          // Update registration record with pass info
+          artistRegistration.passGenerated = true;
+          artistRegistration.passFilePath = passFilePath;
+          await artistRegistration.save();
+          
+          console.log(`✅ Event pass PDF generated for ${artistName}: ${passFilePath}`);
+        } catch (pdfError) {
+          console.error(`❌ Error generating PDF for ${artistName}:`, pdfError);
+          // Don't fail the registration if PDF generation fails
+        }
+      } else {
+        console.log(`ArtistRegistration record already exists for ${artistEmail}`);
+      }
+    } catch (registrationErr) {
+      console.error("Error creating ArtistRegistration record:", registrationErr);
+      // Don't fail the main registration if this fails
+    }
+
     res.status(200).json({
       message: "Artist registered successfully for event",
       event: event
@@ -301,17 +372,35 @@ const registerArtistForEvent = async (req, res) => {
 
 // Handle Stripe webhook for event registrations
 const handleEventRegistrationWebhook = async (req, res) => {
-  console.log("Event registration webhook received");
+  console.log("🔔 Event registration webhook received");
+  console.log("📋 Headers:", req.headers);
+  console.log("📋 Body length:", req.body?.length);
+  
   const sig = req.headers["stripe-signature"];
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  console.log("🔑 Webhook configuration:", {
+    hasSignature: !!sig,
+    hasEndpointSecret: !!endpointSecret,
+    endpointSecretLength: endpointSecret ? endpointSecret.length : 0
+  });
+
+  if (!endpointSecret) {
+    console.error("❌ STRIPE_WEBHOOK_SECRET not set in environment variables");
+    return res.status(400).send("Webhook Error: STRIPE_WEBHOOK_SECRET not configured");
+  }
 
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    console.log("Webhook event type:", event.type);
+    console.log("✅ Webhook signature verified successfully");
+    console.log("📋 Event type:", event.type);
+    console.log("📋 Event ID:", event.id);
   } catch (err) {
-    console.error("Webhook signature verification failed:", err.message);
+    console.error("❌ Webhook signature verification failed:", err.message);
+    console.error("Expected signature:", sig);
+    console.error("Endpoint secret exists:", !!endpointSecret);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -358,6 +447,34 @@ const handleEventRegistrationWebhook = async (req, res) => {
               
               await artistRegistration.save();
               console.log(`✅ ArtistRegistration record created for ${artistName}`);
+              
+              // Generate event pass PDF
+              try {
+                const { generateEventPassPDF } = require('../utils/pdfPassGenerator');
+                
+                const passData = {
+                  eventTitle: event.eventTitle,
+                  artistName: artistName,
+                  artistEmail: artistEmail,
+                  eventDate: event.eventDate,
+                  eventVenue: event.eventVenue,
+                  registrationId: artistRegistration.registrationId,
+                  eventId: eventId,
+                  artistId: artistId
+                };
+                
+                const passFilePath = await generateEventPassPDF(passData);
+                
+                // Update registration record with pass info
+                artistRegistration.passGenerated = true;
+                artistRegistration.passFilePath = passFilePath;
+                await artistRegistration.save();
+                
+                console.log(`✅ Event pass PDF generated for ${artistName}: ${passFilePath}`);
+              } catch (pdfError) {
+                console.error(`❌ Error generating PDF for ${artistName}:`, pdfError);
+                // Don't fail the registration if PDF generation fails
+              }
             } else {
               console.log(`ArtistRegistration record already exists for ${artistEmail}`);
             }
@@ -426,6 +543,53 @@ const getSessionDetails = async (req, res) => {
   }
 };
 
+// Download event pass PDF
+const downloadEventPass = async (req, res) => {
+  try {
+    const { registrationId } = req.params;
+    
+    if (!registrationId) {
+      return res.status(400).json({ message: "Registration ID required" });
+    }
+
+    const ArtistRegistration = require("../model/artistRegistration");
+    const registration = await ArtistRegistration.findOne({ registrationId });
+    
+    if (!registration) {
+      return res.status(404).json({ message: "Registration not found" });
+    }
+
+    if (!registration.passGenerated || !registration.passFilePath) {
+      return res.status(404).json({ message: "Event pass not generated yet" });
+    }
+
+    const fs = require('fs');
+    const path = require('path');
+    
+    // Check if file exists
+    if (!fs.existsSync(registration.passFilePath)) {
+      return res.status(404).json({ message: "Event pass file not found" });
+    }
+
+    // Set headers for PDF download
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="event-pass-${registrationId}.pdf"`);
+    
+    // Stream the file
+    const fileStream = fs.createReadStream(registration.passFilePath);
+    fileStream.pipe(res);
+    
+    fileStream.on('error', (err) => {
+      console.error('Error streaming PDF file:', err);
+      res.status(500).json({ message: "Error downloading file" });
+    });
+
+  } catch (err) {
+    console.error("Error downloading event pass:", err);
+    res.status(500).json({ message: "Failed to download event pass", error: err.message });
+  }
+};
+
 module.exports = {
   createEvent,
   getAllEvents,
@@ -438,4 +602,5 @@ module.exports = {
   getArtistRegistrations,
   handleEventRegistrationWebhook,
   getSessionDetails,
+  downloadEventPass,
 };

@@ -13,6 +13,7 @@ const {
   getArtistRegistrations,
   handleEventRegistrationWebhook,
   getSessionDetails,
+  downloadEventPass,
 } = require("../controllers/eventController");
 
 // Event CRUD
@@ -30,6 +31,9 @@ router.post("/create-registration-checkout-session", createRegistrationCheckoutS
 router.post("/register-artist", registerArtistForEvent);
 router.get("/artist/:artistId/registrations", getArtistRegistrations);
 router.get("/session/:sessionId", getSessionDetails);
+
+// Event pass download
+router.get("/pass/:registrationId", downloadEventPass);
 
 // Stripe webhook for event registrations
 router.post("/webhook", handleEventRegistrationWebhook);
