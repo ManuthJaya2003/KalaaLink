@@ -279,9 +279,9 @@ function SuccessPage() {
           <div class="ticket-status">CONFIRMED & PAID</div>
           
           <div class="ticket-qr-placeholder">
-            <div style="text-align: center; margin-bottom: 10px;">📱</div>
-            <div style="text-align: center; font-weight: 600;">QR Code</div>
-            <div style="text-align: center; font-size: 10px;">Scan at event entrance</div>
+            <div style="text-align: center; margin-bottom: 10px;">🎫</div>
+            <div style="text-align: center; font-weight: 600;">Event Pass</div>
+            <div style="text-align: center; font-size: 10px;">Present at event entrance</div>
           </div>
           
           <div class="ticket-validity">
