@@ -70,6 +70,7 @@ import DonationCancel from "./Components/Chamodi/DonationCancel/DonationCancel";
 
 // ✅ Authentication Context
 import { AuthProvider } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 // ✅ Profile and Forgot Password Components
 import Profile from "./Components/Profile/Profile";
@@ -118,9 +119,10 @@ function App() {
   }, []);
 
   return (
-    <AuthProvider>
-      <CartProvider>
-        <div>
+    <ThemeProvider>
+      <AuthProvider>
+        <CartProvider>
+          <div>
           <Routes>
           {/* ---------- Redirects ---------- */}
           <Route path="/" element={<Navigate to="/mainhome" replace />} />
@@ -213,9 +215,10 @@ function App() {
           {/* ---------- 404 ---------- */}
           <Route path="*" element={<h2>404 - Page Not Found</h2>} />
           </Routes>
-        </div>
-      </CartProvider>
-    </AuthProvider>
+          </div>
+        </CartProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

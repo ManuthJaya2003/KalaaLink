@@ -87,6 +87,47 @@
   --transition-slow: 0.5s ease;
 }
 
+/* ===== DARK MODE THEME VARIABLES ===== */
+[data-theme="dark"] {
+  /* Primary Colors - Dark mode variants */
+  --color-off-white: #1a1a1a;
+  --color-light-beige: #2a2a2a;
+  --color-warm-beige: #333333;
+  --color-pastel-green: #1a2a1a;
+  --color-soft-green: #2a3a2a;
+  --color-warm-peach: #2a1a1a;
+  --color-soft-peach: #3a2a2a;
+  --color-light-orange: #3a2a1a;
+  --color-soft-blue: #1a2a3a;
+  --color-light-purple: #2a1a3a;
+  --color-soft-purple: #3a2a3a;
+  
+  /* Neutral Colors - Dark mode */
+  --color-light-gray: #2a2a2a;
+  --color-medium-gray: #3a3a3a;
+  --color-text-muted: #a0a0a0;
+  --color-text-primary: #e0e0e0;
+  --color-text-dark: #ffffff;
+  
+  /* Accent Colors - Slightly adjusted for dark mode */
+  --color-accent-green: #5ade80;
+  --color-accent-blue: #70a5fa;
+  --color-accent-blue-dark: #4b82f6;
+  --color-accent-purple: #b78bfa;
+  --color-accent-orange: #fb923c;
+  
+  /* Status Colors - Adjusted for dark mode */
+  --color-error: #ff5555;
+  --color-success: #33d55e;
+  --color-warning: #ffaa0b;
+  
+  /* Shadows - Adjusted for dark mode */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-large: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-soft-colored: 0 4px 20px rgba(74, 222, 128, 0.25);
+}
+
 /* ===== GLOBAL RESET & BASE STYLES ===== */
 * {
   margin: 0;
@@ -104,10 +145,11 @@ body {
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   color: var(--color-text-primary);
-  background: #ffffff;
+  background: var(--color-off-white);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 /* ===== TYPOGRAPHY SYSTEM ===== */

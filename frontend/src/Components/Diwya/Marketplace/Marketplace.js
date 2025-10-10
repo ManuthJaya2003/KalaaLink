@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { useCart } from '../CartContext/CartContext';
 import MainNav from '../../MainNav/MainNav';
@@ -165,6 +166,7 @@ const ProductCard = ({ product, onAddToCart, onViewDetails, onPostReview, onView
 };
 
 function Marketplace() {
+  const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -469,15 +471,15 @@ function Marketplace() {
           playsInline
         >
           <source src="/marketplaceHeroVid.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
+          {t('yourBrowserNotSupport')}
         </video>
       </div>
 
       <div className="marketplace-container">
         {/* Art Marketplace Text Section - Matching Events/Artists/Donations exactly */}
         <div className="marketplace-text-section">
-          <h2 className="marketplace-title">Art Marketplace</h2>
-          <p className="marketplace-subtitle">Discover unique artworks from talented artists around the world</p>
+          <h2 className="marketplace-title">{t('artMarketplace')}</h2>
+          <p className="marketplace-subtitle">{t('discoverUniqueArtworks')}</p>
         </div>
 
       <main className="marketplace-main">

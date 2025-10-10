@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import MainNav from "../../MainNav/MainNav";
@@ -19,6 +20,7 @@ console.log("Stripe key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ? "Found
 console.log("Using key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || "pk_test_your_publishable_key");
 
 function Events({ events: propEvents }) {
+  const { t } = useTranslation();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -481,13 +483,13 @@ function Events({ events: propEvents }) {
         {/* Global Testimonials Section */}
         <div className="testimonials-section">
           <div className="testimonials-header">
-            <h2 className="testimonials-title">What Our Attendees Say</h2>
-            <p className="testimonials-subtitle">Hear from people who have attended our amazing events</p>
+            <h2 className="testimonials-title">{t('whatOurAttendeesSay')}</h2>
+            <p className="testimonials-subtitle">{t('hearFromPeople')}</p>
             <button
               className="testimonials-button"
               onClick={() => setShowTestimonialModal(true)}
             >
-              Leave a Testimonial
+              {t('leaveTestimonial')}
             </button>
           </div>
           <div className="testimonials-wrapper">

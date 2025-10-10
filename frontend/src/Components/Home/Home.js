@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import MainNav from '../MainNav/MainNav';
 import './Home.css';
@@ -9,6 +10,7 @@ import Slider from '../Slider/Slider';
 
 function Home() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const testimonialsRef = useRef(null);
   const partnersTrackRef = useRef(null);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -96,38 +98,38 @@ function Home() {
       {/* Soft Intro Section */}
       <section className="intro-section">
         <div className="intro-container">
-          <h1 className="intro-headline">Discover & Celebrate Talented Artists</h1>
-          <p className="intro-subtext">Explore unique art, connect with creators, and be inspired. Discover talented artists from around the world, book their services for your events, and support the creative community that brings beauty and meaning to our lives.</p>
+          <h1 className="intro-headline">{t('discoverCelebrate')}</h1>
+          <p className="intro-subtext">{t('exploreUniqueArt')}</p>
           
           <div className="intro-cta-buttons">
             <button className="intro-btn" onClick={() => navigate('/artists')}>
-              Explore Artists
+              {t('exploreArtists')}
             </button>
             <button className="intro-btn" onClick={() => navigate('/register')}>
-              Join as Artists
+              {t('joinAsArtists')}
             </button>
           </div>
           
           <div className="intro-feature-widgets">
             <div className="feature-widget">
               <img className="widget-icon" src="/m.png" alt="Marketplace" />
-              <span className="widget-text">Marketplace</span>
-              <span className="widget-description">Buy & Sell Artwork</span>
+              <span className="widget-text">{t('marketplace')}</span>
+              <span className="widget-description">{t('buySellArtwork')}</span>
             </div>
             <div className="feature-widget">
               <img className="widget-icon" src="/d.png" alt="Donations" />
-              <span className="widget-text">Donations</span>
-              <span className="widget-description">Support Your Favorite Artists</span>
+              <span className="widget-text">{t('donations')}</span>
+              <span className="widget-description">{t('supportFavoriteArtists')}</span>
             </div>
             <div className="feature-widget">
               <img className="widget-icon" src="/a.png" alt="Artists" />
-              <span className="widget-text">Artists</span>
-              <span className="widget-description">Find Your Favorite Artists</span>
+              <span className="widget-text">{t('artists')}</span>
+              <span className="widget-description">{t('findFavoriteArtists')}</span>
             </div>
             <div className="feature-widget">
               <img className="widget-icon" src="/e.png" alt="Events" />
-              <span className="widget-text">Events</span>
-              <span className="widget-description">Discover Upcoming Events</span>
+              <span className="widget-text">{t('events')}</span>
+              <span className="widget-description">{t('discoverUpcomingEvents')}</span>
             </div>
           </div>
         </div>
@@ -136,8 +138,8 @@ function Home() {
       {/* Virtual Art Gallery */}
       <section className="gallery-section">
         <div className="gallery-header">
-          <h2>Virtual Art Gallery</h2>
-          <p>Explore our curated collection in 360° immersive experience. Discover stunning artworks from talented artists around the world, view detailed pieces up close, and experience art like never before in our virtual gallery space.</p>
+          <h2>{t('virtualArtGallery')}</h2>
+          <p>{t('exploreCuratedCollection')}</p>
         </div>
         <VirtualGallery />
       </section>
@@ -246,21 +248,21 @@ function Home() {
       {/* Statistics/Trust Section */}
       <section className="statistics-section">
         <div className="statistics-header">
-          <h2 className="statistics-title">Our Growing Community in Numbers</h2>
-          <p className="statistics-subtitle">Join thousands of artists and customers who trust KalaaLink for their creative needs</p>
+          <h2 className="statistics-title">{t('ourGrowingCommunity')}</h2>
+          <p className="statistics-subtitle">{t('joinThousandsArtists')}</p>
         </div>
         <div className="statistics-container">
           <div className="stat-item">
             <div className="stat-number">1000+</div>
-            <div className="stat-label">Artists Registered</div>
+            <div className="stat-label">{t('artistsRegistered')}</div>
           </div>
           <div className="stat-item">
             <div className="stat-number">5000+</div>
-            <div className="stat-label">Customers Served</div>
+            <div className="stat-label">{t('customersServed')}</div>
           </div>
           <div className="stat-item">
             <div className="stat-number">200+</div>
-            <div className="stat-label">Partnerships Worldwide</div>
+            <div className="stat-label">{t('partnershipsWorldwide')}</div>
           </div>
         </div>
       </section>
@@ -269,7 +271,7 @@ function Home() {
       {/* Testimonials Widget */}
       <section className="testimonials-widget-section">
         <div className="testimonials-container">
-          <h2 className="testimonials-title">What Our Users Say</h2>
+          <h2 className="testimonials-title">{t('whatOurUsersSay')}</h2>
           <div className="testimonials-wrapper">
             <button className="testimonial-nav-btn testimonial-prev" onClick={() => scrollTestimonials('prev')}>
               <span>‹</span>
@@ -340,12 +342,12 @@ function Home() {
       {/* Our Partners Section */}
       <section className="partners-section">
         <div className="partners-container">
-          <h2 className="partners-title">Our Partners</h2>
+          <h2 className="partners-title">{t('ourPartners')}</h2>
           {loading ? (
-            <div className="partners-loading">Loading partners...</div>
+            <div className="partners-loading">{t('loadingPartners')}</div>
           ) : partners.length === 0 ? (
             <div className="partners-empty">
-              <p>We're working on building partnerships. Check back soon!</p>
+              <p>{t('buildingPartnerships')}</p>
             </div>
           ) : (
             <div className="partners-slider">
@@ -394,7 +396,7 @@ function Home() {
       {/* Ending Note */}
       <section className="ending-note-section">
         <div className="ending-note-container">
-          <p className="ending-note-text">Thank you for supporting our journey — together we make art thrive and create meaningful connections that inspire creativity across our community.</p>
+          <p className="ending-note-text">{t('thankYouSupporting')}</p>
           <div className="ending-note-decoration"></div>
         </div>
       </section>

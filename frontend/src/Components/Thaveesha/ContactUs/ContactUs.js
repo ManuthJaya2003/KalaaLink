@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./ContactUs.css";
 import MainNav from "../../MainNav/MainNav";
 import MainFooter from "../../MainFooter/MainFooter";
@@ -7,6 +8,7 @@ import LiveLocationMap from "./LiveLocationMap";
 import Chatbot from "../../Chatbot/Chatbot";
 
 function ContactUs() {
+  const { t } = useTranslation();
   const [isComplaintFormOpen, setIsComplaintFormOpen] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
@@ -35,7 +37,7 @@ function ContactUs() {
           <div className="success-message">
             <div className="success-content">
               <span className="success-icon">✅</span>
-              <span>Your complaint has been submitted successfully! We'll get back to you soon.</span>
+              <span>{t('complaintSubmittedSuccessfully')}</span>
             </div>
             <button 
               className="success-close" 
@@ -49,27 +51,18 @@ function ContactUs() {
         {/* About */}
         <section className="about-section">
           <div className="about-text">
-            <h2>About KalaaLink</h2>
+            <h2>{t('aboutKalaaLink')}</h2>
             <p>
-              KalaaLink is the premier platform dedicated to bridging the gap
-              between talented artists and a global audience. Our mission is to
-              provide artists with the tools, resources, and exposure they need to
-              thrive in their creative careers. We believe that art is a vital part
-              of culture, and by supporting artists, we enrich our communities and
-              the world.
+              {t('kalaaLinkDescription')}
             </p>
             <p>
-              From managing bookings and selling artwork to fostering collaborations
-              and organizing events, KalaaLink is a comprehensive ecosystem for
-              creative professionals. We are passionate about curating a diverse and
-              vibrant community where creativity is celebrated, and artists can
-              achieve their full potential.
+              {t('kalaaLinkDescription2')}
             </p>
           </div>
 
           {/* Contact Card */}
           <div className="contact-card">
-            <h3>Get in Touch</h3>
+            <h3>{t('getInTouch')}</h3>
             <div className="contact-item">
               <div className="icon-circle">✉</div>
               <div>

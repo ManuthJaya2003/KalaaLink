@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import "./Chatbot.css";
 
 function Chatbot() {
+  const { t } = useTranslation();
   const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:5000";
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -68,11 +70,11 @@ function Chatbot() {
     <div className="kl-chatbot-root" aria-live="polite">
       {showWelcomeTip && !isOpen && (
         <div className="kl-chatbot-tip" role="status">
-          <span className="kl-chatbot-tip-text">👉 Need help? Ask KalaaBot 🎨</span>
+          <span className="kl-chatbot-tip-text">👉 {t('needHelp')}</span>
           <button
             type="button"
             className="kl-chatbot-tip-close"
-            aria-label="Dismiss"
+            aria-label={t('dismiss')}
             onClick={() => {
               setShowWelcomeTip(false);
             }}
@@ -82,7 +84,7 @@ function Chatbot() {
         </div>
       )}
       {!isOpen && (
-        <button className="kl-chatbot-fab" onClick={toggleOpen} aria-label="Open chat">
+        <button className="kl-chatbot-fab" onClick={toggleOpen} aria-label={t('openChat')}>
           💬
         </button>
       )}
@@ -90,8 +92,8 @@ function Chatbot() {
       {isOpen && (
         <div className="kl-chatbot-window" role="dialog" aria-modal="false">
           <div className="kl-chatbot-header">
-            <div className="kl-chatbot-title">KalaaLink Assistant</div>
-            <button className="kl-chatbot-close" onClick={toggleOpen} aria-label="Close chat">×</button>
+            <div className="kl-chatbot-title">{t('kalaaLinkAssistant')}</div>
+            <button className="kl-chatbot-close" onClick={toggleOpen} aria-label={t('closeChat')}>×</button>
           </div>
           <div className="kl-chatbot-messages">
             {messages.map((m, idx) => (
@@ -106,11 +108,11 @@ function Chatbot() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Type a message..."
+              placeholder={t('typeMessage')}
               rows={1}
             />
             <button className="btn btn-primary kl-chatbot-send" onClick={handleSend} disabled={isSending}>
-              {isSending ? "Sending..." : "Send"}
+              {isSending ? t('sending') : t('send')}
             </button>
           </div>
         </div>

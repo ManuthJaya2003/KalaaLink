@@ -1,0 +1,121 @@
+.language-selector {
+  position: relative;
+  display: inline-block;
+}
+
+.language-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  min-width: 120px;
+}
+
+.language-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.language-flag {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.language-name {
+  flex: 1;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.language-arrow {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.language-arrow.open {
+  transform: rotate(180deg);
+}
+
+.language-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--dropdown-bg, #ffffff);
+  border: 1px solid var(--dropdown-border, #e5e7eb);
+  border-radius: 6px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 1000;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-color, #374151);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+  text-align: left;
+}
+
+.language-option:hover {
+  background: var(--option-hover-bg, #f3f4f6);
+}
+
+.language-option.active {
+  background: var(--option-active-bg, #e5e7eb);
+  font-weight: 600;
+}
+
+.language-option .language-flag {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.language-option .language-name {
+  flex: 1;
+  font-size: 14px;
+}
+
+/* Dark theme support */
+[data-theme="dark"] .language-dropdown {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+[data-theme="dark"] .language-option {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .language-option:hover {
+  background: #374151;
+}
+
+[data-theme="dark"] .language-option.active {
+  background: #4b5563;
+}
+
+[data-theme="dark"] .language-toggle-btn {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .language-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
