@@ -6,7 +6,10 @@ const ArtistRegistrationSchema = new Schema({
     artistName: { type: String, required: true },
     artistEmail: { type: String, required: true },
     registrationFee: { type: Number, required: true },
-    registrationDate: { type: Date, default: Date.now }
+    registrationDate: { type: Date, default: Date.now },
+    registrationId: { type: String, unique: true, default: () => `REG-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}` },
+    passGenerated: { type: Boolean, default: false },
+    passFilePath: { type: String, default: null }
 });
 
 module.exports = mongoose.model("ArtistRegistration", ArtistRegistrationSchema);

@@ -96,6 +96,9 @@ const galleryRoutes = require("./routes/galleryRoutes");
 // ✅ Chatbot Route (modular, non-intrusive)
 const chatbotRoute = require("./routes/chatbotRoute");
 
+// ✅ QR Code Validation Routes (modular, non-intrusive)
+const qrValidationRoutes = require("./routes/qrValidationRoutes");
+
 
 // Mount routes
 app.use("/artists", artistManagerRoute);
@@ -149,6 +152,9 @@ app.use("/api/gallery", galleryRoutes);
 
 // ✅ Chatbot endpoint
 app.use("/api/chatbot", chatbotRoute);
+
+// ✅ QR Code validation endpoint
+app.use("/api/qr", qrValidationRoutes);
 
 
 // ================== PDF Generation Route ==================
