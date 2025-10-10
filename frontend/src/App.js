@@ -76,8 +76,6 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Profile from "./Components/Profile/Profile";
 import ForgotPassword from "./Components/ForgotPassword/ForgotPassword";
 
-// ✅ QR Scanner Component
-import QRScannerPage from "./Components/Common/QRScannerPage";
 
 const URL = "http://localhost:5000/events";
 
@@ -215,8 +213,6 @@ function App() {
           <Route path="/donation-success" element={<DonationSuccess />} />
           <Route path="/donation-cancel" element={<DonationCancel />} />
 
-          {/* ✅ QR Scanner Route */}
-          <Route path="/qr-scanner" element={<QRScannerPage />} />
 
           {/* ---------- 404 ---------- */}
           <Route path="*" element={<h2>404 - Page Not Found</h2>} />

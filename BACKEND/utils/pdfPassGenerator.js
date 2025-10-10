@@ -1,10 +1,9 @@
 const PDFDocument = require('pdfkit');
-const QRCode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
 
 /**
- * Generate an event registration pass PDF with QR code
+ * Generate an event registration pass PDF
  * @param {Object} registrationData - Registration data
  * @param {string} registrationData.eventTitle - Event title
  * @param {string} registrationData.artistName - Artist name
@@ -48,25 +47,6 @@ const generateEventPassPDF = async (registrationData) => {
     // Pipe PDF to file
     doc.pipe(fs.createWriteStream(filepath));
 
-    // Generate QR code data
-    const qrData = JSON.stringify({
-      registrationId: registrationId,
-      artistId: artistId,
-      eventId: eventId,
-      artistEmail: artistEmail,
-      eventTitle: eventTitle,
-      generatedAt: new Date().toISOString()
-    });
-
-    // Generate QR code as base64
-    const qrCodeDataURL = await QRCode.toDataURL(qrData, {
-      width: 200,
-      margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#FFFFFF'
-      }
-    });
 
     // Header with KalaaLink branding
     doc.fontSize(24)
@@ -113,34 +93,26 @@ const generateEventPassPDF = async (registrationData) => {
          minute: '2-digit'
        })}`, 50, 300);
 
-    // QR Code section
-    doc.fontSize(16)
-       .fillColor('#2c3e50')
-       .text('Registration QR Code', 50, 350, { align: 'center' });
-
-    // Add QR code image
-    const qrCodeBuffer = Buffer.from(qrCodeDataURL.split(',')[1], 'base64');
-    doc.image(qrCodeBuffer, 200, 380, { width: 200, height: 200 });
 
     // Footer message
     doc.fontSize(14)
        .fillColor('#27ae60')
-       .text('Thank you for registering!', 50, 620, { align: 'center' });
+       .text('Thank you for registering!', 50, 400, { align: 'center' });
 
     doc.fontSize(12)
        .fillColor('#7f8c8d')
-       .text('Please present this pass at the event entrance', 50, 640, { align: 'center' });
+       .text('Please present this pass at the event entrance', 50, 420, { align: 'center' });
 
     // Add some decorative elements
     doc.strokeColor('#e74c3c')
        .lineWidth(2)
-       .moveTo(50, 680)
-       .lineTo(545, 680)
+       .moveTo(50, 460)
+       .lineTo(545, 460)
        .stroke();
 
     doc.fontSize(10)
        .fillColor('#95a5a6')
-       .text('KalaaLink - Connecting Artists & Audiences', 50, 700, { align: 'center' });
+       .text('KalaaLink - Connecting Artists & Audiences', 50, 480, { align: 'center' });
 
     // Finalize PDF
     doc.end();

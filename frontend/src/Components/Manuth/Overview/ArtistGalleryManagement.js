@@ -4,15 +4,13 @@ import "./ArtistGalleryManagement.css";
 
 function ArtistGalleryManagement() {
   const [artworks, setArtworks] = useState([]);
-  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [formData, setFormData] = useState({
     image: null,
     title: "",
     artist: "",
-    summary: "",
-    associatedEventId: ""
+    summary: ""
   });
   const [uploading, setUploading] = useState(false);
 
@@ -29,19 +27,9 @@ function ArtistGalleryManagement() {
     }
   };
 
-  // Fetch events for dropdown
-  const fetchEvents = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/events");
-      setEvents(response.data || []);
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    }
-  };
 
   useEffect(() => {
     fetchArtworks();
-    fetchEvents();
   }, []);
 
   // Handle form input changes
@@ -84,9 +72,6 @@ function ArtistGalleryManagement() {
       formDataToSend.append("title", formData.title);
       formDataToSend.append("artist", formData.artist);
       formDataToSend.append("summary", formData.summary);
-      if (formData.associatedEventId) {
-        formDataToSend.append("associatedEventId", formData.associatedEventId);
-      }
 
       const response = await axios.post("http://localhost:5000/api/artworks", formDataToSend, {
         headers: {
@@ -100,8 +85,7 @@ function ArtistGalleryManagement() {
           image: null,
           title: "",
           artist: "",
-          summary: "",
-          associatedEventId: ""
+          summary: ""
         });
         setShowAddModal(false);
         // Refresh artworks
@@ -181,7 +165,6 @@ function ArtistGalleryManagement() {
                 <th>Title</th>
                 <th>Artist Name</th>
                 <th>Summary</th>
-                <th>Associated Event</th>
                 <th>Created</th>
                 <th>Actions</th>
               </tr>
@@ -201,12 +184,6 @@ function ArtistGalleryManagement() {
                   <td>{artwork.title}</td>
                   <td>{artwork.artist}</td>
                   <td>{truncateText(artwork.summary)}</td>
-                  <td>
-                    {artwork.associatedEventId ? 
-                      events.find(e => e._id === artwork.associatedEventId)?.eventTitle || "Unknown Event" 
-                      : "None"
-                    }
-                  </td>
                   <td>
                     {formatDate(artwork.createdAt)}
                   </td>
@@ -291,22 +268,6 @@ function ArtistGalleryManagement() {
                   />
                 </div>
                 
-                <div className="form-group">
-                  <label htmlFor="associatedEventId">Associated Event (Optional)</label>
-                  <select
-                    id="associatedEventId"
-                    name="associatedEventId"
-                    value={formData.associatedEventId}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Select an event (optional)</option>
-                    {events.map((event) => (
-                      <option key={event._id} value={event._id}>
-                        {event.eventTitle} - {formatDate(event.eventDate)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
                 
                 <div className="form-actions">
                   <button 
