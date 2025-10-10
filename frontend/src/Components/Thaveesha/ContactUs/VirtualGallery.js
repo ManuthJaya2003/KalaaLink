@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
+import axios from 'axios';
 import './VirtualGallery.css';
 
-// Import artwork images
+// Import artwork images as fallback
 import Pic1 from '../../Home/Pic1.jpg';
 import Pic2 from '../../Home/Pic2.jpg';
 import Pic3 from '../../Home/Pic3.jpg';
@@ -16,9 +17,11 @@ const VirtualGallery = () => {
   const rendererRef = useRef(null);
   const cameraRef = useRef(null);
   const [hoveredArtwork, setHoveredArtwork] = useState(null);
+  const [dbArtworks, setDbArtworks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Artwork data with positions and information
-  const artworks = useMemo(() => [
+  // Fallback artwork data with positions and information
+  const fallbackArtworks = useMemo(() => [
     {
       id: 1,
       image: Pic1,
@@ -81,9 +84,55 @@ const VirtualGallery = () => {
     }
   ], []);
 
+  // Fetch artworks from database
+  useEffect(() => {
+    const fetchArtworks = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/artworks');
+        setDbArtworks(response.data || []);
+      } catch (error) {
+        console.error('Error fetching artworks:', error);
+        setDbArtworks([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArtworks();
+  }, []);
+
+  // Combine database artworks with fallback artworks
+  const artworks = useMemo(() => {
+    const wallPositions = [
+      { x: -4.5, y: 0, z: -4.5, rotation: { y: Math.PI / 2 } }, // Left wall
+      { x: 4.5, y: 0, z: -4.5, rotation: { y: -Math.PI / 2 } }, // Right wall
+      { x: 0, y: 0, z: -4.5, rotation: { y: 0 } }, // Back wall
+      { x: -4.5, y: 0, z: 4.5, rotation: { y: Math.PI / 2 } }, // Left wall (opposite)
+      { x: 4.5, y: 0, z: 4.5, rotation: { y: -Math.PI / 2 } }, // Right wall (opposite)
+      { x: 0, y: 0, z: 4.5, rotation: { y: Math.PI } }, // Front wall
+    ];
+
+    const processedDbArtworks = dbArtworks.map((artwork, index) => {
+      const position = wallPositions[index % wallPositions.length];
+      return {
+        id: artwork._id || artwork.id,
+        image: artwork.image,
+        title: artwork.title || 'Untitled',
+        artist: artwork.artist || 'Unknown Artist',
+        description: artwork.summary || 'No description available',
+        position,
+        rotation: position.rotation,
+        size: { width: 2, height: 1.5 }
+      };
+    });
+
+    // If we have database artworks, use them; otherwise use fallback
+    return processedDbArtworks.length > 0 ? processedDbArtworks : fallbackArtworks;
+  }, [dbArtworks, fallbackArtworks]);
+
   useEffect(() => {
     const mountElement = mountRef.current;
-    if (!mountElement) return;
+    if (!mountElement || loading) return;
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -367,6 +416,19 @@ const VirtualGallery = () => {
       renderer.dispose();
     };
   }, [artworks]);
+
+  if (loading) {
+    return (
+      <div className="virtual-gallery-container">
+        <div className="gallery-controls">
+          <span>Loading artworks...</span>
+        </div>
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="virtual-gallery-container">
