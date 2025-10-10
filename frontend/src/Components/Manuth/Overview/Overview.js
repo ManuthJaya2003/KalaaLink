@@ -5,6 +5,8 @@ import OverviewAnalyticsTab from "./OverviewAnalyticsTab";
 import OverviewApplicationsTab from "./OverviewApplicationsTab";
 import OverviewManageArtistsTab from "./OverviewManageArtistsTab";
 import ArtistReviews from "../ArtistReviews/ArtistReviews";
+import ArtGalleryUpload from "./ArtGalleryUpload";
+import ArtistGalleryManagement from "./ArtistGalleryManagement";
 import logoutEmployee from "../../../utils/employeeLogout";
 import "./Overview.css";
 
@@ -59,6 +61,12 @@ const Overview = () => {
             Artist Reviews
           </button>
           <button 
+            onClick={() => setActiveTab("gallery")} 
+            className={`sidebar-btn ${activeTab === "gallery" ? "active" : ""}`}
+          >
+            Art Management
+          </button>
+          <button 
             onClick={handleSignOut} 
             className="sidebar-btn signout-btn"
           >
@@ -76,6 +84,7 @@ const Overview = () => {
           {activeTab === "applications" && <OverviewApplicationsTab />}
           {activeTab === "manage" && <OverviewManageArtistsTab />}
           {activeTab === "reviews" && <ArtistReviews showNavigation={false} />}
+          {activeTab === "gallery" && <ArtistGalleryManagement />}
         </div>
       </div>
     </div>

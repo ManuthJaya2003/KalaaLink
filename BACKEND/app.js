@@ -57,6 +57,7 @@ const dashboardRoute = require("./routes/dashboardRoutes");
 
 // ✅ Marketplace Manager Routes
 const artRoutes = require("./routes/artRoutes");
+const artworkRoutes = require("./routes/artworkRoutes");
 const customizationRoutes = require("./routes/customizationRoutes");
 const reviewRoutes = require("./routes/reviewsRoutes");
 const deliveryRoutes = require("./routes/deliveryRoutes");
@@ -114,6 +115,7 @@ app.use("/api/dashboard", dashboardRoute);
 
 // Marketplace Manager routes
 app.use("/api/art", artRoutes);
+app.use("/api/artworks", artworkRoutes);
 app.use("/api/customizations", customizationRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/review", reviewRoutes);
