@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import emailjs from "emailjs-com";
 import "./OverviewApplicationsTab.css";
 import "./AnalyticsTab.css";
 
@@ -41,6 +42,33 @@ function OverviewApplicationsTab() {
   const approveArtist = async (id) => {
     try {
       const res = await axios.put(`${BASE_URL}/approve/${id}`);
+      
+      // Find the artist data to get email and name for notification
+      const artist = pendingArtists.find(artist => artist._id === id);
+      
+      // Send email notification if artist data is available
+      if (artist && artist.email) {
+        try {
+          const templateParams = {
+            artist_name: artist.stageName || `${artist.firstName || artist.firstname || ""} ${artist.lastName || artist.lastname || ""}`.trim(),
+            artist_email: artist.email,
+            to_email: artist.email
+          };
+
+          await emailjs.send(
+            'service_1uxn9p8',
+            'template_b0u1rzq',
+            templateParams,
+            'Iyq-2jKYLb9Tri5Qd'
+          );
+          
+          console.log('Approval email sent successfully to:', artist.email);
+        } catch (emailErr) {
+          console.error('Failed to send approval email:', emailErr);
+          // Don't fail the approval process if email fails
+        }
+      }
+      
       // Refresh the lists from the backend
       await fetchApplications();
       alert(res.data.message || "Artist approved successfully!");
