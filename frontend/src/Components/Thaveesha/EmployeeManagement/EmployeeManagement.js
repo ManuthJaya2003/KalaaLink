@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import EmployeeProfileModal from './EmployeeProfileModal';
 import './EmployeeManagement.css';
 
 const API_BASE = 'http://localhost:5000/api/employees';
@@ -10,6 +11,8 @@ function EmployeeManagement() {
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -101,6 +104,16 @@ function EmployeeManagement() {
   const closeModal = () => {
     setIsModalOpen(false);
     resetForm();
+  };
+
+  const openProfileModal = (employee) => {
+    setSelectedEmployee(employee);
+    setIsProfileModalOpen(true);
+  };
+
+  const closeProfileModal = () => {
+    setIsProfileModalOpen(false);
+    setSelectedEmployee(null);
   };
 
   const handleSubmit = async (e) => {
@@ -209,6 +222,12 @@ function EmployeeManagement() {
                 </td>
                 <td>
                   <div className="action-buttons">
+                    <button 
+                      className="btn-profile" 
+                      onClick={() => openProfileModal(employee)}
+                    >
+                      Profile
+                    </button>
                     <button 
                       className="btn-edit" 
                       onClick={() => openEditModal(employee)}
@@ -339,6 +358,13 @@ function EmployeeManagement() {
           </div>
         </div>
       )}
+
+      {/* Employee Profile Modal */}
+      <EmployeeProfileModal
+        employee={selectedEmployee}
+        isOpen={isProfileModalOpen}
+        onClose={closeProfileModal}
+      />
     </div>
   );
 }
