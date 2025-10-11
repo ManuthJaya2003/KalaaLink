@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import emailjs from 'emailjs-com';
 import './ComplaintsTab.css';
 
 const API_URL = "http://localhost:5000/complaints";
@@ -60,6 +61,31 @@ function ComplaintsTab() {
             : complaint
         )
       );
+      
+      // Send email notification if complaint is accepted
+      if (newStatus === 'Accepted') {
+        const complaint = complaints.find(c => c._id === complaintId);
+        if (complaint) {
+          emailjs.send(
+            "service_1uxn9p8",
+            "template_sojpjz3",
+            {
+              user_name: complaint.Name,
+              user_email: complaint.Gmail,
+              complaint_id: complaint._id,
+              complaint_subject: complaint.Complaint_Category,
+              complaint_message: complaint.Message
+            },
+            "Iyq-2jKYLb9Tri5Qd"
+          )
+          .then((result) => {
+            console.log("✅ Resolution email sent successfully:", result.text);
+          })
+          .catch((error) => {
+            console.error("❌ Failed to send resolution email:", error);
+          });
+        }
+      }
       
       setShowModal(false);
       setSelectedComplaint(null);

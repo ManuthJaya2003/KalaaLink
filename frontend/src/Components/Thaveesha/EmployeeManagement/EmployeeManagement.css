@@ -243,7 +243,7 @@
   align-items: center;
 }
 
-.btn-edit, .btn-delete {
+.btn-profile, .btn-edit, .btn-delete {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 6px;
@@ -254,6 +254,17 @@
   font-family: inherit;
   width: 80px;
   text-align: center;
+}
+
+.btn-profile {
+  background: #4CAF50;
+  color: #ffffff;
+}
+
+.btn-profile:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
 .btn-edit {
@@ -464,6 +475,149 @@
   margin: 0 !important;
 }
 
+/* Employee Profile Modal Styles */
+.profile-modal {
+  max-width: 700px;
+  width: 90%;
+}
+
+.profile-content {
+  padding: 0 1.5rem;
+}
+
+.profile-section {
+  margin-bottom: 2rem;
+}
+
+.profile-section h3 {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #C1A37F;
+  font-family: 'Georgia', serif;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #C1A37F;
+}
+
+.info-item label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item span {
+  color: #2c3e50;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.role-badge {
+  background: #C1A37F;
+  color: #000000;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.stat-item {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #C1A37F;
+  text-align: center;
+}
+
+.stat-item h4 {
+  color: #374151;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  font-family: 'Georgia', serif;
+}
+
+.loading-stats, .error-stats {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.error-stats {
+  color: #dc2626;
+}
+
+.fallback-info {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 1rem;
+}
+
+.modal-footer .btn-cancel {
+  background: #C1A37F;
+  color: #000000;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.modal-footer .btn-cancel:hover {
+  background: #a68b5f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(193, 163, 127, 0.3);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .employee-management {
@@ -491,6 +645,21 @@
     margin: 20px;
   }
   
+  .profile-modal {
+    width: 95%;
+    max-width: 95%;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
   .employee-table-container {
     overflow-x: auto;
   }
@@ -507,7 +676,7 @@
     font-size: 0.85rem;
   }
   
-  .btn-edit, .btn-delete {
+  .btn-profile, .btn-edit, .btn-delete {
     padding: 6px 12px;
     font-size: 0.8rem;
   }
