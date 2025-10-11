@@ -335,6 +335,54 @@ const EmployeeProfileModal = ({ employee, isOpen, onClose }) => {
     }
   };
 
+  const getJobResponsibilities = () => {
+    const role = employee?.role?.toLowerCase();
+    
+    if (role?.includes('artist manager')) {
+      return [
+        'Oversee onboarding and management of artists',
+        'Review and approve artworks submitted by artists',
+        'Coordinate with event managers for artist participation',
+        'Handle bookings and maintain artist performance analytics'
+      ];
+    } else if (role?.includes('donation manager')) {
+      return [
+        'Manage all active donation campaigns',
+        'Oversee payment confirmations and donor records',
+        'Generate monthly donation and donor reports',
+        'Ensure transparency and compliance with fundraising policies'
+      ];
+    } else if (role?.includes('event manager')) {
+      return [
+        'Plan and organize events across the platform',
+        'Manage artist registrations and event payments',
+        'Coordinate logistics with venues and artists',
+        'Track event performance metrics and attendee feedback'
+      ];
+    } else if (role?.includes('marketplace manager')) {
+      return [
+        'Oversee marketplace product listings and sales flow',
+        'Verify new product uploads by artists',
+        'Track revenue and manage refunds or disputes',
+        'Maintain the quality and authenticity of listed artworks'
+      ];
+    } else if (role?.includes('admin')) {
+      return [
+        'Oversee all user roles and platform operations',
+        'Manage site-wide analytics and system settings',
+        'Review and resolve user complaints',
+        'Approve or remove manager accounts as needed'
+      ];
+    } else {
+      return [
+        'General administrative duties',
+        'Support platform operations',
+        'Assist with user inquiries',
+        'Maintain system documentation'
+      ];
+    }
+  };
+
   if (!isOpen || !employee) return null;
 
   return (
@@ -401,6 +449,15 @@ const EmployeeProfileModal = ({ employee, isOpen, onClose }) => {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="profile-section">
+          <h3>Job Responsibilities</h3>
+          <ul className="responsibilities-list">
+            {getJobResponsibilities().map((responsibility, index) => (
+              <li key={index}>{responsibility}</li>
+            ))}
+          </ul>
         </div>
 
         <div className="modal-footer">
