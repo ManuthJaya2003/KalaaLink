@@ -8,9 +8,8 @@ const rules = [
   { keywords: ["event"], reply: "You can explore or register for upcoming art events in the Events section." },
   { keywords: ["marketplace"], reply: "The marketplace allows artists to sell and customers to buy unique artworks." },
   { keywords: ["donation", "support"], reply: "Support your favorite artists through our donation and sponsorship features ❤️." },
-  { keywords: ["contact"], reply: "Reach out to us anytime at info@kalaalink.com or call +94-11-2223344." },
+  { keywords: ["contact"], reply: "Reach out to us anytime at kalaalink@gmail.com or call +94 76 161 9161." },
   {keywords: ["Oi"], reply: "Ai do?" },
-  {keywords: ["I'm Asiri"], reply: "Heyy. I know you gay boii" },
   
 ];
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { sendStatusChangeEmail } from '../../../utils/sendCustomizationStatusEmail';
 
 const CUSTOMIZATION_URL = 'http://localhost:5000/api/customizations';
 
@@ -59,12 +60,34 @@ function CustomizationsTab({ customizations }) {
 
   const handleUpdateStatus = async (customizationId, newStatus) => {
     try {
+      // Find the customization to get customer details
+      const customization = customizationsList.find(c => c._id === customizationId);
+      
+      // Update status in backend
       await axios.put(`${CUSTOMIZATION_URL}/${customizationId}`, {
         status: newStatus
       });
+      
+      // Update local state
       setCustomizationsList(prev => prev.map(c => 
         c._id === customizationId ? { ...c, status: newStatus } : c
       ));
+      
+      // Send email notification if status is "in-progress" or "completed"
+      if (customization && (newStatus === 'in-progress' || newStatus === 'completed')) {
+        try {
+          await sendStatusChangeEmail(
+            newStatus, 
+            customization.customerEmail, 
+            customization.customerName
+          );
+          console.log(`Email notification sent for ${newStatus} status to ${customization.customerEmail}`);
+        } catch (emailError) {
+          console.error('Failed to send email notification:', emailError);
+          // Don't fail the status update if email fails
+        }
+      }
+      
       alert(`Customization status updated to ${newStatus} successfully!`);
     } catch (error) {
       console.error('Error updating customization status:', error);
