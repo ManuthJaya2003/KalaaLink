@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Orders.css';
+import { sendRefundEmailSafely } from '../../../utils/sendRefundNotificationEmail';
 
 const ORDER_URL = 'http://localhost:5000/api/orders';
 
@@ -138,13 +139,32 @@ function Orders() {
   const handleUpdatePaymentStatus = async (orderId, newStatus, reason) => {
     try {
       setUpdateLoading(true);
+      
+      // Find the order to get customer details before updating
+      const orderToUpdate = orders.find(order => order._id === orderId);
+      
       await axios.put(`${ORDER_URL}/${orderId}/payment-status`, {
         paymentStatus: newStatus,
         reason: reason || 'Manual update by admin'
       });
+      
       await fetchOrders();
       setShowUpdateModal(false);
       setSelectedOrder(null);
+      
+      // Send refund notification email if status is changed to "refunded"
+      if (newStatus === 'refunded' && orderToUpdate) {
+        try {
+          await sendRefundEmailSafely(
+            orderToUpdate.customerEmail, 
+            orderToUpdate.customerName
+          );
+        } catch (emailError) {
+          console.error('Failed to send refund notification email:', emailError);
+          // Don't fail the status update if email fails
+        }
+      }
+      
       alert(`Payment status updated to ${newStatus} successfully!`);
     } catch (error) {
       console.error('Error updating payment status:', error);
