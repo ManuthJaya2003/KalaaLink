@@ -1,6 +1,7 @@
-/* LocationModal.css - Modern Elegant Design */
+/* LocationModal.css - Artist Manager Dashboard - Unique Classes */
 
-.modal-overlay {
+/* ===== ARTIST MANAGER LOCATION MODAL - UNIQUE CLASSES ===== */
+.artist-manager-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -13,7 +14,7 @@
   justify-content: center;
   z-index: 1000;
   padding: 20px;
-  animation: fadeIn 0.3s ease-out;
+  animation: artistManagerFadeIn 0.3s ease-out;
   /* Prevent body scroll when modal is open */
   overflow: hidden;
   /* Ensure the modal content is fully visible */
@@ -21,12 +22,12 @@
   padding-top: 40px;
 }
 
-@keyframes fadeIn {
+@keyframes artistManagerFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-.modal-content {
+.artist-manager-modal-content {
   background: #ffffff;
   border-radius: 24px;
   box-shadow: 
@@ -37,7 +38,7 @@
   max-height: 95vh;
   overflow-y: auto;
   position: relative;
-  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: artistManagerSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   display: flex;
   flex-direction: column;
@@ -49,7 +50,7 @@
   overscroll-behavior: contain;
 }
 
-@keyframes slideUp {
+@keyframes artistManagerSlideUp {
   from { 
     opacity: 0;
     transform: translateY(40px) scale(0.96);
@@ -61,51 +62,49 @@
 }
 
 /* Custom scrollbar for webkit browsers - only show when needed */
-.modal-content::-webkit-scrollbar {
+.artist-manager-modal-content::-webkit-scrollbar {
   width: 8px;
 }
 
-.modal-content::-webkit-scrollbar-track {
+.artist-manager-modal-content::-webkit-scrollbar-track {
   background: #f1f5f9;
   border-radius: 4px;
 }
 
-.modal-content::-webkit-scrollbar-thumb {
+.artist-manager-modal-content::-webkit-scrollbar-thumb {
   background: #C1A37F;
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
-.modal-content::-webkit-scrollbar-thumb:hover {
+.artist-manager-modal-content::-webkit-scrollbar-thumb:hover {
   background: #a68b5f;
 }
 
-/* Remove gradient overlay for cleaner appearance */
-
 /* Allow natural content height */
-.modal-body {
+.artist-manager-modal-body {
   min-height: auto;
 }
 
 /* Ensure the modal content can be scrolled to the very top */
-.modal-content {
+.artist-manager-modal-content {
   /* Add padding to ensure content isn't clipped at the top */
   padding-top: 0;
 }
 
 /* Ensure the first element in modal body is fully visible */
-.modal-body > *:first-child {
+.artist-manager-modal-body > *:first-child {
   margin-top: 0;
   padding-top: 0;
 }
 
 /* Show the location status section */
-.location-status-card {
+.artist-manager-location-status-card {
   display: block !important;
 }
 
 /* Ensure action buttons remain visible and properly styled */
-.action-buttons {
+.artist-manager-action-buttons {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
@@ -117,22 +116,22 @@
 }
 
 /* Show the map container */
-.map-container {
+.artist-manager-map-container {
   display: block !important;
 }
 
 /* Custom scrollbar for modal body */
-.modal-body::-webkit-scrollbar {
+.artist-manager-modal-body::-webkit-scrollbar {
   width: 12px;
 }
 
-.modal-body::-webkit-scrollbar-track {
+.artist-manager-modal-body::-webkit-scrollbar-track {
   background: #f1f5f9;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
 }
 
-.modal-body::-webkit-scrollbar-thumb {
+.artist-manager-modal-body::-webkit-scrollbar-thumb {
   background: #C1A37F;
   border-radius: 6px;
   transition: all 0.3s ease;
@@ -140,12 +139,12 @@
   min-height: 30px;
 }
 
-.modal-body::-webkit-scrollbar-thumb:hover {
+.artist-manager-modal-body::-webkit-scrollbar-thumb:hover {
   background: #a68b5f;
   border-color: #e2e8f0;
 }
 
-.modal-header {
+.artist-manager-modal-header {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -160,7 +159,7 @@
   position: relative;
 }
 
-.modal-header::after {
+.artist-manager-modal-header::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -170,7 +169,7 @@
   background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%);
 }
 
-.header-content {
+.artist-manager-header-content {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -179,7 +178,7 @@
   position: relative;
 }
 
-.header-icon {
+.artist-manager-header-icon {
   font-size: 28px;
   background: linear-gradient(135deg, #C1A37F 0%, #a68b5f 100%);
   -webkit-background-clip: text;
@@ -188,7 +187,7 @@
   filter: drop-shadow(0 2px 4px rgba(193, 163, 127, 0.2));
 }
 
-.modal-header h3 {
+.artist-manager-modal-header h3 {
   margin: 0;
   color: #2c3e50;
   font-size: 1.875rem;
@@ -198,7 +197,7 @@
   flex: 1;
 }
 
-.modal-close {
+.artist-manager-modal-close {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   color: #64748b;
@@ -217,7 +216,7 @@
   transform: translateY(-50%);
 }
 
-.modal-close:hover {
+.artist-manager-modal-close:hover {
   background: #f1f5f9;
   color: #475569;
   border-color: #cbd5e1;
@@ -225,11 +224,11 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.modal-close:active {
+.artist-manager-modal-close:active {
   transform: scale(0.95);
 }
 
-.modal-body {
+.artist-manager-modal-body {
   padding: 32px;
   scroll-behavior: smooth;
   min-height: 0;
@@ -251,7 +250,7 @@
 }
 
 /* Event Details Card */
-.event-details-card {
+.artist-manager-event-details-card {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid #e2e8f0;
   border-radius: 20px;
@@ -266,11 +265,11 @@
   margin-top: 8px;
 }
 
-.event-details-card::before {
+.artist-manager-event-details-card::before {
   display: none;
 }
 
-.event-header h4 {
+.artist-manager-event-header h4 {
   margin: 0 0 24px 0;
   color: #1e293b;
   font-size: 1.5rem;
@@ -279,13 +278,13 @@
   text-align: center;
 }
 
-.event-info-grid {
+.artist-manager-event-info-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
 }
 
-.info-item {
+.artist-manager-info-item {
   display: flex;
   align-items: center;
   padding: 16px 20px;
@@ -297,21 +296,21 @@
   overflow: hidden;
 }
 
-.info-item::before {
+.artist-manager-info-item::before {
   display: none;
 }
 
-.info-item:hover {
+.artist-manager-info-item:hover {
   border-color: #e2e8f0;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
 }
 
-.info-item:hover::before {
+.artist-manager-info-item:hover::before {
   display: none;
 }
 
-.info-icon {
+.artist-manager-info-icon {
   font-size: 20px;
   width: 40px;
   height: 40px;
@@ -324,7 +323,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.info-content {
+.artist-manager-info-content {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -333,7 +332,7 @@
   width: 100%;
 }
 
-.info-label {
+.artist-manager-info-label {
   color: #64748b;
   font-size: 12px;
   font-weight: 600;
@@ -341,7 +340,7 @@
   letter-spacing: 0.05em;
 }
 
-.info-value {
+.artist-manager-info-value {
   color: #1e293b;
   font-size: 15px;
   font-weight: 500;
@@ -350,7 +349,7 @@
 }
 
 /* Location Status Card */
-.location-status-card {
+.artist-manager-location-status-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 20px;
@@ -370,7 +369,7 @@
 }
 
 /* Loading State */
-.status-loading {
+.artist-manager-status-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -379,27 +378,27 @@
   text-align: center;
 }
 
-.loading-spinner {
+.artist-manager-loading-spinner {
   position: relative;
   width: 56px;
   height: 56px;
 }
 
-.spinner {
+.artist-manager-spinner {
   width: 56px;
   height: 56px;
   border: 4px solid #f1f5f9;
   border-top: 4px solid #3b82f6;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: artistManagerSpin 1s linear infinite;
 }
 
-@keyframes spin {
+@keyframes artistManagerSpin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-.status-loading p {
+.artist-manager-status-loading p {
   margin: 0;
   color: #64748b;
   font-size: 16px;
@@ -407,7 +406,7 @@
 }
 
 /* Error State */
-.status-error {
+.artist-manager-status-error {
   display: flex;
   align-items: flex-start;
   gap: 20px;
@@ -417,24 +416,24 @@
   border: 1px solid #fecaca;
 }
 
-.status-icon {
+.artist-manager-status-icon {
   font-size: 28px;
   flex-shrink: 0;
   margin-top: 4px;
 }
 
-.status-content {
+.artist-manager-status-content {
   flex: 1;
 }
 
-.status-content h5 {
+.artist-manager-status-content h5 {
   margin: 0 0 12px 0;
   color: #dc2626;
   font-size: 18px;
   font-weight: 600;
 }
 
-.status-content p {
+.artist-manager-status-content p {
   margin: 0 0 20px 0;
   color: #dc2626;
   font-size: 14px;
@@ -442,7 +441,7 @@
 }
 
 /* Success State */
-.status-success {
+.artist-manager-status-success {
   display: flex;
   align-items: flex-start;
   gap: 20px;
@@ -457,18 +456,18 @@
   margin: 8px 0;
 }
 
-.status-success .status-icon {
+.artist-manager-status-success .artist-manager-status-icon {
   color: #16a34a;
 }
 
-.status-success .status-content h5 {
+.artist-manager-status-success .artist-manager-status-content h5 {
   color: #166534;
   margin: 0 0 20px 0;
   font-size: 18px;
   font-weight: 600;
 }
 
-.location-details {
+.artist-manager-location-details {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -479,7 +478,7 @@
   padding: 4px 0;
 }
 
-.location-item {
+.artist-manager-location-item {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -495,12 +494,12 @@
   margin: 4px 0;
 }
 
-.location-item:hover {
+.artist-manager-location-item:hover {
   border-color: #bbf7d0;
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1);
 }
 
-.item-icon {
+.artist-manager-item-icon {
   font-size: 18px;
   width: 36px;
   height: 36px;
@@ -512,14 +511,14 @@
   flex-shrink: 0;
 }
 
-.item-content {
+.artist-manager-item-content {
   display: flex;
   flex-direction: column;
   gap: 4px;
   flex: 1;
 }
 
-.item-label {
+.artist-manager-item-label {
   color: #166534;
   font-size: 12px;
   font-weight: 600;
@@ -527,7 +526,7 @@
   letter-spacing: 0.05em;
 }
 
-.item-value {
+.artist-manager-item-value {
   color: #15803d;
   font-size: 14px;
   font-weight: 500;
@@ -535,7 +534,7 @@
 }
 
 /* Action Buttons */
-.action-buttons {
+.artist-manager-action-buttons {
   display: flex;
   gap: 16px;
   margin: 24px 0;
@@ -552,7 +551,7 @@
   min-height: auto;
 }
 
-.btn {
+.artist-manager-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -571,7 +570,7 @@
   font-family: inherit;
 }
 
-.btn::before {
+.artist-manager-btn::before {
   content: '';
   position: absolute;
   top: 0;
@@ -582,21 +581,21 @@
   transition: left 0.6s;
 }
 
-.btn:hover::before {
+.artist-manager-btn:hover::before {
   left: 100%;
 }
 
-.btn-icon {
+.artist-manager-btn-icon {
   font-size: 18px;
   flex-shrink: 0;
 }
 
 /* Specific styling for Get Directions button */
-.get-directions-btn,
-.modal-content .get-directions-btn,
-.modal-overlay .get-directions-btn,
-.action-buttons .get-directions-btn,
-button.get-directions-btn {
+.artist-manager-get-directions-btn,
+.artist-manager-modal-content .artist-manager-get-directions-btn,
+.artist-manager-modal-overlay .artist-manager-get-directions-btn,
+.artist-manager-action-buttons .artist-manager-get-directions-btn,
+button.artist-manager-get-directions-btn {
   background: #000000 !important;
   background-color: #000000 !important;
   color: #ffffff !important;
@@ -604,11 +603,11 @@ button.get-directions-btn {
   border: none !important;
 }
 
-.get-directions-btn:hover,
-.modal-content .get-directions-btn:hover,
-.modal-overlay .get-directions-btn:hover,
-.action-buttons .get-directions-btn:hover,
-button.get-directions-btn:hover {
+.artist-manager-get-directions-btn:hover,
+.artist-manager-modal-content .artist-manager-get-directions-btn:hover,
+.artist-manager-modal-overlay .artist-manager-get-directions-btn:hover,
+.artist-manager-action-buttons .artist-manager-get-directions-btn:hover,
+button.artist-manager-get-directions-btn:hover {
   background: #333333 !important;
   background-color: #333333 !important;
   transform: translateY(-3px);
@@ -618,19 +617,19 @@ button.get-directions-btn:hover {
 }
 
 /* General btn-primary styling as fallback */
-.modal-content .btn-primary,
-.modal-overlay .btn-primary,
-.LocationModal .btn-primary,
-button.btn-primary {
+.artist-manager-modal-content .artist-manager-btn-primary,
+.artist-manager-modal-overlay .artist-manager-btn-primary,
+.LocationModal .artist-manager-btn-primary,
+button.artist-manager-btn-primary {
   background: #000000 !important;
   color: #ffffff !important;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
 }
 
-.modal-content .btn-primary:hover,
-.modal-overlay .btn-primary:hover,
-.LocationModal .btn-primary:hover,
-button.btn-primary:hover {
+.artist-manager-modal-content .artist-manager-btn-primary:hover,
+.artist-manager-modal-overlay .artist-manager-btn-primary:hover,
+.LocationModal .artist-manager-btn-primary:hover,
+button.artist-manager-btn-primary:hover {
   background: #333333 !important;
   transform: translateY(-3px);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
@@ -638,14 +637,14 @@ button.btn-primary:hover {
   text-decoration: none;
 }
 
-.btn-secondary {
+.artist-manager-btn-secondary {
   background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
   color: #ffffff;
   border: 2px solid #2c3e50;
   box-shadow: 0 4px 15px rgba(44, 62, 80, 0.2);
 }
 
-.btn-secondary:hover {
+.artist-manager-btn-secondary:hover {
   background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3);
@@ -653,14 +652,14 @@ button.btn-primary:hover {
   border-color: #1a252f;
 }
 
-.btn-outline {
+.artist-manager-btn-outline {
   background: transparent;
   color: #dc2626;
   border: 2px solid #fecaca;
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1);
 }
 
-.btn-outline:hover {
+.artist-manager-btn-outline:hover {
   background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
@@ -669,7 +668,7 @@ button.btn-primary:hover {
 }
 
 /* Map Container */
-.map-container {
+.artist-manager-map-container {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
@@ -688,7 +687,7 @@ button.btn-primary:hover {
   flex-shrink: 0;
 }
 
-.map-container::before {
+.artist-manager-map-container::before {
   content: '';
   position: absolute;
   top: 0;
@@ -701,24 +700,24 @@ button.btn-primary:hover {
 }
 
 /* Map Popups */
-.venue-popup,
-.user-popup {
+.artist-manager-venue-popup,
+.artist-manager-user-popup {
   padding: 16px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   border-radius: 12px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.venue-popup h4,
-.user-popup h4 {
+.artist-manager-venue-popup h4,
+.artist-manager-user-popup h4 {
   margin: 0 0 8px 0;
   color: #2c3e50;
   font-size: 16px;
   font-weight: 600;
 }
 
-.venue-popup p,
-.user-popup p {
+.artist-manager-venue-popup p,
+.artist-manager-user-popup p {
   margin: 0;
   color: #6c757d;
   font-size: 14px;
@@ -727,57 +726,57 @@ button.btn-primary:hover {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .modal-overlay {
+  .artist-manager-modal-overlay {
     padding: 16px;
   }
 
-  .modal-content {
+  .artist-manager-modal-content {
     max-height: 90vh;
     max-width: 100%;
     border-radius: 20px;
   }
 
-  .modal-header {
+  .artist-manager-modal-header {
     padding: 24px 24px 20px 24px;
   }
 
-  .modal-header h3 {
+  .artist-manager-modal-header h3 {
     font-size: 1.5rem;
   }
 
-  .header-icon {
+  .artist-manager-header-icon {
     font-size: 24px;
   }
 
-  .modal-body {
+  .artist-manager-modal-body {
     padding: 24px;
   }
 
-  .event-details-card {
+  .artist-manager-event-details-card {
     padding: 20px;
     margin-bottom: 20px;
   }
 
-  .event-header h4 {
+  .artist-manager-event-header h4 {
     font-size: 1.25rem;
   }
 
-  .info-item {
+  .artist-manager-info-item {
     padding: 12px 16px;
   }
 
-  .info-icon {
+  .artist-manager-info-icon {
     width: 36px;
     height: 36px;
     font-size: 18px;
   }
 
-  .location-status-card {
+  .artist-manager-location-status-card {
     padding: 20px;
     margin-bottom: 20px;
   }
 
-  .action-buttons {
+  .artist-manager-action-buttons {
     flex-direction: column;
     gap: 12px;
     margin: 20px 0;
@@ -787,106 +786,106 @@ button.btn-primary:hover {
     margin-top: 24px;
   }
 
-  .btn {
+  .artist-manager-btn {
     padding: 14px 24px;
     font-size: 14px;
     min-width: auto;
   }
 
-  .map-container {
+  .artist-manager-map-container {
     min-height: 350px;
     max-height: 400px;
   }
 }
 
 @media (max-width: 480px) {
-  .modal-overlay {
+  .artist-manager-modal-overlay {
     padding: 12px;
   }
 
-  .modal-content {
+  .artist-manager-modal-content {
     border-radius: 16px;
     max-height: 95vh;
   }
 
-  .modal-header {
+  .artist-manager-modal-header {
     padding: 20px 20px 16px 20px;
   }
 
-  .modal-header h3 {
+  .artist-manager-modal-header h3 {
     font-size: 1.25rem;
   }
 
-  .header-icon {
+  .artist-manager-header-icon {
     font-size: 20px;
   }
 
-  .modal-body {
+  .artist-manager-modal-body {
     padding: 20px;
   }
 
-  .event-details-card {
+  .artist-manager-event-details-card {
     padding: 16px;
     margin-bottom: 16px;
   }
 
-  .event-header h4 {
+  .artist-manager-event-header h4 {
     font-size: 1.1rem;
     margin-bottom: 20px;
   }
 
-  .info-item {
+  .artist-manager-info-item {
     padding: 10px 14px;
   }
 
-  .info-icon {
+  .artist-manager-info-icon {
     width: 32px;
     height: 32px;
     font-size: 16px;
   }
 
-  .info-label {
+  .artist-manager-info-label {
     font-size: 11px;
   }
 
-  .info-value {
+  .artist-manager-info-value {
     font-size: 13px;
   }
 
-  .location-status-card {
+  .artist-manager-location-status-card {
     padding: 16px;
     margin-bottom: 16px;
   }
 
-  .status-loading,
-  .status-error,
-  .status-success {
+  .artist-manager-status-loading,
+  .artist-manager-status-error,
+  .artist-manager-status-success {
     padding: 16px;
   }
 
-  .location-details {
+  .artist-manager-location-details {
     gap: 12px;
   }
 
-  .location-item {
+  .artist-manager-location-item {
     padding: 12px 16px;
   }
 
-  .item-icon {
+  .artist-manager-item-icon {
     width: 32px;
     height: 32px;
     font-size: 16px;
   }
 
-  .item-label {
+  .artist-manager-item-label {
     font-size: 11px;
   }
 
-  .item-value {
+  .artist-manager-item-value {
     font-size: 13px;
   }
 
-  .action-buttons {
+  .artist-manager-action-buttons {
     gap: 10px;
     margin: 16px 0;
     position: relative;
@@ -895,24 +894,24 @@ button.btn-primary:hover {
     margin-top: 20px;
   }
 
-  .btn {
+  .artist-manager-btn {
     padding: 12px 20px;
     font-size: 13px;
   }
 
-  .map-container {
+  .artist-manager-map-container {
     min-height: 300px;
     max-height: 350px;
   }
 }
 
 /* Force black button styling - highest specificity */
-.modal-overlay .modal-content .action-buttons .btn.btn-primary.get-directions-btn,
-.modal-overlay .modal-content .action-buttons button.btn.btn-primary.get-directions-btn,
-.modal-overlay .modal-content .action-buttons .get-directions-btn,
-.modal-overlay .modal-content .action-buttons button[class*="primary"],
-.action-buttons .btn.btn-primary,
-.action-buttons button.btn-primary {
+.artist-manager-modal-overlay .artist-manager-modal-content .artist-manager-action-buttons .artist-manager-btn.artist-manager-btn-primary.artist-manager-get-directions-btn,
+.artist-manager-modal-overlay .artist-manager-modal-content .artist-manager-action-buttons button.artist-manager-btn.artist-manager-btn-primary.artist-manager-get-directions-btn,
+.artist-manager-modal-overlay .artist-manager-modal-content .artist-manager-action-buttons .artist-manager-get-directions-btn,
+.artist-manager-modal-overlay .artist-manager-modal-content .artist-manager-action-buttons button[class*="primary"],
+.artist-manager-action-buttons .artist-manager-btn.artist-manager-btn-primary,
+.artist-manager-action-buttons button.artist-manager-btn-primary {
   background: #000000 !important;
   background-color: #000000 !important;
   color: #ffffff !important;
@@ -922,12 +921,12 @@ button.btn-primary:hover {
   background-image: none !important;
 }
 
-.modal-overlay .modal-content .action-buttons .btn.btn-primary.get-directions-btn:hover,
-.modal-overlay .modal-content .action-buttons button.btn.btn-primary.get-directions-btn:hover,
-.modal-overlay .modal-content .action-buttons .get-directions-btn:hover,
-.modal-overlay .modal-content .action-buttons button[class*="primary"]:hover,
-.action-buttons .btn.btn-primary:hover,
-.action-buttons button.btn-primary:hover {
+.artist-manager-modal-overlay .artist-manager-modal-content .artist-manager-action-buttons .artist-manager-btn.artist-manager-btn-primary.artist-manager-get-directions-btn:hover,
+.artist-manager-modal-overlay .artist-manager-modal-content .artist-manager-action-buttons button.artist-manager-btn.artist-manager-btn-primary.artist-manager-get-directions-btn:hover,
+.artist-manager-modal-overlay .artist-manager-modal-content .artist-manager-action-buttons .artist-manager-get-directions-btn:hover,
+.artist-manager-modal-overlay .artist-manager-modal-content .artist-manager-action-buttons button[class*="primary"]:hover,
+.artist-manager-action-buttons .artist-manager-btn.artist-manager-btn-primary:hover,
+.artist-manager-action-buttons button.artist-manager-btn-primary:hover {
   background: #333333 !important;
   background-color: #333333 !important;
   color: #ffffff !important;
@@ -937,10 +936,10 @@ button.btn-primary:hover {
 }
 
 /* Additional specificity for any remaining cases */
-button.get-directions-btn,
-button[class*="get-directions"],
-.action-buttons button[class*="primary"],
-.action-buttons button {
+button.artist-manager-get-directions-btn,
+button[class*="artist-manager-get-directions"],
+.artist-manager-action-buttons button[class*="primary"],
+.artist-manager-action-buttons button {
   background: #000000 !important;
   background-color: #000000 !important;
   color: #ffffff !important;
@@ -948,10 +947,10 @@ button[class*="get-directions"],
   background-image: none !important;
 }
 
-button.get-directions-btn:hover,
-button[class*="get-directions"]:hover,
-.action-buttons button[class*="primary"]:hover,
-.action-buttons button:hover {
+button.artist-manager-get-directions-btn:hover,
+button[class*="artist-manager-get-directions"]:hover,
+.artist-manager-action-buttons button[class*="primary"]:hover,
+.artist-manager-action-buttons button:hover {
   background: #333333 !important;
   background-color: #333333 !important;
   color: #ffffff !important;

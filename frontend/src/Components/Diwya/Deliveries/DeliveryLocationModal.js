@@ -157,15 +157,15 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="marketplace-manager-modal-overlay" onClick={onClose}>
+      <div className="marketplace-manager-modal-content" onClick={(e) => e.stopPropagation()}>
         {/* Modern Header with Icon */}
-        <div className="modal-header">
-          <div className="header-content">
-            <div className="header-icon"></div>
+        <div className="marketplace-manager-modal-header">
+          <div className="marketplace-manager-header-content">
+            <div className="marketplace-manager-header-icon">🚚</div>
             <h3>{title}</h3>
           </div>
-          <button className="modal-close" onClick={onClose}>
+          <button className="marketplace-manager-modal-close" onClick={onClose}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -173,32 +173,32 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
           </button>
         </div>
         
-        <div className="modal-body">
+        <div className="marketplace-manager-modal-body">
           {/* Delivery Details Card */}
-          <div className="event-details-card">
-            <div className="event-header">
+          <div className="marketplace-manager-event-details-card">
+            <div className="marketplace-manager-event-header">
               <h4>{delivery?.productName || delivery?.artId?.artType || 'Delivery'}</h4>
             </div>
-            <div className="event-info-grid">
-              <div className="info-item">
-                <div className="info-icon"></div>
-                <div className="info-content">
-                  <span className="info-label">Address</span>
-                  <span className="info-value">{delivery?.address}, {delivery?.city}, {delivery?.district}</span>
+            <div className="marketplace-manager-event-info-grid">
+              <div className="marketplace-manager-info-item">
+                <div className="marketplace-manager-info-icon">📍</div>
+                <div className="marketplace-manager-info-content">
+                  <span className="marketplace-manager-info-label">Address</span>
+                  <span className="marketplace-manager-info-value">{delivery?.address}, {delivery?.city}, {delivery?.district}</span>
                 </div>
               </div>
-              <div className="info-item">
-                <div className="info-icon">📅</div>
-                <div className="info-content">
-                  <span className="info-label">Created</span>
-                  <span className="info-value">{new Date(delivery?.createdAt).toLocaleDateString()}</span>
+              <div className="marketplace-manager-info-item">
+                <div className="marketplace-manager-info-icon">📅</div>
+                <div className="marketplace-manager-info-content">
+                  <span className="marketplace-manager-info-label">Created</span>
+                  <span className="marketplace-manager-info-value">{new Date(delivery?.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
-              <div className="info-item">
-                <div className="info-icon">🕒</div>
-                <div className="info-content">
-                  <span className="info-label">Time</span>
-                  <span className="info-value">{new Date(delivery?.createdAt).toLocaleTimeString()}</span>
+              <div className="marketplace-manager-info-item">
+                <div className="marketplace-manager-info-icon">🕒</div>
+                <div className="marketplace-manager-info-content">
+                  <span className="marketplace-manager-info-label">Time</span>
+                  <span className="marketplace-manager-info-value">{new Date(delivery?.createdAt).toLocaleTimeString()}</span>
                 </div>
               </div>
             </div>
@@ -265,24 +265,25 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
 
           {/* Action Buttons */}
           {userLocation && (
-            <div className="action-buttons">
+            <div className="marketplace-manager-action-buttons">
               <button
                 onClick={handleGetDirections}
-                className="btn btn-primary"
+                className="marketplace-manager-btn marketplace-manager-btn-primary"
               >
                 Get Directions
               </button>
               <button 
-                className="btn btn-secondary"
+                className="marketplace-manager-btn marketplace-manager-btn-secondary"
                 onClick={getUserLocation}
               >
+                <span className="marketplace-manager-btn-icon">↻</span>
                 Refresh Location
               </button>
             </div>
           )}
 
           {/* Map Container */}
-          <div className="map-container">
+          <div className="marketplace-manager-map-container">
             <MapContainer
               center={deliveryCoords}
               zoom={15}
@@ -297,7 +298,7 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
               {/* Delivery marker */}
               <Marker position={deliveryCoords} icon={deliveryIcon}>
                 <Popup>
-                  <div className="venue-popup">
+                  <div className="marketplace-manager-venue-popup">
                     <h4>Delivery Location</h4>
                     <p>{delivery?.address}, {delivery?.city}</p>
                     <p><strong>Customer:</strong> {delivery?.customerName}</p>
@@ -310,7 +311,7 @@ function DeliveryLocationModal({ isOpen, onClose, delivery, title = "Delivery Lo
               {userLocation && (
                 <Marker position={userLocation} icon={userIcon}>
                   <Popup>
-                    <div className="user-popup">
+                    <div className="marketplace-manager-user-popup">
                       <h4>Your Location</h4>
                       <p>You are here</p>
                     </div>

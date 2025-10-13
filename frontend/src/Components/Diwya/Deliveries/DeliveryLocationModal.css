@@ -1,6 +1,7 @@
-/* DeliveryLocationModal.css - Reusing LocationModal design */
+/* DeliveryLocationModal.css - Marketplace Manager Dashboard - Unique Classes */
 
-.modal-overlay {
+/* ===== MARKETPLACE MANAGER DELIVERY MODAL - UNIQUE CLASSES ===== */
+.marketplace-manager-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -13,15 +14,15 @@
   justify-content: center;
   z-index: 1000;
   padding: 20px;
-  animation: fadeIn 0.3s ease-out;
+  animation: marketplaceManagerFadeIn 0.3s ease-out;
 }
 
-@keyframes fadeIn {
+@keyframes marketplaceManagerFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-.modal-content {
+.marketplace-manager-modal-content {
   background: #ffffff;
   border-radius: 24px;
   box-shadow: 
@@ -32,7 +33,7 @@
   max-height: 75vh;
   overflow-y: auto;
   position: relative;
-  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: marketplaceManagerSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   /* Custom scrollbar styling */
   scrollbar-width: thin;
@@ -41,7 +42,7 @@
   flex-direction: column;
 }
 
-@keyframes slideUp {
+@keyframes marketplaceManagerSlideUp {
   from { 
     opacity: 0;
     transform: translateY(40px) scale(0.96);
@@ -53,16 +54,16 @@
 }
 
 /* Custom scrollbar for webkit browsers */
-.modal-content::-webkit-scrollbar {
+.marketplace-manager-modal-content::-webkit-scrollbar {
   width: 8px;
 }
 
-.modal-content::-webkit-scrollbar-track {
+.marketplace-manager-modal-content::-webkit-scrollbar-track {
   background: transparent;
   border-radius: 4px;
 }
 
-.modal-content::-webkit-scrollbar-thumb {
+.marketplace-manager-modal-content::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
   border-radius: 4px;
   transition: all 0.3s ease;
@@ -70,37 +71,37 @@
   background-clip: content-box;
 }
 
-.modal-content::-webkit-scrollbar-thumb:hover {
+.marketplace-manager-modal-content::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
   background-clip: content-box;
 }
 
-.modal-content::-webkit-scrollbar-thumb:active {
+.marketplace-manager-modal-content::-webkit-scrollbar-thumb:active {
   background: linear-gradient(180deg, #64748b 0%, #475569 100%);
   background-clip: content-box;
 }
 
 /* Custom scrollbar for modal body */
-.modal-body::-webkit-scrollbar {
+.marketplace-manager-modal-body::-webkit-scrollbar {
   width: 6px;
 }
 
-.modal-body::-webkit-scrollbar-track {
+.marketplace-manager-modal-body::-webkit-scrollbar-track {
   background: transparent;
   border-radius: 3px;
 }
 
-.modal-body::-webkit-scrollbar-thumb {
+.marketplace-manager-modal-body::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
   border-radius: 3px;
   transition: all 0.3s ease;
 }
 
-.modal-body::-webkit-scrollbar-thumb:hover {
+.marketplace-manager-modal-body::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
 }
 
-.modal-header {
+.marketplace-manager-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -113,7 +114,7 @@
   z-index: 10;
 }
 
-.modal-header::after {
+.marketplace-manager-modal-header::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -123,13 +124,13 @@
   background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%);
 }
 
-.header-content {
+.marketplace-manager-header-content {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.header-icon {
+.marketplace-manager-header-icon {
   font-size: 28px;
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   -webkit-background-clip: text;
@@ -138,7 +139,7 @@
   filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.2));
 }
 
-.modal-header h3 {
+.marketplace-manager-modal-header h3 {
   margin: 0;
   color: #1e293b;
   font-size: 1.875rem;
@@ -150,7 +151,7 @@
   background-clip: text;
 }
 
-.modal-close {
+.marketplace-manager-modal-close {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   color: #64748b;
@@ -165,7 +166,7 @@
   height: 44px;
 }
 
-.modal-close:hover {
+.marketplace-manager-modal-close:hover {
   background: #f1f5f9;
   color: #475569;
   border-color: #cbd5e1;
@@ -173,11 +174,11 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.modal-close:active {
+.marketplace-manager-modal-close:active {
   transform: scale(0.95);
 }
 
-.modal-body {
+.marketplace-manager-modal-body {
   padding: 32px;
   scroll-behavior: smooth;
   flex: 1;
@@ -188,7 +189,7 @@
 }
 
 /* Event Details Card */
-.event-details-card {
+.marketplace-manager-event-details-card {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid #e2e8f0;
   border-radius: 20px;
@@ -199,7 +200,7 @@
   overflow: hidden;
 }
 
-.event-details-card::before {
+.marketplace-manager-event-details-card::before {
   content: '';
   position: absolute;
   top: 0;
@@ -209,7 +210,7 @@
   background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
 }
 
-.event-header h4 {
+.marketplace-manager-event-header h4 {
   margin: 0 0 24px 0;
   color: #1e293b;
   font-size: 1.5rem;
@@ -218,13 +219,13 @@
   text-align: center;
 }
 
-.event-info-grid {
+.marketplace-manager-event-info-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
 }
 
-.info-item {
+.marketplace-manager-info-item {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -237,7 +238,7 @@
   overflow: hidden;
 }
 
-.info-item::before {
+.marketplace-manager-info-item::before {
   content: '';
   position: absolute;
   top: 0;
@@ -249,17 +250,17 @@
   transition: opacity 0.3s ease;
 }
 
-.info-item:hover {
+.marketplace-manager-info-item:hover {
   border-color: #e2e8f0;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
 }
 
-.info-item:hover::before {
+.marketplace-manager-info-item:hover::before {
   opacity: 1;
 }
 
-.info-icon {
+.marketplace-manager-info-icon {
   font-size: 20px;
   width: 40px;
   height: 40px;
@@ -272,7 +273,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.info-content {
+.marketplace-manager-info-content {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -280,7 +281,7 @@
   min-width: 0;
 }
 
-.info-label {
+.marketplace-manager-info-label {
   color: #64748b;
   font-size: 12px;
   font-weight: 600;
@@ -288,7 +289,7 @@
   letter-spacing: 0.05em;
 }
 
-.info-value {
+.marketplace-manager-info-value {
   color: #1e293b;
   font-size: 15px;
   font-weight: 500;
@@ -297,7 +298,7 @@
 }
 
 /* Location Status Card */
-.location-status-card {
+.marketplace-manager-location-status-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 20px;
@@ -308,7 +309,7 @@
 }
 
 /* Loading State */
-.status-loading {
+.marketplace-manager-status-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -317,27 +318,27 @@
   text-align: center;
 }
 
-.loading-spinner {
+.marketplace-manager-loading-spinner {
   position: relative;
   width: 56px;
   height: 56px;
 }
 
-.spinner {
+.marketplace-manager-spinner {
   width: 56px;
   height: 56px;
   border: 4px solid #f1f5f9;
   border-top: 4px solid #3b82f6;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: marketplaceManagerSpin 1s linear infinite;
 }
 
-@keyframes spin {
+@keyframes marketplaceManagerSpin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-.status-loading p {
+.marketplace-manager-status-loading p {
   margin: 0;
   color: #64748b;
   font-size: 16px;
@@ -345,7 +346,7 @@
 }
 
 /* Error State */
-.status-error {
+.marketplace-manager-status-error {
   display: flex;
   align-items: flex-start;
   gap: 20px;
@@ -355,24 +356,24 @@
   border: 1px solid #fecaca;
 }
 
-.status-icon {
+.marketplace-manager-status-icon {
   font-size: 28px;
   flex-shrink: 0;
   margin-top: 4px;
 }
 
-.status-content {
+.marketplace-manager-status-content {
   flex: 1;
 }
 
-.status-content h5 {
+.marketplace-manager-status-content h5 {
   margin: 0 0 12px 0;
   color: #dc2626;
   font-size: 18px;
   font-weight: 600;
 }
 
-.status-content p {
+.marketplace-manager-status-content p {
   margin: 0 0 20px 0;
   color: #dc2626;
   font-size: 14px;
@@ -380,7 +381,7 @@
 }
 
 /* Success State */
-.status-success {
+.marketplace-manager-status-success {
   display: flex;
   align-items: flex-start;
   gap: 20px;
@@ -390,24 +391,24 @@
   border: 1px solid #bbf7d0;
 }
 
-.status-success .status-icon {
+.marketplace-manager-status-success .marketplace-manager-status-icon {
   color: #16a34a;
 }
 
-.status-success .status-content h5 {
+.marketplace-manager-status-success .marketplace-manager-status-content h5 {
   color: #166534;
   margin: 0 0 20px 0;
   font-size: 18px;
   font-weight: 600;
 }
 
-.location-details {
+.marketplace-manager-location-details {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.location-item {
+.marketplace-manager-location-item {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -418,12 +419,12 @@
   transition: all 0.2s ease;
 }
 
-.location-item:hover {
+.marketplace-manager-location-item:hover {
   border-color: #bbf7d0;
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1);
 }
 
-.item-icon {
+.marketplace-manager-item-icon {
   font-size: 18px;
   width: 36px;
   height: 36px;
@@ -435,14 +436,14 @@
   flex-shrink: 0;
 }
 
-.item-content {
+.marketplace-manager-item-content {
   display: flex;
   flex-direction: column;
   gap: 4px;
   flex: 1;
 }
 
-.item-label {
+.marketplace-manager-item-label {
   color: #166534;
   font-size: 12px;
   font-weight: 600;
@@ -450,7 +451,7 @@
   letter-spacing: 0.05em;
 }
 
-.item-value {
+.marketplace-manager-item-value {
   color: #15803d;
   font-size: 14px;
   font-weight: 500;
@@ -458,7 +459,7 @@
 }
 
 /* Action Buttons */
-.action-buttons {
+.marketplace-manager-action-buttons {
   display: flex;
   gap: 16px;
   margin: 24px 0;
@@ -472,7 +473,7 @@
   z-index: 5;
 }
 
-.btn {
+.marketplace-manager-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -491,7 +492,7 @@
   font-family: inherit;
 }
 
-.btn::before {
+.marketplace-manager-btn::before {
   content: '';
   position: absolute;
   top: 0;
@@ -502,22 +503,22 @@
   transition: left 0.6s;
 }
 
-.btn:hover::before {
+.marketplace-manager-btn:hover::before {
   left: 100%;
 }
 
-.btn-icon {
+.marketplace-manager-btn-icon {
   font-size: 18px;
   flex-shrink: 0;
 }
 
-.btn-primary {
+.marketplace-manager-btn-primary {
   background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
   color: #ffffff;
   box-shadow: 0 8px 25px rgba(30, 41, 59, 0.3);
 }
 
-.btn-primary:hover {
+.marketplace-manager-btn-primary:hover {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   transform: translateY(-3px);
   box-shadow: 0 12px 35px rgba(30, 41, 59, 0.4);
@@ -525,14 +526,14 @@
   text-decoration: none;
 }
 
-.btn-secondary {
+.marketplace-manager-btn-secondary {
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   color: #475569;
   border: 2px solid #cbd5e1;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-.btn-secondary:hover {
+.marketplace-manager-btn-secondary:hover {
   background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
@@ -540,14 +541,14 @@
   border-color: #94a3b8;
 }
 
-.btn-outline {
+.marketplace-manager-btn-outline {
   background: transparent;
   color: #dc2626;
   border: 2px solid #fecaca;
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1);
 }
 
-.btn-outline:hover {
+.marketplace-manager-btn-outline:hover {
   background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
@@ -556,7 +557,7 @@
 }
 
 /* Map Container */
-.map-container {
+.marketplace-manager-map-container {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
@@ -569,7 +570,7 @@
   max-height: 500px;
 }
 
-.map-container::before {
+.marketplace-manager-map-container::before {
   content: '';
   position: absolute;
   top: 0;
@@ -582,24 +583,24 @@
 }
 
 /* Map Popups */
-.venue-popup,
-.user-popup {
+.marketplace-manager-venue-popup,
+.marketplace-manager-user-popup {
   padding: 16px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   border-radius: 12px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.venue-popup h4,
-.user-popup h4 {
+.marketplace-manager-venue-popup h4,
+.marketplace-manager-user-popup h4 {
   margin: 0 0 8px 0;
   color: #1e293b;
   font-size: 16px;
   font-weight: 600;
 }
 
-.venue-popup p,
-.user-popup p {
+.marketplace-manager-venue-popup p,
+.marketplace-manager-user-popup p {
   margin: 0;
   color: #64748b;
   font-size: 14px;
@@ -608,57 +609,57 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .modal-overlay {
+  .marketplace-manager-modal-overlay {
     padding: 16px;
   }
 
-  .modal-content {
+  .marketplace-manager-modal-content {
     max-height: 80vh;
     max-width: 100%;
     border-radius: 20px;
   }
 
-  .modal-header {
+  .marketplace-manager-modal-header {
     padding: 24px 24px 20px 24px;
   }
 
-  .modal-header h3 {
+  .marketplace-manager-modal-header h3 {
     font-size: 1.5rem;
   }
 
-  .header-icon {
+  .marketplace-manager-header-icon {
     font-size: 24px;
   }
 
-  .modal-body {
+  .marketplace-manager-modal-body {
     padding: 24px;
   }
 
-  .event-details-card {
+  .marketplace-manager-event-details-card {
     padding: 20px;
     margin-bottom: 20px;
   }
 
-  .event-header h4 {
+  .marketplace-manager-event-header h4 {
     font-size: 1.25rem;
   }
 
-  .info-item {
+  .marketplace-manager-info-item {
     padding: 12px 16px;
   }
 
-  .info-icon {
+  .marketplace-manager-info-icon {
     width: 36px;
     height: 36px;
     font-size: 18px;
   }
 
-  .location-status-card {
+  .marketplace-manager-location-status-card {
     padding: 20px;
     margin-bottom: 20px;
   }
 
-  .action-buttons {
+  .marketplace-manager-action-buttons {
     flex-direction: column;
     gap: 12px;
     margin: 20px 0;
@@ -669,106 +670,106 @@
     margin-top: 24px;
   }
 
-  .btn {
+  .marketplace-manager-btn {
     padding: 14px 24px;
     font-size: 14px;
     min-width: auto;
   }
 
-  .map-container {
+  .marketplace-manager-map-container {
     min-height: 350px;
     max-height: 400px;
   }
 }
 
 @media (max-width: 480px) {
-  .modal-overlay {
+  .marketplace-manager-modal-overlay {
     padding: 12px;
   }
 
-  .modal-content {
+  .marketplace-manager-modal-content {
     border-radius: 16px;
     max-height: 85vh;
   }
 
-  .modal-header {
+  .marketplace-manager-modal-header {
     padding: 20px 20px 16px 20px;
   }
 
-  .modal-header h3 {
+  .marketplace-manager-modal-header h3 {
     font-size: 1.25rem;
   }
 
-  .header-icon {
+  .marketplace-manager-header-icon {
     font-size: 20px;
   }
 
-  .modal-body {
+  .marketplace-manager-modal-body {
     padding: 20px;
   }
 
-  .event-details-card {
+  .marketplace-manager-event-details-card {
     padding: 16px;
     margin-bottom: 16px;
   }
 
-  .event-header h4 {
+  .marketplace-manager-event-header h4 {
     font-size: 1.1rem;
     margin-bottom: 20px;
   }
 
-  .info-item {
+  .marketplace-manager-info-item {
     padding: 10px 14px;
   }
 
-  .info-icon {
+  .marketplace-manager-info-icon {
     width: 32px;
     height: 32px;
     font-size: 16px;
   }
 
-  .info-label {
+  .marketplace-manager-info-label {
     font-size: 11px;
   }
 
-  .info-value {
+  .marketplace-manager-info-value {
     font-size: 13px;
   }
 
-  .location-status-card {
+  .marketplace-manager-location-status-card {
     padding: 16px;
     margin-bottom: 16px;
   }
 
-  .status-loading,
-  .status-error,
-  .status-success {
+  .marketplace-manager-status-loading,
+  .marketplace-manager-status-error,
+  .marketplace-manager-status-success {
     padding: 16px;
   }
 
-  .location-details {
+  .marketplace-manager-location-details {
     gap: 12px;
   }
 
-  .location-item {
+  .marketplace-manager-location-item {
     padding: 12px 16px;
   }
 
-  .item-icon {
+  .marketplace-manager-item-icon {
     width: 32px;
     height: 32px;
     font-size: 16px;
   }
 
-  .item-label {
+  .marketplace-manager-item-label {
     font-size: 11px;
   }
 
-  .item-value {
+  .marketplace-manager-item-value {
     font-size: 13px;
   }
 
-  .action-buttons {
+  .marketplace-manager-action-buttons {
     gap: 10px;
     margin: 16px 0;
     position: sticky;
@@ -778,12 +779,12 @@
     margin-top: 20px;
   }
 
-  .btn {
+  .marketplace-manager-btn {
     padding: 12px 20px;
     font-size: 13px;
   }
 
-  .map-container {
+  .marketplace-manager-map-container {
     min-height: 300px;
     max-height: 350px;
   }

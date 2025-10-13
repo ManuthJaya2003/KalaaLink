@@ -61,8 +61,28 @@ function ArtistPortfolio() {
         }
       );
 
-      setArtist(res.data.artist); // update state with new images & bio
+      const updatedArtist = res.data.artist;
+      setArtist(updatedArtist); // update state with new images & bio
+      
+      // Update localStorage to sync with main profile
+      localStorage.setItem(
+        "artist",
+        JSON.stringify({
+          ...updatedArtist,
+          id: updatedArtist._id || updatedArtist.id,
+        })
+      );
+      
       setMessage("Portfolio updated successfully!");
+      
+      // Reset file inputs
+      setProfileFile(null);
+      setCoverFile(null);
+      
+      // Trigger a custom event to notify other components
+      window.dispatchEvent(new CustomEvent('artistProfileUpdated', {
+        detail: { artist: updatedArtist }
+      }));
     } catch (err) {
       console.error(err);
       setMessage("Failed to update portfolio. Try again.");

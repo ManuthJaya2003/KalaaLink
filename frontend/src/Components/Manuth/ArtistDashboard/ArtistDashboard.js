@@ -47,6 +47,10 @@ function ArtistDashboard() {
     summary: ""
   });
   const [message, setMessage] = useState("");
+  
+  // Profile picture upload state
+  const [profileFile, setProfileFile] = useState(null);
+  const [profilePreview, setProfilePreview] = useState(null);
 
   // Handle Sign Out
   const handleSignOut = () => {
@@ -88,6 +92,9 @@ function ArtistDashboard() {
       category: artist.category || "",
       summary: artist.summary || ""
     });
+    // Reset profile picture upload state
+    setProfileFile(null);
+    setProfilePreview(null);
     setShowEditModal(true);
   };
 
@@ -95,6 +102,9 @@ function ArtistDashboard() {
   const handleCloseModal = () => {
     setShowEditModal(false);
     setMessage("");
+    // Reset profile picture upload state
+    setProfileFile(null);
+    setProfilePreview(null);
   };
 
   // Handle form input changes
@@ -104,6 +114,20 @@ function ArtistDashboard() {
       ...prev,
       [name]: value
     }));
+  };
+
+  // Handle profile picture file selection
+  const handleProfileFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfileFile(file);
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfilePreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   // Handle profile update
@@ -117,6 +141,36 @@ function ArtistDashboard() {
       console.log('Sending update request with data:', editForm);
       console.log('Artist ID being used:', artistId);
       
+      // If profile picture is selected, upload it first
+      if (profileFile) {
+        const formData = new FormData();
+        formData.append("profileImage", profileFile);
+        
+        const imageRes = await axios.put(
+          `http://localhost:5000/registeredArtists/${artistId}/images`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+        
+        console.log('Image upload response:', imageRes.data);
+        // Update artist state with new image immediately
+        const updatedArtistWithImage = imageRes.data.artist;
+        updatedArtistWithImage.id = updatedArtistWithImage._id || updatedArtistWithImage.id;
+        setArtist(updatedArtistWithImage);
+        
+        // Update localStorage immediately
+        localStorage.setItem(
+          "artist",
+          JSON.stringify({
+            ...updatedArtistWithImage,
+            id: updatedArtistWithImage.id || updatedArtistWithImage._id,
+          })
+        );
+      }
+      
+      // Update profile data
       const res = await axios.put(
         `http://localhost:5000/registeredArtists/${artistId}`,
         editForm
@@ -126,7 +180,11 @@ function ArtistDashboard() {
       const updatedArtist = res.data.artist;
       // Ensure we have both id and _id for consistency
       updatedArtist.id = updatedArtist._id || updatedArtist.id;
-      setArtist(updatedArtist);
+      
+      // Only update state if we didn't already update it with image
+      if (!profileFile) {
+        setArtist(updatedArtist);
+      }
 
       // Update localStorage
       localStorage.setItem(
@@ -138,6 +196,12 @@ function ArtistDashboard() {
       );
 
       setMessage("Profile updated successfully!");
+      
+      // Trigger a custom event to notify other components
+      window.dispatchEvent(new CustomEvent('artistProfileUpdated', {
+        detail: { artist: updatedArtist }
+      }));
+      
       setTimeout(() => {
         handleCloseModal();
       }, 1500);
@@ -616,6 +680,23 @@ function ArtistDashboard() {
     return () => clearInterval(refreshInterval);
   }, [artist, notification]);
 
+  // Listen for profile updates from other components (like Portfolio)
+  useEffect(() => {
+    const handleProfileUpdate = (event) => {
+      const { artist: updatedArtist } = event.detail;
+      if (updatedArtist) {
+        console.log('Profile updated from external component:', updatedArtist);
+        setArtist(updatedArtist);
+      }
+    };
+
+    window.addEventListener('artistProfileUpdated', handleProfileUpdate);
+    
+    return () => {
+      window.removeEventListener('artistProfileUpdated', handleProfileUpdate);
+    };
+  }, []);
+
   if (!artist) return null;
 
   return (
@@ -650,12 +731,27 @@ function ArtistDashboard() {
           {/* Left Column - Artist Profile Card */}
           <div className="profile-card">
             <div className="profile-picture">
-              <div className="profile-placeholder">
-                100 x 100
+              {artist.profileImage ? (
+                <img
+                  src={`http://localhost:5000/uploads/${artist.profileImage}`}
+                  alt={`${artist.firstName} ${artist.lastName}`}
+                  className="profile-image"
+                  onError={(e) => {
+                    console.error('Profile image failed to load:', e.target.src);
+                    e.target.style.display = 'none';
+                    e.target.nextElementSibling.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div 
+                className="profile-placeholder" 
+                style={{ display: artist.profileImage ? 'none' : 'flex' }}
+              >
+                {artist.firstName?.charAt(0)}{artist.lastName?.charAt(0)}
               </div>
             </div>
             <h2 className="artist-name">{artist.firstName} {artist.lastName}</h2>
-            <p className="artist-genre">{artist.stageName || "Indie Soul"}</p>
+            <p className="artist-genre">{artist.stageName || artist.genre || "Artist"}</p>
             
             <div className="profile-actions">
               <button className="edit-profile-btn" onClick={handleEditProfile}>
@@ -1046,6 +1142,28 @@ function ArtistDashboard() {
 
             <form onSubmit={handleUpdateProfile} className="edit-form">
               <div className="form-grid">
+                {/* Profile Picture Upload - Full Width */}
+                <div className="form-group form-group-wide">
+                  <label htmlFor="profilePicture">Profile Picture:</label>
+                  <input
+                    type="file"
+                    id="profilePicture"
+                    name="profilePicture"
+                    accept="image/*"
+                    onChange={handleProfileFileChange}
+                    className="profile-picture-input"
+                  />
+                  {(profilePreview || artist.profileImage) && (
+                    <div className="profile-picture-preview">
+                      <img
+                        src={profilePreview || `http://localhost:5000/uploads/${artist.profileImage}`}
+                        alt="Profile Preview"
+                        className="profile-preview-image"
+                      />
+                    </div>
+                  )}
+                </div>
+
                 {/* Row 1 */}
                 <div className="form-group">
                   <label htmlFor="firstName">First Name:</label>

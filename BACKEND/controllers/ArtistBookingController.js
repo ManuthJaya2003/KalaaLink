@@ -89,6 +89,20 @@ const createBooking = async (req, res) => {
   } = req.body;
 
   try {
+    // Get artist pricing information
+    let artist = null;
+    if (artistModel === "artistmanagermodels") {
+      artist = await Artist.findById(artistId);
+    } else if (artistModel === "artists") {
+      artist = await RegisteredArtist.findById(artistId);
+    }
+
+    if (!artist) {
+      return res.status(404).json({ message: "Artist not found" });
+    }
+
+    const totalAmount = artist.bookingPrice || 0;
+
     const newBooking = new ArtistBooking({
       artist: artistId,
       artistModel,
@@ -96,10 +110,11 @@ const createBooking = async (req, res) => {
       customerEmail,
       customerPhoneNumber,
       eventType,
-      eventDate,
+      eventDate: new Date(eventDate), // Convert string to Date
       eventTime,
       eventVenue,
       eventLocation,
+      totalAmount,
       paymentStatus: "pending",
     });
 
@@ -646,17 +661,41 @@ const verifyPaymentManually = async (req, res) => {
         return res.status(404).json({ message: "Booking not found" });
       }
 
+      // Get artist details for complete booking data
+      let artist = null;
+      if (booking.artistModel === "artistmanagermodels") {
+        artist = await Artist.findById(booking.artist);
+      } else if (booking.artistModel === "artists") {
+        artist = await RegisteredArtist.findById(booking.artist);
+      }
+
+      // Prepare complete booking data
+      const completeBookingData = {
+        id: booking._id,
+        bookingId: booking._id,
+        customerName: booking.customerName,
+        customerEmail: booking.customerEmail,
+        customerPhoneNumber: booking.customerPhoneNumber,
+        eventType: booking.eventType,
+        eventDate: booking.eventDate,
+        eventTime: booking.eventTime,
+        eventVenue: booking.eventVenue,
+        eventLocation: booking.eventLocation,
+        totalAmount: booking.totalAmount,
+        paymentStatus: booking.paymentStatus,
+        status: booking.status,
+        createdAt: booking.createdAt,
+        artistName: artist ? (artist.artistName || artist.name || artist.stageName) : 'Artist',
+        artistGenre: artist ? artist.genre : '',
+        artistCategory: artist ? artist.category : ''
+      };
+
       console.log(`✅ Manual verification successful: Booking ${bookingId} marked as paid`);
       
       res.status(200).json({
         success: true,
         message: "Payment verified and booking updated",
-        booking: {
-          id: booking._id,
-          paymentStatus: booking.paymentStatus,
-          status: booking.status,
-          customerName: booking.customerName
-        }
+        booking: completeBookingData
       });
     } else {
       res.status(400).json({

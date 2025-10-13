@@ -33,6 +33,11 @@
   font-weight: 400;
 }
 
+/* Dark mode text visibility fix for Impact Stories subtitle */
+[data-theme="dark"] .impact-stories-subtitle {
+  color: #ffffff !important;
+}
+
 /* Loading and Error States */
 .loading-container,
 .error-container,

@@ -68,7 +68,7 @@ function ContactUs() {
               <div>
                 <h4>Email</h4>
                 <p>General Inquiries &amp; Support</p>
-                <a href="mailto:contact@kalaalink.com">contact@kalaalink.com</a>
+                <a href="mailto:kalaalink@gmail.com">kalaalink@gmail.com</a>
               </div>
             </div>
 
@@ -77,7 +77,7 @@ function ContactUs() {
               <div>
                 <h4>Phone</h4>
                 <p>Mon–Fri, 9:00–17:00</p>
-                <p>+1 (555) 123-4567</p>
+                <p>+94 76 161 9161</p>
               </div>
             </div>
 
@@ -85,8 +85,8 @@ function ContactUs() {
               <div className="icon-circle">📍</div>
               <div>
                 <h4>Our Office</h4>
-                <p>123 Creative Lane,</p>
-                <p>Art City, AC 54321</p>
+                <p>No.218/6, Thalapiyannawa Rd,</p>
+                <p>Ampitiya, Kandy</p>
               </div>
             </div>
           </div>
