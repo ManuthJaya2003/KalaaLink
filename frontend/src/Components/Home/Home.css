@@ -502,6 +502,15 @@ img {
   line-height: 1.4;
 }
 
+/* Dark mode text visibility fixes for Home Page */
+[data-theme="dark"] .intro-headline {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .intro-subtext {
+  color: #ffffff !important;
+}
+
 .intro-cta-buttons {
   display: flex;
   justify-content: center;
@@ -800,6 +809,19 @@ img {
   line-height: 1.5;
 }
 
+/* Dark mode text visibility fixes for Services section */
+[data-theme="dark"] .service-headline {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .service-description {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .service-features li {
+  color: #ffffff !important;
+}
+
 .service-features li::before {
   content: '✓';
   position: absolute;
@@ -1072,6 +1094,15 @@ img {
   text-align: center;
 }
 
+/* Dark mode text visibility fixes for Virtual Art Gallery */
+[data-theme="dark"] .gallery-header h2 {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .gallery-header p {
+  color: #ffffff !important;
+}
+
 /* Responsive gallery styles */
 @media (max-width: 768px) {
   .gallery-section {
@@ -1169,6 +1200,15 @@ img {
   opacity: 0.8;
 }
 
+/* Dark mode text visibility fixes for Statistics section */
+[data-theme="dark"] .statistics-title {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .statistics-subtitle {
+  color: #ffffff !important;
+}
+
 .statistics-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -1252,6 +1292,11 @@ img {
   color: #000000;
   margin-bottom: 30px;
   text-align: center;
+}
+
+/* Dark mode text visibility fix for Testimonials section */
+[data-theme="dark"] .testimonials-title {
+  color: #ffffff !important;
 }
 
 .testimonials-wrapper {
@@ -1414,6 +1459,11 @@ img {
   text-align: center;
 }
 
+/* Dark mode text visibility fix for Partners section */
+[data-theme="dark"] .partners-title {
+  color: #ffffff !important;
+}
+
 .partners-slider {
   width: 100%;
   overflow: hidden;
@@ -1513,6 +1563,11 @@ img {
   margin: 0;
   line-height: 1.6;
   text-align: center;
+}
+
+/* Dark mode text visibility fix for Ending Note section */
+[data-theme="dark"] .ending-note-text {
+  color: #ffffff !important;
 }
 
 .ending-note-decoration {

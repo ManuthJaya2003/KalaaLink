@@ -50,24 +50,34 @@
 
 /* Form Inputs & Uploads */
 .portfolio-container form div {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .portfolio-container label {
   display: block;
   margin-bottom: 8px;
-  font-weight: bold;
-  color: #555;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
 }
 
 .portfolio-container input,
 .portfolio-container textarea {
   width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
   resize: vertical;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.portfolio-container input:focus,
+.portfolio-container textarea:focus {
+  outline: none;
+  border-color: #C1A37F;
+  box-shadow: 0 0 0 3px rgba(193, 163, 127, 0.1);
 }
 
 .portfolio-container button[type="submit"] {
@@ -88,11 +98,27 @@
 /* Image Previews */
 .portfolio-container img {
   display: block;
-  margin-top: 10px;
+  margin-top: 12px;
   border-radius: 8px;
   object-fit: cover;
   max-width: 200px;
   max-height: 200px;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.artist-profile-preview {
+  border-radius: 50% !important;
+  width: 120px !important;
+  height: 120px !important;
+  border: 3px solid #C1A37F !important;
+  box-shadow: 0 4px 12px rgba(193, 163, 127, 0.2) !important;
+}
+
+.artist-cover-preview {
+  border-radius: 12px !important;
+  max-width: 300px !important;
+  max-height: 150px !important;
 }
 
 /* Responsive Design */

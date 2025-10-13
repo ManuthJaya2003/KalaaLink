@@ -284,15 +284,15 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="artist-manager-modal-overlay" onClick={onClose}>
+      <div className="artist-manager-modal-content" onClick={(e) => e.stopPropagation()}>
         {/* Modern Header with Icon */}
-        <div className="modal-header">
-          <div className="header-content">
-            <div className="header-icon"></div>
+        <div className="artist-manager-modal-header">
+          <div className="artist-manager-header-content">
+            <div className="artist-manager-header-icon">📍</div>
             <h3>{title}</h3>
           </div>
-          <button className="modal-close" onClick={onClose}>
+          <button className="artist-manager-modal-close" onClick={onClose}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -300,84 +300,84 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
           </button>
         </div>
         
-        <div className="modal-body">
+        <div className="artist-manager-modal-body">
           {/* Event Details Card */}
-          <div className="event-details-card">
-            <div className="event-header">
+          <div className="artist-manager-event-details-card">
+            <div className="artist-manager-event-header">
               <h4>{booking?.eventType || 'Event'}</h4>
             </div>
-            <div className="event-info-grid">
-              <div className="info-item">
-                <div className="info-content">
-                  <span className="info-label">Venue</span>
-                  <span className="info-value">{booking?.eventVenue}</span>
+            <div className="artist-manager-event-info-grid">
+              <div className="artist-manager-info-item">
+                <div className="artist-manager-info-content">
+                  <span className="artist-manager-info-label">Venue</span>
+                  <span className="artist-manager-info-value">{booking?.eventVenue}</span>
                 </div>
               </div>
-              <div className="info-item">
-                <div className="info-content">
-                  <span className="info-label">Date</span>
-                  <span className="info-value">{new Date(booking?.eventDate).toLocaleDateString()}</span>
+              <div className="artist-manager-info-item">
+                <div className="artist-manager-info-content">
+                  <span className="artist-manager-info-label">Date</span>
+                  <span className="artist-manager-info-value">{new Date(booking?.eventDate).toLocaleDateString()}</span>
                 </div>
               </div>
-              <div className="info-item">
-                <div className="info-content">
-                  <span className="info-label">Time</span>
-                  <span className="info-value">{booking?.eventTime}</span>
+              <div className="artist-manager-info-item">
+                <div className="artist-manager-info-content">
+                  <span className="artist-manager-info-label">Time</span>
+                  <span className="artist-manager-info-value">{booking?.eventTime}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Location Status Card */}
-          <div className="location-status-card">
+          <div className="artist-manager-location-status-card">
             {isGettingLocation ? (
-              <div className="status-loading">
-                <div className="loading-spinner">
-                  <div className="spinner"></div>
+              <div className="artist-manager-status-loading">
+                <div className="artist-manager-loading-spinner">
+                  <div className="artist-manager-spinner"></div>
                 </div>
                 <p>Detecting your current location...</p>
               </div>
             ) : locationError ? (
-              <div className="status-error">
-                <div className="status-icon">!</div>
-                <div className="status-content">
+              <div className="artist-manager-status-error">
+                <div className="artist-manager-status-icon">!</div>
+                <div className="artist-manager-status-content">
                   <h5>Location Error</h5>
                   <p>{locationError}</p>
                   <button 
-                    className="btn btn-outline"
+                    className="artist-manager-btn artist-manager-btn-outline"
                     onClick={getUserLocation}
                   >
-                    <span className="btn-icon">↻</span>
+                    <span className="artist-manager-btn-icon">↻</span>
                     Try Again
                   </button>
                 </div>
               </div>
             ) : userLocation ? (
-              <div className="status-success">
-                <div className="status-icon">✓</div>
-                <div className="status-content">
+              <div className="artist-manager-status-success">
+                <div className="artist-manager-status-icon">✓</div>
+                <div className="artist-manager-status-content">
                   <h5>Location Detected</h5>
-                  <div className="location-details">
-                    <div className="location-item">
-                      <div className="item-icon">L</div>
-                      <div className="item-content">
-                        <span className="item-label">Coordinates</span>
-                        <span className="item-value">{userLocation.lat.toFixed(6)}, {userLocation.lng.toFixed(6)}</span>
+                  <div className="artist-manager-location-details">
+                    <div className="artist-manager-location-item">
+                      <div className="artist-manager-item-icon">L</div>
+                      <div className="artist-manager-item-content">
+                        <span className="artist-manager-item-label">Coordinates</span>
+                        <span className="artist-manager-item-value">{userLocation.lat.toFixed(6)}, {userLocation.lng.toFixed(6)}</span>
                       </div>
                     </div>
-                    <div className="location-item">
-                      <div className="item-icon">T</div>
-                      <div className="item-content">
-                        <span className="item-label">Detected</span>
-                        <span className="item-value">{locationTimestamp ? locationTimestamp.toLocaleTimeString() : 'Just now'}</span>
+                    <div className="artist-manager-location-item">
+                      <div className="artist-manager-item-icon">T</div>
+                      <div className="artist-manager-item-content">
+                        <span className="artist-manager-item-label">Detected</span>
+                        <span className="artist-manager-item-value">{locationTimestamp ? locationTimestamp.toLocaleTimeString() : 'Just now'}</span>
                       </div>
                     </div>
                     {userLocation.accuracy && (
-                      <div className="location-item">
-                        <div className="item-icon">A</div>
-                        <div className="item-content">
-                          <span className="item-label">Accuracy</span>
-                          <span className="item-value">±{Math.round(userLocation.accuracy)}m</span>
+                      <div className="artist-manager-location-item">
+                        <div className="artist-manager-item-icon">A</div>
+                        <div className="artist-manager-item-content">
+                          <span className="artist-manager-item-label">Accuracy</span>
+                          <span className="artist-manager-item-value">±{Math.round(userLocation.accuracy)}m</span>
                         </div>
                       </div>
                     )}
@@ -388,24 +388,24 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
           </div>
 
           {/* Action Buttons */}
-          <div className="action-buttons">
+          <div className="artist-manager-action-buttons">
               <button
                 onClick={handleGetDirections}
-                className="btn btn-primary get-directions-btn"
+                className="artist-manager-btn artist-manager-btn-primary artist-manager-get-directions-btn"
               >
                 Get Directions
               </button>
             <button 
-              className="btn btn-secondary"
+              className="artist-manager-btn artist-manager-btn-secondary"
               onClick={getUserLocation}
             >
-              <span className="btn-icon">↻</span>
+              <span className="artist-manager-btn-icon">↻</span>
               Refresh Location
             </button>
           </div>
 
           {/* Map Container */}
-          <div className="map-container">
+          <div className="artist-manager-map-container">
             {isOpen && (
               <MapContainer
                 center={venueCoords}
@@ -426,7 +426,7 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
               {/* Venue marker */}
               <Marker position={venueCoords} icon={venueIcon}>
                 <Popup>
-                  <div className="venue-popup">
+                  <div className="artist-manager-venue-popup">
                     <h4>Event Venue</h4>
                     <p>{booking?.eventVenue}</p>
                   </div>
@@ -437,7 +437,7 @@ function LocationModal({ isOpen, onClose, booking, title = "Venue Location" }) {
               {userLocation && (
                 <Marker position={userLocation} icon={userIcon}>
                   <Popup>
-                    <div className="user-popup">
+                    <div className="artist-manager-user-popup">
                       <h4>Your Location</h4>
                       <p>You are here</p>
                     </div>

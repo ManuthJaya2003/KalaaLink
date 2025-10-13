@@ -116,7 +116,16 @@ function DonorDashboard() {
                 className={`package-button ${pkg.name.toLowerCase()}-package ${inputs.package === pkg.name ? 'selected' : ''}`}
                 onClick={() => handlePackageSelect(pkg)}
               >
-                {pkg.name} (LKR {pkg.amount?.toLocaleString()})
+                <div className="package-card-content">
+                  <div className="package-title">{pkg.name}</div>
+                  <div className="package-subtitle">
+                    {pkg.name.toLowerCase() === 'diamond' ? 'Support us like a star' :
+                     pkg.name.toLowerCase() === 'gold' ? 'Premium partnership' :
+                     pkg.name.toLowerCase() === 'silver' ? 'Quality contribution' :
+                     'Make a difference'}
+                  </div>
+                  <div className="package-amount">LKR {pkg.amount?.toLocaleString()}</div>
+                </div>
               </button>
             ))}
             <button
@@ -124,7 +133,11 @@ function DonorDashboard() {
               className={`package-button custom-package ${inputs.package === 'Custom' ? 'selected' : ''}`}
               onClick={() => handlePackageSelect({ name: 'Custom', amount: '', _id: null })}
             >
-              Custom
+              <div className="package-card-content">
+                <div className="package-title">Custom</div>
+                <div className="package-subtitle">Your own amount</div>
+                <div className="package-amount">Choose amount</div>
+              </div>
             </button>
           </div>
         </div>

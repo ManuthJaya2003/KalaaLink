@@ -150,17 +150,17 @@ function Home() {
           {/* Artists Service */}
           <div className="service-block service-left">
             <div className="service-content">
-              <h3 className="service-headline">Discover Artists and Connect Anytime, Anywhere</h3>
+              <h3 className="service-headline">{t('discoverArtistsConnect')}</h3>
               <p className="service-description">
-                Engage with talented artists and collaborate effortlessly through our vibrant platform. Our community of verified creatives offers personalized experiences tailored to your vision. Explore portfolios, appreciate their artistry, and connect with confidence.
+                {t('engageWithTalentedArtists')}
               </p>
               <ul className="service-features">
-                <li>Connect with artists instantly</li>
-                <li>Explore inspiring portfolios</li>
-                <li>Verified reviews for trusted collaborations</li>
+                <li>{t('connectWithArtistsInstantly')}</li>
+                <li>{t('exploreInspiringPortfolios')}</li>
+                <li>{t('verifiedReviewsTrustedCollaborations')}</li>
               </ul>
               <button className="service-cta" onClick={() => navigate('/artists')}>
-                Explore Artists
+                {t('exploreArtists')}
               </button>
             </div>
             <div className="service-image artist-image">
@@ -180,17 +180,17 @@ function Home() {
               />
             </div>
             <div className="service-content">
-              <h3 className="service-headline">Enjoy and Explore Upcoming Events with Your Favorite Artists</h3>
+              <h3 className="service-headline">{t('enjoyExploreUpcomingEvents')}</h3>
               <p className="service-description">
-                Stay updated with the latest events and book tickets to see your favorite artists perform live. From gallery openings to cultural festivals, our platform brings together the most exciting creative events in your community.
+                {t('stayUpdatedLatestEvents')}
               </p>
               <ul className="service-features">
-                <li>Event schedules</li>
-                <li>Ticket booking</li>
-                <li>Notifications & reminders</li>
+                <li>{t('eventSchedules')}</li>
+                <li>{t('ticketBooking')}</li>
+                <li>{t('notificationsReminders')}</li>
               </ul>
               <button className="service-cta" onClick={() => navigate('/Events')}>
-                View Events
+                {t('viewEvents')}
               </button>
             </div>
           </div>
@@ -198,17 +198,17 @@ function Home() {
           {/* Donations Service */}
           <div className="service-block service-left">
             <div className="service-content">
-              <h3 className="service-headline">Support Artists You Love</h3>
+              <h3 className="service-headline">{t('supportArtistsYouLove')}</h3>
               <p className="service-description">
-                Help artists continue creating amazing work by supporting them directly through our secure donation platform. Your contributions help talented creators focus on their craft and bring their artistic visions to life.
+                {t('helpArtistsContinueCreating')}
               </p>
               <ul className="service-features">
-                <li>Secure payments</li>
-                <li>Track your contributions</li>
-                <li>Special rewards for donors</li>
+                <li>{t('securePayments')}</li>
+                <li>{t('trackContributions')}</li>
+                <li>{t('specialRewardsDonors')}</li>
               </ul>
               <button className="service-cta" onClick={() => navigate('/donordashboard')}>
-                Donate Now
+                {t('donateNow')}
               </button>
             </div>
             <div className="service-image">
@@ -228,17 +228,17 @@ function Home() {
               />
             </div>
             <div className="service-content">
-              <h3 className="service-headline">Discover and Buy Unique Art</h3>
+              <h3 className="service-headline">{t('discoverBuyUniqueArt')}</h3>
               <p className="service-description">
-                Browse and purchase original artwork from talented artists in our curated marketplace. From paintings and sculptures to digital art and handmade crafts, our marketplace features carefully selected pieces from artists worldwide.
+                {t('browsePurchaseOriginalArtwork')}
               </p>
               <ul className="service-features">
-                <li>Browse curated collections</li>
-                <li>Secure checkout</li>
-                <li>Shipping and tracking</li>
+                <li>{t('browseCuratedCollections')}</li>
+                <li>{t('secureCheckout')}</li>
+                <li>{t('shippingTracking')}</li>
               </ul>
               <button className="service-cta" onClick={() => navigate('/marketplace')}>
-                Visit Marketplace
+                {t('visitMarketplace')}
               </button>
             </div>
           </div>
@@ -279,55 +279,55 @@ function Home() {
             <div className="testimonials-slider" ref={testimonialsRef}>
               <div className="testimonial-card">
                 <div className="testimonial-content">
-                  <p className="testimonial-text">"KalaaLink has revolutionized how I discover and book artists. The platform is intuitive and the artists are incredibly talented."</p>
+                  <p className="testimonial-text">"{t('testimonial1')}"</p>
                   <div className="testimonial-author">
-                    <div className="author-name">Jennifer Chen</div>
-                    <div className="author-role">Event Planner</div>
+                    <div className="author-name">{t('testimonial1Author')}</div>
+                    <div className="author-role">{t('testimonial1Role')}</div>
                   </div>
                 </div>
               </div>
               <div className="testimonial-card">
                 <div className="testimonial-content">
-                  <p className="testimonial-text">"As an artist, this platform has given me amazing opportunities to showcase my work and connect with clients worldwide."</p>
+                  <p className="testimonial-text">"{t('testimonial2')}"</p>
                   <div className="testimonial-author">
-                    <div className="author-name">Michael Torres</div>
-                    <div className="author-role">Digital Artist</div>
+                    <div className="author-name">{t('testimonial2Author')}</div>
+                    <div className="author-role">{t('testimonial2Role')}</div>
                   </div>
                 </div>
               </div>
               <div className="testimonial-card">
                 <div className="testimonial-content">
-                  <p className="testimonial-text">"The marketplace is fantastic! I've found unique pieces that perfectly match my home's aesthetic."</p>
+                  <p className="testimonial-text">"{t('testimonial3')}"</p>
                   <div className="testimonial-author">
-                    <div className="author-name">Lisa Anderson</div>
-                    <div className="author-role">Interior Designer</div>
+                    <div className="author-name">{t('testimonial3Author')}</div>
+                    <div className="author-role">{t('testimonial3Role')}</div>
                   </div>
                 </div>
               </div>
               <div className="testimonial-card">
                 <div className="testimonial-content">
-                  <p className="testimonial-text">"Outstanding customer service and the quality of artists is exceptional. Highly recommend for any creative project."</p>
+                  <p className="testimonial-text">"{t('testimonial4')}"</p>
                   <div className="testimonial-author">
-                    <div className="author-name">David Kim</div>
-                    <div className="author-role">Marketing Director</div>
+                    <div className="author-name">{t('testimonial4Author')}</div>
+                    <div className="author-role">{t('testimonial4Role')}</div>
                   </div>
                 </div>
               </div>
               <div className="testimonial-card">
                 <div className="testimonial-content">
-                  <p className="testimonial-text">"The events feature helped me discover amazing local artists and cultural experiences I never knew existed."</p>
+                  <p className="testimonial-text">"{t('testimonial5')}"</p>
                   <div className="testimonial-author">
-                    <div className="author-name">Sarah Williams</div>
-                    <div className="author-role">Art Enthusiast</div>
+                    <div className="author-name">{t('testimonial5Author')}</div>
+                    <div className="author-role">{t('testimonial5Role')}</div>
                   </div>
                 </div>
               </div>
               <div className="testimonial-card">
                 <div className="testimonial-content">
-                  <p className="testimonial-text">"As a gallery owner, KalaaLink has been instrumental in connecting me with talented emerging artists."</p>
+                  <p className="testimonial-text">"{t('testimonial6')}"</p>
                   <div className="testimonial-author">
-                    <div className="author-name">Robert Martinez</div>
-                    <div className="author-role">Gallery Owner</div>
+                    <div className="author-name">{t('testimonial6Author')}</div>
+                    <div className="author-role">{t('testimonial6Role')}</div>
                   </div>
                 </div>
               </div>

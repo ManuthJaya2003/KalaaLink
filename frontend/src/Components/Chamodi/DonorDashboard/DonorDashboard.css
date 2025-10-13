@@ -102,6 +102,11 @@
   width: 100% !important;
 }
 
+/* Dark mode text visibility fix for Support Our Talented Artists section */
+[data-theme="dark"] .donor-support-subtitle {
+  color: #ffffff !important;
+}
+
 /* ✅ Main navbar integration - consistent styling with main project */
 .donor-dashboard-container {
   max-width: 1200px;
@@ -197,64 +202,239 @@ body, html {
 .package-buttons-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .package-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 20px;
   justify-content: center;
-  align-items: center;
-  max-width: 100%;
+  align-items: stretch;
+  max-width: 1000px;
+  width: 100%;
 }
 
 .package-button {
-  padding: 16px 28px !important;
-  border: 2px solid transparent !important;
-  border-radius: 8px !important;
+  flex: 0 0 auto;
+  width: 200px;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 16px !important;
+  cursor: pointer !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  min-width: 200px !important;
+  text-align: center !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  color: #495057 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.package-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: inherit;
+  border-radius: inherit;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
+.package-card-content {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  justify-content: center;
+}
+
+.package-title {
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.package-subtitle {
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  margin: 0 !important;
+  opacity: 0.8;
+  line-height: 1.3 !important;
+}
+
+.package-amount {
   font-size: 1.1rem !important;
   font-weight: 600 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  min-width: 160px !important;
-  text-align: center !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-  background: #000000 !important;
-  color: #ffffff !important;
+  margin: 0 !important;
+  margin-top: 4px !important;
+  padding: 6px 12px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(10px) !important;
 }
 
-.package-button:hover {
-  background: #C1A37F !important;
-  color: #000000 !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+/* ===== THEMED PACKAGE STYLES ===== */
+
+/* Diamond Package - Shimmering white/light-blue glow */
+.diamond-package {
+  background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 50%, #bbdefb 100%) !important;
+  color: #1565c0 !important;
+  box-shadow: 0 4px 20px rgba(21, 101, 192, 0.2) !important;
 }
 
-.package-button.selected {
-  border-color: #333 !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
-  background: #000000 !important;
-  color: #ffffff !important;
+.diamond-package .package-title {
+  color: #0d47a1 !important;
 }
 
-/* Package buttons now use consistent black/beige styling */
-
-/* High specificity overrides for package buttons */
-.donor-dashboard-container .package-button,
-.donor-dashboard-container .package-buttons .package-button {
-  background: #000000 !important;
-  color: #ffffff !important;
-  padding: 16px 28px !important;
-  font-size: 1.1rem !important;
-  min-width: 160px !important;
+.diamond-package .package-subtitle {
+  color: #1976d2 !important;
 }
 
-.donor-dashboard-container .package-button:hover,
-.donor-dashboard-container .package-buttons .package-button:hover {
-  background: #C1A37F !important;
-  color: #000000 !important;
+.diamond-package .package-amount {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #0d47a1 !important;
+}
+
+.diamond-package:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 8px 30px rgba(21, 101, 192, 0.3) !important;
+}
+
+.diamond-package.selected {
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow: 0 6px 25px rgba(21, 101, 192, 0.4) !important;
+  border: 2px solid #1976d2 !important;
+}
+
+/* Gold Package - Rich gold gradient */
+.gold-package {
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 50%, #ff8f00 100%) !important;
+  color: #e65100 !important;
+  box-shadow: 0 4px 20px rgba(255, 183, 0, 0.3) !important;
+}
+
+.gold-package .package-title {
+  color: #bf360c !important;
+}
+
+.gold-package .package-subtitle {
+  color: #d84315 !important;
+}
+
+.gold-package .package-amount {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #bf360c !important;
+}
+
+.gold-package:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 8px 30px rgba(255, 183, 0, 0.4) !important;
+}
+
+.gold-package.selected {
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow: 0 6px 25px rgba(255, 183, 0, 0.5) !important;
+  border: 2px solid #ff8f00 !important;
+}
+
+/* Silver Package - Metallic grey gradient */
+.silver-package {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 50%, #bdbdbd 100%) !important;
+  color: #424242 !important;
+  box-shadow: 0 4px 20px rgba(189, 189, 189, 0.3) !important;
+}
+
+.silver-package .package-title {
+  color: #212121 !important;
+}
+
+.silver-package .package-subtitle {
+  color: #424242 !important;
+}
+
+.silver-package .package-amount {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #212121 !important;
+}
+
+.silver-package:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 8px 30px rgba(189, 189, 189, 0.4) !important;
+}
+
+.silver-package.selected {
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow: 0 6px 25px rgba(189, 189, 189, 0.5) !important;
+  border: 2px solid #9e9e9e !important;
+}
+
+/* Custom Package - Neutral light teal theme */
+.custom-package {
+  background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 50%, #80cbc4 100%) !important;
+  color: #00695c !important;
+  box-shadow: 0 4px 20px rgba(128, 203, 196, 0.3) !important;
+}
+
+.custom-package .package-title {
+  color: #004d40 !important;
+}
+
+.custom-package .package-subtitle {
+  color: #00695c !important;
+}
+
+.custom-package .package-amount {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #004d40 !important;
+}
+
+.custom-package:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 8px 30px rgba(128, 203, 196, 0.4) !important;
+}
+
+.custom-package.selected {
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow: 0 6px 25px rgba(128, 203, 196, 0.5) !important;
+  border: 2px solid #4db6ac !important;
+}
+
+/* Default Package Theme - For any additional packages */
+.package-button:not(.diamond-package):not(.gold-package):not(.silver-package):not(.custom-package) {
+  background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 50%, #ce93d8 100%) !important;
+  color: #7b1fa2 !important;
+  box-shadow: 0 4px 20px rgba(206, 147, 216, 0.3) !important;
+}
+
+.package-button:not(.diamond-package):not(.gold-package):not(.silver-package):not(.custom-package) .package-title {
+  color: #4a148c !important;
+}
+
+.package-button:not(.diamond-package):not(.gold-package):not(.silver-package):not(.custom-package) .package-subtitle {
+  color: #7b1fa2 !important;
+}
+
+.package-button:not(.diamond-package):not(.gold-package):not(.silver-package):not(.custom-package) .package-amount {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #4a148c !important;
+}
+
+.package-button:not(.diamond-package):not(.gold-package):not(.silver-package):not(.custom-package):hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 8px 30px rgba(206, 147, 216, 0.4) !important;
+}
+
+.package-button:not(.diamond-package):not(.gold-package):not(.silver-package):not(.custom-package).selected {
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow: 0 6px 25px rgba(206, 147, 216, 0.5) !important;
+  border: 2px solid #ab47bc !important;
 }
 
 /* High specificity overrides for subtexts */
@@ -266,6 +446,140 @@ body, html {
   line-height: 1.4 !important;
   text-align: center !important;
   font-style: normal !important;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .package-buttons {
+    gap: 16px;
+  }
+  
+  .package-button {
+    width: 180px;
+    min-width: 180px !important;
+  }
+  
+  .package-card-content {
+    padding: 20px 16px;
+  }
+  
+  .package-title {
+    font-size: 1.2rem !important;
+  }
+  
+  .package-subtitle {
+    font-size: 0.85rem !important;
+  }
+  
+  .package-amount {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .package-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .package-button {
+    width: 100%;
+    max-width: 300px;
+    min-width: 100% !important;
+  }
+  
+  .package-card-content {
+    padding: 18px 14px;
+  }
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+[data-theme="dark"] .packages-intro-text {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .form-intro-text {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .package-button {
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .diamond-package {
+  background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%) !important;
+  color: #e3f2fd !important;
+}
+
+[data-theme="dark"] .diamond-package .package-title {
+  color: #bbdefb !important;
+}
+
+[data-theme="dark"] .diamond-package .package-subtitle {
+  color: #90caf9 !important;
+}
+
+[data-theme="dark"] .gold-package {
+  background: linear-gradient(135deg, #e65100 0%, #f57c00 50%, #ff9800 100%) !important;
+  color: #fff3e0 !important;
+}
+
+[data-theme="dark"] .gold-package .package-title {
+  color: #ffe0b2 !important;
+}
+
+[data-theme="dark"] .gold-package .package-subtitle {
+  color: #ffcc02 !important;
+}
+
+[data-theme="dark"] .silver-package {
+  background: linear-gradient(135deg, #424242 0%, #616161 50%, #757575 100%) !important;
+  color: #f5f5f5 !important;
+}
+
+[data-theme="dark"] .silver-package .package-title {
+  color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .silver-package .package-subtitle {
+  color: #bdbdbd !important;
+}
+
+[data-theme="dark"] .custom-package {
+  background: linear-gradient(135deg, #004d40 0%, #00695c 50%, #00796b 100%) !important;
+  color: #e0f2f1 !important;
+}
+
+[data-theme="dark"] .custom-package .package-title {
+  color: #b2dfdb !important;
+}
+
+[data-theme="dark"] .custom-package .package-subtitle {
+  color: #80cbc4 !important;
+}
+
+/* Dark mode support for donation form */
+[data-theme="dark"] .donation-form {
+  background: #2d3748;
+  border-color: #4a5568;
+}
+
+[data-theme="dark"] .donation-form label {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .donation-form select,
+[data-theme="dark"] .donation-form input {
+  background: #4a5568;
+  border-color: #718096;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .donation-form select:focus,
+[data-theme="dark"] .donation-form input:focus {
+  border-color: #C1A37F;
+  box-shadow: 0 0 0 3px rgba(193, 163, 127, 0.1);
 }
 
 /* Form intro */
@@ -302,6 +616,9 @@ body, html {
   border: 1px solid #e9ecef;
   max-width: 500px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .donation-form label {
@@ -310,6 +627,8 @@ body, html {
   margin-bottom: 8px;
   color: #333;
   font-size: 1rem;
+  width: 100%;
+  text-align: left;
 }
 
 .donation-form select,
@@ -333,6 +652,15 @@ body, html {
 
 .custom-amount-section {
   margin-bottom: 20px;
+  width: 100%;
+}
+
+/* Center the submit button within the donation form */
+.donation-form .submit-button {
+  width: 100%;
+  max-width: 300px;
+  margin-top: 10px;
+  align-self: center;
 }
 
 .submit-button {
@@ -583,6 +911,15 @@ button[type="submit"]:hover {
   margin-bottom: 30px;
   line-height: 1.6;
   color: #333333;
+}
+
+/* Dark mode text visibility fixes for Partnership section */
+[data-theme="dark"] .partnership-section h2 {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .partnership-section p {
+  color: #ffffff !important;
 }
 
 .partnership-button {

@@ -204,21 +204,21 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={handleClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">Update Event</h2>
-          <button className="modal-close" onClick={handleClose}>
+    <div className="event-manager-update-modal-overlay" onClick={handleClose}>
+      <div className="event-manager-update-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="event-manager-update-modal-header">
+          <h2 className="event-manager-update-modal-title">Update Event</h2>
+          <button className="event-manager-update-modal-close" onClick={handleClose}>
             ×
           </button>
         </div>
         
-        <div className="modal-body">
+        <div className="event-manager-update-modal-body">
           <form onSubmit={handleSubmit} className="event-update-form" encType="multipart/form-data">
-            <div className="form-grid">
+            <div className="event-manager-update-form-grid">
               {/* Event Title */}
-              <div className="form-group full-width">
-                <label className="form-label">
+              <div className="event-manager-update-form-group event-manager-update-full-width">
+                <label className="event-manager-update-form-label">
                   Event Title
                 </label>
                 <input
@@ -227,15 +227,15 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                   placeholder="Enter a captivating event title..."
                   value={inputs.eventTitle}
                   onChange={handleChange}
-                  className="form-input"
+                  className="event-manager-update-form-input"
                   required
                 />
               </div>
 
               {/* Date and Time - 2-column grid */}
-              <div className="date-time-container">
-                <div className="form-group">
-                  <label className="form-label">
+              <div className="event-manager-update-date-time-container">
+                <div className="event-manager-update-form-group">
+                  <label className="event-manager-update-form-label">
                     Event Date
                   </label>
                   <input
@@ -243,13 +243,13 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                     type="date"
                     value={inputs.eventDate}
                     onChange={handleChange}
-                    className="form-input"
+                    className="event-manager-update-form-input"
                     required
                   />
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">
+                <div className="event-manager-update-form-group">
+                  <label className="event-manager-update-form-label">
                     Event Time
                   </label>
                   <input
@@ -257,15 +257,15 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                     type="time"
                     value={inputs.eventTime}
                     onChange={handleChange}
-                    className="form-input"
+                    className="event-manager-update-form-input"
                     required
                   />
                 </div>
               </div>
 
               {/* Venue Location */}
-              <div className="form-group full-width">
-                <label className="form-label">
+              <div className="event-manager-update-form-group event-manager-update-full-width">
+                <label className="event-manager-update-form-label">
                   Event Venue Location
                 </label>
                 <MapPicker
@@ -280,8 +280,8 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
               </div>
 
               {/* Description */}
-              <div className="form-group full-width">
-                <label className="form-label">
+              <div className="event-manager-update-form-group event-manager-update-full-width">
+                <label className="event-manager-update-form-label">
                   Event Description
                 </label>
                 <textarea
@@ -289,15 +289,15 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                   placeholder="Describe your event in detail..."
                   value={inputs.eventDescription}
                   onChange={handleChange}
-                  className="form-textarea"
+                  className="event-manager-update-form-textarea"
                   rows="4"
                 />
               </div>
 
               {/* Four Fields - 4-column grid */}
-              <div className="four-fields-container">
-                <div className="form-group">
-                  <label className="form-label">
+              <div className="event-manager-update-four-fields-container">
+                <div className="event-manager-update-form-group">
+                  <label className="event-manager-update-form-label">
                     Max Artists
                   </label>
                   <input
@@ -306,14 +306,14 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                     placeholder="0"
                     value={inputs.maxArtists}
                     onChange={handleChange}
-                    className="form-input"
+                    className="event-manager-update-form-input"
                     min="0"
                     required
                   />
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">
+                <div className="event-manager-update-form-group">
+                  <label className="event-manager-update-form-label">
                     Max Customers
                   </label>
                   <input
@@ -322,14 +322,14 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                     placeholder="0"
                     value={inputs.maxCustomers}
                     onChange={handleChange}
-                    className="form-input"
+                    className="event-manager-update-form-input"
                     min="0"
                     required
                   />
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">
+                <div className="event-manager-update-form-group">
+                  <label className="event-manager-update-form-label">
                     Customer Price (Rs.)
                   </label>
                   <input
@@ -338,14 +338,14 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                     placeholder="0"
                     value={inputs.priceCustomer}
                     onChange={handleChange}
-                    className="form-input"
+                    className="event-manager-update-form-input"
                     min="0"
                     required
                   />
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">
+                <div className="event-manager-update-form-group">
+                  <label className="event-manager-update-form-label">
                     Artist Fee (Rs.)
                   </label>
                   <input
@@ -354,73 +354,73 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                     placeholder="0"
                     value={inputs.registrationFeeArtist}
                     onChange={handleChange}
-                    className="form-input"
+                    className="event-manager-update-form-input"
                     min="0"
                   />
                 </div>
               </div>
 
               {/* Image Upload */}
-              <div className="form-group full-width">
-                <label className="form-label">
+              <div className="event-manager-update-form-group event-manager-update-full-width">
+                <label className="event-manager-update-form-label">
                   Event Image
                 </label>
-                <div className="file-upload-container">
+                <div className="event-manager-update-file-upload-container">
                   <input
                     name="image"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="file-input"
+                    className="event-manager-update-file-input"
                     id="image-upload"
                   />
-                  <label htmlFor="image-upload" className="file-upload-label">
-                    <span className="upload-text">
+                  <label htmlFor="image-upload" className="event-manager-update-file-upload-label">
+                    <span className="event-manager-update-upload-text">
                       {imageFile ? imageFile.name : "Choose a new image file..."}
                     </span>
-                    <span className="upload-hint">Click to browse</span>
+                    <span className="event-manager-update-upload-hint">Click to browse</span>
                   </label>
                 </div>
               </div>
 
               {/* Crew Request Checkbox */}
-              <div className="form-group full-width">
-                <div className="checkbox-container">
-                  <label className="checkbox-label">
+              <div className="event-manager-update-form-group event-manager-update-full-width">
+                <div className="event-manager-update-checkbox-container">
+                  <label className="event-manager-update-checkbox-label">
                     <input
                       type="checkbox"
                       checked={requestCrew}
                       onChange={handleRequestCrewChange}
-                      className="checkbox-input"
+                      className="event-manager-update-checkbox-input"
                     />
-                    <span className="checkbox-custom"></span>
-                    <span className="checkbox-text">
+                    <span className="event-manager-update-checkbox-custom"></span>
+                    <span className="event-manager-update-checkbox-text">
                       Request Crew Support
                     </span>
                   </label>
-                  <p className="checkbox-hint">Check this if you need additional crew members for the event</p>
+                  <p className="event-manager-update-checkbox-hint">Check this if you need additional crew members for the event</p>
                 </div>
               </div>
 
               {/* Crew Request Fields - Only show when checkbox is checked */}
               {requestCrew && (
-                <div className="crew-request-section">
-                  <h3 className="crew-request-title">Crew Request Details</h3>
-                  <p className="crew-request-subtitle">Provide details about the crew support you need</p>
+                <div className="event-manager-update-crew-request-section">
+                  <h3 className="event-manager-update-crew-request-title">Crew Request Details</h3>
+                  <p className="event-manager-update-crew-request-subtitle">Provide details about the crew support you need</p>
 
-                  <div className="form-grid">
+                  <div className="event-manager-update-form-grid">
                     {/* Crew Four Fields - 4-column grid */}
-                    <div className="crew-four-fields-container">
+                    <div className="event-manager-update-crew-four-fields-container">
                       {/* Crew Type */}
-                      <div className="form-group">
-                        <label className="form-label">
+                      <div className="event-manager-update-form-group">
+                        <label className="event-manager-update-form-label">
                           Crew Type
                         </label>
                         <select
                           name="crewType"
                           value={inputs.crewType}
                           onChange={handleChange}
-                          className="form-select"
+                          className="event-manager-update-form-select"
                           required={requestCrew}
                         >
                           <option value="">Select crew type...</option>
@@ -436,8 +436,8 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                       </div>
 
                       {/* Required Date */}
-                      <div className="form-group">
-                        <label className="form-label">
+                      <div className="event-manager-update-form-group">
+                        <label className="event-manager-update-form-label">
                           Required Date
                         </label>
                         <input
@@ -445,14 +445,14 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                           type="date"
                           value={inputs.crewRequiredDate}
                           onChange={handleChange}
-                          className="form-input"
+                          className="event-manager-update-form-input"
                           required={requestCrew}
                         />
                       </div>
 
                       {/* Required Time */}
-                      <div className="form-group">
-                        <label className="form-label">
+                      <div className="event-manager-update-form-group">
+                        <label className="event-manager-update-form-label">
                           Required Time
                         </label>
                         <input
@@ -460,21 +460,21 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                           type="time"
                           value={inputs.crewRequiredTime}
                           onChange={handleChange}
-                          className="form-input"
+                          className="event-manager-update-form-input"
                           required={requestCrew}
                         />
                       </div>
 
                       {/* Estimated Duration */}
-                      <div className="form-group">
-                        <label className="form-label">
+                      <div className="event-manager-update-form-group">
+                        <label className="event-manager-update-form-label">
                           Estimated Duration
                         </label>
                         <select
                           name="estimatedDuration"
                           value={inputs.estimatedDuration}
                           onChange={handleChange}
-                          className="form-select"
+                          className="event-manager-update-form-select"
                           required={requestCrew}
                         >
                           <option value="">Select duration...</option>
@@ -490,10 +490,10 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                     </div>
 
                     {/* Crew Full-Width Fields */}
-                    <div className="crew-full-width-fields">
+                    <div className="event-manager-update-crew-full-width-fields">
                       {/* Crew Details */}
-                      <div className="form-group">
-                        <label className="form-label">
+                      <div className="event-manager-update-form-group">
+                        <label className="event-manager-update-form-label">
                           Crew Details
                         </label>
                         <textarea
@@ -501,15 +501,15 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                           placeholder="Describe the crew requirements in detail..."
                           value={inputs.crewDetails}
                           onChange={handleChange}
-                          className="form-textarea"
+                          className="event-manager-update-form-textarea"
                           rows="4"
                           required={requestCrew}
                         />
                       </div>
 
                       {/* Special Requirements */}
-                      <div className="form-group">
-                        <label className="form-label">
+                      <div className="event-manager-update-form-group">
+                        <label className="event-manager-update-form-label">
                           Special Requirements
                         </label>
                         <textarea
@@ -517,7 +517,7 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
                           placeholder="Any special requirements or notes..."
                           value={inputs.specialRequirements}
                           onChange={handleChange}
-                          className="form-textarea"
+                          className="event-manager-update-form-textarea"
                           rows="3"
                         />
                       </div>
@@ -527,17 +527,17 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
               )}
 
               {/* Submit Button - Inside Form */}
-              <div className="form-actions-inline">
+              <div className="event-manager-update-form-actions-inline">
                 <button 
                   type="button" 
-                  className="cancel-button"
+                  className="event-manager-update-cancel-button"
                   onClick={handleClose}
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit" 
-                  className="submit-button"
+                  className="event-manager-update-submit-button"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Updating..." : "Update Event"}
@@ -547,7 +547,7 @@ function UpdateEventModal({ isOpen, onClose, eventData, onEventUpdated }) {
 
             {/* Submit Message */}
             {submitMessage && (
-              <div className={`submit-message ${submitMessage.includes("successfully") ? "success" : "error"}`}>
+              <div className={`event-manager-update-submit-message ${submitMessage.includes("successfully") ? "success" : "error"}`}>
                 {submitMessage}
               </div>
             )}

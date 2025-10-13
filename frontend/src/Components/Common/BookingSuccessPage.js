@@ -39,15 +39,9 @@ function BookingSuccessPage() {
             console.log('✅ Payment verified successfully');
             setPaymentVerified(true);
             
-            // Get booking details
+            // Get complete booking details from verification response
             const bookingData = verifyResponse.data.booking;
-            // Add URL parameters to booking data if not present
-            if (artistName && artistName !== 'undefined') {
-              bookingData.artistName = artistName;
-            }
-            if (eventType && eventType !== 'undefined') {
-              bookingData.eventType = eventType;
-            }
+            console.log('Complete booking data received:', bookingData);
             setBooking(bookingData);
             
             // Show success notification
@@ -60,15 +54,21 @@ function BookingSuccessPage() {
           console.log('Getting booking by ID:', bookingId);
           const bookingResponse = await axios.get(`${BACKEND_URL}/bookings/test-payment/${bookingId}`);
           const bookingData = bookingResponse.data;
-          // Add URL parameters to booking data if not present
-          if (artistName && artistName !== 'undefined') {
-            bookingData.artistName = artistName;
+          
+          // Ensure we have complete booking data
+          if (bookingData) {
+            // Add URL parameters to booking data if not present
+            if (artistName && artistName !== 'undefined' && !bookingData.artistName) {
+              bookingData.artistName = artistName;
+            }
+            if (eventType && eventType !== 'undefined' && !bookingData.eventType) {
+              bookingData.eventType = eventType;
+            }
+            setBooking(bookingData);
+            setPaymentVerified(true);
+          } else {
+            setError('Booking data not found. Please contact support.');
           }
-          if (eventType && eventType !== 'undefined') {
-            bookingData.eventType = eventType;
-          }
-          setBooking(bookingData);
-          setPaymentVerified(true);
         } else {
           setError('No payment information found. Please contact support.');
         }
@@ -296,12 +296,24 @@ function BookingSuccessPage() {
               <span class="invoice-detail-value">${booking.customerEmail || 'N/A'}</span>
             </div>
             <div class="invoice-detail-row">
+              <span class="invoice-detail-label">Phone:</span>
+              <span class="invoice-detail-value">${booking.customerPhoneNumber || 'N/A'}</span>
+            </div>
+            <div class="invoice-detail-row">
               <span class="invoice-detail-label">Booking Date:</span>
               <span class="invoice-detail-value">${new Date(booking.createdAt || new Date()).toLocaleDateString()}</span>
             </div>
             <div class="invoice-detail-row">
               <span class="invoice-detail-label">Event Date:</span>
               <span class="invoice-detail-value">${booking.eventDate ? new Date(booking.eventDate).toLocaleDateString() : 'TBD'}</span>
+            </div>
+            <div class="invoice-detail-row">
+              <span class="invoice-detail-label">Event Time:</span>
+              <span class="invoice-detail-value">${booking.eventTime || 'TBD'}</span>
+            </div>
+            <div class="invoice-detail-row">
+              <span class="invoice-detail-label">Venue:</span>
+              <span class="invoice-detail-value">${booking.eventVenue || 'TBD'}</span>
             </div>
             <div class="invoice-detail-row">
               <span class="invoice-detail-label">Payment Status:</span>
@@ -319,6 +331,12 @@ function BookingSuccessPage() {
               <div class="item-image">🎨</div>
               <div class="item-details">
                 <div class="item-name">${booking.artistName || 'Artist'} - ${booking.eventType || 'Event'}</div>
+                <div style="font-size: 12px; color: #6c757d; margin: 2px 0;">
+                  ${booking.eventDate ? new Date(booking.eventDate).toLocaleDateString() : 'TBD'} at ${booking.eventTime || 'TBD'}
+                </div>
+                <div style="font-size: 12px; color: #6c757d; margin: 2px 0;">
+                  ${booking.eventVenue || 'Venue TBD'}
+                </div>
                 <div class="item-price">LKR ${booking.totalAmount || '0.00'}</div>
               </div>
             </div>
@@ -412,10 +430,26 @@ function BookingSuccessPage() {
                   <span style={{ color: '#2D3748', fontWeight: '500', fontSize: '16px', display: 'inline', marginLeft: '8px' }}>{booking.customerName || 'Customer'}</span>
                 </div>
                 <div style={{ display: 'block', padding: '8px 0', borderBottom: '1px solid #e5e7eb', textAlign: 'center' }}>
-                  <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Date:</span>
+                  <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Event Date:</span>
                   <span style={{ color: '#2D3748', fontWeight: '500', fontSize: '16px', display: 'inline', marginLeft: '8px' }}>
                     {booking.eventDate ? new Date(booking.eventDate).toLocaleDateString() : 'TBD'}
                   </span>
+                </div>
+                {booking.eventTime && (
+                  <div style={{ display: 'block', padding: '8px 0', borderBottom: '1px solid #e5e7eb', textAlign: 'center' }}>
+                    <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Time:</span>
+                    <span style={{ color: '#2D3748', fontWeight: '500', fontSize: '16px', display: 'inline', marginLeft: '8px' }}>{booking.eventTime}</span>
+                  </div>
+                )}
+                {booking.eventVenue && (
+                  <div style={{ display: 'block', padding: '8px 0', borderBottom: '1px solid #e5e7eb', textAlign: 'center' }}>
+                    <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Venue:</span>
+                    <span style={{ color: '#2D3748', fontWeight: '500', fontSize: '16px', display: 'inline', marginLeft: '8px' }}>{booking.eventVenue}</span>
+                  </div>
+                )}
+                <div style={{ display: 'block', padding: '8px 0', borderBottom: '1px solid #e5e7eb', textAlign: 'center' }}>
+                  <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Total Amount:</span>
+                  <span style={{ color: '#2D3748', fontWeight: '500', fontSize: '16px', display: 'inline', marginLeft: '8px' }}>LKR {booking.totalAmount || '0.00'}</span>
                 </div>
                 <div style={{ display: 'block', padding: '8px 0', borderBottom: '1px solid #e5e7eb', textAlign: 'center' }}>
                   <span style={{ fontWeight: '600', color: '#C1A37F', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline' }}>Booking ID:</span>
@@ -442,7 +476,7 @@ function BookingSuccessPage() {
           {booking && booking.eventVenue && (
             <div className="venue-section">
               <h3 className="venue-section-title">📍 Event Location</h3>
-              <div style={{ textAlign: 'center', padding: '20px', background: '#f9fafb', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+              <div style={{ textAlign: 'center', padding: '20px', background: '#f9fafb', borderRadius: '12px', border: '1px solid #e5e7eb', marginBottom: '20px' }}>
                 <p style={{ margin: '0 0 8px 0', fontWeight: '600', color: '#2D3748' }}>{booking.eventVenue}</p>
                 {booking.eventLocation && booking.eventLocation.lat && booking.eventLocation.lng && (
                   <p style={{ margin: '0', color: '#6b7280', fontSize: '14px' }}>
@@ -450,6 +484,22 @@ function BookingSuccessPage() {
                   </p>
                 )}
               </div>
+              
+              {/* Render VenueMap if we have coordinates */}
+              {booking.eventLocation && booking.eventLocation.lat && booking.eventLocation.lng && (
+                <div style={{ height: '350px', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+                  <VenueMap 
+                    event={{
+                      venueCoordinates: {
+                        latitude: booking.eventLocation.lat,
+                        longitude: booking.eventLocation.lng
+                      },
+                      venue: booking.eventVenue
+                    }} 
+                    height="350px" 
+                  />
+                </div>
+              )}
             </div>
           )}
 

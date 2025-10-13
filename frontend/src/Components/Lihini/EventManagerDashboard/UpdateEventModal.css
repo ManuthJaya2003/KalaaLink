@@ -1,7 +1,7 @@
-/* UpdateEventModal.css - Modal styling for Update Event form */
+/* UpdateEventModal.css - Event Manager Update Modal - Unique Classes */
 
-/* Modal Overlay */
-.modal-overlay {
+/* ===== EVENT MANAGER UPDATE MODAL - UNIQUE CLASSES ===== */
+.event-manager-update-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -14,10 +14,20 @@
   z-index: 1000;
   padding: 20px;
   backdrop-filter: blur(4px);
+  animation: eventManagerUpdateFadeIn 0.3s ease-out;
+}
+
+@keyframes eventManagerUpdateFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Modal Content */
-.modal-content {
+.event-manager-update-modal-content {
   background: white;
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -29,11 +39,11 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: modalSlideIn 0.3s ease-out;
+  animation: eventManagerUpdateSlideIn 0.3s ease-out;
   position: relative;
 }
 
-@keyframes modalSlideIn {
+@keyframes eventManagerUpdateSlideIn {
   from {
     opacity: 0;
     transform: scale(0.9) translateY(-20px);
@@ -45,7 +55,7 @@
 }
 
 /* Modal Header */
-.modal-header {
+.event-manager-update-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -57,7 +67,7 @@
   box-sizing: border-box;
 }
 
-.modal-title {
+.event-manager-update-modal-title {
   font-size: 1.5rem;
   font-weight: 700;
   color: #2c3e50;
@@ -65,7 +75,7 @@
   font-family: 'Georgia', serif;
 }
 
-.modal-close {
+.event-manager-update-modal-close {
   background: none;
   border: none;
   font-size: 2rem;
@@ -81,13 +91,13 @@
   transition: all 0.2s ease;
 }
 
-.modal-close:hover {
+.event-manager-update-modal-close:hover {
   background: #e5e7eb;
   color: #374151;
 }
 
 /* Modal Body */
-.modal-body {
+.event-manager-update-modal-body {
   flex: 1;
   overflow-y: auto;
   padding: 1.5rem 2rem;
@@ -99,39 +109,39 @@
 }
 
 /* Ensure proper scrolling behavior */
-.modal-body::-webkit-scrollbar {
+.event-manager-update-modal-body::-webkit-scrollbar {
   width: 8px;
 }
 
-.modal-body::-webkit-scrollbar-track {
+.event-manager-update-modal-body::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
 }
 
-.modal-body::-webkit-scrollbar-thumb {
+.event-manager-update-modal-body::-webkit-scrollbar-thumb {
   background: #C1A37F;
   border-radius: 4px;
 }
 
-.modal-body::-webkit-scrollbar-thumb:hover {
+.event-manager-update-modal-body::-webkit-scrollbar-thumb:hover {
   background: #a68b5f;
 }
 
 /* Form Layout - Mixed Layouts */
-.form-grid {
+.event-manager-update-form-grid {
   display: block !important;
   margin-bottom: 2rem !important;
   width: 100% !important;
   padding-top: 0;
 }
 
-.form-group.full-width {
+.event-manager-update-form-group.event-manager-update-full-width {
   width: 100% !important;
   display: block !important;
 }
 
 /* Form Groups - Match Organize Event spacing */
-.form-group {
+.event-manager-update-form-group {
   margin-bottom: 1rem;
   width: 100%;
   max-width: 100%;
@@ -139,7 +149,7 @@
 }
 
 /* Event Title - 70% width to match Organize Event */
-.form-grid .form-group.full-width:has(input[name="eventTitle"]) {
+.event-manager-update-form-grid .event-manager-update-form-group.event-manager-update-full-width:has(input[name="eventTitle"]) {
   width: 70% !important;
   max-width: 70% !important;
   margin-bottom: 1rem !important;
@@ -147,7 +157,7 @@
 }
 
 /* Event Description - 70% width to match Organize Event */
-.form-grid .form-group.full-width:has(textarea[name="eventDescription"]) {
+.event-manager-update-form-grid .event-manager-update-form-group.event-manager-update-full-width:has(textarea[name="eventDescription"]) {
   width: 70% !important;
   max-width: 70% !important;
   margin-bottom: 1rem !important;
@@ -155,17 +165,17 @@
 }
 
 /* Ensure inputs within title and description fields fill their parent */
-.form-grid .form-group.full-width:has(input[name="eventTitle"]) .form-input,
-.form-grid .form-group.full-width:has(input[name="eventTitle"]) .form-textarea,
-.form-grid .form-group.full-width:has(textarea[name="eventDescription"]) .form-input,
-.form-grid .form-group.full-width:has(textarea[name="eventDescription"]) .form-textarea {
+.event-manager-update-form-grid .event-manager-update-form-group.event-manager-update-full-width:has(input[name="eventTitle"]) .event-manager-update-form-input,
+.event-manager-update-form-grid .event-manager-update-form-group.event-manager-update-full-width:has(input[name="eventTitle"]) .event-manager-update-form-textarea,
+.event-manager-update-form-grid .event-manager-update-form-group.event-manager-update-full-width:has(textarea[name="eventDescription"]) .event-manager-update-form-input,
+.event-manager-update-form-grid .event-manager-update-form-group.event-manager-update-full-width:has(textarea[name="eventDescription"]) .event-manager-update-form-textarea {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
 }
 
 /* Crew Four Fields Container - 4-column grid */
-.crew-four-fields-container {
+.event-manager-update-crew-four-fields-container {
   display: grid !important;
   grid-template-columns: 1fr 1fr 1fr 1fr !important;
   gap: 1rem !important;
@@ -173,40 +183,40 @@
 }
 
 /* Crew fields - mixed layout */
-.crew-request-section .form-group {
+.event-manager-update-crew-request-section .event-manager-update-form-group {
   width: 100% !important;
   margin-bottom: 0.75rem !important;
   display: block !important;
 }
 
 /* Crew four fields - 4-column grid */
-.crew-four-fields-container .form-group {
+.event-manager-update-crew-four-fields-container .event-manager-update-form-group {
   width: 100% !important;
   margin-bottom: 0 !important;
   display: block !important;
 }
 
 /* Crew full-width fields - single column */
-.crew-full-width-fields .form-group {
+.event-manager-update-crew-full-width-fields .event-manager-update-form-group {
   width: 100% !important;
   margin-bottom: 0.5rem !important;
   display: block !important;
 }
 
 /* Date and Time Labels - No bottom margin for direct alignment */
-.date-time-container .form-label {
+.event-manager-update-date-time-container .event-manager-update-form-label {
   margin-bottom: 0 !important;
   margin-top: 0 !important;
 }
 
 /* Date and Time Inputs - Direct alignment under labels */
-.date-time-container .form-input {
+.event-manager-update-date-time-container .event-manager-update-form-input {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
 
 /* Four Fields Container - 4-column grid */
-.four-fields-container {
+.event-manager-update-four-fields-container {
   display: grid !important;
   grid-template-columns: 1fr 1fr 1fr 1fr !important;
   gap: 1rem !important;
@@ -214,7 +224,7 @@
 }
 
 /* Date and Time Container - 2-column grid */
-.date-time-container {
+.event-manager-update-date-time-container {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
   gap: 1rem !important;
@@ -222,29 +232,8 @@
   width: 100% !important;
 }
 
-/* Date and Time Labels - No bottom margin for direct alignment */
-.date-time-container .form-label {
-  margin-bottom: 0 !important;
-  margin-top: 0 !important;
-}
-
-/* Date and Time Inputs - Direct alignment under labels */
-.date-time-container .form-input {
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-}
-
-/* Four Fields Container - 4-column grid */
-.four-fields-container {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr 1fr 1fr !important;
-  gap: 1rem !important;
-  margin-bottom: 1rem !important;
-  width: 100% !important;
-}
-
 /* Form Labels - Above Inputs */
-.form-label {
+.event-manager-update-form-label {
   display: block;
   text-align: left;
   font-weight: 600;
@@ -256,9 +245,9 @@
 }
 
 /* Form Inputs - Full Width, Minimal Spacing */
-.form-input,
-.form-textarea,
-.form-select {
+.event-manager-update-form-input,
+.event-manager-update-form-textarea,
+.event-manager-update-form-select {
   width: 100% !important;
   max-width: 100% !important;
   padding: 0.75rem 1rem;
@@ -275,32 +264,32 @@
   margin-bottom: 0;
 }
 
-.form-input:focus,
-.form-textarea:focus,
-.form-select:focus {
+.event-manager-update-form-input:focus,
+.event-manager-update-form-textarea:focus,
+.event-manager-update-form-select:focus {
   outline: none;
   border-color: #C1A37F;
   box-shadow: 0 0 0 3px rgba(193, 163, 127, 0.1);
   transform: translateY(-1px);
 }
 
-.form-input:hover,
-.form-textarea:hover,
-.form-select:hover {
+.event-manager-update-form-input:hover,
+.event-manager-update-form-textarea:hover,
+.event-manager-update-form-select:hover {
   border-color: #a68b5f;
 }
 
-.form-textarea {
+.event-manager-update-form-textarea {
   resize: vertical;
   min-height: 100px;
 }
 
 /* File Upload Styling */
-.file-upload-container {
+.event-manager-update-file-upload-container {
   position: relative;
 }
 
-.file-input {
+.event-manager-update-file-input {
   position: absolute;
   opacity: 0;
   width: 100%;
@@ -308,7 +297,7 @@
   cursor: pointer;
 }
 
-.file-upload-label {
+.event-manager-update-file-upload-label {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -323,26 +312,26 @@
   color: #C1A37F;
 }
 
-.file-upload-label:hover {
+.event-manager-update-file-upload-label:hover {
   border-color: #a68b5f;
   background: linear-gradient(135deg, rgba(193, 163, 127, 0.1), rgba(193, 163, 127, 0.1));
   transform: translateY(-2px);
 }
 
-.upload-text {
+.event-manager-update-upload-text {
   font-weight: 600;
   margin-bottom: 0.25rem;
   color: #333;
 }
 
-.upload-hint {
+.event-manager-update-upload-hint {
   font-size: 0.85rem;
   opacity: 0.7;
   color: #666;
 }
 
 /* Checkbox Styling - Fixed size */
-.checkbox-container {
+.event-manager-update-checkbox-container {
   background: rgba(193, 163, 127, 0.05);
   padding: 1rem;
   border-radius: 8px;
@@ -350,7 +339,7 @@
   margin-bottom: 1rem;
 }
 
-.checkbox-label {
+.event-manager-update-checkbox-label {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -358,7 +347,7 @@
   margin-bottom: 0.25rem;
 }
 
-.checkbox-input {
+.event-manager-update-checkbox-input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -366,7 +355,7 @@
   height: 16px;
 }
 
-.checkbox-custom {
+.event-manager-update-checkbox-custom {
   width: 16px;
   height: 16px;
   border: 2px solid #C1A37F;
@@ -377,12 +366,12 @@
   flex-shrink: 0;
 }
 
-.checkbox-input:checked + .checkbox-custom {
+.event-manager-update-checkbox-input:checked + .event-manager-update-checkbox-custom {
   background: #C1A37F;
   border-color: #C1A37F;
 }
 
-.checkbox-input:checked + .checkbox-custom::after {
+.event-manager-update-checkbox-input:checked + .event-manager-update-checkbox-custom::after {
   content: '✓';
   position: absolute;
   top: 50%;
@@ -393,13 +382,13 @@
   font-weight: bold;
 }
 
-.checkbox-text {
+.event-manager-update-checkbox-text {
   font-weight: 600;
   color: #333;
   font-size: 0.9rem;
 }
 
-.checkbox-hint {
+.event-manager-update-checkbox-hint {
   font-size: 0.8rem;
   color: #666;
   margin-left: 24px;
@@ -408,7 +397,7 @@
 }
 
 /* Crew Request Section */
-.crew-request-section {
+.event-manager-update-crew-request-section {
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
@@ -417,12 +406,12 @@
   margin-bottom: 1rem;
   width: 100%;
   max-width: 100%;
-  animation: slideDown 0.3s ease-out;
+  animation: eventManagerUpdateSlideDown 0.3s ease-out;
   box-shadow: none !important;
   grid-column: 1 / -1;
 }
 
-.crew-request-title {
+.event-manager-update-crew-request-title {
   font-size: 1.5rem;
   font-weight: 700;
   color: #2c3e50;
@@ -433,7 +422,7 @@
   font-family: 'Georgia', serif;
 }
 
-.crew-request-subtitle {
+.event-manager-update-crew-request-subtitle {
   font-size: 1rem;
   color: #6b7280;
   margin: 0 0 20px 0;
@@ -443,7 +432,7 @@
   font-weight: 400;
 }
 
-@keyframes slideDown {
+@keyframes eventManagerUpdateSlideDown {
   from {
     opacity: 0;
     transform: translateY(-20px);
@@ -523,7 +512,7 @@
 }
 
 /* Form Actions Inline - Inside Form */
-.form-actions-inline {
+.event-manager-update-form-actions-inline {
   display: flex !important;
   gap: 1rem !important;
   justify-content: center !important;
@@ -539,11 +528,11 @@
 }
 
 /* Legacy Form Actions - Hidden */
-.form-actions {
+.event-manager-update-form-actions {
   display: none !important;
 }
 
-.cancel-button {
+.event-manager-update-cancel-button {
   padding: 0.75rem 1.5rem !important;
   background: #000000 !important;
   color: white !important;
@@ -564,12 +553,12 @@
   flex-shrink: 0 !important;
 }
 
-.cancel-button:hover {
+.event-manager-update-cancel-button:hover {
   background: #333333 !important;
   transform: translateY(-1px);
 }
 
-.submit-button {
+.event-manager-update-submit-button {
   padding: 0.75rem 1.5rem !important;
   background: #C1A37F !important;
   color: #000000 !important;
@@ -590,93 +579,93 @@
   flex-shrink: 0 !important;
 }
 
-.submit-button:hover:not(:disabled) {
+.event-manager-update-submit-button:hover:not(:disabled) {
   background: #a68b5f;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(193, 163, 127, 0.3);
 }
 
-.submit-button:disabled {
+.event-manager-update-submit-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
   transform: none;
 }
 
-.submit-button.submitting {
+.event-manager-update-submit-button.submitting {
   background: #6c757d;
 }
 
 /* Submit Message */
-.submit-message {
+.event-manager-update-submit-message {
   margin-top: 1rem;
   padding: 1rem 1.5rem;
   border-radius: 8px;
   font-weight: 600;
   text-align: center;
-  animation: fadeIn 0.3s ease-in;
+  animation: eventManagerUpdateFadeIn 0.3s ease-in;
 }
 
-.submit-message.success {
+.event-manager-update-submit-message.success {
   background: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
-.submit-message.error {
+.event-manager-update-submit-message.error {
   background: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
-@keyframes fadeIn {
+@keyframes eventManagerUpdateFadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .modal-content {
+  .event-manager-update-modal-content {
     max-width: 95vw;
     max-height: 100vh;
   }
   
-  .modal-body {
+  .event-manager-update-modal-body {
     padding: 1.5rem 2.5rem 2rem 2.5rem;
     max-height: calc(100vh - 120px);
   }
   
   /* Title and Description - 90% width on tablet */
-  .form-grid .form-group.full-width:has(input[name="eventTitle"]),
-  .form-grid .form-group.full-width:has(textarea[name="eventDescription"]) {
+  .event-manager-update-form-grid .event-manager-update-form-group.event-manager-update-full-width:has(input[name="eventTitle"]),
+  .event-manager-update-form-grid .event-manager-update-form-group.event-manager-update-full-width:has(textarea[name="eventDescription"]) {
     width: 90% !important;
     max-width: 90% !important;
   }
   
   /* Date and Time - 2-column on tablet */
-  .date-time-container {
+  .event-manager-update-date-time-container {
     grid-template-columns: 1fr 1fr !important;
     gap: 0.75rem !important;
   }
   
   /* Four Fields - 2-column on tablet */
-  .four-fields-container {
+  .event-manager-update-four-fields-container {
     grid-template-columns: 1fr 1fr !important;
     gap: 0.75rem !important;
   }
   
   /* Crew four fields - 2-column on tablet */
-  .crew-four-fields-container {
+  .event-manager-update-crew-four-fields-container {
     grid-template-columns: 1fr 1fr !important;
     gap: 0.75rem !important;
   }
 }
 
 @media (max-width: 768px) {
-  .modal-overlay {
+  .event-manager-update-modal-overlay {
     padding: 10px;
   }
   
-  .modal-content {
+  .event-manager-update-modal-content {
     max-width: 100vw;
     max-height: 100vh;
     border-radius: 0;
@@ -684,533 +673,189 @@
     min-height: auto;
   }
   
-  .modal-header {
+  .event-manager-update-modal-header {
     padding: 1rem 1.5rem;
     min-height: 70px;
   }
   
-  .modal-body {
+  .event-manager-update-modal-body {
     padding: 1rem 2rem 2rem 2rem;
     max-height: calc(100vh - 120px);
   }
   
-  .modal-title {
+  .event-manager-update-modal-title {
     font-size: 1.25rem;
   }
   
   /* Title and Description - full width on mobile */
-  .form-grid .form-group.full-width:has(input[name="eventTitle"]),
-  .form-grid .form-group.full-width:has(textarea[name="eventDescription"]) {
+  .event-manager-update-form-grid .event-manager-update-form-group.event-manager-update-full-width:has(input[name="eventTitle"]),
+  .event-manager-update-form-grid .event-manager-update-form-group.event-manager-update-full-width:has(textarea[name="eventDescription"]) {
     width: 100% !important;
     max-width: 100% !important;
   }
   
   /* Date and Time - single column on mobile */
-  .date-time-container {
+  .event-manager-update-date-time-container {
     grid-template-columns: 1fr !important;
     gap: 0.5rem !important;
   }
   
   /* Four Fields - single column on mobile */
-  .four-fields-container {
+  .event-manager-update-four-fields-container {
     grid-template-columns: 1fr !important;
     gap: 0.5rem !important;
   }
   
   /* Crew four fields - single column on mobile */
-  .crew-four-fields-container {
+  .event-manager-update-crew-four-fields-container {
     grid-template-columns: 1fr !important;
     gap: 0.5rem !important;
   }
   
-  .form-actions-inline {
+  .event-manager-update-form-actions-inline {
     flex-direction: column !important;
     gap: 0.75rem !important;
   }
   
-  .cancel-button,
-  .submit-button {
+  .event-manager-update-cancel-button,
+  .event-manager-update-submit-button {
     width: 100% !important;
     max-width: none !important;
   }
 }
 
 @media (max-width: 480px) {
-  .modal-overlay {
+  .event-manager-update-modal-overlay {
     padding: 5px;
   }
   
-  .modal-header {
+  .event-manager-update-modal-header {
     padding: 0.75rem 1rem;
   }
   
-  .modal-body {
+  .event-manager-update-modal-body {
     padding: 1rem 1.5rem 2rem 1.5rem;
   }
   
-  .form-input,
-  .form-textarea,
-  .form-select {
+  .event-manager-update-form-input,
+  .event-manager-update-form-textarea,
+  .event-manager-update-form-select {
     padding: 0.75rem;
     font-size: 0.95rem;
   }
   
   /* Crew four fields - single column on mobile */
-  .crew-four-fields-container {
+  .event-manager-update-crew-four-fields-container {
     grid-template-columns: 1fr !important;
   }
 }
 
 /* Responsive adjustments for crew section */
 @media (max-width: 1024px) {
-  .crew-four-fields-container {
+  .event-manager-update-crew-four-fields-container {
     grid-template-columns: 1fr 1fr !important;
   }
 }
 
 @media (max-width: 768px) {
-  .crew-four-fields-container {
+  .event-manager-update-crew-four-fields-container {
     grid-template-columns: 1fr !important;
   }
 }
 
-/* ===== UPDATE EVENT MODAL SPECIFIC FIXES ===== */
-/* Ensure form content is visible, buttons are properly positioned, and modal is scrollable */
-
-/* Modal Content - Ensure proper height and scrolling */
-.modal-content {
-  max-height: 95vh !important; /* Increased height for better content visibility */
-  overflow: hidden !important; /* Prevent modal from scrolling */
-  display: flex !important;
-  flex-direction: column !important;
-  width: 100% !important;
-  max-width: 1200px !important; /* Limit width to prevent excessive stretching */
-}
-
-/* Modal Body - Make scrollable and ensure proper spacing */
-.modal-body {
-  flex: 1 !important;
-  overflow-y: auto !important; /* Enable scrolling when content exceeds height */
-  padding: 1.5rem 2rem 1rem 2rem !important; /* Restored proper padding */
-  max-height: calc(95vh - 120px) !important; /* Account for header height only */
-  min-height: 0 !important; /* Allow flex shrinking */
-  box-sizing: border-box !important;
-}
-
-/* CRITICAL: Force all form content to be visible */
-.modal-body form {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  width: 100% !important;
-  min-height: 400px !important;
-}
-
-.modal-body form * {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-/* Ensure form containers maintain their layout */
-.modal-body .form-grid {
-  display: block !important;
-  width: 100% !important;
-  margin-bottom: 1.5rem !important;
-}
-
-.modal-body .date-time-container {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 1rem !important;
-  margin-bottom: 1rem !important;
-  width: 100% !important;
-}
-
-.modal-body .four-fields-container {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr 1fr 1fr !important;
-  gap: 1rem !important;
-  margin-bottom: 1rem !important;
-  width: 100% !important;
-}
-
-/* Force all form groups to be visible and properly styled */
-.modal-body .form-group {
-  display: block !important;
-  width: 100% !important;
-  margin-bottom: 0.75rem !important; /* Reduced from 1rem for more compact layout */
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-.modal-body .form-group.full-width {
-  display: block !important;
-  width: 100% !important;
-  margin-bottom: 0.75rem !important; /* Reduced from 1rem for more compact layout */
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-/* Force all inputs and labels to be visible and properly styled */
-.modal-body input,
-.modal-body textarea,
-.modal-body select {
-  display: block !important;
-  width: 100% !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  padding: 0.75rem 1rem !important;
-  border: 2px solid #e1e8ed !important;
-  border-radius: 8px !important;
-  font-size: 1rem !important;
-  background: white !important;
-  color: #333 !important;
-  margin-bottom: 0.5rem !important;
-  box-sizing: border-box !important;
-}
-
-.modal-body label {
-  display: block !important;
-  width: 100% !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  font-weight: 600 !important;
-  color: #333 !important;
-  margin-bottom: 0.5rem !important;
-  font-size: 0.95rem !important;
-}
-
-/* Ensure crew request section is visible when toggled */
-.modal-body .crew-request-section {
-  display: block !important;
-  width: 100% !important;
-  margin-top: 1.5rem !important;
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important; /* Remove bottom padding */
-}
-
-/* Remove excessive white space from crew request fields */
-.modal-body .crew-request-section .form-group:last-child {
-  margin-bottom: 0 !important; /* Remove bottom margin from last crew field */
-}
-
-.modal-body .crew-request-section .crew-four-fields-container:last-child {
-  margin-bottom: 0 !important; /* Remove bottom margin from last crew container */
-}
-
-/* Further reduce spacing in crew request section */
-.modal-body .crew-request-section .form-group {
-  margin-bottom: 0.5rem !important; /* Reduced from 1rem */
-}
-
-.modal-body .crew-request-section .crew-four-fields-container {
-  margin-bottom: 0.5rem !important; /* Reduced from 1rem */
-}
-
-/* Remove any extra padding from crew request containers */
-.modal-body .crew-request-section .form-grid {
-  margin-bottom: 0.5rem !important; /* Reduced spacing */
-}
-
-/* Ensure MapPicker is visible */
-.MapPicker {
+/* ===== MAP PICKER INTEGRATION ===== */
+/* Ensure MapPicker renders properly within the modal */
+.event-manager-update-modal-body .map-picker-container {
   display: block !important;
   width: 100% !important;
   min-height: 200px !important;
   border: 1px solid #e1e8ed !important;
   border-radius: 8px !important;
+  margin: 1rem 0 !important;
+  padding: 1rem !important;
+  background: #f8fafc !important;
 }
 
-
-/* Ensure proper scrolling behavior with custom scrollbar */
-.modal-body::-webkit-scrollbar {
-  width: 8px !important;
-}
-
-.modal-body::-webkit-scrollbar-track {
-  background: #f1f1f1 !important;
-  border-radius: 4px !important;
-}
-
-.modal-body::-webkit-scrollbar-thumb {
-  background: #C1A37F !important;
-  border-radius: 4px !important;
-}
-
-.modal-body::-webkit-scrollbar-thumb:hover {
-  background: #a68b5f !important;
-}
-
-/* Form Actions Inline - Ensure buttons are always visible and properly positioned */
-.form-actions-inline {
-  display: flex !important;
-  gap: 1rem !important;
-  justify-content: center !important;
-  align-items: center !important;
-  margin: 0.25rem 0 0 0 !important; /* Minimal top margin to bring buttons closer */
-  padding: 0.5rem 0 !important; /* Minimal padding to minimize space usage */
+.event-manager-update-modal-body .map-container {
+  display: block !important;
   width: 100% !important;
-  flex-wrap: nowrap !important;
-  flex-direction: row !important;
-  background: transparent !important; /* Remove background to blend with form */
-  position: relative !important; /* Remove sticky positioning to allow natural flow */
-  flex-shrink: 0 !important; /* Prevent buttons from shrinking */
-  border-top: 1px solid #e1e8ed !important; /* Add subtle border to separate from form */
-  z-index: 1 !important; /* Lower z-index to not interfere with scrolling */
-  box-sizing: border-box !important;
-  text-align: center !important; /* Ensure center alignment */
-}
-
-/* Ensure buttons are properly sized and visible */
-.cancel-button,
-.submit-button {
-  padding: 0.75rem 1.5rem !important;
-  width: 150px !important;
-  height: 48px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-sizing: border-box !important;
-  margin: 0 !important;
-  flex-shrink: 0 !important; /* Prevent buttons from shrinking */
-  font-size: 0.9rem !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
+  height: 400px !important;
   border-radius: 8px !important;
-  white-space: nowrap !important; /* Prevent text wrapping */
-  text-align: center !important; /* Ensure text is centered */
+  overflow: hidden !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #e5e7eb !important;
+  margin: 1rem 0 !important;
 }
 
-/* Force button container to center buttons */
-.form-actions-inline .cancel-button,
-.form-actions-inline .submit-button {
-  display: inline-flex !important;
-  vertical-align: middle !important;
-  margin: 0 auto !important;
-}
-
-/* Form Groups - Ensure proper spacing without cramping */
-.form-group {
-  margin-bottom: 1rem !important; /* Restored proper spacing for readability */
-  width: 100% !important;
-  max-width: 100% !important;
+.event-manager-update-modal-body .venue-map {
   display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 400px !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+/* Ensure Leaflet map tiles are visible */
+.event-manager-update-modal-body .leaflet-container {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 400px !important;
+  background: #f8f9fa !important;
+  z-index: 10 !important;
+  position: relative !important;
   visibility: visible !important;
   opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
-/* Remove excessive spacing from last form group in crew section */
-.crew-request-section .form-group:last-child {
-  margin-bottom: 0 !important; /* Remove bottom margin from last crew field */
+/* Ensure map controls are visible */
+.event-manager-update-modal-body .leaflet-control-container {
+  z-index: 1000 !important;
 }
 
-/* Ensure specific form containers are visible */
-.form-grid {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  margin-bottom: 1.5rem !important;
-  width: 100% !important;
-  max-width: 100% !important;
+.event-manager-update-modal-body .leaflet-popup-content-wrapper {
+  z-index: 1001 !important;
 }
 
-/* Ensure date-time container is visible */
-.date-time-container {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 1rem !important;
-  margin-bottom: 1rem !important;
-  width: 100% !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+/* Map tiles visibility */
+.event-manager-update-modal-body .leaflet-tile-pane {
+  z-index: 1 !important;
 }
 
-/* Ensure four-fields container is visible */
-.four-fields-container {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr 1fr 1fr !important;
-  gap: 1rem !important;
-  margin-bottom: 1rem !important;
-  width: 100% !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+.event-manager-update-modal-body .leaflet-overlay-pane {
+  z-index: 2 !important;
 }
 
-/* Form Labels - Ensure proper spacing */
-.form-label {
-  display: block !important;
-  text-align: left !important;
-  font-weight: 600 !important;
-  color: #333 !important;
-  margin-bottom: 0.25rem !important; /* Reduced for less cramped appearance */
-  margin-top: 0 !important;
-  font-size: 0.9rem !important; /* Slightly smaller font */
-  width: 100% !important;
+.event-manager-update-modal-body .leaflet-marker-pane {
+  z-index: 3 !important;
 }
 
-/* Form Inputs - Ensure proper sizing and spacing */
-.form-input,
-.form-textarea,
-.form-select {
-  width: 100% !important;
-  max-width: 100% !important;
-  padding: 0.5rem 0.75rem !important; /* Reduced padding for less cramped appearance */
-  border: 1px solid #e1e8ed !important; /* Thinner border */
-  border-radius: 8px !important; /* Smaller border radius */
-  font-size: 0.9rem !important; /* Slightly smaller font */
-  transition: all 0.3s ease !important;
-  background: white !important;
-  color: #333 !important;
-  font-family: inherit !important;
-  display: block !important;
-  box-sizing: border-box !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  min-height: 40px !important; /* Reduced height for less cramped appearance */
+.event-manager-update-modal-body .leaflet-popup-pane {
+  z-index: 4 !important;
 }
 
-/* Textarea specific adjustments */
-.form-textarea {
-  resize: vertical !important;
-  min-height: 80px !important; /* Reduced height */
-  max-height: 150px !important; /* Reduced max height */
-  overflow-y: auto !important; /* Enable scrolling for long content */
+/* Custom marker styles */
+.event-manager-update-modal-body .custom-venue-marker {
+  z-index: 10 !important;
 }
 
-/* Crew Request Section - Ensure proper spacing and remove unnecessary white space */
-.crew-request-section {
-  margin-top: 1.5rem !important; /* Adequate spacing from main form */
-  margin-bottom: 0 !important; /* Remove bottom margin to eliminate white space */
-  padding-bottom: 0 !important; /* Remove bottom padding */
-  width: 100% !important;
-  max-width: 100% !important;
+/* Map click handler area */
+.event-manager-update-modal-body .leaflet-interactive {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  z-index: 15 !important;
 }
 
-/* Crew Request Title - Ensure proper spacing */
-.crew-request-title {
-  font-size: 1.2rem !important; /* Slightly larger for better readability */
-  font-weight: 700 !important;
-  color: #2c3e50 !important;
-  margin: 0 0 0.5rem 0 !important; /* Adequate spacing */
-  line-height: 1.2 !important;
-  text-align: left !important;
-  width: 100% !important;
-  font-family: 'Georgia', serif !important;
+/* Ensure map tiles are clickable */
+.event-manager-update-modal-body .leaflet-tile {
+  pointer-events: auto !important;
+  z-index: 1 !important;
 }
 
-/* Crew Request Subtitle - Ensure proper spacing */
-.crew-request-subtitle {
-  font-size: 0.9rem !important; /* Better readability */
-  color: #6b7280 !important;
-  margin: 0 0 1rem 0 !important; /* Adequate spacing before form fields */
-  line-height: 1.4 !important;
-  text-align: left !important;
-  width: 100% !important;
-  font-weight: 400 !important;
-}
-
-/* Responsive adjustments for better mobile experience */
-@media (max-width: 768px) {
-  .modal-content {
-    max-height: 100vh !important; /* Full height on mobile for better scrolling */
-  }
-  
-  .modal-body {
-    padding: 1rem 1.5rem 1rem 1.5rem !important; /* Adequate padding on mobile */
-    max-height: calc(100vh - 100px) !important; /* Account for mobile header */
-  }
-  
-  .form-actions-inline {
-    flex-direction: column !important; /* Stack buttons vertically on mobile */
-    gap: 0.75rem !important; /* Adequate gap */
-    padding: 1rem 0 !important; /* Adequate padding */
-    margin: 1.5rem 0 0 0 !important; /* Adequate top margin */
-  }
-  
-  .cancel-button,
-  .submit-button {
-    width: 100% !important; /* Full width on mobile */
-    max-width: none !important;
-    padding: 0.75rem 1rem !important; /* Adequate padding for touch */
-    height: 48px !important; /* Adequate height for touch */
-  }
-  
-  .form-group {
-    margin-bottom: 0.75rem !important; /* Adequate spacing on mobile */
-  }
-  
-  .form-label {
-    margin-bottom: 0.25rem !important; /* Adequate label spacing on mobile */
-    font-size: 0.9rem !important; /* Readable font size on mobile */
-  }
-  
-  .form-input,
-  .form-textarea,
-  .form-select {
-    padding: 0.6rem 0.8rem !important; /* Adequate padding on mobile */
-    font-size: 0.9rem !important; /* Readable font size on mobile */
-    min-height: 42px !important; /* Adequate height on mobile */
-  }
-  
-  .form-textarea {
-    min-height: 80px !important; /* Adequate textarea height on mobile */
-    max-height: 150px !important;
-  }
-  
-  .crew-request-section {
-    margin-top: 1rem !important; /* Reduced spacing on mobile */
-    margin-bottom: 0 !important; /* No bottom margin */
-  }
-}
-
-@media (max-width: 480px) {
-  .modal-content {
-    max-height: 100vh !important; /* Full height on small mobile */
-  }
-  
-  .modal-body {
-    padding: 0.75rem 1rem 0.75rem 1rem !important; /* Adequate padding on small mobile */
-    max-height: calc(100vh - 80px) !important; /* Account for small mobile header */
-  }
-  
-  .form-actions-inline {
-    padding: 0.75rem 0 !important; /* Adequate padding on small mobile */
-    margin: 1rem 0 0 0 !important; /* Adequate top margin */
-  }
-  
-  .form-group {
-    margin-bottom: 0.6rem !important; /* Adequate spacing on small mobile */
-  }
-  
-  .form-label {
-    font-size: 0.85rem !important; /* Readable font size on small mobile */
-    margin-bottom: 0.2rem !important;
-  }
-  
-  .form-input,
-  .form-textarea,
-  .form-select {
-    padding: 0.5rem 0.6rem !important; /* Adequate padding on small mobile */
-    font-size: 0.85rem !important; /* Readable font size on small mobile */
-    min-height: 40px !important; /* Adequate height on small mobile */
-  }
-  
-  .form-textarea {
-    min-height: 70px !important; /* Adequate textarea height on small mobile */
-    max-height: 120px !important;
-  }
-  
-  .cancel-button,
-  .submit-button {
-    padding: 0.6rem 0.8rem !important; /* Adequate padding on small mobile */
-    height: 44px !important; /* Adequate height on small mobile */
-    font-size: 0.85rem !important; /* Readable font size on small mobile */
-  }
-  
-  .crew-request-section {
-    margin-top: 0.75rem !important; /* Reduced spacing on small mobile */
-    margin-bottom: 0 !important; /* No bottom margin */
-  }
+/* Map pane clickability */
+.event-manager-update-modal-body .leaflet-map-pane {
+  pointer-events: auto !important;
+  z-index: 10 !important;
 }
