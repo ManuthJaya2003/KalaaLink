@@ -70,7 +70,7 @@ function Chatbot() {
     <div className="kl-chatbot-root" aria-live="polite">
       {showWelcomeTip && !isOpen && (
         <div className="kl-chatbot-tip" role="status">
-          <span className="kl-chatbot-tip-text">👉 {t('needHelp')}</span>
+          <span className="kl-chatbot-tip-text"> {t('needHelp')}</span>
           <button
             type="button"
             className="kl-chatbot-tip-close"

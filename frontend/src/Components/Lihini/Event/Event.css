@@ -2415,6 +2415,11 @@ div .clear-btn {
   color: #ffffff !important;
 }
 
+/* Dark mode text visibility fix for testimonials title */
+[data-theme="dark"] .testimonials-title {
+  color: #000000 !important;
+}
+
 .gallery-wrapper {
   position: relative;
   overflow: hidden;
